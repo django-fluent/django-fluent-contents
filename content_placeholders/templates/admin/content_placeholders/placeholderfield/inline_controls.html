@@ -1,0 +1,12 @@
+{% load i18n %}
+      <div class="cp-controls">
+        <select>{% for category_title, plugins in cp_plugin_categories %}
+          {% if category_title %}<optgroup label="{{ category_title }}">{% endif %}
+            {% for plugin in plugins %}
+              <option value="{{ plugin.type_name }}">{{ plugin.verbose_name }}</option>
+            {% endfor %}
+          {% if category_title %}</optgroup>{% endif %}
+          {% endfor %}
+        </select>
+        <input data-placeholder-id="{{ placeholder.id }}" data-placeholder-slot="{{ placeholder.slot }}" class="button cp-plugin-add-button" type="button" value="{% trans "Add" %}" />
+      </div>

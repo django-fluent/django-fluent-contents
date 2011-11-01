@@ -1,0 +1,79 @@
+/*
+  Extra CSS for the Content Placeholder admin interface customisations
+ */
+
+html.cp-jsenabled .inline-contentitem-group {
+  /*
+    hide all ContentItem inlines, they are moved
+    to a separate DIV, where the items can be sorted.
+  */
+  display: none;
+}
+
+
+/* ---- Clearfix ---- */
+
+.cp-clearfix:after {
+  content:      ".";
+  font-size:    0;
+  line-height:  0;
+  display:      block;
+  height:       0;  
+  clear:        both;
+  visibility:   hidden;
+}
+
+* html .cp-clearfix { height:     1%; } /* 1% of nothing makes IE 6 do the right thing. */
+*+html .cp-clearfix { min-height: 0;  } /* and IE7 has new tricks to trigger hasLayout. */
+
+/* ---- Editor items ---- */
+
+.cp-item-controls {
+  float: right;
+  margin-right: 5px;
+  font-size: 0;
+  line-height: 0;
+}
+
+.cp-item-delete input {
+  display: none;  /* needed for server side, but has special handling in admin.js */
+}
+
+.cp-item-move {
+  float: left;
+}
+
+.cp-item-delete {
+  float: left;
+}
+
+.cp-item-move a {
+  float: left;
+  width: 16px;
+  height: 16px;
+  margin-left: 2px;
+  background-repeat: no-repeat;
+  outline: 0;
+}
+
+.cp-item-up   { background-image: url(img/admin/arrow_up.gif); }
+.cp-item-down { background-image: url(img/admin/arrow_down.gif); }
+
+.inline-related:first-child .cp-item-up { display: none; }
+.inline-related:last-child  .cp-item-down { display: none; }
+
+.cp-item-delete a {
+  float: left;
+  width: 10px;
+  height: 10px;
+  padding: 3px;  /* to become 16x16 */
+  background: url(img/admin/icon_deletelink.gif) no-repeat 50% 50%;
+  outline: 0;
+}
+
+
+/* ---- Fieldset fixes ---- */
+
+.form-row.cp-has-hidden-field {
+    display: none;
+}

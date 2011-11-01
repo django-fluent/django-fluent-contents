@@ -1,0 +1,32 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_modify adminmedia %}
+
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript">
+  // Pass database data to the cp_admin.js file.
+  // Because this is the admin page of the Placeholder itself, and not some other model,
+  // the placeholder array is actually a dummy referring to the current model.
+  var placeholders = {% block js_placeholders %}[{ id: {{ original.id|default:"''" }}, slot: '{{ original.slot|default:""|escapejs }}', title: '{{ original.title|escapejs }}', role: '{{ original.role }}', domnode: 'content_placeholder_inlines' }];{% endblock %}
+  var itemtypes = {% block js_contentitemtypes %}{ {% for fs in inline_admin_formsets %}'{{ fs.opts.type_name|escapejs }}': {
+                      type: '{{ fs.opts.type_name|escapejs }}',
+                      name: '{{ fs.opts.name|escapejs }}',
+                      prefix: '{{ fs.formset.prefix|escapejs }}',
+                      rel_name: '{{ fs.formset.rel_name|escapejs }}',
+                      auto_id: '{{ fs.formset.auto_id|escapejs }}'
+                    }{% if not forloop.last %}, {% endif %}
+                  {% endfor %}}{% endblock %};
+  cp_admin.setPlaceholders( placeholders );
+  cp_admin.setContentItemTypes( itemtypes );
+</script>
+{% endblock %}
+
+{% block after_field_sets %}
+  {# Have an area where the inlines can move and reorder freely #}
+  <div id="content_placeholder_inlines">
+    {% include "admin/content_placeholders/placeholderfield/pane.html" with placeholder=original cp_plugin_categories=cp_plugin_categories %}
+  </div>
+{% endblock %}
+
+{% block after_related_objects %}
+
+{% endblock %}

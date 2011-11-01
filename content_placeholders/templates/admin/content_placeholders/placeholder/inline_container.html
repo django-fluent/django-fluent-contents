@@ -1,0 +1,32 @@
+{% load i18n %}
+  <div id="{{ inline_admin_formset.formset.prefix }}-group" class="inline-group inline-contentitem-group">
+    {{ inline_admin_formset.formset.management_form }}
+    {{ inline_admin_formset.formset.non_form_errors }}
+
+    {# looping in `inline_admin_formset.formset.forms` excludes empty form #}
+    {# looping in `inline_admin_formset` includes the empty placeholder as last item #}
+    {% for inline_admin_form in inline_admin_formset %}
+      <div class="inline-related inline-{{ inline_admin_form.model_admin.type_name }}{% if forloop.last %} empty-form last-related{% endif %}" id="{{ inline_admin_formset.formset.prefix }}-{% if not forloop.last %}{{ forloop.counter0 }}{% else %}empty{% endif %}">
+        <h2 class="cp-formset-item-title cp-clearfix">
+          <span class="title">{{ inline_admin_formset.opts.name }}</span>
+          <span class="cp-item-controls">
+            <span class="cp-item-move">
+              <a class="cp-item-up" href="#up">u</a>
+              <a class="cp-item-down" href="#down">d</a>
+            </span>
+            <span class="cp-item-delete"><a href="#delete">x</a>{% if inline_admin_formset.formset.can_delete and inline_admin_form.original %}{{ inline_admin_form.deletion_field.field }}{% endif %}</span>
+          </span>
+        </h2>
+
+        {# render the form fields. Each Content Type can override it. Default is "admin/cp/cmspageitem/admin_form.html". #}
+        {% block formfields %}
+          {% with inline_admin_form.form as form %}
+            {% include inline_admin_formset.opts.cp_admin_form_template %}
+          {% endwith %}
+        {% endblock %}
+
+        {% if inline_admin_form.has_auto_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
+        {{ inline_admin_form.fk_field.field }}
+      </div>
+    {% endfor %}
+  </div>
