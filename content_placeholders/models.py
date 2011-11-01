@@ -1,6 +1,6 @@
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, FieldError
 from django.db import models
 from django.db.models.base import ModelBase
 from django.template.defaultfilters import truncatewords
@@ -65,8 +65,10 @@ class ContentItemMetaClass(ModelBase):
             model_name = db_table[len(app_label)+1:]
             new_class._meta.db_table = "contentitem_%s_%s" % (app_label, model_name)
 
-#        if issubclass(new_class, ContentItem):
-#            assert hasattr(new_class, '__unicode__'), "The {0} class should implement a __unicode__() function.".format(name)
+        # Enforce good manners.
+        # The name is often not visible, except for the delete page.
+        if name != 'ContentItem' and not hasattr(new_class, '__unicode__'):
+            raise FieldError("The {0} class should implement a __unicode__() function.".format(name))
 
         return new_class
 
