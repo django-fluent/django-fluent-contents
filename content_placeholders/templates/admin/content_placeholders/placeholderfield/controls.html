@@ -1,6 +1,6 @@
-{% load i18n %}
+{% load i18n placeholder_admin_tags %}
       <div class="cp-controls">
-        <select>{% for category_title, plugins in cp_plugin_categories %}
+        <select>{% for category_title, plugins in cp_plugin_list|group_plugins_into_categories|plugin_categories_to_list %}
           {% if category_title %}<optgroup label="{{ category_title }}">{% endif %}
             {% for plugin in plugins %}
               <option value="{{ plugin.type_name }}">{{ plugin.verbose_name }}</option>
@@ -8,5 +8,5 @@
           {% if category_title %}</optgroup>{% endif %}
           {% endfor %}
         </select>
-        <input data-placeholder-id="{{ placeholder.id }}" data-placeholder-slot="{{ placeholder.slot }}" class="button cp-plugin-add-button" type="button" value="{% trans "Add" %}" />
+        <input data-placeholder-id="{{ placeholder_id }}" data-placeholder-slot="{{ placeholder_slot }}" class="button cp-plugin-add-button" type="button" value="{% trans "Add" %}" />
       </div>

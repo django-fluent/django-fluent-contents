@@ -32,7 +32,7 @@ var cp_data = {};
   cp_data.init = function()
   {
     // Find all formset items.
-    var all_items   = $(".inline-group > .inline-related");
+    var all_items   = $(".inline-contentitem-group > .inline-related");
     var empty_items = all_items.filter(".empty-form");
     var fs_items    = all_items.filter(":not(.empty-form)");
 
@@ -118,6 +118,8 @@ var cp_data = {};
    */
   cp_data.get_placeholder_by_slot = function(slot)
   {
+    if( slot == "" )
+      throw new Error("cp_data.get_placeholder_by_slot() received empty value.");
     return _get_placeholder_by_property('slot', slot);
   }
 
@@ -139,7 +141,7 @@ var cp_data = {};
         return cp_data.placeholders[i];
 
     if( window.console )
-      window.console.error("ecms_data.get_placeholder_by_" + prop + ": no object for '" + value + "'");
+      window.console.error("cp_data.get_placeholder_by_" + prop + ": no object for '" + value + "'");
     return null;
   }
 
@@ -202,16 +204,19 @@ var cp_data = {};
       throw new Error("cp_data.setContentItemTypes() was never called");
 
     var fs_item = $(child_node).closest(".inline-related");
-    var ids = fs_item.attr("id").split('-');
-    var prefix = ids[0];
+    var id = fs_item.attr("id");
+    var pos = id.lastIndexOf('-');      // have to split at last '-' for generic inlines.
+    var prefix = id.substring(0, pos);
+    var suffix = id.substring(pos + 1);
 
     // Get itemtype
     var itemtype = null;
-    for(var i in cp_data.itemtypes)
+    for(var TypeName in cp_data.itemtypes)
     {
-      if( cp_data.itemtypes[i].prefix == prefix )
+      var candidate = cp_data.itemtypes[TypeName];
+      if( candidate.prefix == prefix )
       {
-        itemtype = cp_data.itemtypes[i];
+        itemtype = candidate;
         break;
       }
     }
@@ -219,7 +224,7 @@ var cp_data = {};
     return {
       fs_item: fs_item,
       itemtype: itemtype,
-      index: parseInt(ids[1])
+      index: parseInt(suffix)
     };
   }
 
@@ -238,9 +243,9 @@ var cp_data = {};
 
   cp_data.cleanup_empty_placeholders = function()
   {
-    for(var i in dom_placeholders)
-      if(dom_placeholders[i].items.length == 0)
-        delete dom_placeholders[i];
+    for(var i in cp_data.dom_placeholders)
+      if(cp_data.dom_placeholders[i].items.length == 0)
+        delete cp_data.dom_placeholders[i];
   }
 
 

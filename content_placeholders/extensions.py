@@ -12,7 +12,7 @@ from django.template.loader import render_to_string
 from django.utils.html import linebreaks, escape
 from django.utils.importlib import import_module
 from django.utils.translation import ugettext as _
-from content_placeholders.models import ContentItem
+from content_placeholders.models import ContentItem, Placeholder
 
 # The API uses a registration system.
 # While plugins can be easily detected via ``__subclasses__()``, this is more magic and less explicit.
@@ -24,6 +24,7 @@ from content_placeholders.models import ContentItem
 
 # Some standard request processors to use in the plugins,
 # Naturally, you want STATIC_URL to be available in plugins.
+
 _STANDARD_REQUEST_CONTEXT_PROCESSORS = (
     context_processors.request,
     context_processors.static,
@@ -48,7 +49,8 @@ class ContentItemForm(forms.ModelForm):
     """
     The base form for custom pageitem types.
     """
-    placeholder = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+    placeholder = forms.ModelChoiceField(widget=forms.HiddenInput(), required=False, queryset=Placeholder.objects.all())
+    placeholder_slot = forms.CharField(widget=forms.HiddenInput(), required=False)
     sort_order = forms.IntegerField(widget=forms.HiddenInput(), initial=1)
 
 
@@ -61,7 +63,7 @@ class ContentPlugin(object):
     # Settings to override
     model = None  # ContentItem derived
     admin_form = ContentItemForm
-    admin_form_template = "admin/contentplugins/admin_form.html"
+    admin_form_template = "admin/content_placeholders/contentitem/admin_form.html"
     render_template = None
     category = None
 
@@ -196,40 +198,6 @@ class PluginPool(object):
         """
         self._import_plugins()
         return [plugin.model for plugin in self.plugins.values()]
-
-
-    def get_plugin_categories(self):
-        """
-        Split a list of plugins into a dictionary of categories
-        """
-        plugins = sorted(self.get_plugins(), key=lambda p: p.verbose_name)
-        categories = {}
-
-        for plugin in plugins:
-            title = plugin.category or ""
-            if not categories.has_key(title):
-                categories[title] = []
-            categories[title].append(plugin)
-
-        return categories
-
-
-    def get_plugin_choices(self):
-        """
-        Return a tuple of plugin model choices, suitable for a select field.
-        """
-        categories = self.get_plugin_categories()
-        choices = []
-        for category, items in categories.iteritems():
-            if items:
-                plugin_tuples = tuple((plugin.type_name, plugin.verbose_name) for plugin in items)
-                if category:
-                    choices.append((category, plugin_tuples))
-                else:
-                    choices += plugin_tuples
-
-        choices.sort(key=lambda item: item[0])
-        return choices
 
 
     def _import_plugins(self):

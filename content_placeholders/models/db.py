@@ -32,7 +32,7 @@ class Placeholder(models.Model):
 
     # Track relation to parent
     parent_type = models.ForeignKey(ContentType)
-    parent_id = models.IntegerField()
+    parent_id = models.IntegerField(null=True)    # Need to allow Null, because Placeholder is created before parent is saved.
     parent = GenericForeignKey('parent_type', 'parent_id')
 
     title = models.CharField(_('Admin title'), max_length=255, blank=True)
@@ -40,12 +40,21 @@ class Placeholder(models.Model):
     objects = PlaceholderManager()
 
     class Meta:
+        app_label = 'content_placeholders'  # required for subfolder
         verbose_name = _("Placeholder")
         verbose_name_plural = _("Placeholders")
         unique_together = ('parent_type', 'parent_id', 'slot')
 
     def __unicode__(self):
-        return u'{0} at #{1}'.format(self.title or self.slot, self.parent_id)
+        return self.title or self.slot
+
+
+    def get_allowed_plugins(self):
+        """
+        Return the plugins which are supported in this placeholder.
+        """
+        from content_placeholders import extensions  # avoid circular import
+        return extensions.plugin_pool.get_plugins()
 
 
 class ContentItemMetaClass(ModelBase):
@@ -88,32 +97,33 @@ class ContentItem(models.Model):
 
     # Note the validation settings defined here are not reflected automatically
     # in the admin interface because it uses a custom ModelForm to handle these fields.
-    placeholder = models.ForeignKey(Placeholder, related_name='contentitems')
+
+    # Track relation to parent
+    # This makes it much easier to use it as inline.
+    parent_type = models.ForeignKey(ContentType)
+    parent_id = models.IntegerField(null=True)    # Need to allow Null, because Placeholder is created before parent is saved.
+    parent = GenericForeignKey('parent_type', 'parent_id')
+
+    placeholder = models.ForeignKey(Placeholder, related_name='contentitems', null=True)
+    placeholder_slot = models.CharField(_("Placeholder"), max_length=50)  # needed to link to new placeholders
     sort_order = models.IntegerField(default=1)
 
 
     @property
     def plugin(self):
-        """False
+        """
         Access the parent plugin which renders this model.
         """
         return self._content_plugin
 
 
-    def __repr__(self):
-        """
-        Overwritten representation, so Django still displays short representations
-        while subclasses may display the full text with __unicode__
-        """
-        return '<%s: #%d, placeholder=%s, content=%s>' % (self.__class__.__name__, self.id or 0, self.placeholder, smart_str(truncatewords(strip_tags(unicode(self)), 10)))
+    def __unicode__(self):
+        return '<%s: #%d, placeholder=%s>' % (self.__class__.__name__, self.id or 0, self.placeholder)
 
 
     class Meta:
+        app_label = 'content_placeholders'  # required for models subfolder
         ordering = ('placeholder', 'sort_order')
-        verbose_name = _('Contentplugin')
-        verbose_name_plural = _('Contentplugins')
-        abstract = True
+        verbose_name = _('Contentplugin base')
+        verbose_name_plural = _('Contentplugin bases')
 
-
-    # While being abstract, still have the DoesNotExist object:
-    DoesNotExist = types.ClassType('DoesNotExist', (ObjectDoesNotExist,), {})

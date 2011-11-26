@@ -23,6 +23,7 @@
   {
     // Init all parts. Ordering shouldn't matter that much.
     cp_data.init();
+    if( window.cp_tabs ) cp_tabs.init();
     cp_plugins.init();
     cp_plugins.move_items_to_placeholders();
 

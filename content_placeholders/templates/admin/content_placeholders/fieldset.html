@@ -1,0 +1,35 @@
+{# this is essentially admin/includes/fieldset.html, with detection of hidden fields. #}
+{# context structure: InlineFieldset -> Fieldline -> AdminField -> form field (BoundField instance) #}
+{# The hidden field handling is made in advance of https://code.djangoproject.com/ticket/11277 getting merged to trunk #}
+{% for line in fieldset %}{% for adminfield in line %}{% if adminfield.field.is_hidden %}
+  {{ adminfield.field }}{# render all hidden fields top level, compacter and easier to debug #}
+{% endif %}{% endfor %}{% endfor %}
+<fieldset class="module aligned {{ fieldset.classes }}">
+    {% if fieldset.name %}<h2>{{ fieldset.name }}</h2>{% endif %}
+    {% if fieldset.description %}
+        <div class="description">{{ fieldset.description|safe }}</div>
+    {% endif %}
+    {% for line in fieldset %}
+        <div class="form-row{% if line.fields|length_is:'1' and line.errors %} errors{% endif %}{% for adminfield in line %} {{ adminfield.field.name }}{% if adminfield.field.is_hidden %} cp-has-hidden-field{% endif %}{% endfor %}">
+            {% if line.fields|length_is:'1' %}{{ line.errors|linebreaksbr }}{% endif %}
+            {% for adminfield in line %}{% if not adminfield.field.is_hidden %}
+                <div{% if not line.fields|length_is:'1' %} class="field-box{% if not adminfield.is_readonly and adminfield.errors %} errors{% endif %}"{% endif %}>
+                    {% if not line.fields|length_is:'1' and not adminfield.is_readonly %}{{ adminfield.errors }}{% endif %}
+                    {% if adminfield.is_checkbox %}
+                        {{ adminfield.field }}{{ adminfield.label_tag }}
+                    {% else %}
+                        {{ adminfield.label_tag }}
+                        {% if adminfield.is_readonly %}
+                            <p>{{ adminfield.contents }}</p>
+                        {% else %}
+                            {{ adminfield.field }}
+                        {% endif %}
+                    {% endif %}
+                    {% if adminfield.field.help_text %}
+                        <p class="help">{{ adminfield.field.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+            {% endif %}{% endfor %}
+        </div>
+    {% endfor %}
+</fieldset>

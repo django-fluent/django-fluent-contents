@@ -191,6 +191,7 @@ var cp_plugins = {};
     // Configure it
     var field_prefix = group_prefix + "-" + new_index;
     $("#" + field_prefix + "-placeholder").val(placeholder.id);
+    $("#" + field_prefix + "-placeholder_slot").val(placeholder.slot);
     $("#" + field_prefix + "-sort_order").val(new_index);
     cp_plugins.enable_pageitem(fs_item);
   }
@@ -297,7 +298,8 @@ var cp_plugins = {};
     var itemtype     = current_item.itemtype;
 
     // Get administration
-    var placeholder  = cp_data.get_placeholder_by_id( dominfo.placeholder_id );
+    // Slot is always filled in, id may be unknown yet.
+    var placeholder  = cp_data.get_placeholder_by_slot( dominfo.placeholder_slot );
     var total_count  = parseInt(dominfo.total_forms.value);
 
     // Disable item, wysiwyg, etc..
@@ -349,7 +351,8 @@ var cp_plugins = {};
       // Item fields
       id_field: $("#" + field_prefix + "-id"),
       delete_checkbox: $("#" + field_prefix + "-DELETE"),
-      placeholder_id: $("#" + field_prefix + "-placeholder")[0].value
+      placeholder_id: $("#" + field_prefix + "-placeholder")[0].value,
+      placeholder_slot: $("#" + field_prefix + "-placeholder_slot")[0].value
     };
   }
 

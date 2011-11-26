@@ -26,6 +26,7 @@ html.cp-jsenabled .inline-contentitem-group {
 * html .cp-clearfix { height:     1%; } /* 1% of nothing makes IE 6 do the right thing. */
 *+html .cp-clearfix { min-height: 0;  } /* and IE7 has new tricks to trigger hasLayout. */
 
+
 /* ---- Editor items ---- */
 
 .cp-item-controls {
@@ -77,3 +78,74 @@ html.cp-jsenabled .inline-contentitem-group {
 .form-row.cp-has-hidden-field {
     display: none;
 }
+
+
+/* ---- Tabbar interface ---- */
+
+.inline-placeholder-group {
+  border: 0;
+}
+
+#cp-tabnav {
+  margin: 0;
+  padding: 0;
+}
+
+#cp-tabnav li {
+  float: left;
+  display: inline;
+  list-style-position: inside;
+
+  margin: 3px 0 0 0;
+  min-width: 100px;
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+
+  font-weight: bold;
+  font-size: 12px;
+  background-image: none;
+
+  color: #333333;
+}
+
+#cp-tabnav li.active {
+  margin-top: 0;
+  background-image: url('img/admin/default-bg.gif');
+  color: #ffffff;
+}
+
+#cp-tabnav a {
+  outline: 0;
+  display: block;
+  cursor: pointer;
+}
+
+#cp-tabnav a {
+  padding: 5px 14px 5px 12px;
+  height: 13px;
+}
+
+#cp-tabnav li.active a {
+  padding-top: 6px;
+  padding-bottom: 7px;
+}
+
+* html #cp-tabnav li.active a { height: 1%;    } /* IE 6 */
+*+html #cp-tabnav li.active a { min-height: 0; } /* IE 7 */
+
+#cp-tabnav li.active a {
+  color: #fff;
+}
+
+#cp-tabmain {
+  padding: 10px;
+  margin: 0 0 10px 0;
+  border: 1px solid #ccc;
+}
+
+
+/* default tabbar appearance */
+
+.cp-tab { display: none }
+#cp-tabmain .cp-tab-active { display: block }
