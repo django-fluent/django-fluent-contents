@@ -16,7 +16,18 @@ class PlaceholderInline(GenericInlineModelAdmin):
         # cp_tabs.js is included here, as it's a presentation choice
         # to display the placeholder panes in a tabbar format.
         # The remaining scripts should just operate the same without it.
-        js = ('content_placeholders/admin/cp_tabs.js',)
+        js = (
+            'content_placeholders/admin/cp_admin.js',
+            'content_placeholders/admin/cp_data.js',
+            'content_placeholders/admin/cp_tabs.js',
+            'content_placeholders/admin/cp_plugins.js',
+        )
+        css = {
+            'screen': (
+                'content_placeholders/admin/cp_admin.css',
+            ),
+        }
+
         extend = False   # No need for the standard 'admin/js/inlines.min.js' here.
 
     def get_all_allowed_plugins(self):
