@@ -355,7 +355,7 @@ var cp_plugins = {};
       // Item fields
       id_field: $("#" + field_prefix + "-contentitem_ptr"),
       delete_checkbox: $("#" + field_prefix + "-DELETE"),
-      placeholder_id: $("#" + field_prefix + "-placeholder")[0].value,
+      placeholder_id: $("#" + field_prefix + "-placeholder").val(),  // .val allows <select> for debugging.
       placeholder_slot: $("#" + field_prefix + "-placeholder_slot")[0].value
     };
   }

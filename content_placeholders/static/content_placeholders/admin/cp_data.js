@@ -43,7 +43,7 @@ var cp_data = {};
       {
         // Get formset DOM elements
         var fs_item           = fs_items.eq(i);
-        var placeholder_input = fs_item.find("input[name$=-placeholder]");
+        var placeholder_input = fs_item.find("input[name$=-placeholder], select[name$=-placeholder]");  // allow <select> for debugging.
 
         // placeholder_slot may be __main__, placeholder.slot will be the real one.
         var placeholder_id = placeholder_input.val();
