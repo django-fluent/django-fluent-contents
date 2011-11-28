@@ -51,5 +51,5 @@ def _get_request(context):
         render_to_response("page.html", context, context_instance=RequestContext(request))
     """
     # This error message is issued to help newcomers find solutions faster!
-    assert context.has_key('request'), "The placeholder functions require a 'request' object in the context, is RequestContext not used?"
+    assert context.has_key('request'), "The placeholder functions require a 'request' object in the context, is 'RequestContext' not used or 'TEMPLATE_CONTEXT_PROCESSORS' not defined?"
     return context['request']
