@@ -70,14 +70,14 @@ class ContentItemMetaClass(ModelBase):
         db_table  = new_class._meta.db_table
         app_label = new_class._meta.app_label
 
-        if db_table.startswith(app_label + '_') and name != 'ContentItem':
-            model_name = db_table[len(app_label)+1:]
-            new_class._meta.db_table = "contentitem_%s_%s" % (app_label, model_name)
+        if name != 'ContentItem':
+            if db_table.startswith(app_label + '_'):
+                model_name = db_table[len(app_label)+1:]
+                new_class._meta.db_table = "contentitem_%s_%s" % (app_label, model_name)
 
-        # Enforce good manners.
-        # The name is often not visible, except for the delete page.
-        if name != 'ContentItem' and not hasattr(new_class, '__unicode__'):
-            raise FieldError("The {0} class should implement a __unicode__() function.".format(name))
+            # Enforce good manners. The name is often not visible, except for the delete page.
+            if not hasattr(new_class, '__unicode__'):
+                raise FieldError("The {0} class should implement a __unicode__() function.".format(name))
 
         return new_class
 

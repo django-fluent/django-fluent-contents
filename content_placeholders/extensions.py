@@ -1,5 +1,5 @@
 """
-Special classes to extend the CMS; e.g. plugins.
+Special classes to extend the module; e.g. plugins.
 
 The extension mechanism is provided for projects that benefit
 from a tighter integration then the Django URLconf can provide.
