@@ -11,7 +11,8 @@ def render_placeholder(request, placeholder):
     """
     Render a placeholder as HTML string.
     """
-    return render_placeholder_items(request, placeholder.slot, placeholder.contentitems.all())
+    items = placeholder.get_content_items()
+    return render_placeholder_items(request, placeholder.slot, items)
 
 
 def render_placeholder_items(request, slotname, items):

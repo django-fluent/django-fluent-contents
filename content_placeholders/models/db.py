@@ -1,14 +1,11 @@
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist, FieldError
+from django.core.exceptions import FieldError
 from django.db import models
-from django.db.models.base import ModelBase
-from django.template.defaultfilters import truncatewords
-from django.utils.encoding import smart_str
-from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
+from polymorphic import PolymorphicModel
+from polymorphic.base import PolymorphicModelBase
 from content_placeholders.managers import PlaceholderManager
-import types
 
 
 class Placeholder(models.Model):
@@ -57,7 +54,14 @@ class Placeholder(models.Model):
         return extensions.plugin_pool.get_plugins()
 
 
-class ContentItemMetaClass(ModelBase):
+    def get_content_items(self):
+        """
+        Return all models which are associated with this placeholder.
+        """
+        return self.contentitems.all()   # django-polymorphic FTW!
+
+
+class ContentItemMetaClass(PolymorphicModelBase):
     """
     Metaclass for all plugin models.
 
@@ -82,7 +86,7 @@ class ContentItemMetaClass(ModelBase):
         return new_class
 
 
-class ContentItem(models.Model):
+class ContentItem(PolymorphicModel):
     """
     A ```ContentItem``` is a content part which is displayed at a ``Placeholder``.
     The item is rendered by a ``ContentPlugin``.
@@ -126,4 +130,3 @@ class ContentItem(models.Model):
         ordering = ('placeholder', 'sort_order')
         verbose_name = _('Contentplugin base')
         verbose_name_plural = _('Contentplugin bases')
-
