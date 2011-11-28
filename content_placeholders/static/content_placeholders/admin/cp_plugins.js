@@ -302,6 +302,10 @@ var cp_plugins = {};
     var placeholder  = cp_data.get_placeholder_by_slot( dominfo.placeholder_slot );
     var total_count  = parseInt(dominfo.total_forms.value);
 
+    // Final check
+    if( dominfo.id_field.length == 0 )
+      throw new Error("ID field not found for deleting objects!");
+
     // Disable item, wysiwyg, etc..
     cp_plugins.disable_pageitem(current_item.fs_item);
 
@@ -349,7 +353,7 @@ var cp_plugins = {};
       total_forms: $("#" + group_prefix + "-TOTAL_FORMS")[0],
 
       // Item fields
-      id_field: $("#" + field_prefix + "-id"),
+      id_field: $("#" + field_prefix + "-contentitem_ptr"),
       delete_checkbox: $("#" + field_prefix + "-DELETE"),
       placeholder_id: $("#" + field_prefix + "-placeholder")[0].value,
       placeholder_slot: $("#" + field_prefix + "-placeholder_slot")[0].value
