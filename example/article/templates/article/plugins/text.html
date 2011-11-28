@@ -1,4 +1,7 @@
 {% comment %}
-The plugin can also override the render() method, but this already shows how to deal with more complex plugin content.
+The plugin can also override the render() method, but this already
+shows how to deal with more complex plugin content.
+
+The <div> wrapper is recommended to use, to make sure each item appear in a separate block or line.
 {% endcomment %}
-{{ instance.text }}
+<div class="articletext">{{ instance.text|linebreaks }}</div>
