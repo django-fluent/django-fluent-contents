@@ -16,19 +16,19 @@ class PlaceholderManager(models.Manager):
         return self.get_query_set().filter(**lookup)
 
 
-    def get_by_slot(self, parent_object, slotname):
+    def get_by_slot(self, parent_object, slot):
         """
         Return a placeholder by key.
         """
-        return self.parent(parent_object).get(slot=slotname)
+        return self.parent(parent_object).get(slot=slot)
 
 
-    def create_for_object(self, parent_object, slotname):
+    def create_for_object(self, parent_object, slot):
         """
         Create a placeholder with the given parameters
         """
         parent_attrs = _get_lookup_args(parent_object)
-        return self.create(slot=slotname, **parent_attrs)
+        return self.create(slot=slot, **parent_attrs)
 
 
 
