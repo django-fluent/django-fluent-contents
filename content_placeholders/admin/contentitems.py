@@ -1,7 +1,5 @@
-from django.contrib.admin.util import flatten_fieldsets
-from django.contrib.contenttypes.generic import GenericStackedInline, generic_inlineformset_factory
-from django.utils.functional import curry
 from content_placeholders import extensions
+from content_placeholders.admin.genericextensions import ExtensibleGenericInline
 
 
 def get_content_item_inlines():
@@ -33,7 +31,7 @@ def get_content_item_inlines():
     return inlines
 
 
-class ContentItemInline(GenericStackedInline):
+class ContentItemInline(ExtensibleGenericInline):
     """
     Custom ``InlineModelAdmin`` subclass used for content types.
     """
@@ -42,6 +40,7 @@ class ContentItemInline(GenericStackedInline):
     extra = 0
     ct_field = "parent_type"
     ct_fk_field = "parent_id"
+    exclude_unchecked = ('contentitem_ptr',)    # Fix django-polymorphic
     ordering = ('sort_order',)
     template = 'admin/content_placeholders/contentitem/inline_container.html'
 
@@ -63,33 +62,3 @@ class ContentItemInline(GenericStackedInline):
         if self.plugin:
             media += self.plugin.media  # form fields first, plugin afterwards
         return media
-
-
-    def get_formset(self, request, obj=None):
-        # Have to overwrite the entire get_formset() method
-        # because the GenericStackedInline.get_formset does not provide a 'kwargs' option.
-        # This is needed to insert a 'exclude' line that fixes django-polymorphic.
-        if self.declared_fieldsets:
-            fields = flatten_fieldsets(self.declared_fieldsets)
-        else:
-            fields = None
-        if self.exclude is None:
-            exclude = []
-        else:
-            exclude = list(self.exclude)
-        exclude.extend(self.get_readonly_fields(request, obj))
-        exclude.append('contentitem_ptr')   # FIX for django-polymorphic
-        defaults = {
-            "ct_field": self.ct_field,
-            "fk_field": self.ct_fk_field,
-            "form": self.form,
-            "formfield_callback": curry(self.formfield_for_dbfield, request=request),
-            "formset": self.formset,
-            "extra": self.extra,
-            "can_delete": self.can_delete,
-            "can_order": False,
-            "fields": fields,
-            "max_num": self.max_num,
-            "exclude": exclude
-        }
-        return generic_inlineformset_factory(self.model, **defaults)
