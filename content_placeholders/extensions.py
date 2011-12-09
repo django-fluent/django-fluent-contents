@@ -12,7 +12,8 @@ from django.template.loader import render_to_string
 from django.utils.html import linebreaks, escape
 from django.utils.importlib import import_module
 from django.utils.translation import ugettext as _
-from content_placeholders.models import ContentItem, Placeholder
+from content_placeholders.forms import ContentItemForm
+from content_placeholders.models import ContentItem
 
 # The API uses a registration system.
 # While plugins can be easily detected via ``__subclasses__()``, this is more magic and less explicit.
@@ -43,15 +44,6 @@ class PluginContext(Context):
         Context.__init__(self, dict, current_app=current_app)
         for processor in _STANDARD_REQUEST_CONTEXT_PROCESSORS:
             self.update(processor(request))
-
-
-class ContentItemForm(forms.ModelForm):
-    """
-    The base form for custom pageitem types.
-    """
-    placeholder = forms.ModelChoiceField(widget=forms.HiddenInput(), required=False, queryset=Placeholder.objects.all())
-    placeholder_slot = forms.CharField(widget=forms.HiddenInput(), required=False)
-    sort_order = forms.IntegerField(widget=forms.HiddenInput(), initial=1)
 
 
 class ContentPlugin(object):
