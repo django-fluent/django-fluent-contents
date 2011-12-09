@@ -122,7 +122,7 @@ class ContentItem(PolymorphicModel):
 
 
     def __unicode__(self):
-        return '<%s: #%d, placeholder=%s>' % (self.__class__.__name__, self.id or 0, self.placeholder)
+        return '<%s#%d, placeholder=%s>' % (self.polymorphic_ctype or self._meta.verbose_name, self.id or 0, self.placeholder)
 
 
     class Meta:
