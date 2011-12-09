@@ -299,7 +299,7 @@ var cp_plugins = {};
 
     // Get administration
     // Slot is always filled in, id may be unknown yet.
-    var placeholder  = cp_data.get_placeholder_by_slot( dominfo.placeholder_slot );
+    var placeholder  = cp_data.get_placeholder_by_id( dominfo.placeholder_id );
     var total_count  = parseInt(dominfo.total_forms.value);
 
     // Final check
@@ -345,6 +345,14 @@ var cp_plugins = {};
     var group_prefix = itemtype.auto_id.replace(/%s/, itemtype.prefix);
     var field_prefix = group_prefix + "-" + current_item.index;
 
+    var placeholder_id = $("#" + field_prefix + "-placeholder").val();  // .val allows <select> for debugging.
+    var placeholder_slot = $("#" + field_prefix + "-placeholder_slot")[0].value;
+
+    // Placeholder slot may only filled in when creating items,
+    // so restore that info from the existing database.
+    if( placeholder_id && !placeholder_slot )
+      placeholder_slot = cp_data.get_placeholder_by_id(placeholder_id).slot
+
     return {
       // for debugging
       root: current_item.fs_item,
@@ -355,8 +363,8 @@ var cp_plugins = {};
       // Item fields
       id_field: $("#" + field_prefix + "-contentitem_ptr"),
       delete_checkbox: $("#" + field_prefix + "-DELETE"),
-      placeholder_id: $("#" + field_prefix + "-placeholder").val(),  // .val allows <select> for debugging.
-      placeholder_slot: $("#" + field_prefix + "-placeholder_slot")[0].value
+      placeholder_id: placeholder_id,  // .val allows <select> for debugging.
+      placeholder_slot: placeholder_slot
     };
   }
 
