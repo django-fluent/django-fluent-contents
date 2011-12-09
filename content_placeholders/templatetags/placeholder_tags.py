@@ -39,7 +39,7 @@ class PlaceholderNode(Node):
         except Placeholder.DoesNotExist:
             return "<!-- placeholder '{0}' does not yet exist -->".format(slot)
 
-        return rendering.render_placeholder(request, placeholder)
+        return rendering.render_placeholder(request, placeholder, parent)
 
 
 def _get_request(context):

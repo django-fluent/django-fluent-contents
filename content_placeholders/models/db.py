@@ -54,11 +54,16 @@ class Placeholder(models.Model):
         return extensions.plugin_pool.get_plugins()
 
 
-    def get_content_items(self):
+    def get_content_items(self, parent=None):
         """
         Return all models which are associated with this placeholder.
         """
-        return self.contentitems.all()   # django-polymorphic FTW!
+        item_qs = self.contentitems.all()   # django-polymorphic FTW!
+
+        if parent:
+            item_qs = item_qs.filter(**ContentItem.get_parent_lookup_kwargs(parent))
+
+        return item_qs
 
 
     def get_absolute_url(self):
@@ -122,6 +127,17 @@ class ContentItem(PolymorphicModel):
     placeholder = models.ForeignKey(Placeholder, related_name='contentitems', null=True)
     placeholder_slot = models.CharField(_("Placeholder"), max_length=50)  # needed to link to new placeholders
     sort_order = models.IntegerField(default=1)
+
+
+    @classmethod
+    def get_parent_lookup_kwargs(cls, parent):
+        """
+        Return the lookup arguments for ``filter()`` to find :class:`ContentItem` objects of the given parent.
+        """
+        return dict(
+            parent_type=ContentType.objects.get_for_model(parent).id,
+            parent_id=parent.id,
+        )
 
 
     @property
