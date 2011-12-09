@@ -61,6 +61,17 @@ class Placeholder(models.Model):
         return self.contentitems.all()   # django-polymorphic FTW!
 
 
+    def get_absolute_url(self):
+        # Allows quick debugging, and cache refreshes.
+        parent = self.parent
+        try:
+            return self.parent.get_absolute_url()
+        except AttributeError:
+            return None
+
+
+
+
 class ContentItemMetaClass(PolymorphicModelBase):
     """
     Metaclass for all plugin models.
@@ -130,3 +141,12 @@ class ContentItem(PolymorphicModel):
         ordering = ('placeholder', 'sort_order')
         verbose_name = _('Contentplugin base')
         verbose_name_plural = _('Contentplugin bases')
+
+
+    def get_absolute_url(self):
+        # Allows quick debugging, and cache refreshes.
+        parent = self.parent
+        try:
+            return self.parent.get_absolute_url()
+        except AttributeError:
+            return None
