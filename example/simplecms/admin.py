@@ -2,12 +2,12 @@ from django.contrib import admin
 from django.template.loader import get_template
 from django.utils.safestring import mark_safe
 from mptt.admin import MPTTModelAdmin
-from content_placeholders.admin.contentitems import get_content_item_inlines
-from content_placeholders.admin.placeholderfield import PlaceholderInline, PlaceholderFieldAdminMixin
+from content_placeholders.admin.placeholderfield import PlaceholderEditorAdminMixin
+from content_placeholders.analyzer import get_template_placeholder_data
 from simplecms.models import Page
 
 
-class PageAdmin(PlaceholderFieldAdminMixin, MPTTModelAdmin):
+class PageAdmin(PlaceholderEditorAdminMixin, MPTTModelAdmin):
     """
     Administration screen for pages
     """
@@ -20,10 +20,14 @@ class PageAdmin(PlaceholderFieldAdminMixin, MPTTModelAdmin):
     cached_url.allow_tags = True
 
 
-    # This is where the magic happens
-    inlines = [PlaceholderInline] + get_content_item_inlines()
+    # This is where the magic happens:
 
-    def get_object_template(self, request, obj):
+    def get_placeholder_data(self, request, obj):
+        template = self.get_page_template(obj)
+        return get_template_placeholder_data(template)
+
+
+    def get_page_template(self, obj):
         if not obj:
             # Add page. start with default
             return get_template("theme1/pages/standard.html")

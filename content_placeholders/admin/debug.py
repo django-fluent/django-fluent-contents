@@ -16,10 +16,9 @@ class ContentItemInline(ContentItemInlineMixin, InlineModelAdmin):
 class PlaceholderAdmin(DynamicInlinesAdminMixin, admin.ModelAdmin):
     list_display = ('slot', 'title', 'parent',)
 
-    # ---- Frontend support ----
 
     # These files need to be loaded before the other plugin code,
-    # It makes plugin development easier, because plygins can assume everything is present,
+    # It makes plugin development easier, because plugins can assume everything is present,
     class Media:
         js = (
             'content_placeholders/admin/cp_admin.js',
@@ -34,14 +33,11 @@ class PlaceholderAdmin(DynamicInlinesAdminMixin, admin.ModelAdmin):
 
 
     def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
-        """Include plugin meta information, in the context."""
-        plugin_list = extensions.plugin_pool.get_plugins()
+        # Include plugin meta information, in the context.
         context.update({
-            'cp_plugin_list': plugin_list,
-            'cp_placeholders': [obj] if obj else [],
+            'cp_plugin_list': obj.get_allowed_plugins() if obj else extensions.plugin_pool.get_plugins(),
         })
 
-        # And go with standard stuff
         return super(PlaceholderAdmin, self).render_change_form(request, context, add, change, form_url, obj)
 
 

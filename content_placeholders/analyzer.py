@@ -6,7 +6,7 @@ from content_placeholders.models import PlaceholderData
 from content_placeholders.templatetags.placeholder_tags import PlaceholderNode
 
 
-def get_placeholder_data(template):
+def get_template_placeholder_data(template):
     """
     Return the placeholders found in a template,
     wrapped in a :class:`~content_placeholders.models.containers.PlaceholderData` object.
