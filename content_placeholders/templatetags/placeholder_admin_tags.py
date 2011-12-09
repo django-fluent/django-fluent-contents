@@ -1,16 +1,17 @@
-from django.template import Library
-from content_placeholders.admin.contentitems import ContentItemInline
+from django.template import Library, Node
+from django.template.base import TemplateSyntaxError
+from content_placeholders.admin.contentitems import GenericContentItemInline
 
 register = Library()
 
 @register.filter
 def only_content_item_inlines(inlines):
-    return [i for i in inlines if isinstance(i, ContentItemInline)]
+    return [i for i in inlines if isinstance(i, GenericContentItemInline)]
 
 
 @register.filter
 def only_content_item_formsets(formsets):
-    return [f for f in formsets if isinstance(f.opts, ContentItemInline)]
+    return [f for f in formsets if isinstance(f.opts, GenericContentItemInline)]
 
 
 @register.filter
@@ -59,3 +60,43 @@ def plugin_categories_to_choices(categories):
 
     choices.sort(key=lambda item: item[0])
     return choices
+
+
+class GetFirstOfNode(Node):
+    def __init__(self, filters, var_name):
+        self.filters = filters    # list of FilterExpression nodes.
+        self.var_name = var_name
+
+    def render(self, context):
+        value = None
+        for filter in self.filters:
+            # The ignore_failures argument is the most important, otherwise
+            # the value is converted to the TEMPLATE_STRING_IF_INVALID which happens with the with block.
+            value = filter.resolve(context, ignore_failures=True)
+            if value is not None:
+                break
+
+        context[self.var_name] = value
+        return ''
+
+    @classmethod
+    def parse(cls, parser, token):
+        """
+        Parse the node: {% getfirstof val1 val2 as val3 %}
+        parser: a Parser class.
+        token: a Token class.
+        """
+        bits = token.contents.split()  # splits on whitespace
+        if len(bits) < 5:
+            raise TemplateSyntaxError("'{0}' tag takes at least 4 arguments".format(bits[0]))
+        if bits[-2] != 'as':
+            raise TemplateSyntaxError("Expected syntax: {{% {0} val1 val2 as val %}}".format(bits[0]))
+
+        choices = bits[::-2]
+        var_name = bits[-1]
+        filters = [parser.compile_filter(bit) for bit in choices]
+        return cls(filters, var_name)
+
+@register.tag
+def getfirstof(parser, token):
+    return GetFirstOfNode.parse(parser, token)

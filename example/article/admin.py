@@ -1,10 +1,10 @@
 from django.contrib import admin
 from article.models import Article, ArticleTextItem
-from content_placeholders.admin import PlaceholderFieldAdmin, PlaceholderInline, get_content_item_inlines
+from content_placeholders.admin import PlaceholderFieldAdmin
 
 
 class ArticleAdmin(PlaceholderFieldAdmin):
-    inlines = [PlaceholderInline] + get_content_item_inlines()
+    pass
 
 
 admin.site.register(Article, ArticleAdmin)

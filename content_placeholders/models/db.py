@@ -125,7 +125,6 @@ class ContentItem(PolymorphicModel):
     parent = GenericForeignKey('parent_type', 'parent_id')
 
     placeholder = models.ForeignKey(Placeholder, related_name='contentitems', null=True)
-    placeholder_slot = models.CharField(_("Placeholder"), max_length=50)  # needed to link to new placeholders
     sort_order = models.IntegerField(default=1)
 
 

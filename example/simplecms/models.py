@@ -31,6 +31,11 @@ class Page(MPTTModel):
         root = reverse('simplecms-page').rstrip('/')
         return root + self._cached_url
 
+    @property
+    def template_name(self):
+        # This is a simple stub, just showing the concept.
+        return "theme1/pages/standard.html"
+
 
     # ---- updating _cached_url:
 

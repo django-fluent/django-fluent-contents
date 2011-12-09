@@ -4,22 +4,27 @@
 
   inline_admin_formset = generated InlineAdminFormSet of the PlaceholderInline. Each form holds a placeholder.
   inline_admin_formset.opts = PlaceholderInline object
+  inline_admin_formset.original = Placeholder object
+  inline_admin_formset.form.'field'.value = value!
+
+  inline_admin_formset.__iter__ gives all forms + a template form
+  inline_admin_formset.formset.__iter__ gives the raw forms only
 
   inline_admin_formsets = all InlineAdminFormSet objects of the parent
 {% endcomment %}
 <script type="text/javascript">
   // Pass database data to the cp_admin.js file.
   // Each tab hosts a placeholder pane.
-  var placeholders = {% block js_placeholders %}[ {% for inline_admin_form in inline_admin_formset %}{% with placeholder=inline_admin_form.original %}{
+  var placeholders = {% block js_placeholders %}[ {% for inline_admin_form in inline_admin_formset %}{% with form=inline_admin_form.form placeholder=inline_admin_form.original %}{% if not forloop.last %}{% if not forloop.first %}, {% endif %}{
                       id: {{ placeholder.id|default:"''" }},
-                      slot: '{{ placeholder.slot|default:forloop.counter0|escapejs }}',
-                      title: '{{ placeholder.title|escapejs }}',
-                      role: '{{ placeholder.role }}',
-                      domnode: 'tab-region-{{ placeholder.slot|default:forloop.counter0 }}'
-                    }{% if not forloop.last %}, {% endif %}
+                      slot: '{{ form.slot.value|default:forloop.counter0|escapejs }}',
+                      title: '{{ form.title.value|default:"?"|escapejs }}',
+                      role: '{{ form.role.value|default:'?' }}',
+                      domnode: 'tab-region-{{ form.slot.value|default:forloop.counter0 }}'
+                    }{% endif %}
                   {% endwith %}{% endfor %}]{% endblock %};
   var itemtypes = {% block js_contentitemtypes %}{ {% for fs in inline_admin_formsets|only_content_item_formsets %}'{{ fs.opts.type_name|escapejs }}': {
-                      type: '{{ fs.opts.type_name|escapejs }}',{# fs.opts = ContentItemInline #}
+                      type: '{{ fs.opts.type_name|escapejs }}',{# fs.opts = GenericContentItemInline #}
                       name: '{{ fs.opts.name|escapejs }}',
                       prefix: '{{ fs.formset.prefix|escapejs }}',{# fs.formset = targetobjectformFormSet #}
                       rel_name: '{{ fs.formset.rel_name|escapejs }}',
@@ -40,9 +45,9 @@
     {# tab navigation #}
     {# each inline object is a placeholders #}
     <ul id="cp-tabnav" class="cp-clearfix">
-      {% for inline_admin_form in inline_admin_formset %}{% with placeholder=inline_admin_form.original %}
-      <li class="cp-region{% if forloop.first %} active{% endif %}"><a href="#tab-region-{{ placeholder.slot|default:forloop.counter0 }}">{{ placeholder|default_if_none:"new..." }}</a></li>
-      {% endwith %}{% endfor %}
+      {% for form in inline_admin_formset.formset %}
+      <li class="cp-region{% if forloop.first %} active{% endif %}"><a href="#tab-region-{{ form.slot.value|default:forloop.counter0 }}">{{ form.title.value|default_if_none:"new..." }}</a></li>
+      {% endfor %}
       <li id="cp-tabnav-loading" style="display: none"><a href="#">{% trans "Loading layout data..." %}</a></li>
       <li id="cp-tabnav-orphaned" style="display: none"><a href="#tab-orphaned">{% trans "Orphaned content" %}</a></li>
       <li id="cp-tabnav-template" style="display: none"><a href="#">EMPTY</a></li>
@@ -51,34 +56,26 @@
 
     <div id="cp-tabmain" class="module">
       {# all the region tabs #}
-      {% for inline_admin_form in inline_admin_formset %}{% with placeholder=inline_admin_form.original %}
-        {% if placeholder %}{% with cp_plugin_list=placeholder.get_allowed_plugins placeholder_slot=placeholder.slot placeholder_id=placeholder.id %}
-        {# existing placeholder #}
-        <div class="cp-tab cp-region-tab{% if forloop.first %} cp-tab-active{% endif %}" id="tab-region-{{ placeholder.slot|default:forloop.counter0 }}">
-          {% include "admin/content_placeholders/placeholderfield/pane.html" %}
-        {% endwith %}{% else %}{% with cp_plugin_list=inline_admin_formset.opts.get_all_allowed_plugins placeholder_slot=forloop.counter0 placeholder_id=0 %}
-        {# new extra item #}
-        <div class="cp-tab cp-region-tab{% if forloop.first %} cp-tab-active{% endif %}" id="tab-region-{{ forloop.counter0 }}">
-          {% include "admin/content_placeholders/placeholderfield/pane.html" %}
-        {% endwith %}{% endif %}
+      {% for inline_admin_form in inline_admin_formset %}
+        {% getfirstof inline_admin_form.original inline_admin_formset.opts.get_all_allowed_plugins as cp_plugin_list %}
+        {% with placeholder_slot=inline_admin_form.form.slot.value|default_if_none:"__EMPTY__"  placeholder_id=inline_admin_form.original.id %}
+        <div class="cp-tab{% if not forloop.last %} cp-region-tab{% endif %}{% if forloop.first %} cp-tab-active{% endif %}" id="{% if forloop.last %}tab-template{% else %}tab-region-{{ placeholder_slot }}{% endif %}">
 
-          {# fields #}
+          {% include "admin/content_placeholders/placeholderfield/pane.html" %}
+
+          {% if inline_admin_form.form.errors %}{# Should never happen, but when it does, this aids debugging #}
+            <ul class="errorlist"><li>{{ inline_admin_form.form.errors.as_text|linebreaksbr }}</li></ul>
+          {% endif %}
+
+          <!-- placeholder fields -->
           {% if inline_admin_form.has_auto_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
           {{ inline_admin_form.fk_field.field }}
 
-          {% for fieldset in inline_admin_form %}
-          {% for line in fieldset %}{% for adminfield in line %}
-            {{ adminfield.field.as_hidden }}
+          {% for fieldset in inline_admin_form %}{% for line in fieldset %}{% for adminfield in line %}{{ adminfield.field.as_hidden }}
           {% endfor %}{% endfor %}{% endfor %}
+
         </div>
       {% endwith %}{% endfor %}
-
-      {# Repeated again, as empty placeholder #}
-      {% with cp_plugin_list=inline_admin_formset.opts.get_all_allowed_plugins placeholder_slot="EMPTY" placeholder_id="" %}
-      <div class="cp-tab" id="tab-template">
-        {% include "admin/content_placeholders/placeholderfield/pane.html" %}
-      </div>
-      {% endwith %}
 
       {# this is a "lost+found" bucket for layout switching #}
       <div class="cp-tab" id="tab-orphaned">
