@@ -8,12 +8,6 @@ var cp_data = {};
 
 (function($)
 {
-  // Public functions
-  window.cp_admin = {
-    'setPlaceholders':     function(data) { cp_data.placeholders = data; },
-    'setContentItemTypes': function(data) { cp_data.itemtypes = data; }
-  };
-
   // Stored data
   // FIXME: make dom_placeholders private.
   cp_data.dom_placeholders = {};  // the formset items by placeholder; { 'placeholder_slot': { id: 8, slot: 'main, items: [ item1, item2 ], role: 'm', domnode: 'someid' }, ... }
@@ -21,6 +15,12 @@ var cp_data = {};
   // Public data (also for debugging)
   cp_data.placeholders = null;  // [ { slot: 'main', title: 'Main', role: 'm', domnode: 'someid' }, { slot: 'sidebar', ...} ]
   cp_data.itemtypes = null;     // { 'TypeName': { type: "Cms...ItemType", name: "Text item", rel_name: "TypeName_set", auto_id: "id_%s" }, ... }
+
+
+  // Public initialisation functions
+  cp_data.set_placeholders = function(data) { cp_data.placeholders = data; if( ! cp_data.initial_placeholders ) cp_data.initial_placeholders = data; };
+  cp_data.set_content_item_types = function(data) { cp_data.itemtypes = data; };
+  cp_data.get_placeholders = function(data) { return cp_data.placeholders; };
 
 
   /**

@@ -20,8 +20,8 @@
                       auto_id: '{{ fs.formset.auto_id|escapejs }}'
                     }{% if not forloop.last %}, {% endif %}
                   {% endfor %}}{% endblock %};
-  cp_admin.setPlaceholders( placeholders );
-  cp_admin.setContentItemTypes( itemtypes );
+  cp_data.set_placeholders( placeholders );
+  cp_data.set_content_item_types( itemtypes );
 </script>
 {% endblock %}
 
