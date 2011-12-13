@@ -16,6 +16,21 @@ var cp_plugins = {};
 
   // Settings
   var plugin_handlers = {};
+  var before_layout_callbacks = [];
+  var is_first_layout = true;
+
+
+  /**
+   * Bind an event before the final layout is organized.
+   * The callback can return true to stop the initialisation of the plugin.
+   *
+   * At some point, `move_items_to_placeholders()` needs to be called.
+   * Either manually, or through some `load_layout()` function.
+   */
+  cp_plugins.on_init_layout = function(callback)
+  {
+    before_layout_callbacks.push(callback);
+  }
 
 
   cp_plugins.init = function()
@@ -25,6 +40,24 @@ var cp_plugins = {};
     $(".cp-item-controls .cp-item-up").live( 'click', cp_plugins.onItemUpClick );
     $(".cp-item-controls .cp-item-down").live( 'click', cp_plugins.onItemDownClick );
     $(".cp-item-controls .cp-item-delete a").live( 'click', cp_plugins.onDeleteClick );
+  }
+
+
+  cp_plugins.post_init = function()
+  {
+    // Allow external code to change the layout tabs
+    // hence delaying the initialisation.
+    for( var i = 0; i < before_layout_callbacks.length; i++ )
+    {
+      if( before_layout_callbacks[i]() )
+      {
+        console.log('cp_plugins.post_init() - skipped, waiting for layout.');
+        return;
+      }
+    }
+
+    // Do normal initialisation
+    cp_plugins.move_items_to_placeholders();
   }
 
 
@@ -40,20 +73,68 @@ var cp_plugins = {};
       roles_seen[cp_data.placeholders[i].role] = 0;
 
     // Move all items to the tabs.
-    for(var placeholder_key in cp_data.dom_placeholders)
+    // TODO: direct access to dom_placeholder data, should be cleaned up.
+    // The DOM placeholders holds the desired layout of all items.
+    // Depending on the current layout, it placeholder pane can be found, or needs to be migrated.
+    for(var placeholder_slot in cp_data.dom_placeholders)
     {
-      var dom_placeholder = cp_data.dom_placeholders[placeholder_key];
-      roles_seen[dom_placeholder.role]++;
-
+      var dom_placeholder = cp_data.dom_placeholders[placeholder_slot];
+      var last_role_occurance =  ++roles_seen[dom_placeholder.role];
       if( dom_placeholder.items.length == 0)
         continue;
 
       // Fill the tab
-      var last_role_occurance = roles_seen[dom_placeholder.role];
-      var pane = cp_data.get_placeholder_pane(placeholder_key, last_role_occurance);
-
+      var pane = cp_plugins.get_new_placeholder_pane(dom_placeholder, last_role_occurance);
       cp_plugins.move_items_to_pane(dom_placeholder, pane);
     }
+
+    // Initialisation completed!
+    if( is_first_layout )
+    {
+      console.log("Initialized editor, placeholders=", cp_data.placeholders, " itemtypes=", cp_data.itemtypes);
+      is_first_layout = false;
+    }
+  }
+
+
+  /**
+   * Find the new placeholder where the contents can be displayed.
+   */
+  cp_plugins.get_new_placeholder_pane = function(dom_placeholder, last_known_nr)
+  {
+    var isExpiredTab = window.cp_tabs ? cp_tabs.is_expired_tab : function(node) { return false; };
+
+    // Option 1. Find identical placeholder by slot name.
+    var placeholder = cp_data.get_placeholder_by_slot(dom_placeholder.slot);
+    if( placeholder )
+    {
+      // Option 1. Find by slot name,
+      var pane = cp_data.get_placeholder_pane(placeholder);
+      if( pane && ! isExpiredTab(pane.root) )
+        return pane;
+    }
+
+    // Option 2. Find a good substitude candidate, the last placeholder which was used for the same role.
+    var altplaceholder = cp_data.get_placeholder_for_role(dom_placeholder.role, last_known_nr);
+    if( altplaceholder )
+    {
+      pane = cp_data.get_placeholder_pane(altplaceholder);
+      if( pane && ! isExpiredTab(pane.root) )
+      {
+        console.log("Using placeholder '" + altplaceholder.slot + "' as fallback for item from placeholder '" + dom_placeholder.slot + "'.");
+        return pane;
+      }
+    }
+
+    // Option 3. Open a "lost+found" tab.
+    // NOTE: not really a clean solution, needs a better (public) API for this (cp_tabs is optional).
+    if( window.cp_tabs )
+    {
+      console.log("Using orphaned tab as fallback for item from placeholder '" + dom_placeholder.slot + "'.");
+      return cp_tabs.get_fallback_pane();
+    }
+
+    throw new Error("No placeholder pane for placeholder: " + dom_placeholder.slot + " (role: " + dom_placeholder.role + ")");
   }
 
 
@@ -62,7 +143,7 @@ var cp_plugins = {};
    */
   cp_plugins.move_items_to_pane = function(dom_placeholder, pane)
   {
-    if( pane.content.length == 0)
+    if( !pane || pane.content.length == 0)
     {
       if( window.console )
         window.console.error("Invalid tab, missing tab-content: ", pane);
@@ -79,7 +160,16 @@ var cp_plugins = {};
     for(var i in dom_placeholder.items)
     {
       var fs_item = dom_placeholder.items[i];
-      dom_placeholder.items[i] = cp_plugins._move_item_to( fs_item, function(fs_item) { pane.content.append(fs_item); } );
+      dom_placeholder.items[i] = cp_plugins._move_item_to( fs_item, function(fs_item)
+      {
+        pane.content.append(fs_item);
+
+        // Update the placeholder-id.
+        // Note this will not update the dom_placeholders,
+        // hence the item will move back when the original layout is restored.
+        if( pane.placeholder )
+          cp_plugins._set_pageitem_data(fs_item, pane.placeholder, i);
+      });
     }
 
     if( dom_placeholder.items.length )
@@ -161,13 +251,13 @@ var cp_plugins = {};
     // Recoded the inline model dynamics.
 
     // Get objects
-    var itemtype = itemtypes[itemtype_name];
+    var itemtype = cp_data.get_formset_itemtype(itemtype_name);
     var group_prefix = itemtype.auto_id.replace(/%s/, itemtype.prefix);
     var placeholder = cp_data.get_placeholder_by_slot(placeholder_slot);
     var dom_placeholder = cp_data.get_or_create_dom_placeholder(placeholder);
 
     // Get DOM items
-    var pane  = cp_data.get_placeholder_pane(placeholder_slot);
+    var pane  = cp_data.get_placeholder_pane(placeholder);
     var total = $("#" + group_prefix + "-TOTAL_FORMS")[0];
 
     // Clone the item.
@@ -189,11 +279,17 @@ var cp_plugins = {};
     total.value++;
 
     // Configure it
-    var field_prefix = group_prefix + "-" + new_index;
+    cp_plugins._set_pageitem_data(fs_item, placeholder, new_index);
+    cp_plugins.enable_pageitem(fs_item);
+  }
+
+
+  cp_plugins._set_pageitem_data = function(fs_item, placeholder, new_index)
+  {
+    var field_prefix = fs_item.attr('id');   // group_prefix + "-" + new_index
     $("#" + field_prefix + "-placeholder").val(placeholder.id);
     $("#" + field_prefix + "-placeholder_slot").val(placeholder.slot);
     $("#" + field_prefix + "-sort_order").val(new_index);
-    cp_plugins.enable_pageitem(fs_item);
   }
 
 
@@ -321,7 +417,7 @@ var cp_plugins = {};
       for( var i = current_item.index + 1; i < total_count; i++ )
       {
         var fs_item = $("#" + itemtype.prefix + "-" + i);
-        cp_plugins._renumber_formset_item(fs_item, itemtype.prefix, i - 1);
+        cp_admin.renumber_formset_item(fs_item, itemtype.prefix, i - 1);
       }
 
       dominfo.total_forms.value--;
@@ -333,7 +429,8 @@ var cp_plugins = {};
     // Remove from node list, if all removed, show empty tab message.
     if( cp_data.remove_dom_item(placeholder.slot, current_item))
     {
-      var pane = cp_data.get_placeholder_pane(placeholder.slot, 0);
+      // NOTE: not really a clean solution, needs a better (public) API for this.
+      var pane = cp_plugins.get_new_placeholder_pane(placeholder, 0);
       pane.empty_message.show();
     }
   }
@@ -351,7 +448,7 @@ var cp_plugins = {};
     // Placeholder slot may only filled in when creating items,
     // so restore that info from the existing database.
     if( placeholder_id && !placeholder_slot )
-      placeholder_slot = cp_data.get_placeholder_by_id(placeholder_id).slot
+      placeholder_slot = cp_data.get_placeholder_by_id(placeholder_id).slot;
 
     return {
       // for debugging
@@ -366,33 +463,6 @@ var cp_plugins = {};
       placeholder_id: placeholder_id,  // .val allows <select> for debugging.
       placeholder_slot: placeholder_slot
     };
-  }
-
-
-  // Based on django/contrib/admin/media/js/inlines.js
-  cp_plugins._renumber_formset_item = function(fs_item, prefix, new_index)
-  {
-    var id_regex = new RegExp("(" + prefix + "-(\\d+|__prefix__))");
-    var replacement = prefix + "-" + new_index;
-
-    // Loop through the nodes.
-    // Getting them all at once turns out to be more efficient, then looping per level.
-    var nodes = fs_item.add( fs_item.find("*") );
-    for( var i = 0; i < nodes.length; i++ )
-    {
-      var node = nodes[i];
-      var $node = $(node);
-
-      var for_attr = $node.attr('for');
-      if( for_attr )
-        $node.attr("for", for_attr.replace(id_regex, replacement));
-
-      if( node.id )
-        node.id = node.id.replace(id_regex, replacement);
-
-      if( node.name )
-        node.name = node.name.replace(id_regex, replacement);
-    }
   }
 
 
@@ -433,24 +503,6 @@ var cp_plugins = {};
   {
     var view_handler = cp_plugins.get_view_handler(fs_item);
     if( view_handler ) view_handler.disable(fs_item);
-  }
-
-
-  // -------- Extra jQuery plugin ------
-
-  /**
-   * jQuery outerHTML plugin
-   * Very simple, and incomplete - but sufficient for here.
-   */
-  $.fn.get_outerHtml = function( html )
-  {
-    if( this.length )
-    {
-      if( this[0].outerHTML )
-        return this[0].outerHTML;
-      else
-        return $("<div>").append( this.clone() ).html();
-    }
   }
 
 })(window.jQuery || django.jQuery);

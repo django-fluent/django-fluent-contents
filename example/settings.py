@@ -90,6 +90,13 @@ INSTALLED_APPS = (
     'theme1',
 )
 
+SIMPLECMS_TEMPLATE_CHOICES = (
+    ("theme1/pages/standard.html", "Standard"),
+    ("theme1/pages/standard-twocols.html", "Two columns"),
+)
+SIMPLECMS_DEFAULT_TEMPLATE = SIMPLECMS_TEMPLATE_CHOICES[0][0]
+
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

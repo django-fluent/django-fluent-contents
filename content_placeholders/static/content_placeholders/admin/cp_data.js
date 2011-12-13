@@ -14,6 +14,7 @@ var cp_data = {};
 
   // Public data (also for debugging)
   cp_data.placeholders = null;  // [ { slot: 'main', title: 'Main', role: 'm', domnode: 'someid' }, { slot: 'sidebar', ...} ]
+  cp_data.initial_placeholders = null;
   cp_data.itemtypes = null;     // { 'TypeName': { type: "Cms...ItemType", name: "Text item", rel_name: "TypeName_set", auto_id: "id_%s" }, ... }
 
 
@@ -21,6 +22,7 @@ var cp_data = {};
   cp_data.set_placeholders = function(data) { cp_data.placeholders = data; if( ! cp_data.initial_placeholders ) cp_data.initial_placeholders = data; };
   cp_data.set_content_item_types = function(data) { cp_data.itemtypes = data; };
   cp_data.get_placeholders = function(data) { return cp_data.placeholders; };
+  cp_data.get_initial_placeholders = function(data) { return cp_data.initial_placeholders; };
 
 
   /**
@@ -47,14 +49,15 @@ var cp_data = {};
 
         // placeholder_slot may be __main__, placeholder.slot will be the real one.
         var placeholder_id = placeholder_input.val();
-        var placeholder = cp_data.get_placeholder_by_id(placeholder_id);
-// TODO: This was old code when a placeholder was found by name.
-//        if( placeholder )
-//          placeholder_input.val(placeholder.id);
 
         // Append item to administration
-        var dom_placeholder = cp_data.get_or_create_dom_placeholder(placeholder);
-        cp_data.dom_placeholders[placeholder.slot].items.push(fs_item);
+        var dom_placeholder = cp_data.get_or_create_dom_placeholder(placeholder_id);
+        dom_placeholder.items.push(fs_item);
+
+        if( dom_placeholder.is_fallback )
+        {
+          placeholder_input.val('');
+        }
       }
     }
 
@@ -67,13 +70,37 @@ var cp_data = {};
   }
 
 
-  cp_data.get_or_create_dom_placeholder = function(placeholder)
+  cp_data.get_or_create_dom_placeholder = function(placeholder_id)
   {
+    // If the ID references to a placeholder which was removed from the template,
+    // make sure the item is indexed somehow.
+    var placeholder = cp_data.get_placeholder_by_id(placeholder_id);
+    var is_fallback = false;
+    if( ! placeholder )
+    {
+      placeholder = {'slot': '__id=' + placeholder_id, 'role': null};
+      is_fallback = true;
+    }
+
     var dom_placeholder = cp_data.dom_placeholders[placeholder.slot];
-    if(!dom_placeholder)
-      dom_placeholder = cp_data.dom_placeholders[placeholder.slot] = { slot: placeholder.slot, items: [], role: placeholder.role };
+    if( ! dom_placeholder )
+    {
+      // create
+      dom_placeholder = cp_data.dom_placeholders[placeholder.slot] = {
+        slot: placeholder.slot,
+        items: [],
+        role: placeholder.role,
+        is_fallback: is_fallback
+      };
+    }
 
     return dom_placeholder;
+  }
+
+
+  cp_data.get_dom_placeholders = function()
+  {
+    return cp_data.dom_placeholders;
   }
 
 
@@ -141,7 +168,7 @@ var cp_data = {};
         return cp_data.placeholders[i];
 
     if( window.console )
-      window.console.error("cp_data.get_placeholder_by_" + prop + ": no object for '" + value + "'");
+      window.console.warn("cp_data.get_placeholder_by_" + prop + ": no object for '" + value + "'");
     return null;
   }
 
@@ -149,10 +176,9 @@ var cp_data = {};
   /**
    * Return the DOM elements where the placeholder adds it's contents.
    */
-  cp_data.get_placeholder_pane = function(placeholder_slot, last_known_nr)
+  cp_data.get_placeholder_pane = function(placeholder)
   {
-    var pane_id = cp_data.get_placeholder_by_slot(placeholder_slot).domnode;
-    return cp_data._get_object_for_pane($("#" + pane_id));
+    return cp_data.get_object_for_pane($("#" + placeholder.domnode), placeholder);
   }
 
 
@@ -162,7 +188,7 @@ var cp_data = {};
   cp_data.get_placeholder_pane_for_item = function(fs_item)
   {
     var pane = fs_item.closest(".cp-content").parent();
-    return cp_data._get_object_for_pane(pane);
+    return cp_data.get_object_for_pane(pane, undefined);
   }
 
 
@@ -175,22 +201,28 @@ var cp_data = {};
     var pane_objects = [];
     for(var i = 0; i < cp_data.placeholders.length; i++)
     {
-      var pane_id = cp_data.placeholders[i].domnode;
-      pane_objects.push(cp_data._get_object_for_pane($("#" + pane_id)));
+      var placeholder = cp_data.placeholders[i];
+      pane_objects.push(cp_data.get_placeholder_pane(placeholder));
     }
 
     return pane_objects;
   }
 
 
-  cp_data._get_object_for_pane = function(pane)
+  cp_data.get_object_for_pane = function(pane, placeholder)
   {
     if( pane.length == 0 )
-      throw new Error("Pane not found: " + pane.selector);
+    {
+      if( window.console )
+        window.console.warn("Pane not found: " + pane.selector);
+      return null;
+    }
+
     return {
       root: pane,  // mainly for debugging
       content: pane.children(".cp-content"),
-      empty_message: pane.children('.cp-empty')
+      empty_message: pane.children('.cp-empty'),
+      placeholder: placeholder
     };
   }
 

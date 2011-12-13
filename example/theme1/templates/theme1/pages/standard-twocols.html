@@ -5,5 +5,11 @@
 {% block main %}
   <h1>{{ simplecms_page.title }}</h1>
 
-  {% render_placeholder simplecms_page "main1" %}
+  <div id="content">
+    {% render_placeholder simplecms_page "main1" %}
+  </div>
+
+  <div id="sidebar">
+    {% render_placeholder simplecms_page "sidebar" %}
+  </div>
 {% endblock %}

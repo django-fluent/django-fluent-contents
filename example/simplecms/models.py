@@ -3,6 +3,7 @@ from django.db import models
 from django.db.transaction import commit_on_success
 from content_placeholders.models.fields import PlaceholderRelation, ContentItemRelation
 from mptt.models import MPTTModel
+from simplecms import appconfig
 
 
 class Page(MPTTModel):
@@ -12,6 +13,9 @@ class Page(MPTTModel):
     slug = models.SlugField("Slug")
     parent = models.ForeignKey('self', related_name='children', blank=True, null=True)
     _cached_url = models.CharField(max_length=300, blank=True, editable=False, default='', db_index=True)
+
+    # Allow different layouts
+    template_name = models.CharField("Layout", max_length=255, choices=appconfig.SIMPLECMS_TEMPLATE_CHOICES, default=appconfig.SIMPLECMS_DEFAULT_TEMPLATE)
 
     # The content via django-content-placeholders
     placeholder_set = PlaceholderRelation()
@@ -31,11 +35,6 @@ class Page(MPTTModel):
         # is included at a sublevel, it needs to be prepended.
         root = reverse('simplecms-page').rstrip('/')
         return root + self._cached_url
-
-    @property
-    def template_name(self):
-        # This is a simple stub, just showing the concept.
-        return "theme1/pages/standard.html"
 
 
     # ---- updating _cached_url:

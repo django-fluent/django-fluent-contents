@@ -121,6 +121,11 @@ a:hover {
   clear: both;
 }
 
+#content {
+  width: 440px;
+  float: left;
+}
+
 #sidebar {
   margin-left: 460px;
 }

@@ -1,0 +1,15 @@
+{% extends "admin/change_form.html" %}
+{% comment %}
+  Since the whole placeholder editor is loaded via an inline component,
+  standard admin templates can be used for the admin page.
+{% endcomment %}
+
+{% block extrahead %}{{ block.super }}
+  <script type="text/javascript">
+    cp_plugins.on_init_layout(function()
+    {
+      simplecms_layouts.init('{{ original.template_name|escapejs }}');
+      return simplecms_layouts.fetch_layout_on_refresh();
+    });
+  </script>
+{% endblock %}

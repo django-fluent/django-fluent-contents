@@ -59,14 +59,21 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
         self._initial = kwargs.pop('initial', [])
         super(BaseInitialGenericInlineFormSet, self).__init__(*args, **kwargs)
 
+    def initial_form_count(self):
+        if self.is_bound:
+            return super(BaseInitialGenericInlineFormSet, self).initial_form_count()
+        else:
+            return len(self.get_queryset())
+
     def total_form_count(self):
         if self.is_bound:
             return super(BaseInitialGenericInlineFormSet, self).total_form_count()
         else:
-            return len(self._initial) + self.extra
+            return max(len(self.get_queryset()), len(self._initial)) + self.extra
 
     def _construct_form(self, i, **kwargs):
         if self._initial and not kwargs.get('instance', None):
+            instance = None
             try:
                 # Editing existing object. Make sure the ID is passed.
                 instance = self.get_queryset()[i]

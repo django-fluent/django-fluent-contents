@@ -144,6 +144,10 @@ html.cp-jsenabled .inline-contentitem-group {
   border: 1px solid #ccc;
 }
 
+#cp-tabmain .cp-placeholder-delete {
+  display: none;
+}
+
 
 /* default tabbar appearance */
 
