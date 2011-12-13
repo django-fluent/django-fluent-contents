@@ -27,7 +27,7 @@ class Placeholder(models.Model):
     slot = models.SlugField(_('Slot'), help_text=_("A short name to identify the placeholder in the template code"))
     role = models.CharField(_('Role'), max_length=1, choices=ROLES, default=MAIN, help_text=_("This defines where the object is used."))
 
-    # Track relation to parent
+    # Track relation to parent (e.g. page or article)
     parent_type = models.ForeignKey(ContentType)
     parent_id = models.IntegerField(null=True)    # Need to allow Null, because Placeholder is created before parent is saved.
     parent = GenericForeignKey('parent_type', 'parent_id')
@@ -124,7 +124,9 @@ class ContentItem(PolymorphicModel):
     parent_id = models.IntegerField(null=True)    # Need to allow Null, because Placeholder is created before parent is saved.
     parent = GenericForeignKey('parent_type', 'parent_id')
 
-    placeholder = models.ForeignKey(Placeholder, related_name='contentitems', null=True)
+    # Deleting a placeholder should not remove the items, only makes them orphaned.
+    # Also, when updating the page, the PlaceholderEditorInline first adds/deletes placeholders before the items are updated.
+    placeholder = models.ForeignKey(Placeholder, related_name='contentitems', null=True, on_delete=models.SET_NULL)
     sort_order = models.IntegerField(default=1)
 
 

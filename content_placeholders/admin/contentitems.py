@@ -13,10 +13,23 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
     def save_new(self, form, commit=True):
         # This is the time to link the form 'placeholder_slot' field to a placeholder that was just created before.
         # Hence, the PlaceholderEditorInline needs to be included before any ContentItemInline.
-        if form.cleaned_data['placeholder_slot'] and not form.cleaned_data['placeholder']:
-            form.cleaned_data['placeholder'] = Placeholder.objects.get(slot=form.cleaned_data['placeholder_slot'], parent_type=ContentType.objects.get_for_model(self.instance), parent_id=self.instance.id)
-
+        self._set_placeholder_id(form)
         return super(BaseContentItemFormSet, self).save_new(form, commit=commit)
+
+
+    def save_existing(self, form, instance, commit=True):
+        self._set_placeholder_id(form)
+        return form.save(commit=commit)
+
+
+    def _set_placeholder_id(self, form):
+        if form.cleaned_data['placeholder_slot'] and not form.cleaned_data['placeholder']:
+            saved_placeholder = Placeholder.objects.get(
+                slot=form.cleaned_data['placeholder_slot'],
+                parent_type=ContentType.objects.get_for_model(self.instance),
+                parent_id=self.instance.id
+            )
+            form.cleaned_data['placeholder'] = saved_placeholder
 
 
 
