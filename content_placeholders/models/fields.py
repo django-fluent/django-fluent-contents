@@ -5,7 +5,7 @@ from django.db.models.query_utils import Q
 from django.utils.text import capfirst
 from content_placeholders.forms.fields import PlaceholderFormField
 from content_placeholders.forms.widgets import PlaceholderPluginEditor
-from content_placeholders.models.db import Placeholder
+from content_placeholders.models.db import Placeholder, ContentItem
 
 # PlaceholderField
 # Inspired, and based upon Django CMS
@@ -18,6 +18,12 @@ class PlaceholderRelation(GenericRelation):
     """
     def __init__(self, **kwargs):
         super(PlaceholderRelation, self).__init__(to=Placeholder,
+            object_id_field='parent_id', content_type_field='parent_type', **kwargs)
+
+
+class ContentItemRelation(GenericRelation):
+    def __init__(self, **kwargs):
+        super(ContentItemRelation, self).__init__(to=ContentItem,
             object_id_field='parent_id', content_type_field='parent_type', **kwargs)
 
 

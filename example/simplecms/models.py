@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.transaction import commit_on_success
-from content_placeholders.models.fields import PlaceholderRelation
+from content_placeholders.models.fields import PlaceholderRelation, ContentItemRelation
 from mptt.models import MPTTModel
 
 
@@ -14,7 +14,8 @@ class Page(MPTTModel):
     _cached_url = models.CharField(max_length=300, blank=True, editable=False, default='', db_index=True)
 
     # The content via django-content-placeholders
-    placeholders = PlaceholderRelation()
+    placeholder_set = PlaceholderRelation()
+    contentitem_set = ContentItemRelation()
 
     class Meta:
         verbose_name = "Page"
