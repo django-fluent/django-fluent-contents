@@ -9,5 +9,14 @@ class PlaceholderData(object):
         self.slot = slot
         self.title = title or slot
 
+    def as_dict(self):
+        """
+        Return the contents as dictionary, for initial form data.
+        """
+        return {
+            'slot': self.slot,
+            'title': self.title
+        }
+
 
 __all__ = ['Placeholder', 'ContentItem', 'PlaceholderData']

@@ -73,10 +73,7 @@ class PlaceholderEditorInline(ExtensibleGenericInline):
 
     def _get_initial_from_placeholderdata(self, data):
         # data = list(PlaceholderData)
-        return [{
-                'slot': d.slot,
-                'title': d.title
-            }
+        return [d.as_dict()
             for d in data
         ]
 
