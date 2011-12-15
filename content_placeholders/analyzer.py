@@ -19,8 +19,9 @@ def get_template_placeholder_data(template):
     result = []
     for placeholdernode in nodes:
         data = PlaceholderData(
-            slot=placeholdernode.get_slot(),
-            title=placeholdernode.get_title(),
+            slot=pageplaceholdernode.get_slot(),
+            title=pageplaceholdernode.get_title(),
+            role=pageplaceholdernode.get_role(),
         )
 
         if data.slot not in names:
