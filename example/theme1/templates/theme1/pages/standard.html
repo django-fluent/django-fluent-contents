@@ -5,5 +5,7 @@
 {% block main %}
   <h1>{{ simplecms_page.title }}</h1>
 
-  {% page_placeholder simplecms_page "main1" title="Main content" %}
+  <div id="content">
+    {% page_placeholder simplecms_page "main1" title="Main content" %}
+  </div>
 {% endblock %}

@@ -121,12 +121,12 @@ a:hover {
   clear: both;
 }
 
-#content {
+body.twocols #content {
   width: 440px;
   float: left;
 }
 
-#sidebar {
+body.twocols #sidebar {
   margin-left: 460px;
 }
 
