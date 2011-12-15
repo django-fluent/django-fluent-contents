@@ -109,12 +109,6 @@ class ContentItem(PolymorphicModel):
     """
     __metaclass__ = ContentItemMetaClass
 
-    # Currently the model has a connection back to the plugin, because it makes a lot of things easier
-    # for the internal framework. For example, rendering the item while having a model.
-    # That allows the render() function to be at the plugin itself.
-    # The value is set by register()
-    _content_plugin = None
-
     # Note the validation settings defined here are not reflected automatically
     # in the admin interface because it uses a custom ModelForm to handle these fields.
 
@@ -146,7 +140,8 @@ class ContentItem(PolymorphicModel):
         """
         Access the parent plugin which renders this model.
         """
-        return self._content_plugin
+        from content_placeholders.extensions import plugin_pool
+        return plugin_pool.get_plugin_by_model(self.__class__)
 
 
     def __unicode__(self):

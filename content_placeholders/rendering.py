@@ -32,5 +32,9 @@ def render_content_items(request, items):
 
 
 def _render_items(request, items):
-    str = ''.join(contentitem.plugin._render_contentitem(contentitem, request) for contentitem in items)
-    return mark_safe(str)
+    output = []
+    for contentitem in items:
+        plugin = contentitem.plugin
+        output.append(plugin._render_contentitem(contentitem, request))
+
+    return mark_safe(''.join(output))

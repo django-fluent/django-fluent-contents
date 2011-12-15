@@ -153,6 +153,7 @@ class PluginPool(object):
 
     def __init__(self):
         self.plugins = {}
+        self.plugin_for_model = {}
         self.detected = False
 
     def register(self, plugin):
@@ -161,6 +162,7 @@ class PluginPool(object):
 
         If a plugin is already registered, this will raise PluginAlreadyRegistered.
         """
+        # Duct-Typing does not suffice here, avoid hard to debug problems by upfront checks.
         assert issubclass(plugin, ContentPlugin), "The plugin must inherit from `ContentPlugin`"
         assert plugin.model, "The plugin has no model defined"
         assert issubclass(plugin.model, ContentItem), "The plugin model must inherit from `ContentItem`"
@@ -171,9 +173,8 @@ class PluginPool(object):
         
         # Make a single static instance, similar to ModelAdmin.
         plugin_instance = plugin()
-
-        plugin.model._content_plugin = plugin_instance   # makes things a lot easier down the road (at rendering).
         self.plugins[name] = plugin_instance
+        self.plugin_for_model[plugin.model] = name       # Track reverse for rendering
 
 
     def get_plugins(self):
@@ -190,6 +191,17 @@ class PluginPool(object):
         """
         self._import_plugins()
         return [plugin.model for plugin in self.plugins.values()]
+
+
+    def get_plugin_by_model(self, model_class):
+        """
+        Return the corresponding plugin for a given model.
+        """
+        self._import_plugins()                       # could happen during rendering that no plugin scan happened yet.
+        assert issubclass(model_class, ContentItem)  # avoid confusion between model instance and class here!
+
+        name = self.plugin_for_model[model_class]
+        return self.plugins[name]
 
 
     def _import_plugins(self):
