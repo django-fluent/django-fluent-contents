@@ -3,7 +3,7 @@ Analyze the templates for placeholders of this module.
 """
 from template_analyzer.djangoanalyzer import get_node_instances
 from content_placeholders.models import PlaceholderData
-from content_placeholders.templatetags.placeholder_tags import PlaceholderNode
+from content_placeholders.templatetags.placeholder_tags import PagePlaceholderNode
 
 
 def get_template_placeholder_data(template):
@@ -12,12 +12,12 @@ def get_template_placeholder_data(template):
     wrapped in a :class:`~content_placeholders.models.containers.PlaceholderData` object.
     """
     # Find the instances.
-    nodes = get_node_instances(template, PlaceholderNode)
+    nodes = get_node_instances(template, PagePlaceholderNode)
 
     # Avoid duplicates, wrap in a class.
     names = set()
     result = []
-    for placeholdernode in nodes:
+    for pageplaceholdernode in nodes:
         data = PlaceholderData(
             slot=pageplaceholdernode.get_slot(),
             title=pageplaceholdernode.get_title(),

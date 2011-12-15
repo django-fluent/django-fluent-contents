@@ -6,10 +6,10 @@
   <h1>{{ simplecms_page.title }}</h1>
 
   <div id="content">
-    {% render_placeholder simplecms_page "main1" title="Main content" role="main" %}
+    {% page_placeholder simplecms_page "main1" title="Main content" role="main" %}
   </div>
 
   <div id="sidebar">
-    {% render_placeholder simplecms_page "sidebar" title="Sidebar" role="sidebar" %}
+    {% page_placeholder simplecms_page "sidebar" title="Sidebar" role="sidebar" %}
   </div>
 {% endblock %}

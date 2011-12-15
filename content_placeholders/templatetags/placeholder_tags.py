@@ -30,12 +30,13 @@ def _split_token_args(bits, parser, compile_args=False, compile_kwargs=False):
 
 
 @register.tag
-def render_placeholder(parser, token):
+def page_placeholder(parser, token):
     """
     Render a placeholder for a given object.
     Example::
 
-        {% render_placeholder currentpage "slotname" %}
+        {% page_placeholder someobject.placeholder %}
+        {% page_placeholder currentpage "slotname"  %}
     """
     bits = token.split_contents()
     arg_bits, kwarg_bits = _split_token_args(bits, parser)
@@ -51,7 +52,7 @@ def render_placeholder(parser, token):
         raise TemplateSyntaxError("""{0} tag allows two arguments: 'slotname' 'parent-object' and optionally: title=".." role="..".""".format(bits[0]))
 
 
-class PlaceholderNode(Node):
+class PagePlaceholderNode(Node):
     """
     Template Node for a placeholder.
     """
