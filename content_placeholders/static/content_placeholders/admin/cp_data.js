@@ -78,7 +78,8 @@ var cp_data = {};
     var is_fallback = false;
     if( ! placeholder )
     {
-      placeholder = {'slot': '__id=' + placeholder_id, 'role': null};
+      var slot = (placeholder_id == "" ? "__orphaned__" : "__orphaned__@" + placeholder_id);  // distinguish clearly, easier debugging.
+      placeholder = {'slot': slot, 'role': null};
       is_fallback = true;
     }
 
@@ -136,6 +137,8 @@ var cp_data = {};
    */
   cp_data.get_placeholder_by_id = function(id)
   {
+    if( id == "" )
+      return null;
     return _get_placeholder_by_property('id', id);
   }
 

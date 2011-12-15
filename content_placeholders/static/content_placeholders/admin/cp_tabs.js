@@ -92,11 +92,11 @@ var cp_tabs = {};
     tab_links.mousedown( cp_tabs.onTabMouseDown ).click( cp_tabs.onTabClick );
 
     // Migrate formset items.
-    var old_placeholders = cp_data.get_placeholders();
     cp_data.set_placeholders( placeholders );
-    cp_plugins.move_items_to_placeholders( old_placeholders );
+    cp_plugins.move_items_to_placeholders();
 
     // Cleanup. The previous old tabs can be removed now.
+    cp_tabs._update_placeholder_forms();
     cp_tabs._remove_old_tabs();
     cp_tabs._ensure_active_tab(tab_links.eq(0));
     cp_tabs._restore_tabmain_height();
@@ -204,14 +204,12 @@ var cp_tabs = {};
   }
 
 
-  cp_tabs._remove_old_tabs = function()
+  cp_tabs._update_placeholder_forms = function()
   {
+    // Remove old placeholders
     var tabmain = $("#cp-tabmain");
-    var oldtabs = tabmain.children(".cp-oldtab");
-    var newtabs = tabmain.children(".cp-region-tab");
-
     var dbplaceholders = cp_data.get_initial_placeholders();
-    var dbamount = $("#" + placeholder_id_prefix + "-INITIAL_FORMS").val();
+    var dbamount = parseInt($("#" + placeholder_id_prefix + "-INITIAL_FORMS").val());
     var newamount = tabmain.children('.cp-region-tab').length;
 
     // Old indexes are reused,
@@ -223,12 +221,18 @@ var cp_tabs = {};
       var id = dbplaceholders[i].id;
       tabmain.prepend(
           '<input type="checkbox" class="cp-placeholder-delete" name="' + name + '-DELETE" checked="checked" />' +
-          '<input type="hidden" class="cp-placeholder-delete" name="' + name + '-id" value="' + id + '" />'
+              '<input type="hidden" class="cp-placeholder-delete" name="' + name + '-id" value="' + id + '" />'
       );
     }
 
-    oldtabs.remove();
-    $("#" + placeholder_group_prefix + "-TOTAL_FORMS").val(newamount);
+    // Total forms should also incorporate deleted records, so always be >= dbamount
+    $("#" + placeholder_id_prefix + "-TOTAL_FORMS").val(Math.max(newamount, dbamount));
+  }
+
+
+  cp_tabs._remove_old_tabs = function()
+  {
+    $("#cp-tabmain > .cp-oldtab").remove();
 
     // Remove empty/obsolete dom regions
     cp_data.cleanup_empty_placeholders();
