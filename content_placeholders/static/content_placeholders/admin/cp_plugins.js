@@ -391,6 +391,7 @@ var cp_plugins = {};
     // Get dom info
     var current_item = cp_data.get_formset_item_data(child_node);
     var dominfo      = cp_plugins._get_formset_dom_info(current_item);
+    var pane         = cp_data.get_placeholder_pane_for_item(current_item.fs_item);
     var itemtype     = current_item.itemtype;
 
     // Get administration
@@ -426,12 +427,24 @@ var cp_plugins = {};
     // And remove item
     current_item.fs_item.remove();
 
-    // Remove from node list, if all removed, show empty tab message.
-    if( cp_data.remove_dom_item(placeholder.slot, current_item))
+    // Remove from node list, if all removed
+    if( placeholder )
     {
-      // NOTE: not really a clean solution, needs a better (public) API for this.
-      var pane = cp_plugins.get_new_placeholder_pane(placeholder, 0);
+      // TODO: currently ignoring return value. dom_placeholder is currently not accurate, behaves more like "desired placeholder".
+      // TODO: deal with orphaned items.
+      cp_data.remove_dom_item(placeholder.slot, current_item);
+    }
+
+    // Show empty tab message
+    if( pane.content.children('.inline-related').length == 0 )
+    {
       pane.empty_message.show();
+
+      // Orphaned tab?
+      if( pane.placeholder == null && window.cp_tabs )
+      {
+        cp_tabs.hide_fallback_pane();
+      }
     }
   }
 

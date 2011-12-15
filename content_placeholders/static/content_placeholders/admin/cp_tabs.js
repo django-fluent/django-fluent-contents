@@ -43,6 +43,17 @@ var cp_tabs = {};
 
 
   /**
+   * Hide the tab to display an orphaned item.
+   */
+  cp_tabs.hide_fallback_pane = function()
+  {
+    $("#cp-tabnav-orphaned").hide();
+    $("#tab-orphaned").hide();
+    cp_tabs._ensure_active_tab();
+  }
+
+
+  /**
    * Rearrange all tabs due to the newly loaded layout.
    *
    * layout = {placeholders: [{key, title}, ..]}
@@ -98,7 +109,7 @@ var cp_tabs = {};
     // Cleanup. The previous old tabs can be removed now.
     cp_tabs._update_placeholder_forms();
     cp_tabs._remove_old_tabs();
-    cp_tabs._ensure_active_tab(tab_links.eq(0));
+    cp_tabs._ensure_active_tab();
     cp_tabs._restore_tabmain_height();
 
     // Show tabbar if still hidden (at first load)
@@ -195,12 +206,13 @@ var cp_tabs = {};
   }
 
 
-  cp_tabs._ensure_active_tab = function(fallback_tab_link)
+  cp_tabs._ensure_active_tab = function()
   {
     // Activate the fallback item (first) if none active.
     // This needs to happen after organize, so orphans tab might be visible
-    if( $("#cp-tabnav > li.active:visible").length == 0 )
-      fallback_tab_link.mousedown().mouseup().click();
+    var tabnav = $("#cp-tabnav");
+    if( tabnav.children("li.active:visible").length == 0 )
+      tabnav.children("li.cp-region > a:first").mousedown().mouseup().click();
   }
 
 
