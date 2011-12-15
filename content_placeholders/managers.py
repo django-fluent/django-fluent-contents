@@ -12,7 +12,7 @@ class PlaceholderManager(models.Manager):
         """
         Return all placeholders which are associated with a given parent object.
         """
-        lookup = _get_lookup_args(parent_object)
+        lookup = get_parent_lookup_kwargs(parent_object)
         return self.get_query_set().filter(**lookup)
 
 
@@ -27,13 +27,22 @@ class PlaceholderManager(models.Manager):
         """
         Create a placeholder with the given parameters
         """
-        parent_attrs = _get_lookup_args(parent_object)
+        parent_attrs = get_parent_lookup_kwargs(parent_object)
         return self.create(slot=slot, **parent_attrs)
 
 
 
-def _get_lookup_args(parent_object):
-    return {
-        'parent_type': ContentType.objects.get_for_model(parent_object),
-        'parent_id': parent_object.pk,
-    }
+def get_parent_lookup_kwargs(parent_object):
+    """
+    Return lookup arguments for the generic ``parent_type`` / ``parent_id`` fields.
+    """
+    if parent_object is None:
+        return dict(
+            parent_type__isnull=True,
+            parent_id=0
+        )
+    else:
+        return dict(
+            parent_type=ContentType.objects.get_for_model(parent_object),
+            parent_id=parent_object.pk,
+        )

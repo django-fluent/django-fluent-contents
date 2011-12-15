@@ -124,6 +124,51 @@ class PagePlaceholderNode(Node):
         return rendering.render_placeholder(request, placeholder, parent)
 
 
+@register.tag
+def render_placeholder(parser, token):
+    """
+    Render a shared placeholder.
+    Example::
+
+        {% render_placeholder "slotname"  %}{# for global objects. #}
+        {% render_placeholder someobject.placeholder %}
+    """
+    bits = token.split_contents()
+    if len(bits) == 2:
+        return PlaceholderObjectNode(parser.compile_filter(bits[1]))
+    else:
+        raise TemplateSyntaxError("""{0} tag allows only one parameter: 'slotname'.""".format(bits[0]))
+
+
+class PlaceholderObjectNode(Node):
+    """
+    Template Node for a placeholder field.
+    """
+    def __init__(self, placeholder_expr):
+        self.placeholder_expr = placeholder_expr
+
+
+    def get_placeholder(self, context):
+        placeholder = self.placeholder_expr.resolve(context)
+
+        if isinstance(placeholder, Placeholder):
+            return placeholder
+        elif isinstance(placeholder, basestring):
+            slot = placeholder
+            try:
+                return Placeholder.objects.get_by_slot(None, slot)
+            except Placeholder.DoesNotExist:
+                return "<!-- global placeholder '{0}' does not yet exist -->".format(slot)
+        else:
+            raise ValueError("The field '{0}' does not refer to a placeholder or slotname!".format(self.placeholder_expr))
+
+
+    def render(self, context):
+        request = _get_request(context)
+        placeholder = self.get_placeholder(context)
+        return rendering.render_placeholder(request, placeholder)
+
+
 def _get_request(context):
     """
     Fetch the request from the context.

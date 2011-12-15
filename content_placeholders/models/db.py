@@ -5,7 +5,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from polymorphic import PolymorphicModel
 from polymorphic.base import PolymorphicModelBase
-from content_placeholders.managers import PlaceholderManager
+from content_placeholders.managers import PlaceholderManager, get_parent_lookup_kwargs
 
 
 class Placeholder(models.Model):
@@ -28,7 +28,7 @@ class Placeholder(models.Model):
     role = models.CharField(_('Role'), max_length=1, choices=ROLES, default=MAIN, help_text=_("This defines where the object is used."))
 
     # Track relation to parent (e.g. page or article)
-    parent_type = models.ForeignKey(ContentType)
+    parent_type = models.ForeignKey(ContentType, null=True, blank=True)  # Allow null for global placeholders
     parent_id = models.IntegerField(null=True)    # Need to allow Null, because Placeholder is created before parent is saved.
     parent = GenericForeignKey('parent_type', 'parent_id')
 
@@ -61,7 +61,7 @@ class Placeholder(models.Model):
         item_qs = self.contentitems.all()   # django-polymorphic FTW!
 
         if parent:
-            item_qs = item_qs.filter(**ContentItem.get_parent_lookup_kwargs(parent))
+            item_qs = item_qs.filter(**get_parent_lookup_kwargs(parent))
 
         return item_qs
 
@@ -122,17 +122,6 @@ class ContentItem(PolymorphicModel):
     # Also, when updating the page, the PlaceholderEditorInline first adds/deletes placeholders before the items are updated.
     placeholder = models.ForeignKey(Placeholder, related_name='contentitems', null=True, on_delete=models.SET_NULL)
     sort_order = models.IntegerField(default=1)
-
-
-    @classmethod
-    def get_parent_lookup_kwargs(cls, parent):
-        """
-        Return the lookup arguments for ``filter()`` to find :class:`ContentItem` objects of the given parent.
-        """
-        return dict(
-            parent_type=ContentType.objects.get_for_model(parent).id,
-            parent_id=parent.id,
-        )
 
 
     @property
