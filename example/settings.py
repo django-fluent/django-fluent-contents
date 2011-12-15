@@ -1,5 +1,10 @@
 # Django settings for example project.
-from os.path import join, dirname
+from os.path import join, dirname, realpath
+
+# Add parent path,
+# Allow starting the app without installing the module.
+import sys
+sys.path.insert(0, dirname(dirname(realpath(__file__))))
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
