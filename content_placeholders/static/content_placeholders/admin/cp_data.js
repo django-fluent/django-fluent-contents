@@ -51,7 +51,8 @@ var cp_data = {};
         var placeholder_id = placeholder_input.val();
 
         // Append item to administration
-        var dom_placeholder = cp_data.get_or_create_dom_placeholder(placeholder_id);
+        var placeholder = cp_data.get_placeholder_by_id(placeholder_id);   // can be null if item became orphaned.
+        var dom_placeholder = cp_data.get_or_create_dom_placeholder(placeholder, placeholder_id);
         dom_placeholder.items.push(fs_item);
 
         if( dom_placeholder.is_fallback )
@@ -70,15 +71,14 @@ var cp_data = {};
   }
 
 
-  cp_data.get_or_create_dom_placeholder = function(placeholder_id)
+  cp_data.get_or_create_dom_placeholder = function(placeholder, fallback_id)
   {
     // If the ID references to a placeholder which was removed from the template,
     // make sure the item is indexed somehow.
-    var placeholder = cp_data.get_placeholder_by_id(placeholder_id);
     var is_fallback = false;
     if( ! placeholder )
     {
-      var slot = (placeholder_id == "" ? "__orphaned__" : "__orphaned__@" + placeholder_id);  // distinguish clearly, easier debugging.
+      var slot = (!fallback_id ? "__orphaned__" : "__orphaned__@" + fallback_id);  // distinguish clearly, easier debugging.
       placeholder = {'slot': slot, 'role': null};
       is_fallback = true;
     }
@@ -240,7 +240,7 @@ var cp_data = {};
 
     var fs_item = $(child_node).closest(".inline-related");
     var id = fs_item.attr("id");
-    var pos = id.lastIndexOf('-');      // have to split at last '-' for generic inlines.
+    var pos = id.lastIndexOf('-');      // have to split at last '-' for generic inlines (inlinetype-id / app-model-ctfield-ctfkfield-id)
     var prefix = id.substring(0, pos);
     var suffix = id.substring(pos + 1);
 

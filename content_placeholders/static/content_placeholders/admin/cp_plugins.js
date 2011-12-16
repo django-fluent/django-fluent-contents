@@ -286,7 +286,11 @@ var cp_plugins = {};
 
   cp_plugins._set_pageitem_data = function(fs_item, placeholder, new_index)
   {
-    var field_prefix = fs_item.attr('id');   // group_prefix + "-" + new_index
+    // Currently redetermining group_prefix, avoid getting fs_item to go out of sync with different call paths.
+    var current_item = cp_data.get_formset_item_data(fs_item);
+    var group_prefix = current_item.itemtype.auto_id.replace(/%s/, current_item.itemtype.prefix);
+    var field_prefix = group_prefix + "-" + current_item.index;
+
     $("#" + field_prefix + "-placeholder").val(placeholder.id);
     $("#" + field_prefix + "-placeholder_slot").val(placeholder.slot);
     $("#" + field_prefix + "-sort_order").val(new_index);
