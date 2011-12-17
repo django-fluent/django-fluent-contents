@@ -148,24 +148,20 @@ class PlaceholderObjectNode(Node):
         self.placeholder_expr = placeholder_expr
 
 
-    def get_placeholder(self, context):
-        placeholder = self.placeholder_expr.resolve(context)
-
-        if isinstance(placeholder, Placeholder):
-            return placeholder
-        elif isinstance(placeholder, basestring):
-            slot = placeholder
-            try:
-                return Placeholder.objects.get_by_slot(None, slot)
-            except Placeholder.DoesNotExist:
-                return "<!-- global placeholder '{0}' does not yet exist -->".format(slot)
-        else:
-            raise ValueError("The field '{0}' does not refer to a placeholder or slotname!".format(self.placeholder_expr))
-
-
     def render(self, context):
         request = _get_request(context)
-        placeholder = self.get_placeholder(context)
+        placeholder = self.placeholder_expr.resolve(context)
+
+        if not isinstance(placeholder, Placeholder):
+            if isinstance(placeholder, basestring):
+                slot = placeholder
+                try:
+                    placeholder = Placeholder.objects.get_by_slot(None, slot)
+                except Placeholder.DoesNotExist:
+                    return "<!-- global placeholder '{0}' does not yet exist -->".format(slot)
+            else:
+                raise ValueError("The field '{0}' does not refer to a placeholder or slotname!".format(self.placeholder_expr))
+
         return rendering.render_placeholder(request, placeholder)
 
 
