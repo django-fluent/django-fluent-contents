@@ -6,6 +6,16 @@ from content_placeholders.admin import PlaceholderFieldAdmin
 class ArticleAdmin(PlaceholderFieldAdmin):
     prepopulated_fields = {'slug': ('title',)}
 
+    fieldsets = (
+        (None, {
+            'fields': ('title', 'slug'),
+        }),
+        ("Contents", {
+            'fields': ('content',),
+            'classes': ('plugin-holder',),
+        })
+    )
+
 admin.site.register(Article, ArticleAdmin)
 
 

@@ -163,3 +163,20 @@ html.cp-jsenabled .inline-contentitem-group {
   padding-left: 10px;
   margin-left: 8em;
 }
+
+.wide .cp-placeholderfield {
+  margin-left: 15em;
+}
+
+fieldset.plugin-holder label {
+  display: none
+}
+
+fieldset.plugin-holder .cp-placeholderfield label {
+  display: inline;
+}
+
+fieldset.plugin-holder .cp-placeholderfield {
+  margin: 0;
+  padding: 0;
+}
