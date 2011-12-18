@@ -1,3 +1,4 @@
+from django.db.models import Manager
 from django.template import Library, Node, TemplateSyntaxError
 from django.utils.safestring import SafeUnicode
 from content_placeholders.models import Placeholder
@@ -152,15 +153,23 @@ class PlaceholderObjectNode(Node):
         request = _get_request(context)
         placeholder = self.placeholder_expr.resolve(context)
 
-        if not isinstance(placeholder, Placeholder):
-            if isinstance(placeholder, basestring):
-                slot = placeholder
-                try:
-                    placeholder = Placeholder.objects.get_by_slot(None, slot)
-                except Placeholder.DoesNotExist:
-                    return "<!-- global placeholder '{0}' does not yet exist -->".format(slot)
-            else:
-                raise ValueError("The field '{0}' does not refer to a placeholder or slotname!".format(self.placeholder_expr))
+        if placeholder is None:
+            return "<!-- placeholder object is None -->"
+        elif isinstance(placeholder, Placeholder):
+            pass
+        elif isinstance(placeholder, basestring):
+            slot = placeholder
+            try:
+                placeholder = Placeholder.objects.get_by_slot(None, slot)
+            except Placeholder.DoesNotExist:
+                return "<!-- global placeholder '{0}' does not yet exist -->".format(slot)
+        elif isinstance(placeholder, Manager):
+            try:
+                placeholder = placeholder.all()[0]
+            except IndexError:
+                return "<!-- No placeholders found for query -->".format(self.placeholder_expr)
+        else:
+            raise ValueError("The field '{0}' does not refer to a placeholder or slotname!".format(self.placeholder_expr))
 
         return rendering.render_placeholder(request, placeholder)
 
