@@ -5,7 +5,7 @@ from django.template.loader import get_template
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from mptt.admin import MPTTModelAdmin
-from content_placeholders.admin.placeholderfield import PlaceholderEditorAdminMixin
+from content_placeholders.admin.placeholdereditor import PlaceholderEditorAdminMixin
 from content_placeholders.analyzer import get_template_placeholder_data
 from simplecms import appconfig
 from simplecms.models import Page
