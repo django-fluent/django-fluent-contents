@@ -1,12 +1,16 @@
-from urlparse import urljoin
 from django.forms.widgets import Widget
-from django.template.context import RequestContext
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
-from content_placeholders.extensions import plugin_pool
-from content_placeholders.models.db import Placeholder
+from content_placeholders import extensions
 
-class PluginEditor(Widget):
+class PlaceholderFieldWidget(Widget):
+    """
+    The widget to render a placeholder field.
+
+    It outputs a ``<div>`` which functions as placeholder content area.
+    The client-side placeholder editor will use that area to display the ContentItem inlines.
+    """
+
     class Media:
         js = (
             'content_placeholders/admin/cp_admin.js',
@@ -19,32 +23,26 @@ class PluginEditor(Widget):
             ),
         }
 
+
+    def __init__(self, attrs=None, slot=None, plugins=None):
+        super(PlaceholderFieldWidget, self).__init__(attrs)
+        self.slot = slot
+        self.plugins = extensions.plugin_pool.get_plugins() if plugins is None else plugins
+
+
+    def value_from_datadict(self, data, files, name):
+        # This returns the field value from the form POST fields.
+        # Currently returns a dummy value, so the PlaceholderFieldDescriptor() can detect it.
+        return "-DUMMY-"
+
+
     def render(self, name, value, attrs=None):
-        return mark_safe(render_to_string('admin/content_placeholders/placeholderfield/widget.html', {}))
+        """
+        Render the placeholder field.
+        """
         context = {
-            'plugin_list': self.attrs['list'],
-            'installed_plugins': self.attrs['installed'],
-            'copy_languages': self.attrs['copy_languages'],
-            'language': self.attrs['language'],
-            'show_copy': self.attrs['show_copy'],
-            'placeholder': self.attrs['placeholder'],
+            'cp_plugin_list': self.plugins,
+            'placeholder_id': '',
+            'placeholder_slot': self.slot,
         }
         return mark_safe(render_to_string('admin/content_placeholders/placeholderfield/widget.html', context))
-
-
-class PlaceholderPluginEditor(PluginEditor):
-    def x_render(self, name, value, attrs=None):
-        try:
-            ph = Placeholder.objects.get(pk=value)
-        except Placeholder.DoesNotExist:
-            ph = None
-            context = {'add':True}
-        if ph:
-            plugin_list = ph.cmsplugin_set.filter(parent=None).order_by('position')
-            context = {
-                'plugin_list': plugin_list,
-                'installed_plugins': plugin_pool.get_all_plugins(ph.slot),
-                'urloverride': True,
-                'placeholder': ph,
-            }
-        return mark_safe(render_to_string('admin/cms/page/widgets/placeholder_editor.html', context, RequestContext(self.request)))

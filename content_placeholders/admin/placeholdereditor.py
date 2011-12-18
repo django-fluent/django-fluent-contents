@@ -116,8 +116,10 @@ class PlaceholderEditorAdminMixin(PlaceholderEditorBaseMixin, DynamicInlinesAdmi
     """
     The base functionality for ``ModelAdmin`` dialogs to display a placeholder editor with plugins.
     """
+    placeholder_inline = PlaceholderEditorInline
+
     def get_extra_inlines(self, obj=None):
-        return [PlaceholderEditorInline] + get_content_item_inlines(plugins=self.get_all_allowed_plugins())
+        return [self.placeholder_inline] + get_content_item_inlines(plugins=self.get_all_allowed_plugins())
 
 
 

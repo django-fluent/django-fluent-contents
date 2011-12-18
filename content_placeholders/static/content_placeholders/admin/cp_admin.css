@@ -153,3 +153,13 @@ html.cp-jsenabled .inline-contentitem-group {
 
 .cp-tab { display: none }
 #cp-tabmain .cp-tab-active { display: block }
+
+
+/* ---- PlaceholderField ---- */
+
+.cp-placeholderfield {
+  /* this combination gives the same space as the label */
+  font-size: 12px;
+  padding-left: 10px;
+  margin-left: 8em;
+}
