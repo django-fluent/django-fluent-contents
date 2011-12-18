@@ -1,0 +1,9 @@
+{% extends "theme1/base.html" %}{% load placeholder_tags %}
+
+{% block headtitle %}{{ article.title }}{% endblock %}
+
+{% block main %}
+  <h1>{{ article.title }}</h1>
+
+  {% render_placeholder article.content %}
+{% endblock %}

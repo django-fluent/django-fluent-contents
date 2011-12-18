@@ -5,5 +5,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
+
+    url(r'^articles/', include('article.urls')),
     url(r'', include('simplecms.urls')),
 )

@@ -4,8 +4,15 @@ from content_placeholders.admin import PlaceholderFieldAdmin
 
 
 class ArticleAdmin(PlaceholderFieldAdmin):
-    pass
-
+    prepopulated_fields = {'slug': ('title',)}
 
 admin.site.register(Article, ArticleAdmin)
-admin.site.register(ArticleTextItem)
+
+
+
+# For debugging:
+
+class ArticleTextItemAdmin(admin.ModelAdmin):
+    list_display = ('text', 'parent')
+
+admin.site.register(ArticleTextItem, ArticleTextItemAdmin)
