@@ -1,6 +1,7 @@
 from django.contrib.contenttypes.generic import GenericRelation, GenericRel
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.query_utils import Q
+from django.db.utils import DatabaseError
 from django.utils.text import capfirst
 from content_placeholders.forms.fields import PlaceholderFormField
 from content_placeholders.forms.widgets import PlaceholderFieldWidget
@@ -22,9 +23,14 @@ class PlaceholderRelation(GenericRelation):
     It makes it possible to reverse
     """
     def __init__(self, **kwargs):
-        defaults = {
-            'limit_choices_to': Q(parent_type=ContentType.objects.get_for_model(Placeholder)),
-        }
+        defaults = {}
+        try:
+            defaults['limit_choices_to'] = Q(
+                parent_type=ContentType.objects.get_for_model(Placeholder)
+            )
+        except DatabaseError:
+            pass   # skip at first syncdb
+
         defaults.update(kwargs)
         super(PlaceholderRelation, self).__init__(to=Placeholder,
             object_id_field='parent_id', content_type_field='parent_type', **defaults)
@@ -38,14 +44,20 @@ class ContentItemRelation(GenericRelation):
 
 class PlaceholderRel(GenericRel):
     def __init__(self, slot):
+        limit_choices_to=None
+        try:
+            limit_choices_to = Q(
+                parent_type=ContentType.objects.get_for_model(Placeholder),
+                slot=slot,
+            )
+        except DatabaseError:
+            pass   # skip at first syncdb
+
         # TODO: make sure reverse queries work properly
         super(PlaceholderRel, self).__init__(
             to=Placeholder,
             related_name='placeholderfield_{0}+'.format(slot),   # TODO: make unique for model (multiple models can use same slotnane)
-            limit_choices_to=Q(
-                parent_type=ContentType.objects.get_for_model(Placeholder),
-                slot=slot,
-            )
+            limit_choices_to=limit_choices_to
         )
 
 
