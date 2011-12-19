@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.transaction import commit_on_success
-from content_placeholders.models.fields import PlaceholderRelation, ContentItemRelation
+from fluent_contents.models.fields import PlaceholderRelation, ContentItemRelation
 from mptt.models import MPTTModel
 from simplecms import appconfig
 

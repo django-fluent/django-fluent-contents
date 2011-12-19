@@ -1,0 +1,41 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_modify adminmedia %}{% comment %}
+  This is the admin template to render a singkle Placeholder.
+  This is only for debugging, in general, a placeholder is only created through an inline.
+
+  The item editor is initialized, so the placeholder items can be reordered, and updated freely.
+{% endcomment %}
+
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript">
+  // Pass database data to the cp_admin.js file.
+  // Because this is the admin page of the Placeholder itself, and not some other model,
+  // the placeholder array is actually a dummy referring to the current model.
+  var placeholders = {% block js_placeholders %}[{ id: {{ original.id|default:"''" }}, slot: '{{ original.slot|default:"DUMMY"|escapejs }}', title: '{{ original.title|escapejs }}', role: '{{ original.role }}', domnode: 'content_placeholder_inlines' }];{% endblock %}
+  var itemtypes = {% block js_contentitemtypes %}{ {% for fs in inline_admin_formsets %}'{{ fs.opts.type_name|escapejs }}': {
+                      type: '{{ fs.opts.type_name|escapejs }}',
+                      name: '{{ fs.opts.name|escapejs }}',
+                      prefix: '{{ fs.formset.prefix|escapejs }}',
+                      rel_name: '{{ fs.formset.rel_name|escapejs }}',
+                      auto_id: '{{ fs.formset.auto_id|escapejs }}'
+                    }{% if not forloop.last %}, {% endif %}
+                  {% endfor %}}{% endblock %};
+  cp_data.set_placeholders( placeholders );
+  cp_data.set_content_item_types( itemtypes );
+</script>
+{% endblock %}
+
+{% block after_field_sets %}
+  {# Have an area where the inlines can move and reorder freely #}
+  <div class="inline-group inline-placeholder-group">
+    <div id="cp-tabmain" class="module">
+      <div id="content_placeholder_inlines">
+        {% include "admin/fluent_contents/placeholderfield/pane.html" with placeholder_slot=original.slot|default:"DUMMY" placeholder_id=original.id|default:'' cp_plugin_categories=cp_plugin_categories %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block after_related_objects %}
+
+{% endblock %}

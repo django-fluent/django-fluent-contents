@@ -84,7 +84,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
 
-    'content_placeholders',
+    'fluent_contents',
 
     # Example app
     'article',

@@ -1,0 +1,8 @@
+{% load i18n %}{% block pane %}
+          <div class="cp-empty">
+            {% block emptymessage %}{% trans "Placeholder empty" %}{% endblock %}
+          </div>
+          <div class="cp-content">
+          </div>
+{% block controls %}{% include "admin/fluent_contents/placeholderfield/controls.html" %}{% endblock %}
+{% endblock %}

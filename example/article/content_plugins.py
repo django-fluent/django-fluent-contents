@@ -1,5 +1,5 @@
 from article.models import ArticleTextItem
-from content_placeholders.extensions import ContentPlugin, plugin_pool
+from fluent_contents.extensions import ContentPlugin, plugin_pool
 
 
 class ArticleTextPlugin(ContentPlugin):

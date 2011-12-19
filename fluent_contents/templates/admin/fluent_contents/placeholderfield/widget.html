@@ -1,0 +1,11 @@
+{% extends "admin/fluent_contents/placeholderfield/pane.html" %}{% load i18n %}
+
+{% block pane %}
+<div class="cp-placeholderfield" id="cp-placeholderfield-{{ placeholder_slot }}">
+  {{ block.super }}
+</div>
+{% endblock %}
+
+{% block emptymessage %}
+  {% trans "No items added to this field yet." %}
+{% endblock %}

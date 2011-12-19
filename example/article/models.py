@@ -1,7 +1,7 @@
 from django.core.urlresolvers import reverse
 from django.db import models
-from content_placeholders.models.fields import PlaceholderField, PlaceholderRelation, ContentItemRelation
-from content_placeholders.models import ContentItem
+from fluent_contents.models.fields import PlaceholderField, PlaceholderRelation, ContentItemRelation
+from fluent_contents.models import ContentItem
 
 
 class Article(models.Model):

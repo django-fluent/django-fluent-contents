@@ -1,6 +1,6 @@
 from django.contrib import admin
 from article.models import Article, ArticleTextItem
-from content_placeholders.admin import PlaceholderFieldAdmin
+from fluent_contents.admin import PlaceholderFieldAdmin
 
 
 class ArticleAdmin(PlaceholderFieldAdmin):

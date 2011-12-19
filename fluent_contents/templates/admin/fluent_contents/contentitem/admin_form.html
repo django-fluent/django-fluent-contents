@@ -1,0 +1,14 @@
+{% comment %}
+This is the base template to render a ContentPlugin model.
+The template can be replaced by defining ``admin_form_template`` in the plugin class.
+
+The before_fieldsets and after_fieldsets blocks are added on purpose,
+to allow plugins to easily extend this file.
+{% endcomment %}
+        {% block before_fieldsets %}{% endblock %}
+        {% block fieldsets %}
+        {% for fieldset in inline_admin_form %}
+          {% include "admin/fluent_contents/fieldset.html" %}{# a admin/includes/fieldset.html that supports hidden fields #}
+        {% endfor %}
+        {% endblock %}
+        {% block after_fieldsets %}{% endblock %}
