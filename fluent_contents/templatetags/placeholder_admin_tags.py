@@ -26,7 +26,7 @@ def group_plugins_into_categories(plugins):
     categories = {}
 
     for plugin in plugins:
-        title = plugin.category or ""
+        title = unicode(plugin.category or u"")  # enforce resolving ugettext_lazy proxies.
         if not categories.has_key(title):
             categories[title] = []
         categories[title].append(plugin)
