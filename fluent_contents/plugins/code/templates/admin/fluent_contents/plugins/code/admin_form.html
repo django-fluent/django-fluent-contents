@@ -1,0 +1,25 @@
+{% for fieldset in inline_admin_form %}
+{% for line in fieldset %}{% for field in line %}{% if field.field.is_hidden %}
+  {{ field.field }}{# render all hidden fields top level, compacter and easier to debug #}
+{% endif %}{% endfor %}{% endfor %}
+
+    {% with form=inline_admin_form.form %}{# NOTE: gets raw form, without bold admin labels #}
+    <fieldset class="module aligned {{ fieldset.classes }}">
+      <div class="form-row code-form-row">
+        {% if form.code.errors %}{{ form.code.errors }}{% endif %}
+        {{ form.code }}
+      </div>
+      <div class="form-row">
+        {{ form.language.errors }}
+        <span class="field-box">
+          <label for="{{ form.language.auto_id }}" class="required">{{ form.language.label }}:</label>
+          {{ form.language }}
+        </span>
+        <span class="field-box code-linenumbers">
+          {{ form.linenumbers }}
+          <label for="{{ form.linenumbers.auto_id }}" class="vCheckboxLabel">{{ form.linenumbers.label }}</label>
+        </span>
+      </div>
+    </fieldset>
+    {% endwith %}
+{% endfor %}

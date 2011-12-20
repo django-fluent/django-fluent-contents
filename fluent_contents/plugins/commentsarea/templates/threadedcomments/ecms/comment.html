@@ -1,0 +1,13 @@
+{% comment %}
+  Render a comment for django-threadedcomments.
+  This is split to a separate file, making Ajax updates easier.
+  TODO: implement special features, such as a "respond" button for this comment.
+{% endcomment %}
+<dl>
+<dt id="c{{ comment.id }}">
+    {{ comment.submit_date }} - {{ comment.name }}
+</dt>
+<dd>
+    <p>{{ comment.comment }}</p>
+</dd>
+</dl>

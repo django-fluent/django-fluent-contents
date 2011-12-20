@@ -1,0 +1,14 @@
+from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+
+VERSION = (0, 1)
+
+backendapp = 'disqus'
+
+# Do some settings checks.
+if backendapp not in settings.INSTALLED_APPS:
+    raise ImproperlyConfigured("The '{0}' application is required to use the '{1}' plugin.".format(backendapp, 'disqusarea'))
+
+for varname in ('DISQUS_API_KEY', 'DISQUS_WEBSITE_SHORTNAME'):
+    if not getattr(settings, varname, None):
+        raise ImproperlyConfigured("The '{0}' setting is required to use the '{1}' plugin.".format(varname, 'disqusarea'))

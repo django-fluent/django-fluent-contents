@@ -84,7 +84,22 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
 
+    'django.contrib.comments',
+    'django_wysiwyg',
+    #'disqus',
+
     'fluent_contents',
+    'fluent_contents.plugins.code',
+    'fluent_contents.plugins.commentsarea',
+    #'fluent_contents.plugins.disquswidgets',
+    #'fluent_contents.plugins.formdesignerlink',
+    'fluent_contents.plugins.gist',
+    'fluent_contents.plugins.googledocsviewer',
+    'fluent_contents.plugins.iframe',
+    'fluent_contents.plugins.markup',
+    'fluent_contents.plugins.rawhtml',
+    'fluent_contents.plugins.text',
+
 
     # Example app
     'article',
@@ -119,3 +134,6 @@ LOGGING = {
         },
     }
 }
+
+#DISQUS_API_KEY = ''
+#DISQUS_WEBSITE_SHORTNAME = ''

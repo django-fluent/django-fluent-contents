@@ -1,0 +1,24 @@
+{# The admin_form only displays the widgets, no form labels etc.. in front of it #}
+        {% block before_fieldsets %}{% endblock %}
+        {% block fieldsets %}
+        {% for fieldset in inline_admin_form %}
+          {% for line in fieldset %}
+            {% for adminfield in line %}
+
+              {% if adminfield.field.is_hidden %}
+                {{ adminfield.field }}
+              {% else %}
+                <div class="form-row{% if adminfield.errors %} errors{% endif %}">
+                  {% if adminfield.errors %}{{ adminfield.errors|linebreaksbr }}{% endif %}
+                  {{ adminfield.field }}
+                  {% if adminfield.field.help_text %}
+                      <p class="help">{{ adminfield.field.help_text|safe }}</p>
+                  {% endif %}
+                </div>
+              {% endif %}
+
+            {% endfor %}
+          {% endfor %}
+        {% endfor %}
+        {% endblock %}
+        {% block after_fieldsets %}{% endblock %}

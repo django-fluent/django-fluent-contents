@@ -1,0 +1,24 @@
+/* ---- Rich editor (quick fixes) ---- */
+
+.inline-TextItem .vLargeTextField {
+  display: none;  /* avoid flashing a textarea which is to become a WYSIWYG editor */
+}
+
+body.yui-skin-sam .inline-TextItem .yui-editor-container {
+  border-color: #ccc;
+}
+
+body.yui-skin-sam .inline-TextItem .yui-editor-container .yui-toolbar-subcont {
+  border-color: #ccc;
+  padding-left: 0.5em;
+}
+
+body.yui-skin-sam .inline-TextItem .yui-toolbar-container {
+  background-color: #eee;
+}
+
+body.yui-skin-sam .inline-TextItem .yui-toolbar-container .yui-toolbar-group h3 {
+  font-weight: normal;
+  margin-top: 0.35em;
+  border: 0;
+}

@@ -59,6 +59,7 @@ class ContentPlugin(object):
     render_template = None
     category = None
 
+    ADMIN_TEMPLATE_WITHOUT_LABELS = "admin/fluent_contents/contentitem/admin_form_without_labels.html"
 
     @property
     def verbose_name(self):
