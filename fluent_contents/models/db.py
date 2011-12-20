@@ -140,8 +140,8 @@ class ContentItem(PolymorphicModel):
     class Meta:
         app_label = 'fluent_contents'  # required for models subfolder
         ordering = ('placeholder', 'sort_order')
-        verbose_name = _('Contentplugin base')
-        verbose_name_plural = _('Contentplugin bases')
+        verbose_name = _('Contentitem base')
+        verbose_name_plural = _('Contentitem bases')
 
 
     def get_absolute_url(self):
