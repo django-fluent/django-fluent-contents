@@ -48,13 +48,13 @@ As of django-wysiwyg 0.3, the following editors are available:
 * **yui**: The YAHOO editor.
 * **yui_advanced**: The YAHOO editor with more toolbar buttons.
 
-Internally, this setting refers to a set of templates names:
+Additional editors can be easily added, as the setting refers to a set of templates names:
 
-* django_wysiwyg/*favor*/includes.html
-* django_wysiwyg/*flavor*/editor_instance.html
+* django_wysiwyg/**favor**/includes.html
+* django_wysiwyg/**flavor**/editor_instance.html
 
 For more information, see the documentation of ``django_wysiwyg``
-about `Extending django-wysiwyg <http://django-wysiwyg.readthedocs.org/en/latest/extending.html>`_.
+about `extending django-wysiwyg <http://django-wysiwyg.readthedocs.org/en/latest/extending.html>`_.
 
 
 FLUENT_CLEAN_HTML
@@ -69,3 +69,4 @@ FLUENT_SANITIZE_HTML
 ~~~~~~~~~~~~~~~~~~~~
 
 if ``True``, the HTML insecure items will be removed server side using ``html5lib``.
+

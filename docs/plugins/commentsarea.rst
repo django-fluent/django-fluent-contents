@@ -4,12 +4,12 @@ The commentsarea plugin
 =======================
 
 The `commentsarea`  plugin displays the form and messagelist
-that `django.contrib.comments <https://docs.djangoproject.com/en/dev/ref/contrib/comments/>`_ renders.
+that django.contrib.comments_ renders.
 
 By default, the displayed comments will look very plain. This is however, not an accident.
-The `django.contrib.comments` module provides these defaults to make it fully customizable
+The django.contrib.comments_ module provides these defaults to make it fully customizable
 to the design and workflow of the web site where it is being used.
-Hence, this plugin depends on a properly configured `django.contrib.comments` module.
+Hence, this plugin depends on a properly configured django.contrib.comments_ module.
 
 Installation
 ------------
@@ -23,7 +23,7 @@ Add the following settings to ``settings.py``:
         'fluent_contents.plugins.commentsarea',
     )
 
-The `django.contrib.comments` module also requires a location for it's pages.
+The django.contrib.comments_ module also requires a location for it's pages.
 Add the following to ``urls.py``:
 
 .. code-block:: python
@@ -116,8 +116,8 @@ It will automatically redirect back to the blog in a few seconds.
 Additional configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The `django.contrib.comments` module can be further extended with other modules.
-In fact, `django.contrib.comments` only establishes a standard methology for integrating comments to a Django site.
+The django.contrib.comments_ module can be further extended with other modules.
+In fact, django.contrib.comments_ only establishes a standard methology for integrating comments to a Django site.
 The framework also supports moderation, flagging, and RSS feeds too. More documentation can be found at:
 
 * `Django's comments framework <https://docs.djangoproject.com/en/dev/ref/contrib/comments/>`_
@@ -132,3 +132,6 @@ Some of the modules worth looking at are:
 * `django-myrecaptcha <https://bitbucket.org/pelletier/django-myrecaptcha/>`_
 
 These modules can enhance the commentsarea even further.
+
+.. _django.contrib.comments: https://docs.djangoproject.com/en/dev/ref/contrib/comments/
+

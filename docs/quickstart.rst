@@ -148,8 +148,8 @@ because they have no default layout. This turns out however, to make them highly
 to your design and requirements.
 
 
-Creating a CMS system:
-----------------------
+Creating a CMS system
+---------------------
 
 The django-fluent-contents package also offers a :class:`~fluent_contents.admin.placeholdereditor.PlaceholderEditorAdmin` class
 and :class:`~fluent_contents.admin.placeholdereditor.PlaceholderEditorAdminMixin` mixin which allows CMS-developers
