@@ -21,6 +21,7 @@ Getting started
    :maxdepth: 2
 
    quickstart
+   newplugins
 
 Content plugins
 ---------------
