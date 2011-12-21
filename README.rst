@@ -6,13 +6,6 @@ The ``fluent_contents`` module offers a widget engine to display various content
 This engine operates similary like Django CMS, FeinCMS or django-portlets,
 however, it can be used for any project, or CMS system.
 
-The features include:
-
-* a "icon list" module for the admin homepage.
-* a "welcome" module for the admin homepage.
-* a configurable module layout for the admin homepage, through ``settings.py``.
-* a "return to site" link.
-
 Available default content types:
 
 * Standard content:
