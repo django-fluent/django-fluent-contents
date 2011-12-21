@@ -12,8 +12,8 @@ The `markup` plugin provides support for lightweight "markup" languages, such as
 For technical savy users, this makes it easy to write pages in a consistent style,
 or publish wiki/RST documentation online.
 
-The plugin uses `django.contrib.markup <https://docs.djangoproject.com/en/dev/ref/contrib/markup/>`_ internally
-to provide the translation of the markup to HTML, hence it supports any markup language that `django.contrib.markup` has a filter for.
+The plugin uses django.contrib.markup_ internally
+to provide the translation of the markup to HTML, hence it supports any markup language that django.contrib.markup_ has a filter for.
 
 Installation
 ------------
@@ -67,4 +67,6 @@ The plugin currently assumes that only one type of language will be used;
 that either the pages are written in reStructuredText, Markdown or Textile.
 In case the language is switched, the existing plugin instances will remember
 the markup language they were written in, and keep using that.
+
+.. _django.contrib.markup: https://docs.djangoproject.com/en/dev/ref/contrib/markup/
 

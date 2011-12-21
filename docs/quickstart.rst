@@ -47,7 +47,7 @@ Since some extra plugins are used here, make sure their applications are install
 .. note::
 
     Each plugin is optional. Only the ``fluent_contents`` application is required, allowing to write custom models and plugins.
-    Since a layout with the `text` and `code` plugin form a good introduction, these are added here.
+    Since a layout with the :ref:`text <text>` and :ref:`code <code>` plugin form a good introduction, these are added here.
 
 Afterwards, you can setup the database::
 
@@ -133,11 +133,11 @@ To add even more plugins, use::
 Most of the features are glue to existing Python or Django modules,
 hence these packages need to be installed:
 
-* ``django_wysiwyg`` (for the `text` plugin)
-* ``Pygments`` (for the `code` plugin)
-* ``docutils`` (for the `markup` plugin)
-* ``django-disqus`` (for the `disquscommentsarea` plugin)
-* `django-form-designer <http://github.com/philomat/django-form-designer>`_ (for the `formdesignerlink` plugin)
+* ``django_wysiwyg`` (for the :ref:`text <text>` plugin)
+* ``Pygments`` (for the :ref:`code <code>` plugin)
+* ``docutils`` (for the :ref:`markup <markup>` plugin)
+* ``django-disqus`` (for the :ref:`disquscommentsarea <disquscommentsarea>` plugin)
+* `django-form-designer <http://github.com/philomat/django-form-designer>` (for the :ref:`formdesignerlink <formdesignerlink>` plugin)
 
 The reason all these features are optional is make them easily swappable for other implementations.
 You can use a different comments module, or invert new content plugins.
@@ -151,8 +151,8 @@ to your design and requirements.
 Creating a CMS system:
 ----------------------
 
-The django-fluent-contents package also offers a `~fluent_contents.admin.placeholdereditor.PlaceholderEditorAdmin` class
-(and `~fluent_contents.admin.placeholdereditor.PlaceholderEditorAdminMixin`) which allows CMS-developers
+The django-fluent-contents package also offers a :class:`~fluent_contents.admin.placeholdereditor.PlaceholderEditorAdmin` class
+and :class:`~fluent_contents.admin.placeholdereditor.PlaceholderEditorAdminMixin` mixin which allows CMS-developers
 to display the content plugins at various locations of a CMS page.
 For more information, see the :doc:`cms`.
 

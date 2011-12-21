@@ -4,7 +4,10 @@ The rawhtml plugin
 ==================
 
 The `rawhtml` plugin allows inserting raw HTML code in the page.
-This can be used for example, to insert `jQuery <http://jquery.org/>`_ snippets in a page.
+This can be used for example for:
+
+* including `jQuery <http://jquery.org/>`_ snippets in a page.
+* including "embed codes" in a page, provided by sites such as Facebook, Google Docs, YouTube, SlideShare, and Vimeo.
 
 Installation
 ------------
