@@ -15,6 +15,11 @@ class PlaceholderEditorInline(ExtensibleGenericInline):
     It should be inserted in the ``ModelAdmin.inlines`` before the inlines that
     the :func:`~fluent_contents.admin.contentitems.get_content_item_inlines` function generates.
     The ContentItem inlines look for the ``Placeholder`` object that was created just before their invocation.
+
+    To fetch the initial data, the inline will attempt to find the parent model,
+    and call :func:`~PlaceholderEditorBaseMixin.get_placeholder_data`.
+    When the admin models inherit from :class:`~fluent_contents.admin.PlaceholderEditorAdmin`
+    or :class:`~fluent_contents.admin.PlaceholderFieldAdmin` this will be setup already.
     """
     model = Placeholder
     formset = BaseInitialGenericInlineFormSet
@@ -98,7 +103,7 @@ class PlaceholderEditorBaseMixin(object):
         Return the placeholders that the editor should initially display.
         The function should return a list of :class:`~fluent_contents.models.PlaceholderData` classes.
         These classes can either be instantiated manually, or read from a template
-        using :func:`~fluent_contents.analyzer.get_template_placeholder_data` for example.
+        using the :ref:`fluent_contents.analyzer` module for example.
         """
         raise NotImplementedError("The '{0}' subclass should implement get_placeholder_data().".format(self.__class__.__name__))
 
@@ -112,13 +117,18 @@ class PlaceholderEditorBaseMixin(object):
 
 
 
-class PlaceholderEditorAdminMixin(PlaceholderEditorBaseMixin, DynamicInlinesAdminMixin):  # admin.ModelAdmin
+class PlaceholderEditorAdminMixin(PlaceholderEditorBaseMixin, DynamicInlinesAdminMixin):
     """
     The base functionality for ``ModelAdmin`` dialogs to display a placeholder editor with plugins.
+    It loads the inlines using :func:`get_extra_inlines`.
     """
     placeholder_inline = PlaceholderEditorInline
 
     def get_extra_inlines(self, obj=None):
+        """
+        Return the extra inlines for the placeholder editor.
+        It loads the :attr:`placeholder_inline` first, followed by the inlines for the :class:`~fluent_contents.models.ContentItem` classes.
+        """
         return [self.placeholder_inline] + get_content_item_inlines(plugins=self.get_all_allowed_plugins())
 
 

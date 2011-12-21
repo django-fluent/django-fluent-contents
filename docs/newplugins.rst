@@ -11,8 +11,8 @@ Such item could be created in a WYSIWYG editor, but in this case we'll provide a
 
 The plugin can be created in your Django project, for example as the package ``plugins.announcementblock``.
 
-The example files
------------------
+Example code
+------------
 
 For the ``plugins.announcementblock`` package, the following files are needed:
 
@@ -127,12 +127,29 @@ Customizing the frontend rendering
 The :class:`~fluent_contents.extensions.ContentPlugin` class renders the plugin using the following options:
 
 * a ``render_template`` attribute or :func:`~fluent_contents.extensions.ContentPlugin.get_render_template` method.
+  This is the recommended approach for complex content.
   Optionally, :class:`~fluent_contents.extensions.ContentPlugin.get_context` can be overwritten to provide more context.
-* A custom :func:`~fluent_contents.extensions.ContentPlugin.render` method.
 
+* A custom :func:`~fluent_contents.extensions.ContentPlugin.render` method.
+  This may be suitable if there is very little output to render.
+
+As example, this is the render function of the :ref:`text <text>` plugin:
+
+.. code-block:: python
+
+    def render(self, instance, request, **kwargs):
+        return '<div class="text">' + instance.text + '</div>\n'
+
+.. note::
+
+    Unless the content is meant to be used as HTML, it should be escaped with the :func:`django.utils.html.escape` function.
+
+The standard :func:`~fluent_contents.extensions.ContentPlugin.render` method takes the template
+from :func:`~fluent_contents.extensions.ContentPlugin.get_render_template`,
+and uses the context provided by :func:`~fluent_contents.extensions.ContentPlugin.get_context`.
 The rendering context is wrapped in a :func:`~fluent_contents.extensions.PluginContext`,
 which is similar to the :class:`~django.template.context.RequestContext` that Django provides. This ensures that
-variables the ``STATIC_URL`` and ``request`` are available in the plugin templates.
+variables such as ``STATIC_URL`` and ``request`` are available in the plugin templates.
 
 Customizing the admin interface
 -------------------------------

@@ -1,10 +1,16 @@
 from django import forms
 from fluent_contents.models.db import Placeholder
 
+__all__ = ('ContentItemForm',)
+
 
 class ContentItemForm(forms.ModelForm):
     """
-    The base form for custom :class:`ContentItem` types.
+    The base form for custom :class:`~fluent_contents.models.ContentItem` types.
+    It displays the additional meta fields as hidden fields.
+
+    When creating custom admin forms (e.g. to add validation for specific fields),
+    use this class as base to ensure all fields are properly set up.
     """
     placeholder = forms.ModelChoiceField(widget=forms.HiddenInput(), required=False, queryset=Placeholder.objects.all())
     sort_order = forms.IntegerField(widget=forms.HiddenInput(), initial=1)

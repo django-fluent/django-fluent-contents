@@ -1,6 +1,5 @@
-fluent_dashboard.utils
-======================
+fluent_contents.utils
+=====================
 
 .. automodule:: fluent_contents.utils
    :members:
-

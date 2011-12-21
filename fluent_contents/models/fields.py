@@ -4,8 +4,12 @@ from django.db.models.query_utils import Q
 from django.db.utils import DatabaseError
 from django.utils.text import capfirst
 from fluent_contents.forms.fields import PlaceholderFormField
-from fluent_contents.forms.widgets import PlaceholderFieldWidget
 from fluent_contents.models.db import Placeholder, ContentItem
+
+__all__ = (
+    'PlaceholderRelation', 'ContentItemRelation',
+    'PlaceholderField',
+)
 
 # The PlaceholderField is inspired by Django CMS
 # Yet uses a different methology to access the fields.
@@ -19,8 +23,13 @@ from fluent_contents.models.db import Placeholder, ContentItem
 
 class PlaceholderRelation(GenericRelation):
     """
-    A ``GenericRelation`` which can be applied to a model that is freuently references by a ``Placeholder``.
-    It makes it possible to reverse
+    A :class:`~django.contrib.contenttypes.generic.GenericRelation` which can be applied to a parent model that
+    is expected to be referenced be a :class:`~fluent_contents.models.Placeholder`. For example:
+
+    .. code-block:: python
+
+        class Page(models.Model):
+            placeholder_set = PlaceholderRelation()
     """
     def __init__(self, **kwargs):
         defaults = {}
@@ -37,12 +46,25 @@ class PlaceholderRelation(GenericRelation):
 
 
 class ContentItemRelation(GenericRelation):
+    """
+    A :class:`~django.contrib.contenttypes.generic.GenericRelation` which can be applied to a parent model that
+    is expected to be referenced by the :class:`~fluent_contents.models.ContentItem` classes. For example:
+
+    .. code-block:: python
+
+        class Page(models.Model):
+            contentitem_set = ContentItemRelation()
+    """
     def __init__(self, **kwargs):
         super(ContentItemRelation, self).__init__(to=ContentItem,
             object_id_field='parent_id', content_type_field='parent_type', **kwargs)
 
 
 class PlaceholderRel(GenericRel):
+    """
+    The internal :class:`~django.contrib.contenttypes.generic.GenericRel`
+    that is used by the :class:`PlaceholderField` to support queries.
+    """
     def __init__(self, slot):
         limit_choices_to=None
         try:
@@ -62,15 +84,18 @@ class PlaceholderRel(GenericRel):
 
 
 class PlaceholderFieldDescriptor(object):
-    # This descriptor is placed on the PlaceholderField model instance
-    # by the PlaceholderField.contribute_to_class() function.
-    # This causes instance.field to return a Placeholder object.
-
+    """
+    This descriptor is placed on the PlaceholderField model instance
+    by the :func:`~PlaceholderField.contribute_to_class` function.
+    This causes ``instance.field`` to return a :class:`~fluent_contents.models.Placeholder` object.
+    """
     def __init__(self, slot):
+        """Set the slot this descriptor is created for."""
         self.slot = slot
 
 
     def __get__(self, instance, instance_type=None):
+        """Return the placeholder by slot."""
         if instance is None:
             return self
         return Placeholder.objects.get_by_slot(instance, self.slot)
@@ -87,7 +112,24 @@ class PlaceholderFieldDescriptor(object):
 
 
 class PlaceholderField(PlaceholderRelation):
+    """
+    The model field to add :class:`~fluent_contents.models.ContentItem` objects to a model.
+    This class provides the form fields for the field. Use this class in a model to use it:
+
+    .. code-block:: python
+
+        class Article(models.Model):
+            contents = PlaceholderField("article_contents")
+
+    The :attr:`slot` parameter is mandatory to identify the placeholder.
+    The :attr:`plugins` can be optionally defined to limit which plugins are allowed to be used.
+    The data itself is stored as reverse relation in the :class:`~fluent_contents.models.ContentItem` object.
+    Hence, all contents will be cleaned up properly when the parent model is deleted.
+    """
     def __init__(self, slot, plugins=None, **kwargs):
+        """
+        Initialize the placeholder field.
+        """
         super(PlaceholderField, self).__init__(**kwargs)
 
         self.slot = slot
@@ -101,7 +143,7 @@ class PlaceholderField(PlaceholderRelation):
 
     def formfield(self, **kwargs):
         """
-        Returns a PlaceholderFormField instance for this database Field.
+        Returns a :class:`PlaceholderFormField` instance for this database Field.
         """
         defaults = {
             'label': capfirst(self.verbose_name),
@@ -113,6 +155,9 @@ class PlaceholderField(PlaceholderRelation):
 
 
     def contribute_to_class(self, cls, name):
+        """
+        Internal Django method to associate the field with the Model; it assigns the descriptor.
+        """
         super(PlaceholderField, self).contribute_to_class(cls, name)
 
         # overwrites what instance.<colname> returns; give direct access to the placeholder
@@ -125,5 +170,8 @@ class PlaceholderField(PlaceholderRelation):
 
 
     def value_from_object(self, obj):
+        """
+        Internal Django method, used to return the placeholder ID when exporting the model instance.
+        """
         placeholder = getattr(obj, self.name)           # not using self.attname, access the descriptor instead.
         return placeholder.id if placeholder else None  # Be consistent with other fields, like ForeignKey

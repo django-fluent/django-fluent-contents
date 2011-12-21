@@ -15,3 +15,6 @@ class CodeItem(ContentItem):
     class Meta:
         verbose_name = _('Code snippet')
         verbose_name_plural = _('Code snippets')
+
+    def __unicode__(self):
+        return self.code

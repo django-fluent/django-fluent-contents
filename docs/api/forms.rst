@@ -1,6 +1,10 @@
-fluent_dashboard.forms
-======================
+fluent_contents.forms
+=====================
 
 .. automodule:: fluent_contents.forms
-   :members:
 
+The ``ContentItemForm`` class
+-----------------------------
+
+.. autoclass:: fluent_contents.forms.ContentItemForm
+   :members:

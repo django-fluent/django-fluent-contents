@@ -1,9 +1,11 @@
 from django import forms
 from fluent_contents.forms.widgets import PlaceholderFieldWidget
 
+
 class PlaceholderFormField(forms.Field):
     """
-    A form field to display a placeholder field.
+    The internal form field to display a placeholder field.
+    It displays the :class:`~fluent_dashboard.forms.PlaceholderFieldWidget`.
     """
     def __init__(self, slot, plugins=None, **kwargs):
         # Pass along...

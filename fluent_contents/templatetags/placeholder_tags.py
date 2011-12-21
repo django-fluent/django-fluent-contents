@@ -1,3 +1,28 @@
+"""
+The ``placeholder_tags`` module provides two template tags for rendering placeholders:
+It can be loaded using:
+
+.. code-block:: html+django
+
+    {% load placeholder_tags %}
+
+A placeholder which is stored in a :class:`~fluent_contents.models.PlaceholderField` can
+be rendered with the following syntax:
+
+.. code-block:: html+django
+
+    {% render_placeholder someobject.placeholder %}
+
+To support CMS interfaces, placeholder slots can be defined in the template.
+This is done using the following syntax:
+
+.. code-block:: html+django
+
+    {% page_placeholder currentpage "slotname" %}
+    {% page_placeholder currentpage "slotname" title="Admin title" role="main" %}
+
+The CMS interface can scan for those tags using the :ref:`fluent_contents.analyzer` module.
+"""
 from django.db.models import Manager
 from django.template import Library, Node, TemplateSyntaxError
 from django.utils.safestring import SafeUnicode
@@ -33,10 +58,10 @@ def _split_token_args(bits, parser, compile_args=False, compile_kwargs=False):
 @register.tag
 def page_placeholder(parser, token):
     """
-    Render a placeholder for a given object.
-    Example::
+    Render a placeholder for a given object. Syntax:
 
-        {% page_placeholder someobject.placeholder %}
+    .. code-block:: html+django
+
         {% page_placeholder currentpage "slotname"  %}
     """
     bits = token.split_contents()
@@ -55,7 +80,10 @@ def page_placeholder(parser, token):
 
 class PagePlaceholderNode(Node):
     """
-    Template Node for a placeholder.
+    The template node of the ``page_placeholder`` tag.
+    It renders a placeholder of a provided parent object.
+    The template tag can also contain additional metadata,
+    which can be returned by scanning for this node using the :ref:`fluent_contents.analyzer` module.
     """
     def __init__(self, parent_expr, slot_expr, meta_kwargs):
         self.parent_expr = parent_expr
@@ -93,7 +121,10 @@ class PagePlaceholderNode(Node):
 
 
     def get_title(self):
-        # TODO: stub, return title from template
+        """
+        Return the string literal that is used in the template.
+        The title is used in the admin screens.
+        """
         if self.kwargs.has_key('title'):
             return self._extract_literal(self.kwargs['title'])
 
@@ -105,6 +136,10 @@ class PagePlaceholderNode(Node):
 
 
     def get_role(self):
+        """
+        Return the string literal that is used in the template.
+        The role can be "main", "sidebar" or "related", or shorted to "m", "s", "r".
+        """
         if self.kwargs.has_key('role'):
             return self._extract_literal(self.kwargs['role'])
         else:
@@ -128,22 +163,24 @@ class PagePlaceholderNode(Node):
 @register.tag
 def render_placeholder(parser, token):
     """
-    Render a shared placeholder.
-    Example::
+    Render a shared placeholder. Syntax:
 
-        {% render_placeholder "slotname"  %}{# for global objects. #}
+    .. code-block:: html+django
+
+        {% render_placeholder "slotname" %}{# for global objects. #}
         {% render_placeholder someobject.placeholder %}
     """
     bits = token.split_contents()
     if len(bits) == 2:
-        return PlaceholderObjectNode(parser.compile_filter(bits[1]))
+        return RenderPlaceholderNode(parser.compile_filter(bits[1]))
     else:
         raise TemplateSyntaxError("""{0} tag allows only one parameter: 'slotname'.""".format(bits[0]))
 
 
-class PlaceholderObjectNode(Node):
+class RenderPlaceholderNode(Node):
     """
-    Template Node for a placeholder field.
+    The template node of the ``render_placeholder`` tag.
+    It renders the provided placeholder object.
     """
     def __init__(self, placeholder_expr):
         self.placeholder_expr = placeholder_expr

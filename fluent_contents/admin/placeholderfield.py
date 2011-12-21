@@ -6,6 +6,9 @@ from fluent_contents.models.fields import PlaceholderField
 
 
 class PlaceholderFieldInline(PlaceholderEditorInline):
+    """
+    The inline used to process placeholder fields.
+    """
     template = "admin/fluent_contents/placeholderfield/inline_init.html"
 
 
@@ -17,6 +20,9 @@ class PlaceholderFieldAdminMixin(PlaceholderEditorAdminMixin):
 
 
     def get_placeholder_data(self, request, obj):
+        """
+        Return the data of the placeholder fields.
+        """
         # Return all placeholder fields in the model.
         if not hasattr(self.model._meta, 'placeholder_fields'):
             return []
@@ -33,6 +39,9 @@ class PlaceholderFieldAdminMixin(PlaceholderEditorAdminMixin):
 
 
     def get_all_allowed_plugins(self):
+        """
+        Return which plugins are allowed by the placeholder fields.
+        """
         # Get all allowed plugins of the various placeholders together.
         if not hasattr(self.model._meta, 'placeholder_fields'):
             # No placeholder fields in the model, no need for inlines.
@@ -52,7 +61,8 @@ class PlaceholderFieldAdminMixin(PlaceholderEditorAdminMixin):
 
 class PlaceholderFieldAdmin(PlaceholderFieldAdminMixin, admin.ModelAdmin):
     """
-    Base class for ``ModelAdmin`` instances that display :class:`~fluent_contents.models.fields.PlaceholderField` values.
+    Base class for ``ModelAdmin`` instances that loads the :class:`~fluent_contents.models.ContentItem` inlines
+    which the :class:`~fluent_contents.models.PlaceholderField` displays.
     The class is built up with a :class:`PlaceholderFieldAdminMixin` mixin, allowing inheritance from the ``MPTTModelAdmin`` class instead.
     """
     pass

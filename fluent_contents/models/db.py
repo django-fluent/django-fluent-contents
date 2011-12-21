@@ -10,7 +10,19 @@ from fluent_contents.managers import PlaceholderManager, get_parent_lookup_kwarg
 
 class Placeholder(models.Model):
     """
-    A placeholder is displayed at a page, rendering custom content.
+    The placeholder groups various :class:`ContentItem` models together in a single compartment.
+    It is the reference point to render custom content.
+    Each placeholder is identified by a `slot` name and `parent` object.
+
+    Optionally, the placeholder can have a `title`, and `role`.
+    The role is taken into account by the client-side placeholder editor when a page switches template layouts.
+    Content items are migrated to the apropriate placeholder, first matched by slot name, secondly matched by role.
+
+    The parent object is stored in a generic relation, so the placeholder can be used with any custom object.
+    By adding a :class:`~fluent_contents.models.PlaceholderRelation` field to the parent model, the relation can be traversed backwards.
+    From the placeholder, the :attr:`contentitem_set` can be traversed to find the associated :class:`ContentItem` objects.
+    Since a :class:`ContentItem` is polymorphic, the actual sub classes of the :class:`ContentItem` will be returned by the query.
+    To prevent this behavior, call :func:`~polymorphic.query.PolymorphicQuerySet.non_polymorphic` on the `QuerySet`.
     """
     # The 'role' field is useful for migrations by a CMS,
     # e.g. moving from a 2-col layout to a 3-col layout.
@@ -57,6 +69,7 @@ class Placeholder(models.Model):
     def get_content_items(self, parent=None):
         """
         Return all models which are associated with this placeholder.
+        Because a :class:`ContentItem` is polymorphic, the actual sub classes of the content item will be returned by the query.
         """
         item_qs = self.contentitems.all()   # django-polymorphic FTW!
 
@@ -67,6 +80,10 @@ class Placeholder(models.Model):
 
 
     def get_absolute_url(self):
+        """
+        Return the URL of the parent object, if it has one.
+        This method mainly exists to refreshing cache mechanisms.
+        """
         # Allows quick debugging, and cache refreshes.
         parent = self.parent
         try:
@@ -104,8 +121,46 @@ class ContentItemMetaClass(PolymorphicModelBase):
 
 class ContentItem(PolymorphicModel):
     """
-    A ```ContentItem``` is a content part which is displayed at a ``Placeholder``.
-    The item is rendered by a ``ContentPlugin``.
+    A `ContentItem` represents a content part (also called pagelet) which is displayed in a :class:`Placeholder`.
+    To use the `ContentItem`, derive it in your model class:
+
+    .. code-block:: python
+
+        class ExampleItem(ContentItem):
+            # any custom fields here
+
+            class Meta:
+                verbose_name = "Example item"
+
+    The `ContentItem` class is polymorphic; when querying the objects, the derived instances will be returned automatically:
+
+    >>> from fluent_contents.models import ContentItem
+    >>> ContentItem.objects.all()
+    [<ArticleTextItem: Main article>, <RawHtmlItem: test>, <CodeItem: def foo(): print 1>,
+    <AnnouncementBlockItem: Test>, <ArticleTextItem: Text in sidebar>]
+
+    The `django-polymorphic` code is written in such way, this requires the least amount of queries necessary.
+    When access to the polymorphic classes is not needed, call :func:`~polymorphic.query.PolymorphicQuerySet.non_polymorphic` on the `QuerySet` to prevent this behavior:
+
+    >>> from fluent_contents.models import ContentItem
+    >>> ContentItem.objects.all().non_polymorphic()
+    [<ContentItem: Article text item#1 in 'Main content'>, <ContentItem: HTML code#5 in 'Main content'>, <ContentItem: Code snippet#6 in 'Main content'>,
+    <ContentItem: Announcement block#7 in 'Main content'>, <ContentItem: Article text item#4 in 'Sidebar'>]
+
+    Being polymorphic also means the base class provides some additional methods such as:
+
+    * :func:`get_real_instance`
+    * :func:`get_real_instance_class`
+
+    Each `ContentItem` references both it's parent object (e.g. a page, or article), and the placeholder.
+    While this is done mainly for internal reasons, it also provides an easy way to query all content items of a parent.
+    The parent object is stored in a generic relation, so the `ContentItem` can be used with any custom object.
+    By adding a :class:`~fluent_contents.models.ContentItemRelation` field to the parent model, the relation can be traversed backwards.
+
+    Because the `ContentItem` references it's parent, and not the other way around,
+    it will be cleaned up automatically by Django when the parent object is deleted.
+
+    The rendering of a `ContentItem` class happens in a :class:`~fluent_contents.extensions.ContentPlugin` class.
     """
     __metaclass__ = ContentItemMetaClass
 
@@ -134,7 +189,11 @@ class ContentItem(PolymorphicModel):
 
 
     def __unicode__(self):
-        return '<%s#%d, placeholder=%s>' % (self.polymorphic_ctype or self._meta.verbose_name, self.id or 0, self.placeholder)
+        return u"{type}#{id:d} in '{placeholder}'".format(
+            type=self.polymorphic_ctype or self._meta.verbose_name,
+            id=self.id or 0,
+            placeholder=self.placeholder
+        )
 
 
     class Meta:
@@ -145,6 +204,10 @@ class ContentItem(PolymorphicModel):
 
 
     def get_absolute_url(self):
+        """
+        Return the URL of the parent object, if it has one.
+        This method mainly exists to refreshing cache mechanisms.
+        """
         # Allows quick debugging, and cache refreshes.
         parent = self.parent
         try:

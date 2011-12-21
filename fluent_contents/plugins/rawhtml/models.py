@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents.models import ContentItem
 
@@ -8,3 +9,6 @@ class RawHtmlItem(ContentItem):
     class Meta:
         verbose_name = _('HTML code')
         verbose_name_plural = _('HTML code')
+
+    def __unicode__(self):
+        return strip_tags(self.html)

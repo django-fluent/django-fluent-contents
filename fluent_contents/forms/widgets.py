@@ -1,14 +1,13 @@
 from django.forms.widgets import Widget
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
-from fluent_contents import extensions
 
 class PlaceholderFieldWidget(Widget):
     """
-    The widget to render a placeholder field.
+    The widget to render a :class:`fluent_contents.models.PlaceholderField`.
 
-    It outputs a ``<div>`` which functions as placeholder content area.
-    The client-side placeholder editor will use that area to display the ContentItem inlines.
+    It outputs a ``<div>`` element which operates as placeholder content area.
+    The client-side editor will use that area to display the admin interfaces of the :class:`fluent_contents.models.ContentItem` models.
     """
 
     class Media:
@@ -25,6 +24,7 @@ class PlaceholderFieldWidget(Widget):
 
 
     def __init__(self, attrs=None, slot=None, plugins=None):
+        from fluent_contents import extensions   # Avoid circular reference because __init__.py imports subfolders too
         super(PlaceholderFieldWidget, self).__init__(attrs)
         self.slot = slot
         self.plugins = extensions.plugin_pool.get_plugins() if plugins is None else plugins

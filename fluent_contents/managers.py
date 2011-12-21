@@ -1,3 +1,6 @@
+"""
+The manager classes are accessed via ``Placeholder.objects``.
+"""
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 
@@ -5,7 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 
 class PlaceholderManager(models.Manager):
     """
-    Extra methods for the placeholder
+    Extra methods for the placeholder.
     """
 
     def parent(self, parent_object):

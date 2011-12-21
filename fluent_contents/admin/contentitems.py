@@ -88,7 +88,8 @@ class GenericContentItemInline(ContentItemInlineMixin, ExtensibleGenericInline):
 
 def get_content_item_inlines(plugins=None, base=GenericContentItemInline):
     """
-    Dynamically generate genuine django inlines for all registered content types.
+    Dynamically generate genuine django inlines for all registered content item types.
+    When the `plugins` parameter is ``None``, all plugin inlines are returned.
     """
     if plugins is None:
         plugins = extensions.plugin_pool.get_plugins()
