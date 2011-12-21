@@ -53,3 +53,25 @@ Programming:
    plugins/markup
    plugins/rawhtml
 
+API documentation
+-----------------
+
+.. toctree::
+   :maxdepth: 2
+
+   api/analyzer
+   api/extensions
+   api/forms
+   api/managers
+   api/models
+   api/rendering
+   api/templatetags/placeholder_tags
+   api/utils
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
