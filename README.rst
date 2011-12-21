@@ -70,8 +70,9 @@ It should have the following settings::
         'fluent_contents.plugins.text',
 
         # Some plugins need extra Django applications
-        'django_wysiwyg',
         'disqus',
+        'django.contrib.comments',
+        'django_wysiwyg',
         'form_designer',
     )
 

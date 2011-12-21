@@ -1,22 +1,55 @@
-.. django-fluent-contents documentation master file, created by
-   sphinx-quickstart on Wed Dec 21 15:06:42 2011.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Welcome to django-fluent-contents' documentation!
+=================================================
 
-Welcome to django-fluent-contents's documentation!
-==================================================
+This documentation covers the latest release of django-fluent-contents, a collection of applications
+to build an end user CMS for the `Django <http://www.djangoproject.com>`_ administration interface.
+django-fluent-contents includes:
 
-Contents:
+* A ``PlaceholderField`` to display various content on a model.
+* A ``PlaceholderAdminMixin`` to build CMS interfaces.
+* A default set of plugins to display WYSIWYG content, reStructuredText, highlighted code, Gist snippets and more.
+* an extensible plugin API.
+
+To get up and running quickly, consult the :ref:`quick-start guide <quickstart>`.
+The chapters below describe the configuration of each specific plugin in more detail.
+
+
+Getting started
+---------------
 
 .. toctree::
    :maxdepth: 2
 
+   quickstart
+   cms
 
+Content plugins
+---------------
 
-Indices and tables
-==================
+Standard plugins:
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. toctree::
+   :maxdepth: 2
+
+   plugins/text
+   plugins/googledocsviewer
+
+Interactivity:
+
+.. toctree::
+   :maxdepth: 2
+
+   plugins/commentsarea
+   plugins/disquscommentsarea
+   plugins/formdesignerlink
+
+Programming:
+
+.. toctree::
+   :maxdepth: 2
+
+   plugins/code
+   plugins/gist
+   plugins/markup
+   plugins/rawhtml
 
