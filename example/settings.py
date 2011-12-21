@@ -87,6 +87,7 @@ INSTALLED_APPS = (
     'django.contrib.comments',
     'django_wysiwyg',
     #'disqus',
+    #'form_designer',
 
     'fluent_contents',
     'fluent_contents.plugins.code',

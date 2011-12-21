@@ -8,7 +8,8 @@ setup(
     license='Apache License, Version 2.0',
 
     install_requires=[
-        'Django>=1.3.0',   # Simply not tested with 1.2
+        'Django>=1.3.0',   # Using staticfiles
+        'django-polymorphic>=0.2',
         'django-template-analyzer>=1.0.0',
     ],
     extras_require = {

@@ -9,6 +9,11 @@ backendapp = 'disqus'
 if backendapp not in settings.INSTALLED_APPS:
     raise ImproperlyConfigured("The '{0}' application is required to use the '{1}' plugin.".format(backendapp, 'disqusarea'))
 
+try:
+    import disqus
+except ImportError:
+    raise ImportError("The 'django-disqus' package is required to use the 'disqusarea' plugin.")
+
 for varname in ('DISQUS_API_KEY', 'DISQUS_WEBSITE_SHORTNAME'):
     if not getattr(settings, varname, None):
         raise ImproperlyConfigured("The '{0}' setting is required to use the '{1}' plugin.".format(varname, 'disqusarea'))
