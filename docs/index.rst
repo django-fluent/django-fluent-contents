@@ -21,7 +21,6 @@ Getting started
    :maxdepth: 2
 
    quickstart
-   cms
 
 Content plugins
 ---------------
@@ -52,6 +51,14 @@ Programming:
    plugins/gist
    plugins/markup
    plugins/rawhtml
+
+Advanced topics
+---------------
+
+.. toctree::
+   :maxdepth: 2
+
+   cms
 
 API documentation
 -----------------

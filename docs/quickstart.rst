@@ -64,7 +64,6 @@ The most simply way, is adding a :class:`~fluent_contents.models.fields.Placehol
 
     class Article(models.Model):
         title = models.CharField("Title", max_length=200)
-        slug = models.SlugField("Slug", unique=True)
         content = PlaceholderField("article_content")
 
         class Meta:
