@@ -26,7 +26,7 @@ __all__ = (
 class PlaceholderData(object):
     """
     A wrapper with data of a placeholder node.
-    It shares the :attr:`slot`, :attr:`title` and :attr:`role` fields with the :class:`fluent_contents.models.Placeholder` class.
+    It shares the :attr:`slot`, :attr:`title` and :attr:`role` fields with the :class:`~fluent_contents.models.Placeholder` class.
     """
     ROLE_ALIASES = {
         'main': Placeholder.MAIN,
@@ -54,6 +54,11 @@ class PlaceholderData(object):
     def as_dict(self):
         """
         Return the contents as dictionary, for initial form data.
+        The dictionary contains the fields:
+
+        * ``slot``
+        * ``title``
+        * ``role``
         """
         return {
             'slot': self.slot,

@@ -17,7 +17,7 @@ class Page(MPTTModel):
     # Allow different layouts
     template_name = models.CharField("Layout", max_length=255, choices=appconfig.SIMPLECMS_TEMPLATE_CHOICES, default=appconfig.SIMPLECMS_DEFAULT_TEMPLATE)
 
-    # The content via django-content-placeholders
+    # Accessing the data of django-fluent-contents
     placeholder_set = PlaceholderRelation()
     contentitem_set = ContentItemRelation()
 
