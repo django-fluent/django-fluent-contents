@@ -1,7 +1,6 @@
 {% load disqus_tags %}
 
 {% if instance.allow_new %}
-  {% disqus_dev %}
   {% disqus_show_comments %}
 {% else %}
   {% include "fluent_contents/plugins/disquswidgets/comments_closed.html" %}
