@@ -32,7 +32,6 @@ Standard plugins:
    :maxdepth: 2
 
    plugins/text
-   plugins/googledocsviewer
 
 Interactivity:
 
@@ -42,6 +41,13 @@ Interactivity:
    plugins/commentsarea
    plugins/disquscommentsarea
    plugins/formdesignerlink
+
+Online services:
+
+.. toctree::
+   :maxdepth: 2
+
+   plugins/googledocsviewer
 
 Programming:
 

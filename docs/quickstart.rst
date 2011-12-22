@@ -150,9 +150,8 @@ to your design and requirements.
 Creating a CMS system
 ---------------------
 
-The django-fluent-contents package also offers a :class:`~fluent_contents.admin.placeholdereditor.PlaceholderEditorAdmin` class
-and :class:`~fluent_contents.admin.placeholdereditor.PlaceholderEditorAdminMixin` mixin which allows CMS-developers
-to display the content plugins at various locations of a CMS page.
+The django-fluent-contents package also offers a :class:`~fluent_contents.admin.PlaceholderEditorAdmin` class
+which allows CMS-developers to display the content plugins at various locations of a CMS page.
 For more information, see the :doc:`cms`.
 
 Testing your new shiny project

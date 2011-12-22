@@ -1,3 +1,5 @@
+.. _fluent_contents.admin:
+
 fluent_contents.admin
 =====================
 

@@ -20,6 +20,10 @@ The features include:
 
 In the source distribution, see the ``example.simple`` package for a working demonstration.
 
+.. seealso::
+
+    The API documentation of the :ref:`fluent_contents.admin` module provides more details of the classes.
+
 The basic setup
 ---------------
 
