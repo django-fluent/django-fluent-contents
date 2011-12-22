@@ -7,7 +7,7 @@ from fluent_contents.plugins.disquswidgets.models import DisqusCommentsAreaItem
 class DisqusCommentsPlugin(ContentPlugin):
     model = DisqusCommentsAreaItem
     category = _('Interactivity')
-    render_template = "ecms_plugins/disquswidgets/comments.html"
+    render_template = "fluent_contents/plugins/disquswidgets/comments.html"
 
 
     def get_context(self, instance, request, **kwargs):
