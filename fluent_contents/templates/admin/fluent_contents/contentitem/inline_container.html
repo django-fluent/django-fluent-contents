@@ -3,6 +3,10 @@
     {{ inline_admin_formset.formset.management_form }}
     {{ inline_admin_formset.formset.non_form_errors }}
 
+    {% if inline_admin_formset.opts.cp_admin_init_template %}
+      {% include inline_admin_formset.opts.cp_admin_init_template %}
+    {% endif %}
+
     {# looping in `inline_admin_formset.formset.forms` excludes empty form #}
     {# looping in `inline_admin_formset` includes the empty placeholder as last item #}
     {% for inline_admin_form in inline_admin_formset %}

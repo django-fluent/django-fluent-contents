@@ -84,6 +84,9 @@ class ContentPlugin(object):
     #: The template to render the admin interface with
     admin_form_template = "admin/fluent_contents/contentitem/admin_form.html"
 
+    #: An optional template which is included in the admin interface, to initialize components (e.g. JavaScript)
+    admin_init_template = None
+
     #: The template to render the frontend HTML output.
     render_template = None
 

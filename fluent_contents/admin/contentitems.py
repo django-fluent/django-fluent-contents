@@ -111,7 +111,8 @@ def get_content_item_inlines(plugins=None, base=GenericContentItemInline):
             'name': plugin.verbose_name,
             'plugin': plugin,
             'type_name': plugin.type_name,
-            'cp_admin_form_template': plugin.admin_form_template
+            'cp_admin_form_template': plugin.admin_form_template,
+            'cp_admin_init_template': plugin.admin_init_template,
         }
 
         inlines.append(type(name, (base,), attrs))
