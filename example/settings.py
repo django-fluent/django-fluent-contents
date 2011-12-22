@@ -84,11 +84,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
 
-    'django.contrib.comments',
-    'django_wysiwyg',
-    #'disqus',
-    #'form_designer',
-
     'fluent_contents',
     'fluent_contents.plugins.code',
     'fluent_contents.plugins.commentsarea',
@@ -109,6 +104,12 @@ INSTALLED_APPS = (
     'mptt',
     'simplecms',
     'theme1',
+
+    # Other apps
+    'django.contrib.comments',  # should be below theme1
+    'django_wysiwyg',
+    #'disqus',
+    #'form_designer',
 )
 
 SIMPLECMS_TEMPLATE_CHOICES = (
@@ -117,6 +118,7 @@ SIMPLECMS_TEMPLATE_CHOICES = (
 )
 SIMPLECMS_DEFAULT_TEMPLATE = SIMPLECMS_TEMPLATE_CHOICES[0][0]
 
+DJANGO_WYSIWYG_FLAVOR = 'yui_advanced'
 
 LOGGING = {
     'version': 1,

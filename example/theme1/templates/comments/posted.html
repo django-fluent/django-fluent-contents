@@ -1,0 +1,28 @@
+{% extends "comments/base.html" %}{% load i18n %}
+
+{% block title %}{% trans "Thanks for commenting" %}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+    <meta http-equiv="Refresh" content="5; url={{ comment.content_object.get_absolute_url }}#c{{ comment.id }}" />
+{% endblock %}
+
+{% block content %}
+    <h1>Thank you for responding</h1>
+    <p>
+      We have received your comment, and added it to the web site.<br />
+      You will be sent back to the article...
+    </p>
+
+    {# Using identical formatting to normal comment list #}
+    <dl id="comments">
+      <dt id="c{{ comment.id }}">
+        {{ comment.submit_date }} - {{ comment.name }}
+      </dt>
+      <dd>
+        <p>{{ comment.comment }}</p>
+      </dd>
+    </dl>
+
+    <p><a href="{{ comment.content_object.get_absolute_url }}#c{{ comment.id }}">Back to the article</a></p>
+{% endblock %}

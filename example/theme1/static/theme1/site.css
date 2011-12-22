@@ -334,6 +334,19 @@ pre, code {
   font-family: "Consolas", "Menlo", "Monaco", "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", monospace;
 }
 
+pre {
+  margin: 1.5em;
+}
+
+iframe {
+  border: 1px solid #ccc;
+}
+
+form label {
+  float: left;
+  width: 8em;
+}
+
 
 /* ---- standard resets and utils ---- */
 
