@@ -132,11 +132,11 @@ To add even more plugins, use::
 Most of the features are glue to existing Python or Django modules,
 hence these packages need to be installed:
 
-* ``django_wysiwyg`` (for the :ref:`text <text>` plugin)
+* ``django-wysiwyg`` (for the :ref:`text <text>` plugin)
 * ``Pygments`` (for the :ref:`code <code>` plugin)
 * ``docutils`` (for the :ref:`markup <markup>` plugin)
 * ``django-disqus`` (for the :ref:`disquscommentsarea <disquscommentsarea>` plugin)
-* `django-form-designer <http://github.com/philomat/django-form-designer>` (for the :ref:`formdesignerlink <formdesignerlink>` plugin)
+* `django-form-designer <http://github.com/philomat/django-form-designer>`_ (for the :ref:`formdesignerlink <formdesignerlink>` plugin)
 
 The reason all these features are optional is make them easily swappable for other implementations.
 You can use a different comments module, or invert new content plugins.
