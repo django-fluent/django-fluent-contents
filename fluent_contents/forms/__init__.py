@@ -1,5 +1,5 @@
 from django import forms
-from fluent_contents.models.db import Placeholder
+from fluent_contents.models import Placeholder
 
 __all__ = ('ContentItemForm',)
 

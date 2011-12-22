@@ -4,7 +4,7 @@ from django.db.models.query_utils import Q
 from django.db.utils import DatabaseError
 from django.utils.text import capfirst
 from fluent_contents.forms.fields import PlaceholderFormField
-from fluent_contents.models.db import Placeholder, ContentItem
+from fluent_contents.models import Placeholder, ContentItem
 
 __all__ = (
     'PlaceholderRelation', 'ContentItemRelation',
