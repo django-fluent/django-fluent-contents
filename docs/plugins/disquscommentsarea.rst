@@ -4,12 +4,21 @@ The disquscommentsarea plugin
 =============================
 
 The `disquscommentsarea`  plugin displays a comments area powed by DISQUS_.
-In the background, DISQUS uses a JavaScript include to embed the comments.
+
+.. image:: /images/plugins/disquscommentsarea-admin.*
+   :width: 788px
+   :height: 60px
+
+.. image:: /images/plugins/disquscommentsarea-html.*
+   :width: 441px
+   :height: 490px
+
+In the background, DISQUS_ uses a JavaScript include to embed the comments.
 Google indexes the comments nevertheless.
 
 The plugin uses django-disqus_ internally to render the HTML output.
 The django-disqus_ module also offers management commands
-to import the comments of `django.contrib.comments` to DISQUS_,
+to import the comments of django.contrib.comments_ to DISQUS_,
 or export the comments from DISQUS_ as JSON or WXR feed.
 
 Installation
@@ -40,6 +49,12 @@ To see the shortname of your website, navigate to Settings->General on the DISQU
 Secondly, make sure the `django.contrib.sites` framework is configured,
 including the domain name where the pages should be displayed.
 
+.. tip::
+
+    While the DISQUS_ include provides all default styles, it can be useful to specify some default styling as well.
+    This avoids any undesired minor jumps by page elements when DISQUS_ is loading.
+
 .. _get your API key here: http://disqus.com/api/get_my_key/
 .. _DISQUS: http://disqus.com
 .. _django-disqus: https://github.com/arthurk/django-disqus
+.. _django.contrib.comments: https://docs.djangoproject.com/en/dev/ref/contrib/comments/

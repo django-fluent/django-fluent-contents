@@ -6,6 +6,15 @@ The googledocsviewer plugin
 The `googledocsviewer` plugin allows inserting an embedded Google Docs Viewer in the page.
 This can be used to display various files - like PDF or DOCX files - inline in the HTML page.
 
+.. image:: /images/plugins/googledocsviewer-admin.*
+   :width: 788px
+   :height: 207px
+
+.. image:: /images/plugins/googledocsviewer-html.*
+   :width: 552px
+   :height: 602px
+
+
 Installation
 ------------
 
@@ -18,6 +27,11 @@ Add the following settings to ``settings.py``:
     )
 
 The plugin does not provide additional configuration options, nor does it have dependencies on other packages.
+
+The Google Docs Viewer is rendered as ``<iframe>`` tag.
+The appearance of the ``<iframe>`` tag depends on the CSS style of the web site.
+Generally, at least a ``border`` should be defined.
+
 
 .. note::
 

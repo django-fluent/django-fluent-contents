@@ -5,6 +5,14 @@ The code plugin
 
 The `code` plugin provides highlighting for programming code.
 
+.. image:: /images/plugins/code-admin.*
+   :width: 788px
+   :height: 223px
+
+.. image:: /images/plugins/code-html.*
+   :width: 420px
+   :height: 250px
+
 The plugin uses `Pygments <http://pygments.org/>`_ as backend to perform the highlighting.
 
 Installation

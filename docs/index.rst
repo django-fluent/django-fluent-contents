@@ -57,6 +57,13 @@ Programming:
    plugins/code
    plugins/gist
    plugins/markup
+
+Advanced:
+
+.. toctree::
+   :maxdepth: 2
+
+   plugins/iframe
    plugins/rawhtml
 
 Advanced topics

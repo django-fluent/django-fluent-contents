@@ -3,11 +3,18 @@
 The formdesignerlink plugin
 ===========================
 
-The `formdesignerlink` plugin displays a form, created by
-the `django-formdesigner <https://github.com/philomat/django-form-designer>`_ module.
+The `formdesignerlink` plugin displays a form, created by the django-form-designer_ module.
+
+.. image:: /images/plugins/formdesignerlink-admin.*
+   :width: 787px
+   :height: 60px
+
+.. image:: /images/plugins/formdesignerlink-html.*
+   :width: 416px
+   :height: 264px
 
 .. note::
-    While the `formdesigner` interface may not be fully up to the "UI standards" of `django-fluent-contents`,
+    While the `form_designer` interface may not be fully up to the "UI standards" of `django-fluent-contents`,
     it is however a popular module, and hence this plugin is provided!
 
 Installation
@@ -22,7 +29,15 @@ Add the following settings to ``settings.py``:
         'fluent_contents.plugins.formdesignerlink',
     )
 
-Each page can now be enriched with a form, that was created by the `formdesigner` application.
+To display previews, the `form_designer` application also requires an additional line in ``urls.py``:
+
+.. code-block:: python
+
+    urlpatterns += patterns('',
+        url(r'^forms/', include('form_designer.urls')),
+    )
+
+Each page can now be enriched with a form, that was created by the `form_designer` application.
 
 Configuration
 -------------
@@ -43,6 +58,10 @@ Some relevant settings are:
 ``FORM_DESIGNER_WIDGET_CLASSES``
     A list of choices, to define which Django widget types are allowed.
 
+It is also highly recommended to overwrite the ``form_designer/templates/html/formdefinition/base.html`` template,
+which is used to provide previews for the form in the admin interface.
+
 Further information can be found in the source code of `django-formdesigner`.
 (`e.g. settings.py <https://github.com/philomat/django-form-designer/blob/master/form_designer/settings.py>`_).
 
+.. _django-form-designer: https://github.com/philomat/django-form-designer/

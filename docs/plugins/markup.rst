@@ -3,7 +3,17 @@
 The markup plugin
 =================
 
-The `markup` plugin provides support for lightweight "markup" languages, such as:
+The `markup` plugin provides support for lightweight "markup" languages.
+
+.. image:: /images/plugins/markup-admin.*
+   :width: 788px
+   :height: 182px
+
+.. image:: /images/plugins/markup-html.*
+   :width: 398px
+   :height: 202px
+
+The plugin provided support for the markup languages:
 
 * **reStructuredText**: The syntax known for Python documentation.
 * **Markdown**: The syntax known for GitHub and Stack Overflow comments (both do have a dialect/extended version)
@@ -12,8 +22,8 @@ The `markup` plugin provides support for lightweight "markup" languages, such as
 For technical savy users, this makes it easy to write pages in a consistent style,
 or publish wiki/RST documentation online.
 
-The plugin uses django.contrib.markup_ internally
-to provide the translation of the markup to HTML, hence it supports any markup language that django.contrib.markup_ has a filter for.
+The plugin uses django.contrib.markup_ internally to provide the translation of the markup to HTML,
+hence it supports any markup language that django.contrib.markup_ has a filter for.
 
 Installation
 ------------
