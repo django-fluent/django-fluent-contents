@@ -28,12 +28,16 @@ __all__ = ('PluginContext', 'ContentPlugin', 'plugin_pool')
 # Some standard request processors to use in the plugins,
 # Naturally, you want STATIC_URL to be available in plugins.
 
+def _add_debug(request):
+    return {'debug': settings.DEBUG}
+
 _STANDARD_REQUEST_CONTEXT_PROCESSORS = (
     context_processors.request,
     context_processors.static,
     context_processors.csrf,
     context_processors.media,
     context_processors.i18n,
+    _add_debug,
 )
 
 class PluginContext(Context):
