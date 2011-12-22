@@ -72,6 +72,10 @@ html.cp-jsenabled .inline-contentitem-group {
   outline: 0;
 }
 
+.cp-empty {
+  margin: 0.5em 0;
+}
+
 
 /* ---- Fieldset fixes ---- */
 
