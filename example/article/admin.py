@@ -22,7 +22,7 @@ admin.site.register(Article, ArticleAdmin)
 
 # For debugging:
 
-class ArticleTextItemAdmin(admin.ModelAdmin):
-    list_display = ('text', 'parent')
-
-admin.site.register(ArticleTextItem, ArticleTextItemAdmin)
+#class ArticleTextItemAdmin(admin.ModelAdmin):
+#    list_display = ('text', 'parent')
+#
+#admin.site.register(ArticleTextItem, ArticleTextItemAdmin)
