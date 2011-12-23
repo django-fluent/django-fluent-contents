@@ -78,5 +78,10 @@ that either the pages are written in reStructuredText, Markdown or Textile.
 In case the language is switched, the existing plugin instances will remember
 the markup language they were written in, and keep using that.
 
+FLUENT_MARKUP_MARKDOWN_EXTRAS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Define the markdown extensions to use.
+
 .. _django.contrib.markup: https://docs.djangoproject.com/en/dev/ref/contrib/markup/
 
