@@ -124,7 +124,7 @@ class PlaceholderEditorAdminMixin(PlaceholderEditorBaseMixin, DynamicInlinesAdmi
     """
     placeholder_inline = PlaceholderEditorInline
 
-    def get_extra_inlines(self, obj=None):
+    def get_extra_inlines(self):
         """
         Return the extra inlines for the placeholder editor.
         It loads the :attr:`placeholder_inline` first, followed by the inlines for the :class:`~fluent_contents.models.ContentItem` classes.

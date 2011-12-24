@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from django.contrib.admin import ModelAdmin
 from django.contrib.admin.util import flatten_fieldsets
 from django.contrib.contenttypes.generic import GenericInlineModelAdmin, generic_inlineformset_factory, BaseGenericInlineFormSet
 from django.contrib.contenttypes.models import ContentType
@@ -10,38 +11,52 @@ class DynamicInlinesAdminMixin(object):
     ModelAdmin mixin to create inlines with a :func:`get_inlines()` method.
     The initialization of the inlines is also delayed, reducing stress on the Django initialization sequence.
     """
+
+    @abstractmethod
+    def get_extra_inlines(self):
+        """
+        Overwrite this method to generate inlines.
+        """
+        raise NotImplementedError("The '{0}' subclass should implement get_extra_inlines()".format(self.__class__.__name__))
+
+
+    # Django 1.3:
+    # Inlines are created once in self.inline_instances
+
     def __init__(self, *args, **kwargs):
         super(DynamicInlinesAdminMixin, self).__init__(*args, **kwargs)
         self._initialized_inlines = False
 
     def get_form(self, request, obj=None, **kwargs):
-        """
-        Lazy initialization of the inlines.
-        """
-        self._get_extra_inlines(obj)   # delayed the initialisation a bit
+        if hasattr(self, 'inline_instances') \
+        and not self._initialized_inlines:
+            # delayed the initialisation a bit
+            # When inlines are dynamically created, calling it too early places more stress on the Django load mechanisms.
+            # This happens with plugin scanning code.
+            #
+            # e.g. load_middleware() -> import xyz.admin.something -> processes __init__.py ->
+            #      admin.site.register(SomethingAdmin) -> Base::__init__() -> start looking for plugins -> ImportError
+            #
+            self.inline_instances += self._get_extra_inline_instances()
+            self._initialized_inlines = True
         return super(DynamicInlinesAdminMixin, self).get_form(request, obj, **kwargs)
 
-    def _get_extra_inlines(self, obj=None):
-        # When inlines are dynamically created, calling it too early places more stress on the Django load mechanisms.
-        # This happens with plugin scanning code.
-        #
-        # e.g. load_middleware() -> import xyz.admin.something -> processes __init__.py ->
-        #      admin.site.register(SomethingAdmin) -> Base::__init__() -> start looking for plugins -> ImportError
-        #
-        if not self._initialized_inlines:
-            inlinetypes = self.get_extra_inlines(obj)
-            for InlineType in inlinetypes:
-                inline_instance = InlineType(self.model, self.admin_site)
-                self.inline_instances.append(inline_instance)
 
-            self._initialized_inlines = True
+    def _get_extra_inline_instances(self):
+        inline_instances = []
+        inlinetypes = self.get_extra_inlines()
+        for InlineType in inlinetypes:
+            inline_instance = InlineType(self.model, self.admin_site)
+            inline_instances.append(inline_instance)
+        return inline_instances
 
-    @abstractmethod
-    def get_extra_inlines(self, obj=None):
-        """
-        Overwrite this method to generate inlines.
-        """
-        raise NotImplementedError("The '{0}' subclass should implement get_extra_inlines()".format(self.__class__.__name__))
+
+    # Django 1.4:
+    # Inlines are created per request
+
+    def get_inline_instances(self, request):
+        inlines = super(DynamicInlinesAdminMixin, self).get_inline_instances(request)
+        return inlines + self._get_extra_inline_instances()
 
 
 

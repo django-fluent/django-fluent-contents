@@ -41,6 +41,5 @@ class PlaceholderAdmin(DynamicInlinesAdminMixin, admin.ModelAdmin):
         return super(PlaceholderAdmin, self).render_change_form(request, context, add, change, form_url, obj)
 
 
-    def get_extra_inlines(self, obj=None):
-        allowed_plugins = obj.get_allowed_plugins() if obj else None
-        return get_content_item_inlines(allowed_plugins, base=ContentItemInline)
+    def get_extra_inlines(self):
+        return get_content_item_inlines(base=ContentItemInline)
