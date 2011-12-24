@@ -19,9 +19,13 @@ def render_placeholder(request, placeholder, parent_object=None):
     items = placeholder.get_content_items(parent_object)
 
     if not items:
-        return "<!-- no items in placeholder '{0}' -->".format(placeholder.slot)
+        html = "<!-- no items in placeholder '{0}' -->".format(placeholder.slot)
     else:
-        return _render_items(request, items)
+        html = _render_items(request, items)
+
+    if is_edit_mode(request):
+        html = _wrap_placeholder_output(html, placeholder)
+    return html
 
 
 def render_content_items(request, items):
@@ -29,19 +33,71 @@ def render_content_items(request, items):
     Render a list of :class:`~fluent_contents.models.ContentItem` objects as HTML string.
     """
     if not items:
-        return "<!-- no items to render -->"
+        html ="<!-- no items to render -->"
     else:
-        return _render_items(request, items)
+        html = _render_items(request, items)
+
+    if is_edit_mode(request):
+        html = _wrap_anonymous_output(html)
+    return html
+
+
+def set_edit_mode(request, state):
+    """
+    Enable the edit mode; placeholders and plugins will be wrapped in a ``<div>`` that exposes metadata for frontend editing.
+    """
+    setattr(request, '_fluent_contents_edit_mode', bool(state))
+
+
+def is_edit_mode(request):
+    """
+    Return whether edit mode is enabled.
+    """
+    return getattr(request, '_fluent_contents_edit_mode', False)
 
 
 def _render_items(request, items):
+    edit_mode = is_edit_mode(request)
+
     output = []
     for contentitem in items:
         try:
             plugin = contentitem.plugin
         except PluginNotFound as e:
-            output.append('<!-- error: {0} -->\n'.format(str(e)))
+            html = '<!-- error: {0} -->\n'.format(str(e))
         else:
-            output.append(plugin._render_contentitem(contentitem, request))
+            html = plugin._render_contentitem(contentitem, request)
+
+        if edit_mode:
+            html = _wrap_contentitem_output(html, contentitem)
+        output.append(html)
 
     return mark_safe(''.join(output))
+
+
+def _wrap_placeholder_output(html, placeholder):
+    return '<div class="cp-editable-placeholder" id="cp-editable-placeholder-{slot}" data-placeholder-id="{id}" data-placeholder-slot="{slot}">' \
+           '{html}' \
+           '</div>\n'.format(
+        html=html,
+        id=placeholder.id,
+        slot=placeholder.slot,
+    )
+
+
+def _wrap_anonymous_output(html):
+    return '<div class="cp-editable-placeholder">' \
+           '{html}' \
+           '</div>\n'.format(
+        html=html,
+    )
+
+
+def _wrap_contentitem_output(html, contentitem):
+    return '<div class="cp-editable-contentitem" data-itemtype="{itemtype}" data-item-id="{id}">' \
+           '{html}' \
+           '</div>\n'.format(
+        html=html,
+        itemtype=contentitem.__class__.__name__,  # Same as ContentPlugin.type_name
+        id=contentitem.id,
+    )
