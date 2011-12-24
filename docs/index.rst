@@ -90,6 +90,18 @@ API documentation
    api/templatetags/placeholder_tags
    api/utils
 
+Roadmap
+=======
+
+The following features are planned:
+
+* Frontend editing support
+* Global / shared placeholders
+* Fieldsets in plugins
+* Caching output of content items in memcached (updated on admin edit).
+* Bridging other plugin systems, like Django CMS
+* Inline support (e.g. building a linklist plugin).
+
 Indices and tables
 ==================
 
