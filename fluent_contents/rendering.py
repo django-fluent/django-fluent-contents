@@ -4,6 +4,7 @@ This can be used when the placeholder content is rendered outside of a template.
 The templatetags also make use of these functions.
 """
 from django.utils.safestring import mark_safe
+from fluent_contents.extensions import PluginNotFound
 
 # This code is separate from the templatetags,
 # so it can be called outside the templates as well.
@@ -36,7 +37,11 @@ def render_content_items(request, items):
 def _render_items(request, items):
     output = []
     for contentitem in items:
-        plugin = contentitem.plugin
-        output.append(plugin._render_contentitem(contentitem, request))
+        try:
+            plugin = contentitem.plugin
+        except PluginNotFound as e:
+            output.append('<!-- error: {0} -->\n'.format(str(e)))
+        else:
+            output.append(plugin._render_contentitem(contentitem, request))
 
     return mark_safe(''.join(output))

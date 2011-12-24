@@ -204,6 +204,13 @@ class PluginAlreadyRegistered(Exception):
     pass
 
 
+class PluginNotFound(Exception):
+    """
+    Raised when the plugin could not be found in the rendering process.
+    """
+    pass
+
+
 class PluginPool(object):
     """
     The central administration of plugins.
@@ -261,7 +268,10 @@ class PluginPool(object):
         self._import_plugins()                       # could happen during rendering that no plugin scan happened yet.
         assert issubclass(model_class, ContentItem)  # avoid confusion between model instance and class here!
 
-        name = self.plugin_for_model[model_class]
+        try:
+            name = self.plugin_for_model[model_class]
+        except KeyError:
+            raise PluginNotFound("No plugin found for model '{0}'.".format(model_class.__name__))
         return self.plugins[name]
 
 
