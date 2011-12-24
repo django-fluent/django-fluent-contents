@@ -36,7 +36,7 @@ Add the following settings to ``settings.py``:
         'fluent_contents.plugins.markup',
     )
 
-    FLUENT_MARKUP_LANGUAGE = 'restructuredtext'
+    FLUENT_MARKUP_LANGUAGES = ['restructuredtext', 'markdown', 'textile']
 
 Depending on the choosen markup language, the required dependency needs to be installed using `pip`:
 
@@ -62,21 +62,18 @@ The following settings are available:
     FLUENT_MARKUP_LANGUAGE = 'restructuredtext'
 
 
-FLUENT_MARKUP_LANGUAGE
+FLUENT_MARKUP_LANGUAGES
 ~~~~~~~~~~~~~~~~~~~~~~
 
 Define which markup language should be used.
 
-The supported values are:
+This is a list/tuple, which can contain the following values:
 
 * *restructuredtext*
 * *markdown*
 * *textile*
 
-The plugin currently assumes that only one type of language will be used;
-that either the pages are written in reStructuredText, Markdown or Textile.
-In case the language is switched, the existing plugin instances will remember
-the markup language they were written in, and keep using that.
+By default, all languages are added.
 
 FLUENT_MARKUP_MARKDOWN_EXTRAS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

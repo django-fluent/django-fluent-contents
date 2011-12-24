@@ -40,7 +40,7 @@ def render_text(text, language=None):
     Render the text, reuses the template filters provided by Django.
     """
     # Get the filter
-    filter = SUPPORTED_LANGUAGES.get(language or appsettings.FLUENT_MARKUP_LANGUAGE)
+    filter = SUPPORTED_LANGUAGES.get(language, None)
     if not filter:
         raise ImproperlyConfigured("markup filter does not exist: {0}. Valid options are: {1}".format(
             language, ', '.join(SUPPORTED_LANGUAGES.keys())

@@ -1,35 +1,104 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from polymorphic.manager import PolymorphicManager
 from fluent_contents.forms import ContentItemForm
 from fluent_contents.models import ContentItem
 from fluent_contents.plugins.markup import appsettings, backend
 
-_configuredlanguageName = backend.LANGUAGE_NAMES.get(appsettings.FLUENT_MARKUP_LANGUAGE)
+LANGUAGE_MODEL_CLASSES = {}
+
+__all__ = [
+    'LANGUAGE_MODEL_CLASSES',
+]
 
 
 class MarkupItemForm(ContentItemForm):
     """
     A custom form that validates the markup.
     """
+    default_language = None
+
     def clean_text(self):
         try:
-            backend.render_text(self.cleaned_data['text'], self.instance.language)
+            backend.render_text(self.cleaned_data['text'], self.instance.language or self.default_language)
         except Exception, e:
             raise ValidationError("There is an error in the markup: %s" % e)
         return self.cleaned_data['text']
+
 
 
 class MarkupItem(ContentItem):
     """
     A snippet of markup (restructuredtext, markdown, or textile) to display at a page.
     """
-
     text = models.TextField(_('markup'))
 
     # Store the language to keep rendering intact while switching settings.
-    language = models.CharField(_('Language'), max_length=30, editable=False, default=appsettings.FLUENT_MARKUP_LANGUAGE, choices=backend.LANGUAGE_CHOICES)
+    language = models.CharField(_('Language'), max_length=30, editable=False, choices=backend.LANGUAGE_CHOICES)
 
     class Meta:
-        verbose_name = _('%s item') % _configuredlanguageName
-        verbose_name_plural = _('%s items') % _configuredlanguageName
+        verbose_name = _('Markup item')
+        verbose_name_plural = _('Markup items')
+
+    def __init__(self, *args, **kwargs):
+        super(MarkupItem, self).__init__(*args, **kwargs)
+
+        # Extra polymorphic!
+        ProxyModelClass = LANGUAGE_MODEL_CLASSES.get(self.language, None)
+        if ProxyModelClass:
+            self.__class__ = ProxyModelClass
+
+
+
+class MarkupLanguageManager(PolymorphicManager):
+    def __init__(self, fixed_language):
+        super(MarkupLanguageManager, self).__init__()
+        self.fixed_language = fixed_language
+
+    def get_query_set(self):
+        return super(MarkupLanguageManager, self).get_query_set().filter(language=self.fixed_language)
+
+
+
+def _create_markup_model(fixed_language):
+    """
+    Create a new MarkupItem model that saves itself in a single language.
+    """
+    title = backend.LANGUAGE_NAMES.get(fixed_language) or fixed_language
+
+    objects = MarkupLanguageManager(fixed_language)
+
+    def save(self, *args, **kwargs):
+        self.language = fixed_language
+        MarkupItem.save(self, *args, **kwargs)
+
+    class Meta:
+        verbose_name = title
+        verbose_name_plural = _('%s items') % title
+        proxy = True
+
+    classname = "{0}MarkupItem".format(fixed_language.capitalize())
+
+    new_class = MarkupItem.__metaclass__(classname, (MarkupItem,), {
+        '__module__': MarkupItem.__module__,
+        'objects': objects,
+        'save': save,
+        'Meta': Meta,
+    })
+
+    # Make easily browsable
+    LANGUAGE_MODEL_CLASSES[fixed_language] = new_class
+    return new_class
+
+
+# Create proxy models for all supported languages. This allows reusage of the same database table.
+# It does not impact the frontend, as django-polymorphic requests the MarkupItem base class (which is then upcasted in __init__()).
+# the admin interface will query the database per language, as it has an inline per plugin type.
+for language in backend.SUPPORTED_LANGUAGES.keys():
+    if language not in appsettings.FLUENT_MARKUP_LANGUAGES:
+        continue
+
+    new_class = _create_markup_model(language)
+    #globals()[new_class.__name__] = new_class
+    #__all__.append(new_class.__name__)

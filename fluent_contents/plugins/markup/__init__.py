@@ -12,15 +12,19 @@ dependencies = {
 
 
 # Do some version checking
-backendapp = dependencies.get(appsettings.FLUENT_MARKUP_LANGUAGE)
-try:
+for language in appsettings.FLUENT_MARKUP_LANGUAGES:
+    backendapp = dependencies.get(language)
     if backendapp:
-        __import__(backendapp)
-except ImportError, e:
-    raise ImportError("The '{0}' package is required to use the '{1}' language for the '{2}' plugin.".format(backendapp, appsettings.FLUENT_MARKUP_LANGUAGE, 'markup'))
+        try:
+            __import__(backendapp)
+        except ImportError, e:
+            raise ImportError("The '{0}' package is required to use the '{1}' language for the '{2}' plugin.".format(backendapp, language, 'markup'))
 
+
+# Second round, check if language is supported.
 from fluent_contents.plugins.markup import backend
-if appsettings.FLUENT_MARKUP_LANGUAGE not in backend.SUPPORTED_LANGUAGES:
-    raise ImproperlyConfigured("markup filter does not exist: %s. Valid options are: %s" % (
-        appsettings.FLUENT_MARKUP_LANGUAGE, ', '.join(backend.SUPPORTED_LANGUAGES.keys())
-    ))
+for language in appsettings.FLUENT_MARKUP_LANGUAGES:
+    if language not in backend.SUPPORTED_LANGUAGES:
+        raise ImproperlyConfigured("markup filter does not exist: %s. Valid options are: %s" % (
+            language, ', '.join(backend.SUPPORTED_LANGUAGES.keys())
+        ))

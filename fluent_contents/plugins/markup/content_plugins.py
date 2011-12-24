@@ -10,13 +10,17 @@ This plugin supports several markup languages:
 """
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import ContentPlugin, plugin_pool
-from fluent_contents.plugins.markup.models import MarkupItem, MarkupItemForm
-from fluent_contents.plugins.markup import backend
+from fluent_contents.plugins.markup.models import MarkupItem, MarkupItemForm, LANGUAGE_MODEL_CLASSES
+from fluent_contents.plugins.markup import backend, appsettings
 
 
-class MarkupPlugin(ContentPlugin):
+class MarkupPluginBase(ContentPlugin):
+    """
+    Base plugin for markup item models.
+    The actual plugins are dynamically created.
+    """
     model = MarkupItem
-    category = _('Programming')
+    category = _('Markup')
     admin_form = MarkupItemForm
     admin_form_template = ContentPlugin.ADMIN_TEMPLATE_WITHOUT_LABELS
 
@@ -31,4 +35,21 @@ class MarkupPlugin(ContentPlugin):
         return '<div class="markup">' + html + '</div>\n'
 
 
-plugin_pool.register(MarkupPlugin)
+# Dynamically create plugins for every language type.
+# Allows adding them separately in the admin, while using the same database table.
+for language, model in LANGUAGE_MODEL_CLASSES.iteritems():
+    if language not in appsettings.FLUENT_MARKUP_LANGUAGES:
+        continue
+
+    admin_form = MarkupItemForm.__metaclass__("{0}MarkupItemForm".format(language.capitalize()), (MarkupItemForm,), {
+        'default_language': language,
+    })
+
+    classname = "{0}MarkupPlugin".format(language.capitalize())
+    PluginClass = MarkupPluginBase.__metaclass__(classname, (MarkupPluginBase,), {
+        'model': model,
+        'admin_form': admin_form,
+    })
+
+    #globals()[classname] = PluginClass
+    plugin_pool.register(PluginClass)

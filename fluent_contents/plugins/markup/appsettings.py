@@ -3,7 +3,8 @@ Settings for the markup item.
 """
 from django.conf import settings
 
-FLUENT_MARKUP_LANGUAGE = getattr(settings, "FLUENT_MARKUP_LANGUAGE", 'restructuredtext')
+# NOTE: The checks whether FLUENT_MARKUP_LANGUAGES contains valid values happens in __init__.py
+FLUENT_MARKUP_LANGUAGES = getattr(settings, "FLUENT_MARKUP_LANGUAGES", ['restructuredtext', 'markdown', 'textile'])
 FLUENT_MARKUP_MARKDOWN_EXTRAS = getattr(settings, "FLUENT_MARKUP_MARKDOWN_EXTRAS", [])
 
 # Experimental:
