@@ -183,7 +183,7 @@ class ContentPlugin(object):
 
 def _import_apps_submodule(submodule):
     """
-    Look for a submodule is a series of packages, e.g. ".ecms_plugins" in all INSTALLED_APPS.
+    Look for a submodule is a series of packages, e.g. ".content_plugins" in all INSTALLED_APPS.
     """
     for app in settings.INSTALLED_APPS:
         try:
