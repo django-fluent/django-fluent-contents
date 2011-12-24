@@ -5,7 +5,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from polymorphic import PolymorphicModel
 from polymorphic.base import PolymorphicModelBase
-from fluent_contents.managers import PlaceholderManager, get_parent_lookup_kwargs
+from fluent_contents.managers import PlaceholderManager, ContentItemManager, get_parent_lookup_kwargs
 
 
 class Placeholder(models.Model):
@@ -163,6 +163,7 @@ class ContentItem(PolymorphicModel):
     The rendering of a `ContentItem` class happens in a :class:`~fluent_contents.extensions.ContentPlugin` class.
     """
     __metaclass__ = ContentItemMetaClass
+    objects = ContentItemManager()
 
     # Note the validation settings defined here are not reflected automatically
     # in the admin interface because it uses a custom ModelForm to handle these fields.

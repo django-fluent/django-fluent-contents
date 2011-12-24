@@ -3,6 +3,7 @@ The manager classes are accessed via ``Placeholder.objects``.
 """
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
+from polymorphic import PolymorphicManager, PolymorphicQuerySet
 
 
 
@@ -33,6 +34,14 @@ class PlaceholderManager(models.Manager):
         parent_attrs = get_parent_lookup_kwargs(parent_object)
         return self.create(slot=slot, **parent_attrs)
 
+
+class ContentItemQuerySet(PolymorphicQuerySet):
+    pass
+
+
+class ContentItemManager(PolymorphicManager):
+    def __init__(self, *args, **kwargs):
+        super(ContentItemManager, self).__init__(queryset_class=ContentItemQuerySet, *args, **kwargs)
 
 
 def get_parent_lookup_kwargs(parent_object):
