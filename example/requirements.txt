@@ -6,6 +6,7 @@
 Django>=1.3.0
 django-mptt==0.5.2
 django-fluent-contents>=0.8.0dev
+django-template-analyzer>=1.0.0
 
 # For code plugin
 Pygments==1.4
