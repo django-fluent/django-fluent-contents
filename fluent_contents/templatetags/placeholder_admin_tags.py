@@ -92,7 +92,7 @@ class GetFirstOfNode(Node):
         if bits[-2] != 'as':
             raise TemplateSyntaxError("Expected syntax: {{% {0} val1 val2 as val %}}".format(bits[0]))
 
-        choices = bits[::-2]
+        choices = bits[1:-2]
         var_name = bits[-1]
         filters = [parser.compile_filter(bit) for bit in choices]
         return cls(filters, var_name)

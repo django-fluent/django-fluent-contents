@@ -16,7 +16,7 @@
   // Pass database data to the cp_admin.js file.
   // Each tab hosts a placeholder pane.
   var placeholders = {% block js_placeholders %}[ {% for inline_admin_form in inline_admin_formset %}{% with form=inline_admin_form.form placeholder=inline_admin_form.original %}{% if not forloop.last %}{% if not forloop.first %}, {% endif %}{
-                      id: {{ placeholder.id|default:"''" }},
+                      id: {% if placeholder and placeholder.id %}{{ placeholder.id }}{% else %}''{% endif %},{# if test added to support TEMPLATE_STRING_IF_INVALID #}
                       slot: '{{ form.slot.value|default:forloop.counter0|escapejs }}',
                       title: '{{ form.title.value|default:"?"|escapejs }}',
                       role: '{{ form.role.value|default:'?' }}',
@@ -57,8 +57,9 @@
     <div id="cp-tabmain" class="module">
       {# all the region tabs #}
       {% for inline_admin_form in inline_admin_formset %}
-        {% getfirstof inline_admin_form.original inline_admin_formset.opts.get_all_allowed_plugins as cp_plugin_list %}
-        {% with placeholder_slot=inline_admin_form.form.slot.value|default_if_none:"__EMPTY__"  placeholder_id=inline_admin_form.original.id %}
+        {% getfirstof inline_admin_form.original.get_allowed_plugins inline_admin_formset.opts.get_all_allowed_plugins as cp_plugin_list %}
+        {% getfirstof inline_admin_form.form.slot.value '__EMPTY__' as placeholder_slot %}
+        {% getfirstof inline_admin_form.original.id '' as placeholder_id %}{# used by pane.html / controls.html #}
         <div class="cp-tab{% if not forloop.last %} cp-region-tab{% endif %}{% if forloop.first %} cp-tab-active{% endif %}" id="{% if forloop.last %}tab-template{% else %}tab-region-{{ placeholder_slot }}{% endif %}">
 
           {% include "admin/fluent_contents/placeholderfield/pane.html" %}
@@ -69,13 +70,11 @@
 
           <!-- placeholder fields -->
           {% if inline_admin_form.has_auto_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
-          {{ inline_admin_form.fk_field.field }}
-
           {% for fieldset in inline_admin_form %}{% for line in fieldset %}{% for adminfield in line %}{{ adminfield.field.as_hidden }}
           {% endfor %}{% endfor %}{% endfor %}
 
         </div>
-      {% endwith %}{% endfor %}
+      {% endfor %}
 
       {# this is a "lost+found" bucket for layout switching #}
       <div class="cp-tab" id="tab-orphaned">
