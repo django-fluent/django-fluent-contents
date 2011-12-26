@@ -30,7 +30,7 @@ _defaultShortlist = (
     'xslt',
 )
 
-FLUENT_CODE_DEFAULT_LANGUAGE = getattr(settings, "FLUENT_CODE_DEFAULT_LANGUAGE", '')
+FLUENT_CODE_DEFAULT_LANGUAGE = getattr(settings, "FLUENT_CODE_DEFAULT_LANGUAGE", 'html')
 FLUENT_CODE_STYLE = getattr(settings, 'FLUENT_CODE_STYLE', 'default')
 FLUENT_CODE_DEFAULT_LINE_NUMBERS = getattr(settings, 'FLUENT_CODE_DEFAULT_LINE_NUMBERS', False)
 FLUENT_CODE_SHORTLIST = getattr(settings, 'FLUENT_CODE_SHORTLIST', _defaultShortlist)

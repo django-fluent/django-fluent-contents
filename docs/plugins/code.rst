@@ -38,7 +38,7 @@ For further tuning however, the following settings are available:
 
 .. code-block:: python
 
-    FLUENT_CODE_DEFAULT_LANGUAGE = 'python'
+    FLUENT_CODE_DEFAULT_LANGUAGE = 'html'
     FLUENT_CODE_DEFAULT_LINE_NUMBERS = False
 
     FLUENT_CODE_STYLE = 'default'
@@ -53,6 +53,7 @@ FLUENT_CODE_DEFAULT_LANGUAGE
 Define which programming language should be selected by default.
 
 This setting is ideally suited to set personal preferences.
+By default this is "HTML", to be neutral.
 
 FLUENT_CODE_DEFAULT_LINE_NUMBERS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
