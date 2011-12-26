@@ -116,4 +116,8 @@ def get_content_item_inlines(plugins=None, base=GenericContentItemInline):
         }
 
         inlines.append(type(name, (base,), attrs))
+
+    # For consistency, enforce ordering
+    inlines.sort(key=lambda inline: inline.name.lower())
+
     return inlines
