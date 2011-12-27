@@ -1,4 +1,4 @@
-{% load threadedcomments_tags debug_tags %}
+{% load threadedcomments_tags %}
 {# get_comment_list for instance.parent as comment_list #}
 
 {% for comment in comment_list|fill_tree|annotate_tree %}
@@ -8,7 +8,7 @@
   {% if comment.open %}<ul>{% endif %}
   <li{% if comment.last %} class="last"{% endif %}>
 
-    {% include "threadedcomments/ecms/comment.html" %}
+    {% include "threadedcomments/fluent_pages/comment.html" %}
 
   {% for close in comment.close %}
       </li>
