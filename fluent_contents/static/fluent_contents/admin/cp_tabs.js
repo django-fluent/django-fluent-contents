@@ -147,9 +147,6 @@ var cp_tabs = {};
     // TODO: this is tricky, temporary there will be two elements with the same ID.
     var name_prefix = inputs.filter('[name$=-__prefix__-id]').attr('name').replace(/-__prefix__-id/, '');
     cp_admin.renumber_formset_item(tab, name_prefix, new_index);
-
-    console.log(inputs);
-
     return tab;
   }
 
