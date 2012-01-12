@@ -124,13 +124,13 @@ class ContentPlugin(object):
         return self.model.objects.all()
 
 
-    def _render_contentitem(self, instance, request):
+    def _render_contentitem(self, request, instance):
         # Internal wrapper for render(), to allow updating the method signature easily.
         # It also happens to really simplify code navigation.
-        return self.render(instance=instance, request=request)
+        return self.render(request=request, instance=instance)
 
 
-    def render(self, instance, request, **kwargs):
+    def render(self, request, instance, **kwargs):
         """
         The rendering/view function that displays a plugin model instance.
 
@@ -144,9 +144,9 @@ class ContentPlugin(object):
         to prevent the item from being displayed right next to the previous plugin.
 
         """
-        render_template = self.get_render_template(instance, request, **kwargs)
+        render_template = self.get_render_template(request, instance, **kwargs)
         if render_template:
-            context = self.get_context(instance, request, **kwargs)
+            context = self.get_context(request, instance, **kwargs)
             return render_to_string(render_template, context, context_instance=PluginContext(request))
         else:
             return unicode(_(u"{No rendering defined for class '%s'}" % self.__class__.__name__))
@@ -160,7 +160,7 @@ class ContentPlugin(object):
                   '<p><strong>%s</strong></p>%s</div>' % (_('Error:'), linebreaks(escape(str(error))))
 
 
-    def get_render_template(self, instance, request, **kwargs):
+    def get_render_template(self, request, instance, **kwargs):
         """
         Return the template to render for the specific model `instance` or `request`,
         By default it uses the ``render_template`` attribute.
@@ -168,7 +168,7 @@ class ContentPlugin(object):
         return self.render_template
 
 
-    def get_context(self, instance, request, **kwargs):
+    def get_context(self, request, instance, **kwargs):
         """
         Return the context to use in the template defined by ``render_template`` (or :func:`get_render_template`).
         By default, it returns the model instance as ``instance`` field in the template.
@@ -238,7 +238,7 @@ class PluginPool(object):
         name = plugin.__name__
         if name in self.plugins:
             raise PluginAlreadyRegistered("[%s] a plugin with this name is already registered" % name)
-        
+
         # Make a single static instance, similar to ModelAdmin.
         plugin_instance = plugin()
         self.plugins[name] = plugin_instance

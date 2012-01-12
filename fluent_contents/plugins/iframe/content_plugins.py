@@ -12,7 +12,7 @@ class IframePlugin(ContentPlugin):
     category = _('Advanced')
 
 
-    def render(self, instance, request, **kwargs):
+    def render(self, request, instance, **kwargs):
         return u'<iframe class="iframe" src="{src}" width="{width}" height="{height}"></iframe>'.format(
             src=escape(instance.src),
             width=instance.width,

@@ -66,7 +66,7 @@ def _render_items(request, items):
         except PluginNotFound as e:
             html = '<!-- error: {0} -->\n'.format(str(e))
         else:
-            html = plugin._render_contentitem(contentitem, request)
+            html = plugin._render_contentitem(request, contentitem)
 
         if edit_mode:
             html = _wrap_contentitem_output(html, contentitem)

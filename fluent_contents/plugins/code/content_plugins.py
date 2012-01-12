@@ -7,7 +7,7 @@ from fluent_contents.plugins.code.models import CodeItem
 from fluent_contents.plugins.code import appsettings, backend
 
 
-class EcmsCodePlugin(ContentPlugin):
+class CodePlugin(ContentPlugin):
     model = CodeItem
     category = _('Programming')
     admin_form_template = "admin/fluent_contents/plugins/code/admin_form.html"
@@ -16,10 +16,10 @@ class EcmsCodePlugin(ContentPlugin):
         css = {'screen': ('fluent_contents/code/code_admin.css',)}
 
 
-    def render(self, instance, request, **kwargs):
+    def render(self, request, instance, **kwargs):
         # Style is not stored in the model,
         # it needs to be a side-wide setting (maybe even in the theme)
         return backend.render_code(instance, style_name=appsettings.FLUENT_CODE_STYLE)
 
 
-plugin_pool.register(EcmsCodePlugin)
+plugin_pool.register(CodePlugin)

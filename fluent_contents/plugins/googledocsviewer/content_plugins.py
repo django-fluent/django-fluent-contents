@@ -21,7 +21,7 @@ class GoogleDocsViewerPlugin(ContentPlugin):
     category = _('Online services')
 
 
-    def render(self, instance, request, **kwargs):
+    def render(self, request, instance, **kwargs):
         url = 'http://docs.google.com/viewer?url={url}&embedded=true'.format(url=urlquote(instance.url, ''))
         return u'<iframe class="googledocsviewer" src="{src}" width="{width}" height="{height}"></iframe>'.format(
             src=escape(url),

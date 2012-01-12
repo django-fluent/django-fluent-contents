@@ -17,7 +17,7 @@ class RawHtmlPlugin(ContentPlugin):
         css = {'screen': ('fluent_contents/plugins/rawhtml/rawhtml_admin.css',)}
 
 
-    def render(self, instance, request, **kwargs):
+    def render(self, request, instance, **kwargs):
         return instance.html
 
 

@@ -21,11 +21,11 @@ class FormDesignerLinkPlugin(ContentPlugin):
     category = _('Interactivity')
 
 
-    def get_render_template(self, instance, request, **kwargs):
+    def get_render_template(self, request, instance, **kwargs):
         return instance.form_definition.form_template_name or self.render_template or form_designer_settings.DEFAULT_FORM_TEMPLATE
 
 
-    def get_context(self, instance, request, **kwargs):
+    def get_context(self, request, instance, **kwargs):
         context = {}
         # The process_form() function is designed with Django CMS in mind,
         # and responds to both the GET and POST request.

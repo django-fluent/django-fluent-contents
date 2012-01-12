@@ -25,7 +25,7 @@ class MarkupPluginBase(ContentPlugin):
     admin_form_template = ContentPlugin.ADMIN_TEMPLATE_WITHOUT_LABELS
 
 
-    def render(self, instance, request, **kwargs):
+    def render(self, request, instance, **kwargs):
         try:
             html = backend.render_text(instance.text, instance.language)
         except Exception, e:

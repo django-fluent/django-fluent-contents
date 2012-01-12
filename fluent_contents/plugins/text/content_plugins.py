@@ -14,7 +14,7 @@ class TextPlugin(ContentPlugin):
         js = ('fluent_contents/plugins/text/text_admin.js',)
         css = {'screen': ('fluent_contents/plugins/text/text_admin.css',)}
 
-    def render(self, instance, request, **kwargs):
+    def render(self, request, instance, **kwargs):
         # Included in a DIV, so the next item will be displayed below.
         return '<div class="text">' + instance.text + '</div>\n'
 

@@ -12,7 +12,7 @@ class GistPlugin(ContentPlugin):
     category = _('Programming')
 
 
-    def render(self, instance, request, **kwargs):
+    def render(self, request, instance, **kwargs):
         url = u'http://gist.github.com/{0}.js'.format(instance.gist_id)
         if instance.filename:
             url += u'?file={0}'.format(urlquote(instance.filename))
