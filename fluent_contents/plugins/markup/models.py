@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.text import truncate_words
 from django.utils.translation import ugettext_lazy as _
 from polymorphic.manager import PolymorphicManager
 from fluent_contents.forms import ContentItemForm
@@ -40,6 +41,9 @@ class MarkupItem(ContentItem):
     class Meta:
         verbose_name = _('Markup item')
         verbose_name_plural = _('Markup items')
+
+    def __unicode__(self):
+        return truncate_words(self.text, 20)
 
     def __init__(self, *args, **kwargs):
         super(MarkupItem, self).__init__(*args, **kwargs)

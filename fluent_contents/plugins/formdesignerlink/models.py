@@ -10,3 +10,6 @@ class FormDesignerLink(ContentItem):
     class Meta:
         verbose_name = _('Form link')
         verbose_name_plural = _('Form links')
+
+    def __unicode__(self):
+        return self.form_definition.title if self.form_definition else u''

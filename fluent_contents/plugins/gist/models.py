@@ -12,3 +12,6 @@ class GistItem(ContentItem):
     class Meta:
         verbose_name = _('GitHub Gist snippet')
         verbose_name_plural = _('GitHub Gist snippets')
+
+    def __unicode__(self):
+        return unicode(self.gist_id)

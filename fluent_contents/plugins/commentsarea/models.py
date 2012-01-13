@@ -9,3 +9,6 @@ class CommentsAreaItem(ContentItem):
     class Meta:
         verbose_name = _('Comments area')
         verbose_name_plural = _('Comments areas')
+
+    def __unicode__(self):
+        return u''

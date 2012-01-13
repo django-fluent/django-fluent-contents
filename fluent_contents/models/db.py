@@ -113,7 +113,7 @@ class ContentItemMetaClass(PolymorphicModelBase):
                 new_class._meta.db_table = "contentitem_%s_%s" % (app_label, model_name)
 
             # Enforce good manners. The name is often not visible, except for the delete page.
-            if not hasattr(new_class, '__unicode__'):
+            if not hasattr(new_class, '__unicode__') or new_class.__unicode__ == ContentItem.__unicode__:
                 raise FieldError("The {0} class should implement a __unicode__() function.".format(name))
 
         return new_class
@@ -190,7 +190,7 @@ class ContentItem(PolymorphicModel):
 
 
     def __unicode__(self):
-        return u"{type}#{id:d} in '{placeholder}'".format(
+        return u"{type} {id:d} in '{placeholder}'".format(
             type=self.polymorphic_ctype or self._meta.verbose_name,
             id=self.id or 0,
             placeholder=self.placeholder
@@ -200,8 +200,8 @@ class ContentItem(PolymorphicModel):
     class Meta:
         app_label = 'fluent_contents'  # required for models subfolder
         ordering = ('placeholder', 'sort_order')
-        verbose_name = _('Contentitem base')
-        verbose_name_plural = _('Contentitem bases')
+        verbose_name = _('Contentitem link')
+        verbose_name_plural = _('Contentitem links')
 
 
     def get_absolute_url(self):

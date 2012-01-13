@@ -9,3 +9,6 @@ class DisqusCommentsAreaItem(ContentItem):
     class Meta:
         verbose_name = _('Disqus comments area')
         verbose_name_plural = _('Disqus comments areas')
+
+    def __unicode__(self):
+        return u''
