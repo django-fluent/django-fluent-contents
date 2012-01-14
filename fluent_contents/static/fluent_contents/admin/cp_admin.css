@@ -77,7 +77,7 @@ html.cp-jsenabled .inline-contentitem-group {
 }
 
 #cp-tabmain .cp-empty {
-  margin: 20px;
+  margin: 10px 5px;
 }
 
 /* ---- Fieldset fixes ---- */
@@ -197,5 +197,5 @@ fieldset.plugin-holder .cp-placeholderfield {
 /* ---- Placeholder pane ---- */
 
 .cp-controls {
-  margin-top: 20px;
+  margin-top: 15px;
 }
