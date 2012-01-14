@@ -5,4 +5,6 @@
 .project
 .pydevproject
 .idea/workspace.xml
+.DS_Store
+dist/
 docs/_build/
