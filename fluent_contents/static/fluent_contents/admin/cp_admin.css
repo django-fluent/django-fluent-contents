@@ -189,3 +189,10 @@ fieldset.plugin-holder .cp-placeholderfield {
   margin: 0;
   padding: 0;
 }
+
+
+/* ---- Placeholder pane ---- */
+
+.cp-controls {
+  margin-top: 20px;
+}
