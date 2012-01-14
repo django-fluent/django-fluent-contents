@@ -88,11 +88,16 @@ html.cp-jsenabled .inline-contentitem-group {
 
 .inline-placeholder-group {
   border: 0;
+  position: relative;
+
+  /* enforce new rendering context, avoid jumpy animations with cp_tabs.hide() / show() */
+  overflow: auto;
+  margin-top: 0;
 }
 
 #cp-tabnav {
   margin: 0;
-  padding: 0;
+  padding: 5px 0 0 0;  /* the extra top space for .inline-placeholder-group */
 }
 
 #cp-tabnav li {
@@ -144,7 +149,7 @@ html.cp-jsenabled .inline-contentitem-group {
 
 #cp-tabmain {
   padding: 10px;
-  margin: 0 0 10px 0;
+  margin: 0;  /* no bottom margin, .inline-placeholder-group already takes care of this */
   border: 1px solid #ccc;
 }
 

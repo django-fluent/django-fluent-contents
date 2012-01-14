@@ -153,25 +153,25 @@ var cp_tabs = {};
 
   cp_tabs.get_container = function()
   {
-    return $("#cp-tabbar");
+    return $(".inline-placeholder-group");
   }
 
 
   cp_tabs.show = function(slow)
   {
     if( slow )
-      $("#cp-tabbar").slideDown();
+      $(".inline-placeholder-group").slideDown();
     else
-      $("#cp-tabbar").show();
+      $(".inline-placeholder-group").show();
   }
 
 
   cp_tabs.hide = function(slow)
   {
     if( slow )
-      $("#cp-tabbar").slideUp();
+      $(".inline-placeholder-group").slideUp();
     else
-      $("#cp-tabbar").hide();
+      $(".inline-placeholder-group").hide();
   }
 
 
