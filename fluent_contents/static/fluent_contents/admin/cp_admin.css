@@ -76,6 +76,9 @@ html.cp-jsenabled .inline-contentitem-group {
   margin: 0.5em 0;
 }
 
+#cp-tabmain .cp-empty {
+  margin: 20px;
+}
 
 /* ---- Fieldset fixes ---- */
 

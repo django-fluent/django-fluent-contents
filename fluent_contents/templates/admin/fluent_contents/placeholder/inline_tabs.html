@@ -62,7 +62,7 @@
         {% getfirstof inline_admin_form.original.id '' as placeholder_id %}{# used by pane.html / controls.html #}
         <div class="cp-tab{% if not forloop.last %} cp-region-tab{% endif %}{% if forloop.first %} cp-tab-active{% endif %}" id="{% if forloop.last %}tab-template{% else %}tab-region-{{ placeholder_slot }}{% endif %}">
 
-          {% include "admin/fluent_contents/placeholderfield/pane.html" %}
+          {% include "admin/fluent_contents/placeholderfield/pane_tabbar.html" %}
 
           {% if inline_admin_form.form.errors %}{# Should never happen, but when it does, this aids debugging #}
             <ul class="errorlist"><li>{{ inline_admin_form.form.errors.as_text|linebreaksbr }}</li></ul>
