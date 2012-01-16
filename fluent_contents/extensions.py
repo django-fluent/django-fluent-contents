@@ -17,6 +17,7 @@ from django.utils.html import linebreaks, escape
 from django.utils.importlib import import_module
 from django.utils.translation import ugettext as _
 from fluent_contents.models import ContentItem
+from threading import Lock
 
 __all__ = ('PluginContext', 'ContentPlugin', 'plugin_pool')
 
@@ -215,6 +216,7 @@ class PluginPool(object):
     """
     The central administration of plugins.
     """
+    scanLock = Lock()
 
     def __init__(self):
         self.plugins = {}
@@ -281,8 +283,18 @@ class PluginPool(object):
         """
         if self.detected:
             return
-        _import_apps_submodule("content_plugins")
-        self.detected = True
+
+        # In some cases, plugin scanning may start during a request.
+        # Make sure there is only one thread scanning for plugins.
+        self.scanLock.acquire()
+        if self.detected:
+            return  # previous threaded released + completed
+
+        try:
+            _import_apps_submodule("content_plugins")
+        finally:
+            self.detected = True
+            self.scanLock.release()
 
 #: The global plugin pool, a instance of the :class:`PluginPool` class.
 plugin_pool = PluginPool()
