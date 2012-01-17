@@ -53,8 +53,10 @@ def get_parent_lookup_kwargs(parent_object):
             parent_type__isnull=True,
             parent_id=0
         )
-    else:
+    elif isinstance(parent_object, models.Model):
         return dict(
             parent_type=ContentType.objects.get_for_model(parent_object),
             parent_id=parent_object.pk,
         )
+    else:
+        raise ValueError("parent_object is not a model!")
