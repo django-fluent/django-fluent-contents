@@ -5,13 +5,13 @@ from django.template.loader import get_template
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from mptt.admin import MPTTModelAdmin
-from fluent_contents.admin import PlaceholderEditorAdminMixin
+from fluent_contents.admin import PlaceholderEditorAdmin
 from fluent_contents.analyzer import get_template_placeholder_data
 from simplecms import appconfig
 from simplecms.models import Page
 
 
-class PageAdmin(PlaceholderEditorAdminMixin, MPTTModelAdmin):
+class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
     """
     Administration screen for pages
     """

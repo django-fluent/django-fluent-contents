@@ -6,7 +6,7 @@ to build an end user CMS for the `Django <http://www.djangoproject.com>`_ admini
 django-fluent-contents includes:
 
 * A ``PlaceholderField`` to display various content on a model.
-* A ``PlaceholderAdminMixin`` to build CMS interfaces.
+* A ``PlaceholderEditorAdmin`` to build CMS interfaces.
 * A default set of plugins to display WYSIWYG content, reStructuredText, highlighted code, Gist snippets and more.
 * an extensible plugin API.
 

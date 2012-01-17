@@ -74,7 +74,7 @@ The most simply way, is adding a :class:`~fluent_contents.models.fields.Placehol
             return self.title
 
 
-Make sure the admin screen uses either the :class:`~fluent_contents.admin.placeholderfield.PlaceholderFieldAdmin` or :class:`~fluent_contents.admin.placeholderfield.PlaceholderFieldAdminMixin` class.
+Make sure the admin screen the :class:`~fluent_contents.admin.placeholderfield.PlaceholderFieldAdmin` class.
 This makes sure additional inlines are added the the admin screen:
 
 .. code-block:: python

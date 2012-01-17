@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.utils.functional import curry
 from fluent_contents import extensions
 from fluent_contents.admin.contentitems import get_content_item_inlines
-from fluent_contents.admin.genericextensions import ExtensibleGenericInline, BaseInitialGenericInlineFormSet, DynamicInlinesAdminMixin
+from fluent_contents.admin.genericextensions import ExtensibleGenericInline, BaseInitialGenericInlineFormSet, DynamicInlinesModelAdmin
 from fluent_contents.models import Placeholder
 
 
@@ -117,7 +117,7 @@ class PlaceholderEditorBaseMixin(object):
 
 
 
-class PlaceholderEditorAdminMixin(PlaceholderEditorBaseMixin, DynamicInlinesAdminMixin):
+class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, DynamicInlinesModelAdmin):
     """
     The base functionality for ``ModelAdmin`` dialogs to display a placeholder editor with plugins.
     It loads the inlines using :func:`get_extra_inlines`.
@@ -130,12 +130,3 @@ class PlaceholderEditorAdminMixin(PlaceholderEditorBaseMixin, DynamicInlinesAdmi
         It loads the :attr:`placeholder_inline` first, followed by the inlines for the :class:`~fluent_contents.models.ContentItem` classes.
         """
         return [self.placeholder_inline] + get_content_item_inlines(plugins=self.get_all_allowed_plugins())
-
-
-
-class PlaceholderEditorAdmin(PlaceholderEditorAdminMixin, admin.ModelAdmin):
-    """
-    Base class for ``ModelAdmin`` instaces to display the placeholder editor.
-    The class is built up with a :class:`PlaceholderEditorAdminMixin` mixin, allowing inheritance from the ``MPTTModelAdmin`` class instead.
-    """
-    pass

@@ -13,13 +13,12 @@ Each class also has a mixin version, in case a different base class is already u
 (e.g. the `MPTTModelAdmin` class from `django-mptt <https://github.com/django-mptt/django-mptt>`_)
 """
 from django.contrib import admin
-from fluent_contents.admin.placeholdereditor import PlaceholderEditorAdminMixin, PlaceholderEditorAdmin, PlaceholderEditorInline, PlaceholderEditorBaseMixin
-from fluent_contents.admin.placeholderfield import PlaceholderFieldAdmin, PlaceholderFieldAdminMixin
+from fluent_contents.admin.placeholdereditor import PlaceholderEditorAdmin, PlaceholderEditorInline, PlaceholderEditorBaseMixin
+from fluent_contents.admin.placeholderfield import PlaceholderFieldAdmin
 from fluent_contents.admin.contentitems import get_content_item_inlines
 
 __all__ = (
-    'PlaceholderEditorAdminMixin', 'PlaceholderEditorAdmin', 'PlaceholderEditorInline', 'PlaceholderEditorBaseMixin',
-    'PlaceholderFieldAdmin', 'PlaceholderFieldAdminMixin',
+    'PlaceholderEditorAdmin', 'PlaceholderEditorInline', 'PlaceholderEditorBaseMixin', 'PlaceholderFieldAdmin',
     'get_content_item_inlines',
 )
 

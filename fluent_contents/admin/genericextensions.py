@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.functional import curry
 
 
-class DynamicInlinesAdminMixin(object):
+class DynamicInlinesModelAdmin(ModelAdmin):
     """
     ModelAdmin mixin to create inlines with a :func:`get_inlines()` method.
     The initialization of the inlines is also delayed, reducing stress on the Django initialization sequence.
@@ -24,7 +24,7 @@ class DynamicInlinesAdminMixin(object):
     # Inlines are created once in self.inline_instances
 
     def __init__(self, *args, **kwargs):
-        super(DynamicInlinesAdminMixin, self).__init__(*args, **kwargs)
+        super(DynamicInlinesModelAdmin, self).__init__(*args, **kwargs)
         self._initialized_inlines = False
 
     def get_form(self, request, obj=None, **kwargs):
@@ -39,7 +39,7 @@ class DynamicInlinesAdminMixin(object):
             #
             self.inline_instances += self._get_extra_inline_instances()
             self._initialized_inlines = True
-        return super(DynamicInlinesAdminMixin, self).get_form(request, obj, **kwargs)
+        return super(DynamicInlinesModelAdmin, self).get_form(request, obj, **kwargs)
 
 
     def _get_extra_inline_instances(self):
@@ -55,7 +55,7 @@ class DynamicInlinesAdminMixin(object):
     # Inlines are created per request
 
     def get_inline_instances(self, request):
-        inlines = super(DynamicInlinesAdminMixin, self).get_inline_instances(request)
+        inlines = super(DynamicInlinesModelAdmin, self).get_inline_instances(request)
         return inlines + self._get_extra_inline_instances()
 
 

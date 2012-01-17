@@ -68,15 +68,16 @@ in the template.
 Variation for django-mptt
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Since most CMS systems are built with django-mptt_, which requires a different base class,
-the :class:`~fluent_contents.admin.PlaceholderEditorAdminMixin` can be used instead:
+For CMS systems that are built with django-mptt_,
+the same :class:`~fluent_contents.admin.PlaceholderEditorAdmin` can be used
+thanks to the MRO (Method Resolution Order) that Python uses:
 
 .. code-block:: python
 
     from mptt.admin import MPTTModelAdmin
-    from fluent_contents.admin import PlaceholderEditorAdminMixin
+    from fluent_contents.admin import PlaceholderEditorAdmin
 
-    class PageAdmin(PlaceholderEditorAdminMixin, MPTTModelAdmin):
+    class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
 
         # Same code as above
 

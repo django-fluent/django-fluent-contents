@@ -1,6 +1,6 @@
 from django.contrib import admin
 from fluent_contents import extensions
-from fluent_contents.admin.placeholdereditor import PlaceholderEditorInline, PlaceholderEditorAdminMixin
+from fluent_contents.admin.placeholdereditor import PlaceholderEditorInline, PlaceholderEditorAdmin
 from fluent_contents.models import PlaceholderData
 from fluent_contents.models.fields import PlaceholderField
 
@@ -12,9 +12,12 @@ class PlaceholderFieldInline(PlaceholderEditorInline):
     template = "admin/fluent_contents/placeholderfield/inline_init.html"
 
 
-class PlaceholderFieldAdminMixin(PlaceholderEditorAdminMixin):
+class PlaceholderFieldAdmin(PlaceholderEditorAdmin):
     """
     The base functionality for ``ModelAdmin`` dialogs to display placeholder fields.
+
+    This class loads the :class:`~fluent_contents.models.ContentItem` inlines,
+    and initializes the frontend editor for the :class:`~fluent_contents.models.PlaceholderField`.
     """
     placeholder_inline = PlaceholderFieldInline
 
@@ -57,12 +60,3 @@ class PlaceholderFieldAdminMixin(PlaceholderEditorAdminMixin):
                 plugins += field.plugins
 
         return list(set(plugins))
-
-
-class PlaceholderFieldAdmin(PlaceholderFieldAdminMixin, admin.ModelAdmin):
-    """
-    Base class for ``ModelAdmin`` instances that loads the :class:`~fluent_contents.models.ContentItem` inlines
-    which the :class:`~fluent_contents.models.PlaceholderField` displays.
-    The class is built up with a :class:`PlaceholderFieldAdminMixin` mixin, allowing inheritance from the ``MPTTModelAdmin`` class instead.
-    """
-    pass
