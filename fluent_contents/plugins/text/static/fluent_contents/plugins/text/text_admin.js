@@ -33,7 +33,7 @@
   function enable_wysiwyg(root)
   {
     init_wysiwyg();
-    var textareas = root.find("textarea.vLargeTextField:not([id=~__prefix__])").debug();
+    var textareas = root.find("textarea.vLargeTextField:not([id=~__prefix__])");
 
     if( ! django_wysiwyg.is_loaded() )
     {
