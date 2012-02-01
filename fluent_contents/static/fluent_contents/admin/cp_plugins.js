@@ -349,6 +349,17 @@ var cp_plugins = {};
     {
       cp_plugins.update_sort_order(panes[i]);
     }
+
+    // Validate
+    for(var i = 0; i < panes.length; i++)
+    {
+      if( ! cp_plugins.validate_placeholder_forms(panes[i]) )
+      {
+        alert("Internal CMS error: error in placeholder data found. Not saving results");
+        event.preventDefault();
+        return false;
+      }
+    }
   }
 
 
@@ -360,6 +371,26 @@ var cp_plugins = {};
     {
       sort_order[i].value = i;
     }
+  }
+
+
+  cp_plugins.validate_placeholder_forms = function(tab)
+  {
+    var desired_id = tab.placeholder.id;
+    var desired_slot = tab.placeholder.slot;
+    var inputs = tab.content.find('input[type=hidden]');
+    var ids = inputs.filter('[id$=-placeholder]');
+    var slots = inputs.filter('[id$=-placeholder_slot]');
+    if( ids.length != slots.length )
+      return false;
+
+    for( var i = 0; i < ids.length; i++ )
+    {
+      var id = ids[i].value, slot = slots[i].value;
+      if( id != desired_id || (slot != desired_slot && !(slot == '' && id)) )
+        return false;
+    }
+    return true;
   }
 
 
