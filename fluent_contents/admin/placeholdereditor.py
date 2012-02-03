@@ -22,7 +22,7 @@ class PlaceholderEditorInline(ExtensibleGenericInline):
     or :class:`~fluent_contents.admin.PlaceholderFieldAdmin` this will be setup already.
     """
     model = Placeholder
-    formset = BaseInitialGenericInlineFormSet
+    formset = BaseInitialGenericInlineFormSet  # Important part of the class!
     ct_field = 'parent_type'
     ct_fk_field = 'parent_id'
     template = "admin/fluent_contents/placeholder/inline_tabs.html"
@@ -67,20 +67,13 @@ class PlaceholderEditorInline(ExtensibleGenericInline):
 
             # Grab the initial data from the parent PlaceholderEditorBaseMixin
             data = placeholder_admin.get_placeholder_data(request, obj)
-            initial = self._get_initial_from_placeholderdata(data)
+            initial = [d.as_dict() for d in data]
 
         # Inject as default parameter to the constructor
         # This is the BaseExtendedGenericInlineFormSet constructor
         formset = super(PlaceholderEditorInline, self).get_formset(request, obj, **kwargs)
         formset.__init__ = curry(formset.__init__, initial=initial)
         return formset
-
-
-    def _get_initial_from_placeholderdata(self, data):
-        # data = list(PlaceholderData)
-        return [d.as_dict()
-            for d in data
-        ]
 
 
     def _get_parent_modeladmin(self):

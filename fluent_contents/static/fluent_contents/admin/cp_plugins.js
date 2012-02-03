@@ -272,7 +272,7 @@ var cp_plugins = {};
 
     var fs_item = $("#" + item_id);
     if( fs_item.length == 0 )
-      throw new Error("New FormSetItem not found: #" + item_id)
+      throw new Error("New FormSetItem not found: #" + item_id);
 
     // Update administration
     dom_placeholder.items.push(fs_item);
@@ -284,7 +284,7 @@ var cp_plugins = {};
   }
 
 
-  cp_plugins._set_pageitem_data = function(fs_item, placeholder, new_index)
+  cp_plugins._set_pageitem_data = function(fs_item, placeholder, new_sort_index)
   {
     // Currently redetermining group_prefix, avoid getting fs_item to go out of sync with different call paths.
     var current_item = cp_data.get_formset_item_data(fs_item);
@@ -293,7 +293,7 @@ var cp_plugins = {};
 
     $("#" + field_prefix + "-placeholder").val(placeholder.id);
     $("#" + field_prefix + "-placeholder_slot").val(placeholder.slot);
-    $("#" + field_prefix + "-sort_order").val(new_index);
+    $("#" + field_prefix + "-sort_order").val(new_sort_index);
   }
 
 

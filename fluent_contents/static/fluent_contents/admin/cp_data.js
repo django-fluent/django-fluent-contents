@@ -21,8 +21,8 @@ var cp_data = {};
   // Public initialisation functions
   cp_data.set_placeholders = function(data) { cp_data.placeholders = data; if( ! cp_data.initial_placeholders ) cp_data.initial_placeholders = data; };
   cp_data.set_content_item_types = function(data) { cp_data.itemtypes = data; };
-  cp_data.get_placeholders = function(data) { return cp_data.placeholders; };
-  cp_data.get_initial_placeholders = function(data) { return cp_data.initial_placeholders; };
+  cp_data.get_placeholders = function() { return cp_data.placeholders; };
+  cp_data.get_initial_placeholders = function() { return cp_data.initial_placeholders; };
 
 
   /**
