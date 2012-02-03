@@ -130,7 +130,7 @@ class PagePlaceholderNode(Node):
 
         slot = self.get_slot()
         if slot is not None:
-            return slot.capitalize()
+            return slot.replace('_', ' ').title()
 
         return None
 
