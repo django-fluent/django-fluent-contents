@@ -1,10 +1,23 @@
 from abc import abstractmethod
-from django.contrib import admin
 from django.utils.functional import curry
 from fluent_contents import extensions
 from fluent_contents.admin.contentitems import get_content_item_inlines
 from fluent_contents.admin.genericextensions import ExtensibleGenericInline, BaseInitialGenericInlineFormSet, DynamicInlinesModelAdmin
 from fluent_contents.models import Placeholder
+
+
+class PlaceholderInlineFormSet(BaseInitialGenericInlineFormSet):
+    # Most logic happens in the generic base class
+
+    def __init__(self, *args, **kwargs):
+        #kwargs['prefix'] = 'placeholder_fs'
+        super(PlaceholderInlineFormSet, self).__init__(*args, **kwargs)
+
+    @classmethod
+    def get_default_prefix(cls):
+        # Make output less verbose, easier to read, and less kB to transmit.
+        return 'placeholder-fs'
+
 
 
 class PlaceholderEditorInline(ExtensibleGenericInline):
@@ -22,7 +35,7 @@ class PlaceholderEditorInline(ExtensibleGenericInline):
     or :class:`~fluent_contents.admin.PlaceholderFieldAdmin` this will be setup already.
     """
     model = Placeholder
-    formset = BaseInitialGenericInlineFormSet  # Important part of the class!
+    formset = PlaceholderInlineFormSet  # Important part of the class!
     ct_field = 'parent_type'
     ct_fk_field = 'parent_id'
     template = "admin/fluent_contents/placeholder/inline_tabs.html"

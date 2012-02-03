@@ -44,6 +44,13 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
                 form.cleaned_data['placeholder'] = desired_placeholder
 
 
+    @classmethod
+    def get_default_prefix(cls):
+        # Make output less verbose, easier to read, and less kB to transmit.
+        opts = cls.model._meta
+        return opts.object_name.lower()
+
+
 
 class ContentItemInlineMixin(object):
     """
