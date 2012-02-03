@@ -14,7 +14,7 @@ var cp_tabs = {};
 
   // Allow debugging
   var stub = function() {};
-  var console = window.console || {'log': stub, 'error': stub};
+  var console = window.console || {'log': stub, 'error': stub, 'warn': stub};
 
 
   cp_tabs.init = function()
@@ -74,25 +74,39 @@ var cp_tabs = {};
 
     // Cache globally
     console.log("Received placeholders: ", layout.placeholders, "dom_regions=", cp_data.dom_placeholders );
+    var dbplaceholders = cp_data.get_initial_placeholders();
     var oldplaceholders = cp_data.get_placeholders();
     var newplaceholders = layout.placeholders;
     var placeholders = [];
 
+    // Create map of old IDs
+    var dbplaceholderids = {};
+    for( var i = 0, len = dbplaceholders.length; i < len; i++ )
+      dbplaceholderids[dbplaceholders[i].slot] = dbplaceholders[i].id;
+
     // Create the appropriate tabs for the regions.
-    for( var i = 0, len = newplaceholders.length; i < len; i++ )
+    var id_index  = 0;                           // Items with ID's must be the first items.
+    var new_index = newplaceholders.length - 1;  // Unknown how many ID's are reused, start at end.
+    for( i = 0, len = newplaceholders.length; i < len; i++ )
     {
       var placeholder = newplaceholders[i];
+      var placeholder_id = dbplaceholderids[placeholder.slot] || '';
 
       // Prepare data for administration
-      // Reuse old ID's when possible, give the placeholder a new meaning.
+      // Reuse old ID's when possible.
       placeholder.domnode = "tab-region-" + placeholder.slot;
       placeholder.role = placeholder.role || 'm';
-      placeholder.id = (i < oldplaceholders.length ? oldplaceholders[i].id : '');
+      placeholder.id = placeholder_id;
       placeholders.push(placeholder);
 
       // Create DOM nodes
       loading_tab.before( cp_tabs._create_tab_title(placeholder) );
-      tabmain.append( cp_tabs._create_tab_content(placeholder, i) );
+      tabmain.append( cp_tabs._create_tab_content(placeholder, ( placeholder_id ? id_index : new_index )) );
+
+      if( placeholder_id )
+        id_index++;
+      else
+        new_index--;
     }
 
     // Update administration
@@ -135,13 +149,17 @@ var cp_tabs = {};
         'data-placeholder-slot': placeholder.slot
     });
 
-    // Restore placeholder DOM information (id, slot, name, title) from placeholder object.
+    // Set placeholder form fields (id, slot, name, title) from placeholder object.
     var inputs = tab.children('input[name*=__prefix__]');
     for( var i = 0; i < inputs.length; i++ )
     {
       var name = inputs[i].name;
       var fieldname = name.substring(name.lastIndexOf('-') + 1);
-      inputs[i].value = placeholder[fieldname];
+
+      if( fieldname == 'id' && ! placeholder.id)
+        inputs.eq(i).removeAttr('value');
+      else
+        inputs[i].value = placeholder[fieldname];
     }
 
     // TODO: this is tricky, temporary there will be two elements with the same ID.
@@ -217,21 +235,36 @@ var cp_tabs = {};
   {
     // Remove old placeholders
     var tabmain = $("#cp-tabmain");
-    var dbplaceholders = cp_data.get_initial_placeholders();
     var dbamount = parseInt($("#" + placeholder_id_prefix + "-INITIAL_FORMS").val());
-    var newamount = tabmain.children('.cp-region-tab').length;
 
-    // Old indexes are reused,
-    // only remove additional tabs.
-    tabmain.children('.cp-placeholder-delete, .cp-placeholder-delete').remove();
-    for( var i = newamount; i < dbamount; i++ )
+    // Build an index of new placeholder IDs
+    var dbplaceholders = cp_data.get_initial_placeholders();
+    var newplaceholders = cp_data.get_placeholders();
+    var reused_ids = {};
+    for( var i = 0; i < newplaceholders.length; i++)
     {
-      var name = placeholder_group_prefix + '-' + i;
+      if( newplaceholders[i].id )
+        reused_ids[newplaceholders[i].id] = true;
+    }
+
+    var newamount = newplaceholders.length;
+    if( tabmain.children('.cp-region-tab').length != newamount )
+      console.warn("_update_placeholder_forms() - newamount != tabs.length");
+
+    // Old placeholder ID's are reused.
+    // Remove the ones which are no longer available.
+    tabmain.children('.cp-placeholder-delete, .cp-placeholder-delete').remove();
+    for( var i = 0; i < dbplaceholders.length; i++ )
+    {
       var id = dbplaceholders[i].id;
-      tabmain.prepend(
-          '<input type="checkbox" class="cp-placeholder-delete" name="' + name + '-DELETE" checked="checked" />' +
-              '<input type="hidden" class="cp-placeholder-delete" name="' + name + '-id" value="' + id + '" />'
-      );
+      if( !reused_ids[id] )
+      {
+        var name = placeholder_group_prefix + '-' + newamount++;
+        tabmain.prepend(
+            '<input type="checkbox" class="cp-placeholder-delete" name="' + name + '-DELETE" checked="checked" />' +
+                '<input type="hidden" class="cp-placeholder-delete" name="' + name + '-id" value="' + id + '" />'
+        );
+      }
     }
 
     // Total forms should also incorporate deleted records, so always be >= dbamount
