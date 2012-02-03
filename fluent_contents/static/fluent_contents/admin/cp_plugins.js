@@ -187,7 +187,7 @@ var cp_plugins = {};
     // Don't restore the special fields,
     // The add_action could move the formset item, and this update it.
     var ignoreFields = ['placeholder', 'placeholder_slot', 'sort_order'];
-    var ignoreTest = function(name) { return jQuery.inArray(name.substring(name.lastIndexOf('-')+1), ignoreFields) != -1; };
+    var ignoreTest = function(name) { return $.inArray(name.substring(name.lastIndexOf('-')+1), ignoreFields) != -1; };
 
     // Remove the item.
     cp_plugins.disable_pageitem(fs_item);   // needed for WYSIWYG editors!
