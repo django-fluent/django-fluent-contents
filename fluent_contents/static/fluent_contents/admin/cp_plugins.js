@@ -182,18 +182,23 @@ var cp_plugins = {};
    */
   cp_plugins._move_item_to = function( fs_item, add_action )
   {
-    var itemId  = fs_item.attr("id");
+    var itemId = fs_item.attr("id");
+
+    // Don't restore the special fields,
+    // The add_action could move the formset item, and this update it.
+    var ignoreFields = ['placeholder', 'placeholder_slot', 'sort_order'];
+    var ignoreTest = function(name) { return jQuery.inArray(name.substring(name.lastIndexOf('-')+1), ignoreFields) != -1; };
 
     // Remove the item.
     cp_plugins.disable_pageitem(fs_item);   // needed for WYSIWYG editors!
-    var values = cp_plugins._get_input_values(fs_item);
+    var values = cp_plugins._get_input_values(fs_item, ignoreTest);
     add_action( fs_item.remove() );
 
     // Fetch the node reference as it was added to the DOM.
     fs_item = $("#" + itemId);
 
     // Re-enable the item
-    cp_plugins._set_input_values(fs_item, values);
+    cp_plugins._set_input_values(fs_item, values, ignoreTest);
     cp_plugins.enable_pageitem(fs_item);
 
     // Return to allow updating the administration
@@ -201,29 +206,40 @@ var cp_plugins = {};
   }
 
 
-  cp_plugins._get_input_values = function(root)
+  cp_plugins._get_input_values = function(root, ignoreTestFunc)
   {
     var inputs = root.find(":input");
     var values = {};
     for(var i = 0; i < inputs.length; i++)
     {
-      var input = inputs.eq(i);
-      values[input.attr("name")] = input.val();
+      var input = inputs.eq(i)
+        , name = input.attr("name");
+
+      if( !ignoreTestFunc || !ignoreTestFunc(name) )
+        values[name] = input.val();
     }
 
     return values;
   }
 
 
-  cp_plugins._set_input_values = function(root, values)
+  cp_plugins._set_input_values = function(root, values, ignoreTestFunc)
   {
     var inputs = root.find(":input");
     for(var i = 0; i < inputs.length; i++)
     {
-      var input = inputs.eq(i);
-      var value = values[input.attr("name")];
-      if(value != null)
-        input.val(value);
+      var input = inputs.eq(i)
+        , name = input.attr("name");
+
+      if( values.hasOwnProperty(name)
+       && (!ignoreTestFunc || !ignoreTestFunc(name)) )
+      {
+        var value = values[name];
+        if(value == null)
+          input.removeAttr('value');
+        else
+          input.val(value);
+      }
     }
   }
 
