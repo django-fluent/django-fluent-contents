@@ -95,6 +95,8 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
             except IndexError:
                 try:
                     # Adding new object, pass initial values
+                    # TODO: initial should be connected to proper instance ordering.
+                    # currently this works, because the client handles all details for layout switching.
                     values = self._initial[i]
                     values[self.ct_field.name] = ContentType.objects.get_for_model(self.instance)
                     values[self.ct_fk_field.name] = self.instance.pk
