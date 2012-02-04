@@ -71,6 +71,8 @@ def page_placeholder(parser, token):
 
         {% page_placeholder currentpage "slotname" title="Tab title" role="main %}
 
+    If the currentpage variable is named ``page``, it can be left out.
+
     The extra information can be extracted with the
     :func:`~PagePlaceholderNode.get_title` and :func:`~PagePlaceholderNode.get_role`
     functions of the :class:`~PagePlaceholderNode` class.
@@ -105,13 +107,17 @@ class PagePlaceholderNode(Node):
 
         if len(arg_bits) == 2:
             (parent, slot) = arg_bits
-            return cls(
-                parent_expr=parser.compile_filter(parent),
-                slot_expr=parser.compile_filter(slot),
-                meta_kwargs=kwarg_bits
-            )
+        elif len(arg_bits) == 1:
+            # Allow 'page' by default. Works with most CMS'es, including django-fluent-pages.
+            (parent, slot) = ('page', arg_bits[0])
         else:
             raise TemplateSyntaxError("""{0} tag allows two arguments: 'parent object' 'slot name' and optionally: title=".." role="..".""".format(bits[0]))
+
+        return cls(
+            parent_expr=parser.compile_filter(parent),
+            slot_expr=parser.compile_filter(slot),
+            meta_kwargs=kwarg_bits
+        )
 
 
     def get_slot(self):
