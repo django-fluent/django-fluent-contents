@@ -92,6 +92,9 @@ class ContentPlugin(object):
     #: An optional template which is included in the admin interface, to initialize components (e.g. JavaScript)
     admin_init_template = None
 
+    #: The fieldsets for the admin view.
+    admin_fieldsets = None
+
     #: The template to render the frontend HTML output.
     render_template = None
 

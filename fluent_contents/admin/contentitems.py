@@ -1,3 +1,4 @@
+from django.contrib.admin.options import InlineModelAdmin
 from django.contrib.contenttypes.generic import BaseGenericInlineFormSet
 from django.contrib.contenttypes.models import ContentType
 from fluent_contents import extensions
@@ -52,7 +53,7 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
 
 
 
-class ContentItemInlineMixin(object):
+class ContentItemInlineMixin(InlineModelAdmin):
     """
     Base functionality for a ContentItem inline.
     This class can be mixed with a regular `InlineModelAdmin` or `GenericInlineModelAdmin`.
@@ -65,8 +66,12 @@ class ContentItemInlineMixin(object):
     # overwritten by subtype
     name = None
     plugin = None
+    extra_fieldsets = None
     type_name = None
     cp_admin_form_template = None
+
+    # Extra settings
+    base_fields = ('placeholder', 'placeholder_slot', 'sort_order',)  # base fields in ContentItemForm
 
 
     def __init__(self, *args, **kwargs):
@@ -80,6 +85,14 @@ class ContentItemInlineMixin(object):
         if self.plugin:
             media += self.plugin.media  # form fields first, plugin afterwards
         return media
+
+
+    def get_fieldsets(self, request, obj=None):
+        # If subclass declares fieldsets, this is respected
+        if not self.extra_fieldsets or self.declared_fieldsets:
+            return super(ContentItemInlineMixin, self).get_fieldsets(request, obj)
+
+        return ((None, {'fields': self.base_fields}),) + self.extra_fieldsets
 
 
 class GenericContentItemInline(ContentItemInlineMixin, ExtensibleGenericInline):
@@ -118,6 +131,7 @@ def get_content_item_inlines(plugins=None, base=GenericContentItemInline):
             'name': plugin.verbose_name,
             'plugin': plugin,
             'type_name': plugin.type_name,
+            'extra_fieldsets': plugin.admin_fieldsets,
             'cp_admin_form_template': plugin.admin_form_template,
             'cp_admin_init_template': plugin.admin_init_template,
         }
