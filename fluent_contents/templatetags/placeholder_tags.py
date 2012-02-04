@@ -34,7 +34,8 @@ register = Library()
 
 kwarg_re = re.compile('^(?P<name>\w+)=')
 
-def _split_token_args(bits, parser, compile_args=False, compile_kwargs=False):
+def split_token_args(bits, parser, compile_args=False, compile_kwargs=False):
+    # NOTE: This function is also used by fluent_pages.pagetypes.fluentpage.templatetags.fluentpage
     expect_kwarg = False
     args = []
     kwargs = {}
@@ -63,19 +64,18 @@ def page_placeholder(parser, token):
     .. code-block:: html+django
 
         {% page_placeholder currentpage "slotname"  %}
-    """
-    bits = token.split_contents()
-    arg_bits, kwarg_bits = _split_token_args(bits, parser)
 
-    if len(arg_bits) == 2:
-        (parent, slot) = arg_bits
-        return PagePlaceholderNode(
-            parent_expr=parser.compile_filter(parent),
-            slot_expr=parser.compile_filter(slot),
-            meta_kwargs=kwarg_bits
-        )
-    else:
-        raise TemplateSyntaxError("""{0} tag allows two arguments: 'slotname' 'parent-object' and optionally: title=".." role="..".""".format(bits[0]))
+    Additionally, extra meta information can be provided for the admin interface.
+
+    .. code-block:: html+django
+
+        {% page_placeholder currentpage "slotname" title="Tab title" role="main %}
+
+    The extra information can be extracted with the
+    :func:`~PagePlaceholderNode.get_title` and :func:`~PagePlaceholderNode.get_role`
+    functions of the :class:`~PagePlaceholderNode` class.
+    """
+    return PagePlaceholderNode.parse(parser, token)
 
 
 class PagePlaceholderNode(Node):
@@ -93,6 +93,25 @@ class PagePlaceholderNode(Node):
         for key in meta_kwargs.keys():
             if key not in ('title', 'role'):
                 raise TemplateSyntaxError("Unsupported meta argument: {0}".format(key))
+
+
+    @classmethod
+    def parse(cls, parser, token):
+        """
+        Parse the node: {% page_placeholder parentobj slotname title="test" role="m" %}
+        """
+        bits = token.split_contents()
+        arg_bits, kwarg_bits = split_token_args(bits, parser)
+
+        if len(arg_bits) == 2:
+            (parent, slot) = arg_bits
+            return cls(
+                parent_expr=parser.compile_filter(parent),
+                slot_expr=parser.compile_filter(slot),
+                meta_kwargs=kwarg_bits
+            )
+        else:
+            raise TemplateSyntaxError("""{0} tag allows two arguments: 'parent object' 'slot name' and optionally: title=".." role="..".""".format(bits[0]))
 
 
     def get_slot(self):
@@ -170,11 +189,7 @@ def render_placeholder(parser, token):
         {% render_placeholder "slotname" %}{# for global objects. #}
         {% render_placeholder someobject.placeholder %}
     """
-    bits = token.split_contents()
-    if len(bits) == 2:
-        return RenderPlaceholderNode(parser.compile_filter(bits[1]))
-    else:
-        raise TemplateSyntaxError("""{0} tag allows only one parameter: 'slotname'.""".format(bits[0]))
+    return RenderPlaceholderNode.parse(parser, token)
 
 
 class RenderPlaceholderNode(Node):
@@ -184,6 +199,17 @@ class RenderPlaceholderNode(Node):
     """
     def __init__(self, placeholder_expr):
         self.placeholder_expr = placeholder_expr
+
+
+    @classmethod
+    def parse(cls, parser, token):
+        bits = token.split_contents()
+        if len(bits) == 2:
+            return cls(
+                placeholder_expr=parser.compile_filter(bits[1])
+            )
+        else:
+            raise TemplateSyntaxError("""{0} tag allows only one parameter: 'slotname'.""".format(bits[0]))
 
 
     def render(self, context):
