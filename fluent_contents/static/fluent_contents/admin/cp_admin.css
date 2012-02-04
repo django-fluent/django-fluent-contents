@@ -83,7 +83,25 @@ html.cp-jsenabled .inline-contentitem-group {
 /* ---- Fieldset fixes ---- */
 
 .form-row.cp-has-hidden-field {
-    display: none;
+  display: none;
+}
+
+
+/* ---- Inline header fixes ---- */
+
+.cp-content .inline-related h2.cp-formset-item-title {
+  /* Give fieldsets inside inline a different title
+     Otherwise there will be 2 levels of the same color already.
+  */
+  background-image: url('img/admin/nav-bg.gif');
+  background-position: left bottom;
+  color: #999999;
+}
+
+.cp-content .inline-related fieldset h2 {
+  background-image: url('img/admin/nav-bg-reverse.gif');
+  background-position: left bottom;
+  color: #999999;
 }
 
 
