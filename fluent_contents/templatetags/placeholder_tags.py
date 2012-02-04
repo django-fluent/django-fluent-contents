@@ -87,13 +87,14 @@ class PagePlaceholderNode(Node):
     The template tag can also contain additional metadata,
     which can be returned by scanning for this node using the :ref:`fluent_contents.analyzer` module.
     """
-    def __init__(self, parent_expr, slot_expr, meta_kwargs):
+    def __init__(self, parent_expr, slot_expr, template_expr, meta_kwargs):
         self.parent_expr = parent_expr
         self.slot_expr = slot_expr
+        self.template_expr = template_expr
         self.kwargs = meta_kwargs
 
         for key in meta_kwargs.keys():
-            if key not in ('title', 'role'):
+            if key not in ('title', 'role', 'template'):
                 raise TemplateSyntaxError("Unsupported meta argument: {0}".format(key))
 
 
@@ -113,9 +114,11 @@ class PagePlaceholderNode(Node):
         else:
             raise TemplateSyntaxError("""{0} tag allows two arguments: 'parent object' 'slot name' and optionally: title=".." role="..".""".format(bits[0]))
 
+        template = kwarg_bits.pop('template', None)
         return cls(
             parent_expr=parser.compile_filter(parent),
             slot_expr=parser.compile_filter(slot),
+            template_expr=parser.compile_filter(template) if template else None,
             meta_kwargs=kwarg_bits
         )
 
@@ -182,7 +185,8 @@ class PagePlaceholderNode(Node):
         except Placeholder.DoesNotExist:
             return "<!-- placeholder '{0}' does not yet exist -->".format(slot)
 
-        return rendering.render_placeholder(request, placeholder, parent)
+        template_name = self.template_expr.resolve(context) if self.template_expr else None
+        return rendering.render_placeholder(request, placeholder, parent, template_name=template_name)
 
 
 @register.tag
