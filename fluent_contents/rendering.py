@@ -3,6 +3,7 @@ This module provides functions to render placeholder content manually.
 This can be used when the placeholder content is rendered outside of a template.
 The templatetags also make use of these functions.
 """
+from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 from fluent_contents.extensions import PluginNotFound
 
@@ -66,7 +67,9 @@ def _render_items(request, items):
         except PluginNotFound as e:
             html = '<!-- error: {0} -->\n'.format(str(e))
         else:
-            html = plugin._render_contentitem(request, contentitem)
+            # Plugin output is likely HTML, but it should be placed in mark_safe() to raise awareness about escaping.
+            # This is just like Input.render() and unlike Node.render().
+            html = conditional_escape(plugin._render_contentitem(request, contentitem))
 
         if edit_mode:
             html = _wrap_contentitem_output(html, contentitem)
@@ -76,28 +79,28 @@ def _render_items(request, items):
 
 
 def _wrap_placeholder_output(html, placeholder):
-    return '<div class="cp-editable-placeholder" id="cp-editable-placeholder-{slot}" data-placeholder-id="{id}" data-placeholder-slot="{slot}">' \
+    return mark_safe('<div class="cp-editable-placeholder" id="cp-editable-placeholder-{slot}" data-placeholder-id="{id}" data-placeholder-slot="{slot}">' \
            '{html}' \
            '</div>\n'.format(
-        html=html,
+        html=conditional_escape(html),
         id=placeholder.id,
         slot=placeholder.slot,
-    )
+    ))
 
 
 def _wrap_anonymous_output(html):
-    return '<div class="cp-editable-placeholder">' \
+    return mark_safe('<div class="cp-editable-placeholder">' \
            '{html}' \
            '</div>\n'.format(
-        html=html,
-    )
+        html=conditional_escape(html),
+    ))
 
 
 def _wrap_contentitem_output(html, contentitem):
-    return '<div class="cp-editable-contentitem" data-itemtype="{itemtype}" data-item-id="{id}">' \
+    return mark_safe('<div class="cp-editable-contentitem" data-itemtype="{itemtype}" data-item-id="{id}">' \
            '{html}' \
            '</div>\n'.format(
-        html=html,
+        html=conditional_escape(html),
         itemtype=contentitem.__class__.__name__,  # Same as ContentPlugin.type_name
         id=contentitem.id,
-    )
+    ))

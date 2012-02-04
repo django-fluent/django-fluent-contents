@@ -8,6 +8,7 @@ This plugin supports several markup languages:
   Textile: A extensive markup format, also used in Redmine and partially in Basecamp.
 
 """
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.markup.models import MarkupItem, MarkupItemForm, LANGUAGE_MODEL_CLASSES
@@ -32,7 +33,7 @@ class MarkupPluginBase(ContentPlugin):
             html = self.render_error(e)
 
         # Included in a DIV, so the next item will be displayed below.
-        return '<div class="markup">' + html + '</div>\n'
+        return mark_safe('<div class="markup">' + html + '</div>\n')
 
 
 # Dynamically create plugins for every language type.

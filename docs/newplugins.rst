@@ -138,7 +138,7 @@ As example, this is the render function of the :ref:`text <text>` plugin:
 .. code-block:: python
 
     def render(self, instance, request, **kwargs):
-        return '<div class="text">' + instance.text + '</div>\n'
+        return mark_safe('<div class="text">' + instance.text + '</div>\n')
 
 .. note::
 

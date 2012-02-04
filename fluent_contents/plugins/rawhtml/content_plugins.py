@@ -1,3 +1,4 @@
+from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.rawhtml.models import RawHtmlItem
@@ -18,7 +19,7 @@ class RawHtmlPlugin(ContentPlugin):
 
 
     def render(self, request, instance, **kwargs):
-        return instance.html
+        return mark_safe(instance.html)
 
 
 plugin_pool.register(RawHtmlPlugin)
