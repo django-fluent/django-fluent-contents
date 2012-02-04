@@ -29,6 +29,9 @@ var cp_tabs = {};
     var placeholder_editor_inline = $(".inline-placeholder-group");
     placeholder_group_prefix = placeholder_editor_inline.attr('id').replace(/-group$/, '');
     placeholder_id_prefix = 'id_' + placeholder_group_prefix;   // HACK: assume id_%s as auto_id.
+
+    // Improve quick editing a lot:
+    cp_tabs._select_previous_or_first_tab();
   }
 
 
@@ -227,7 +230,31 @@ var cp_tabs = {};
     // This needs to happen after organize, so orphans tab might be visible
     var tabnav = $("#cp-tabnav");
     if( tabnav.children("li.active:visible").length == 0 )
-      tabnav.children("li.cp-region > a:first").mousedown().mouseup().click();
+        cp_tabs._select_previous_or_first_tab();
+  }
+
+
+  cp_tabs._select_previous_or_first_tab = function()
+  {
+    // See if there is an old selected tab that can be reselected
+    var tabnav = $("#cp-tabnav");
+    var tab;
+    var oldtab = ($.cookie ? $.cookie('cp-last-tab') : null);
+    if( oldtab )
+      tab = tabnav.find('li.cp-region > a[href$=#' + oldtab + ']');  // .children() gave no results (note Django 1.3 ships jQuery v1.4.2)
+
+    if( ! tab || tab.length == 0 )
+    {
+      // Get the first tab
+      tab = tabnav.children("li.cp-region > a:first");
+      if( tab.length == 0 )
+      {
+        // Only fallback tab visible?
+        tab = $("#cp-tabnav-orphaned > a:first");
+      }
+    }
+
+    tab.mousedown().mouseup().click();
   }
 
 
@@ -315,7 +342,7 @@ var cp_tabs = {};
 
     // Find new pane to activate
     var href  = thisnav.find("a").attr('href');
-    var active = href.substring( href.indexOf("#") );
+    var active = href.substring( href.indexOf("#") + 1 );
     var activePane = panes.filter("#" + active);
 
     // And switch
@@ -325,6 +352,12 @@ var cp_tabs = {};
     thisnav.addClass("active");
 
     cp_tabs._focus_first_input(activePane);
+
+    // Store as current tab
+    if( $.cookie )
+    {
+      $.cookie('cp-last-tab', active);
+    }
   }
 
 
