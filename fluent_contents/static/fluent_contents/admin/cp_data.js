@@ -230,6 +230,37 @@ var cp_data = {};
   }
 
 
+  cp_data.get_formset_dom_info = function(child_node)
+  {
+    var current_item = cp_data.get_formset_item_data(child_node);
+    var itemtype     = current_item.itemtype;
+    var group_prefix = itemtype.auto_id.replace(/%s/, itemtype.prefix);
+    var field_prefix = group_prefix + "-" + current_item.index;
+
+    var placeholder_id = $("#" + field_prefix + "-placeholder").val();  // .val allows <select> for debugging.
+    var placeholder_slot = $("#" + field_prefix + "-placeholder_slot")[0].value;
+
+    // Placeholder slot may only filled in when creating items,
+    // so restore that info from the existing database.
+    if( placeholder_id && !placeholder_slot )
+      placeholder_slot = cp_data.get_placeholder_by_id(placeholder_id).slot;
+
+    return {
+      // for debugging
+      root: current_item.fs_item,
+
+      // management form item
+      total_forms: $("#" + group_prefix + "-TOTAL_FORMS")[0],
+
+      // Item fields
+      id_field: $("#" + field_prefix + "-contentitem_ptr"),
+      delete_checkbox: $("#" + field_prefix + "-DELETE"),
+      placeholder_id: placeholder_id,  // .val allows <select> for debugging.
+      placeholder_slot: placeholder_slot
+    };
+  }
+
+
   /**
    * Get the formset information, by passing a child node.
    */
@@ -237,6 +268,8 @@ var cp_data = {};
   {
     if( cp_data.itemtypes == null )
       throw new Error("cp_data.setContentItemTypes() was never called");
+    if( child_node.fs_item )
+      return child_node;   // already parsed
 
     var fs_item = $(child_node).closest(".inline-related");
     var id = fs_item.attr("id");

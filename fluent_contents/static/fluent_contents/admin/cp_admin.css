@@ -40,7 +40,7 @@ html.cp-jsenabled .inline-contentitem-group {
   display: none;  /* needed for server side, but has special handling in admin.js */
 }
 
-.cp-item-move {
+.cp-item-icons {
   float: left;
 }
 
@@ -48,7 +48,7 @@ html.cp-jsenabled .inline-contentitem-group {
   float: left;
 }
 
-.cp-item-move a {
+.cp-item-icons a {
   float: left;
   width: 16px;
   height: 16px;
@@ -59,6 +59,7 @@ html.cp-jsenabled .inline-contentitem-group {
 
 .cp-item-up   { background-image: url(img/admin/arrow_up.gif); }
 .cp-item-down { background-image: url(img/admin/arrow_down.gif); }
+.cp-item-move { background-image: url(img/admin/arrow-move.png); }
 
 .inline-related:first-child .cp-item-up { display: none; }
 .inline-related:last-child  .cp-item-down { display: none; }
@@ -71,6 +72,43 @@ html.cp-jsenabled .inline-contentitem-group {
   background: url(img/admin/icon_deletelink.gif) no-repeat 50% 50%;
   outline: 0;
 }
+
+#cp-move-popup {
+  position: absolute;
+  display: none;
+  line-height: 20px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+}
+
+#cp-move-popup p {
+  margin: 0;
+  padding: 3px 6px;
+  background-image: url("img/admin/default-bg.gif");
+  color: #fff;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+#cp-move-popup ul {
+  margin: 0;
+  padding: 0;
+  list-style-position: outside;
+}
+
+#cp-move-popup li {
+  list-style: none;
+  background: url(img/admin/nav-bg-reverse.gif) left bottom;
+}
+
+#cp-move-popup li a {
+  display: block;
+  white-space: nowrap;
+  padding: 3px 6px;
+}
+
+* html #cp-move-popup li a { height: 1%; }
+*+html #cp-move-popup li a { min-height: 0; }
 
 .cp-empty {
   margin: 0.5em 0;

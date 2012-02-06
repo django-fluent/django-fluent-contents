@@ -14,9 +14,10 @@
         <h2 class="cp-formset-item-title cp-clearfix">
           <span class="title">{{ inline_admin_formset.opts.name }}</span>
           <span class="cp-item-controls">
-            <span class="cp-item-move">
+            <span class="cp-item-icons">
               <a class="cp-item-up" href="#up">u</a>
               <a class="cp-item-down" href="#down">d</a>
+              <a class="cp-item-move" href="#move">m</a>
             </span>
             <span class="cp-item-delete"><a href="#delete">x</a>{% if inline_admin_formset.formset.can_delete and inline_admin_form.original %}{{ inline_admin_form.deletion_field.field }}{% endif %}</span>
           </span>

@@ -39,6 +39,7 @@ var cp_plugins = {};
     $(".cp-plugin-add-button").live( 'click', cp_plugins.onAddButtonClick );
     $(".cp-item-controls .cp-item-up").live( 'click', cp_plugins.onItemUpClick );
     $(".cp-item-controls .cp-item-down").live( 'click', cp_plugins.onItemDownClick );
+    $(".cp-item-controls .cp-item-move").live( 'click', cp_plugins.onItemMoveClick );
     $(".cp-item-controls .cp-item-delete a").live( 'click', cp_plugins.onDeleteClick );
   }
 
@@ -302,7 +303,7 @@ var cp_plugins = {};
 
   cp_plugins._set_pageitem_data = function(fs_item, placeholder, new_sort_index)
   {
-    // Currently redetermining group_prefix, avoid getting fs_item to go out of sync with different call paths.
+    // Currently redetermining group_prefix, avoid letting fs_item to go out of sync with different call paths.
     var current_item = cp_data.get_formset_item_data(fs_item);
     var group_prefix = current_item.itemtype.auto_id.replace(/%s/, current_item.itemtype.prefix);
     var field_prefix = group_prefix + "-" + current_item.index;
@@ -313,13 +314,20 @@ var cp_plugins = {};
   }
 
 
-  // -------- Move plugin ------
+  // -------- Moving and sorting plugins ------
 
 
   cp_plugins.onItemUpClick = function(event)
   {
     event.preventDefault();
     cp_plugins.swap_formset_item(event.target, true);
+  }
+
+
+  cp_plugins.onItemMoveClick = function(event)
+  {
+    event.preventDefault();
+    cp_plugins._show_move_popup(event.target);
   }
 
 
@@ -334,23 +342,113 @@ var cp_plugins = {};
   {
     var current_item = cp_data.get_formset_item_data(child_node);
     var fs_item = current_item.fs_item;
+    var pane = cp_data.get_placeholder_pane_for_item(fs_item);
+
+    // Get next/previous item
     var relative = fs_item[isUp ? 'prev' : 'next']("div");
     if(!relative.length) return;
 
+    cp_plugins._fixate_item_height(fs_item);
+    fs_item = cp_plugins._move_item_to( fs_item, function(fs_item) { fs_item[isUp ? 'insertBefore' : 'insertAfter'](relative); } );
+    cp_plugins._restore_item_height(fs_item);
+    cp_plugins.update_sort_order(pane);
+  }
+
+
+  cp_plugins.move_item_to_placeholder = function(child_node, slot)
+  {
+    var current_item = cp_data.get_formset_item_data(child_node);  // childnode is likely already a current_item object.
+    var fs_item = current_item.fs_item;
+
+    var old_pane = cp_data.get_placeholder_pane_for_item(fs_item);
+    var old_placeholder = cp_data.get_placeholder_by_slot(current_item.placeholder_slot);  // slot is always filled in.
+    var new_placeholder = cp_data.get_placeholder_by_slot(slot);
+    var dom_placeholder = cp_data.get_or_create_dom_placeholder(new_placeholder);
+    var new_pane = cp_data.get_placeholder_pane(new_placeholder);
+
+    // Move formset item
+    fs_item = cp_plugins._move_item_to( fs_item, function(fs_item) { new_pane.content.append(fs_item); } );
+    var last_index = cp_plugins.update_sort_order(new_pane);
+    cp_plugins._set_pageitem_data(fs_item, new_placeholder, last_index);
+
+    // Move to proper dom placeholder list.
+    // dom_placeholder is currently not accurate, behaves more like "desired placeholder".
+    if( old_placeholder ) cp_data.remove_dom_item(old_placeholder.slot, current_item);
+    dom_placeholder.items.push(fs_item);
+
+    // Update placeholders + hide popup
+    new_pane.empty_message.hide();
+    cp_plugins._check_empty_pane(old_pane);
+    cp_plugins._hide_move_popup(null);
+  }
+
+
+  cp_plugins._show_move_popup = function(child_node)
+  {
+    var current_item = cp_data.get_formset_item_data(child_node);
+    var dominfo      = cp_data.get_formset_dom_info(current_item);
+    var placeholders = cp_data.get_placeholders();
+
+    // Build popup HTML
+    var html = '<p>Move to</p><ul>';
+    for( var i = 0; i < placeholders.length; i++ )
+    {
+      var placeholder = placeholders[i];
+      if( placeholder.id == dominfo.placeholder_id || placeholder.slot == dominfo.placeholder_slot )
+        continue;
+
+      html += '<li><a href="#' + placeholder.slot + '">' + placeholder.title + '</a></li>';
+    }
+    html += '</ul>';
+    $("body").append('<div id="cp-move-popup">' + html + '</div>');
+
+    // Set position
+    var $window = $(window);
+    var $child_node = $(child_node);
+    var pos = $child_node.offset();
+    var $popup = $("#cp-move-popup");
+    $popup.offset({
+      left: parseInt(pos.left) - $popup.width() + 18 + $window.scrollLeft(),
+      top: parseInt(pos.top) + $child_node.height() + 2 + $window.scrollTop()
+    });
+
+    // Configure clicks
+    $popup.find('a').click(function(event){
+      event.preventDefault();
+      var slot = event.target.href;
+      slot = slot.substring(slot.indexOf('#') + 1);
+      cp_plugins.move_item_to_placeholder(current_item, slot);
+    });
+
+    $(document).click(cp_plugins._hide_move_popup);
+
+    // Show!
+    $popup.fadeIn(150);
+  }
+
+  cp_plugins._hide_move_popup = function(event)
+  {
+    if( event && $(event.target).closest('#cp-move-popup').length ) return;
+    $("#cp-move-popup").remove();
+    $(document).unbind('click', cp_plugins._hide_move_popup);
+  }
+
+
+  cp_plugins._fixate_item_height = function(fs_item)
+  {
     // Avoid height flashes by fixating height
-    // FIXME: this breaks encapsulation of the tabbar control. Yet it is pretty easy this way.
     clearTimeout( restore_timer );
-    var tabmain = $("#cp-tabmain");
+    var tabmain = $("#cp-tabmain");   // FIXME: this breaks encapsulation of the tabbar control. Yet it is pretty easy this way.
     tabmain.css("height", tabmain.height() + "px");
     fs_item.css("height", fs_item.height() + "px");
+  }
 
-    // Swap
-    var pane = cp_data.get_placeholder_pane_for_item( fs_item );
-    fs_item = cp_plugins._move_item_to( fs_item, function(fs_item) { fs_item[isUp ? 'insertBefore' : 'insertAfter'](relative); } );
-    cp_plugins.update_sort_order(pane);
 
+  cp_plugins._restore_item_height = function(fs_item)
+  {
     // Give more then enough time for the YUI editor to restore.
     // The height won't be changed within 2 seconds at all.
+    var tabmain = $("#cp-tabmain");
     restore_timer = setTimeout(function() {
       fs_item.css("height", '');
       tabmain.css("height", '');
@@ -387,6 +485,7 @@ var cp_plugins = {};
     {
       sort_order[i].value = i;
     }
+    return i - 1;
   }
 
 
@@ -441,13 +540,13 @@ var cp_plugins = {};
   {
     // Get dom info
     var current_item = cp_data.get_formset_item_data(child_node);
-    var dominfo      = cp_plugins._get_formset_dom_info(current_item);
+    var dominfo      = cp_data.get_formset_dom_info(current_item);
     var pane         = cp_data.get_placeholder_pane_for_item(current_item.fs_item);
     var itemtype     = current_item.itemtype;
 
     // Get administration
-    // Slot is always filled in, id may be unknown yet.
-    var placeholder  = cp_data.get_placeholder_by_id( dominfo.placeholder_id );
+    // dominfo slot is always filled in, id may be unknown yet.
+    var placeholder  = cp_data.get_placeholder_by_slot( dominfo.placeholder_slot );
     var total_count  = parseInt(dominfo.total_forms.value);
 
     // Final check
@@ -455,6 +554,7 @@ var cp_plugins = {};
       throw new Error("ID field not found for deleting objects!");
 
     // Disable item, wysiwyg, etc..
+    fs_item.css("height", fs_item.height() + "px");  // Fixate height, less redrawing.
     cp_plugins.disable_pageitem(current_item.fs_item);
 
     // In case there is a delete checkbox, save it.
@@ -487,6 +587,12 @@ var cp_plugins = {};
     }
 
     // Show empty tab message
+    cp_plugins._check_empty_pane(pane);
+  }
+
+
+  cp_plugins._check_empty_pane = function(pane)
+  {
     if( pane.content.children('.inline-related').length == 0 )
     {
       pane.empty_message.show();
@@ -497,36 +603,6 @@ var cp_plugins = {};
         cp_tabs.hide_fallback_pane();
       }
     }
-  }
-
-
-  cp_plugins._get_formset_dom_info = function(current_item)
-  {
-    var itemtype     = current_item.itemtype;
-    var group_prefix = itemtype.auto_id.replace(/%s/, itemtype.prefix);
-    var field_prefix = group_prefix + "-" + current_item.index;
-
-    var placeholder_id = $("#" + field_prefix + "-placeholder").val();  // .val allows <select> for debugging.
-    var placeholder_slot = $("#" + field_prefix + "-placeholder_slot")[0].value;
-
-    // Placeholder slot may only filled in when creating items,
-    // so restore that info from the existing database.
-    if( placeholder_id && !placeholder_slot )
-      placeholder_slot = cp_data.get_placeholder_by_id(placeholder_id).slot;
-
-    return {
-      // for debugging
-      root: current_item.fs_item,
-
-      // management form item
-      total_forms: $("#" + group_prefix + "-TOTAL_FORMS")[0],
-
-      // Item fields
-      id_field: $("#" + field_prefix + "-contentitem_ptr"),
-      delete_checkbox: $("#" + field_prefix + "-DELETE"),
-      placeholder_id: placeholder_id,  // .val allows <select> for debugging.
-      placeholder_slot: placeholder_slot
-    };
   }
 
 
