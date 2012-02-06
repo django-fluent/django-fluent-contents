@@ -138,6 +138,8 @@ body.cp-single-placeholder .cp-item-move { display: none; }
   background-image: url('img/admin/nav-bg.gif');
   background-position: left bottom;
   color: #999999;
+  border-left: 1px solid #eee;
+  border-right: 1px solid #eee;
 }
 
 .cp-content .inline-related fieldset h2 {
