@@ -554,7 +554,7 @@ var cp_plugins = {};
       throw new Error("ID field not found for deleting objects!");
 
     // Disable item, wysiwyg, etc..
-    fs_item.css("height", fs_item.height() + "px");  // Fixate height, less redrawing.
+    current_item.fs_item.css("height", current_item.fs_item.height() + "px");  // Fixate height, less redrawing.
     cp_plugins.disable_pageitem(current_item.fs_item);
 
     // In case there is a delete checkbox, save it.
