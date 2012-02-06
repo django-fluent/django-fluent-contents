@@ -19,7 +19,23 @@ var cp_data = {};
 
 
   // Public initialisation functions
-  cp_data.set_placeholders = function(data) { cp_data.placeholders = data; if( ! cp_data.initial_placeholders ) cp_data.initial_placeholders = data; };
+  cp_data.set_placeholders = function(data)
+  {
+    cp_data.placeholders = data;
+    if( ! cp_data.initial_placeholders )
+    {
+      cp_data.initial_placeholders = data;
+    }
+    else
+    {
+      // Allow move icon to be shown/hidden.
+      if( cp_data.placeholders.length == 1 )
+        $("body").addClass('cp-single-placeholder');
+      else
+        $("body").removeClass('cp-single-placeholder');
+    }
+  };
+
   cp_data.set_content_item_types = function(data) { cp_data.itemtypes = data; };
   cp_data.get_placeholders = function() { return cp_data.placeholders; };
   cp_data.get_initial_placeholders = function() { return cp_data.initial_placeholders; };
@@ -60,6 +76,9 @@ var cp_data = {};
           placeholder_input.val('');
         }
       }
+
+      if( cp_data.placeholders.length == 1 )
+        $("body").addClass('cp-single-placeholder');
     }
 
     // Add the empty items to the itemtypes dictionary.
