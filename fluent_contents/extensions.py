@@ -151,9 +151,18 @@ class ContentPlugin(object):
         render_template = self.get_render_template(request, instance, **kwargs)
         if render_template:
             context = self.get_context(request, instance, **kwargs)
-            return render_to_string(render_template, context, context_instance=PluginContext(request))
+            return self.render_to_string(request, render_template, context)
         else:
             return unicode(_(u"{No rendering defined for class '%s'}" % self.__class__.__name__))
+
+
+    def render_to_string(self, request, template, context, content_instance=None):
+        """
+        Render a custom template with the :class:`~PluginContext` as context instance.
+        """
+        if not content_instance:
+            content_instance = PluginContext(request)
+        return render_to_string(template, context, context_instance=content_instance)
 
 
     def render_error(self, error):
