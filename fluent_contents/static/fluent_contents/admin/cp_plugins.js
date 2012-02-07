@@ -547,8 +547,10 @@ var cp_plugins = {};
 
     // Get administration
     // dominfo slot is always filled in, id may be unknown yet.
-    var placeholder  = cp_data.get_placeholder_by_slot( dominfo.placeholder_slot );
+    var placeholder  = null;
     var total_count  = parseInt(dominfo.total_forms.value);
+    if( dominfo.placeholder_slot )   // could be orphaned tab
+      placeholder = cp_data.get_placeholder_by_slot( dominfo.placeholder_slot );
 
     // Final check
     if( dominfo.id_field.length == 0 )
@@ -583,7 +585,7 @@ var cp_plugins = {};
     if( placeholder )
     {
       // TODO: currently ignoring return value. dom_placeholder is currently not accurate, behaves more like "desired placeholder".
-      // TODO: deal with orphaned items.
+      // TODO: deal with orphaned items, might exist somewhere in the dom_placeholder administration.
       cp_data.remove_dom_item(placeholder.slot, current_item);
     }
 
