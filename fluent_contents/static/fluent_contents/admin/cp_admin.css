@@ -64,6 +64,7 @@ html.cp-jsenabled .inline-contentitem-group {
 #cp-tabmain .cp-item-move { background-image: url(img/admin/arrow-move-we.png); }
 /* .cp-placeholderfield .cp-item-move { background-image: url(img/admin/arrow-move-ns.png); } */
 body.cp-single-placeholder .cp-item-move { display: none; }
+body.cp-single-placeholder #tab-orphaned .cp-item-move { display: inline; }  /* always show in orphaned tab */
 
 .inline-related:first-child .cp-item-up { display: none; }
 .inline-related:last-child  .cp-item-down { display: none; }
