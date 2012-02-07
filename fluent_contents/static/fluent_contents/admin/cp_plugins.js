@@ -394,7 +394,8 @@ var cp_plugins = {};
     for( var i = 0; i < placeholders.length; i++ )
     {
       var placeholder = placeholders[i];
-      if( placeholder.id == dominfo.placeholder_id || placeholder.slot == dominfo.placeholder_slot )
+      if( (placeholder.id && placeholder.id == dominfo.placeholder_id)
+       || (placeholder.slot && placeholder.slot == dominfo.placeholder_slot) )
         continue;
 
       html += '<li><a href="#' + placeholder.slot + '">' + placeholder.title + '</a></li>';
