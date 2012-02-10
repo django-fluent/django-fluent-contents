@@ -76,6 +76,21 @@ def page_placeholder(parser, token):
     The extra information can be extracted with the
     :func:`~PagePlaceholderNode.get_title` and :func:`~PagePlaceholderNode.get_role`
     functions of the :class:`~PagePlaceholderNode` class.
+
+    Optionally, a template can be used to render the placeholder:
+
+    .. code-block:: html+django
+
+        {% page_placeholder currentpage "slotname" template="mysite/parts/slot_placeholder.html" %}
+
+    That template should loop over the content items, for example:
+
+    .. code-block:: html+django
+
+        {% for contentitem, html in contentitems %}
+          {% if not forloop.first %}<div class="splitter"></div>{% endif %}
+          {{ html }}
+        {% endfor %}
     """
     return PagePlaceholderNode.parse(parser, token)
 
