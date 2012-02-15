@@ -25,7 +25,8 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
 
 
     def save_existing(self, form, instance, commit=True):
-        self._set_placeholder_id(form)
+        if commit:
+            self._set_placeholder_id(form)
         return form.save(commit=commit)
 
 
