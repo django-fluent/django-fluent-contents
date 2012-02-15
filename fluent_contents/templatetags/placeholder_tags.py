@@ -35,7 +35,6 @@ register = Library()
 kwarg_re = re.compile('^(?P<name>\w+)=')
 
 def split_token_args(bits, parser, compile_args=False, compile_kwargs=False):
-    # NOTE: This function is also used by fluent_pages.pagetypes.fluentpage.templatetags.fluentpage
     expect_kwarg = False
     args = []
     kwargs = {}
