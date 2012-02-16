@@ -72,9 +72,12 @@
           {% if inline_admin_form.has_auto_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
           {% for fieldset in inline_admin_form %}{% for line in fieldset %}{% for adminfield in line %}{{ adminfield.field.as_hidden }}
           {% endfor %}{% endfor %}{% endfor %}
-
         </div>
       {% endfor %}
+
+      <p id="cp-tabs-empty">
+        {% trans "There are no placeholders in this template." %}
+      </p>
 
       {# this is a "lost+found" bucket for layout switching #}
       <div class="cp-tab" id="tab-orphaned">

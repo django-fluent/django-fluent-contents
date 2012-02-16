@@ -32,6 +32,10 @@ var cp_tabs = {};
 
     // Improve quick editing a lot:
     cp_tabs._select_previous_or_first_tab();
+
+    // Hide empty message
+    if( cp_data.get_placeholders().length )
+      $("#cp-tabs-empty").hide();
   }
 
 
@@ -150,6 +154,7 @@ var cp_tabs = {};
     // Cleanup. The previous old tabs can be removed now.
     cp_tabs._remove_old_tabs();
     cp_tabs._ensure_active_tab();
+    cp_tabs.update_empty_message();
     cp_tabs._restore_tabmain_height();
 
     // Show tabbar if still hidden (at first load)
@@ -253,7 +258,17 @@ var cp_tabs = {};
     // This needs to happen after organize, so orphans tab might be visible
     var tabnav = $("#cp-tabnav");
     if( tabnav.children("li.active:visible").length == 0 )
-        cp_tabs._select_previous_or_first_tab();
+    {
+      cp_tabs._select_previous_or_first_tab();  // TODO: check orphaned tab
+    }
+  }
+
+
+  cp_tabs.update_empty_message = function()
+  {
+    console.log(cp_data.get_placeholders());
+    var no_tabs = cp_data.get_placeholders().length == 0 && $("#cp-tabmain .inline-related").length == 0;
+    $("#cp-tabs-empty")[no_tabs ? "show" : "hide"]();
   }
 
 
@@ -277,7 +292,9 @@ var cp_tabs = {};
       }
     }
 
-    tab.mousedown().mouseup().click();
+    if( tab.length )
+      tab.mousedown().mouseup().click();
+    return tab.length > 0;
   }
 
 

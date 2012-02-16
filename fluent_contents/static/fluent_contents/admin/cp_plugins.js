@@ -449,7 +449,7 @@ var cp_plugins = {};
   {
     // Give more then enough time for the YUI editor to restore.
     // The height won't be changed within 2 seconds at all.
-    var tabmain = $("#cp-tabmain");
+    var tabmain = $("#cp-tabmain");   // FIXME: this breaks encapsulation of the tabbar control. Yet it is pretty easy this way.
     restore_timer = setTimeout(function() {
       fs_item.css("height", '');
       tabmain.css("height", '');
@@ -591,6 +591,8 @@ var cp_plugins = {};
 
     // Show empty tab message
     cp_plugins._check_empty_pane(pane);
+    if( window.cp_tabs )
+      cp_tabs.update_empty_message();
   }
 
 

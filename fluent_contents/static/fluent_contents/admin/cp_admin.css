@@ -119,7 +119,8 @@ body.cp-single-placeholder #tab-orphaned .cp-item-move { display: inline; }  /* 
   margin: 0.5em 0;
 }
 
-#cp-tabmain .cp-empty {
+#cp-tabmain .cp-empty,
+#cp-tabs-empty {
   margin: 10px 5px;
 }
 
