@@ -11,6 +11,7 @@ class DynamicInlinesModelAdmin(ModelAdmin):
     ModelAdmin mixin to create inlines with a :func:`get_inlines()` method.
     The initialization of the inlines is also delayed, reducing stress on the Django initialization sequence.
     """
+    extra_inlines_first = True
 
     @abstractmethod
     def get_extra_inlines(self):
@@ -37,7 +38,10 @@ class DynamicInlinesModelAdmin(ModelAdmin):
             # e.g. load_middleware() -> import xyz.admin.something -> processes __init__.py ->
             #      admin.site.register(SomethingAdmin) -> Base::__init__() -> start looking for plugins -> ImportError
             #
-            self.inline_instances += self._get_extra_inline_instances()
+            if self.extra_inlines_first:
+                self.inline_instances = self._get_extra_inline_instances() + self.inline_instances
+            else:
+                self.inline_instances += self._get_extra_inline_instances()
             self._initialized_inlines = True
         return super(DynamicInlinesModelAdmin, self).get_form(request, obj, **kwargs)
 
@@ -56,7 +60,10 @@ class DynamicInlinesModelAdmin(ModelAdmin):
 
     def get_inline_instances(self, request):
         inlines = super(DynamicInlinesModelAdmin, self).get_inline_instances(request)
-        return inlines + self._get_extra_inline_instances()
+        if self.extra_inlines_first:
+            return self._get_extra_inline_instances() + inlines
+        else:
+            return inlines + self._get_extra_inline_instances()
 
 
 
