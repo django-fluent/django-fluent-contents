@@ -304,8 +304,8 @@ class PluginPool(object):
 
         try:
             _import_apps_submodule("content_plugins")
-        finally:
             self.detected = True
+        finally:
             self.scanLock.release()
 
 #: The global plugin pool, a instance of the :class:`PluginPool` class.
