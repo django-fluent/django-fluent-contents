@@ -63,12 +63,11 @@ class ContentPlugin(object):
 
     .. code-block:: python
 
+        @plugin_pool.register
         class AnnouncementBlockPlugin(ContentPlugin):
             model = AnnouncementBlockItem
             render_template = "plugins/announcementblock.html"
             category = _("Simple blocks")
-
-        plugin_pool.register(AnnouncementBlockPlugin)
 
     As minimal configuration, specify the :attr:`model` and :attr:`render_template` fields.
     When the plugin is registered in the :attr:`plugin_pool`, it will be instantiated once.
@@ -257,6 +256,7 @@ class PluginPool(object):
         plugin_instance = plugin()
         self.plugins[name] = plugin_instance
         self.plugin_for_model[plugin.model] = name       # Track reverse for rendering
+        return plugin  # Allow decorator syntax
 
 
     def get_plugins(self):
