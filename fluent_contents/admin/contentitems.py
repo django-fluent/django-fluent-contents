@@ -63,6 +63,7 @@ class ContentItemInlineMixin(InlineModelAdmin):
     extra = 0
     ordering = ('sort_order',)
     template = 'admin/fluent_contents/contentitem/inline_container.html'
+    form = ContentItemForm
 
     # overwritten by subtype
     name = None
@@ -70,6 +71,7 @@ class ContentItemInlineMixin(InlineModelAdmin):
     extra_fieldsets = None
     type_name = None
     cp_admin_form_template = None
+    cp_admin_init_template = None
 
     # Extra settings
     base_fields = ('placeholder', 'placeholder_slot', 'sort_order',)  # base fields in ContentItemForm
@@ -96,6 +98,17 @@ class ContentItemInlineMixin(InlineModelAdmin):
         return ((None, {'fields': self.base_fields}),) + self.extra_fieldsets
 
 
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        # Allow to use formfield_overrides using a fieldname too.
+        # Avoids the major need to reroute formfield_for_dbfield() via the plugin.
+        try:
+            attrs = self.formfield_overrides[db_field.name]
+            kwargs = dict(attrs, **kwargs)
+        except KeyError:
+            pass
+        return super(ContentItemInlineMixin, self).formfield_for_dbfield(db_field, **kwargs)
+
+
 class GenericContentItemInline(ContentItemInlineMixin, ExtensibleGenericInline):
     """
     Custom ``InlineModelAdmin`` subclass used for content types.
@@ -112,6 +125,10 @@ def get_content_item_inlines(plugins=None, base=GenericContentItemInline):
     Dynamically generate genuine django inlines for all registered content item types.
     When the `plugins` parameter is ``None``, all plugin inlines are returned.
     """
+    COPY_FIELDS = (
+        'form', 'raw_id_fields', 'filter_vertical', 'filter_horizontal',
+        'radio_fields', 'prepopulated_fields', 'formfield_overrides', 'readonly_fields',
+    )
     if plugins is None:
         plugins = extensions.plugin_pool.get_plugins()
 
@@ -126,16 +143,20 @@ def get_content_item_inlines(plugins=None, base=GenericContentItemInline):
         attrs = {
             '__module__': plugin.__class__.__module__,
             'model': ContentItemType,
-            'form': plugin.admin_form or ContentItemForm,
 
             # Add metadata properties for template
             'name': plugin.verbose_name,
             'plugin': plugin,
             'type_name': plugin.type_name,
-            'extra_fieldsets': plugin.admin_fieldsets,
+            'extra_fieldsets': plugin.fieldsets,
             'cp_admin_form_template': plugin.admin_form_template,
             'cp_admin_init_template': plugin.admin_init_template,
         }
+
+        # Copy a restricted set of admin fields to the inline model too.
+        for name in COPY_FIELDS:
+            if getattr(plugin, name):
+                attrs[name] = getattr(plugin, name)
 
         inlines.append(type(name, (base,), attrs))
 

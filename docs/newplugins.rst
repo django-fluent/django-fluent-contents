@@ -169,7 +169,7 @@ Defining the form layout
 
 The admin form and template can be replaced, using;
 
-* ``admin_form = ...`` allows changing the used admin form. By default this is a :class:`~fluent_contents.forms.ContentItemForm`.
+* ``form = ...`` allows changing the used admin form. By default this is a :class:`~fluent_contents.forms.ContentItemForm`.
 * ``admin_form_template = ...`` allows changing the admin form template. Reasonable defaults are:
 
  * ``admin/fluent_contents/contentitem/admin_form.html`` - a standard template that displays all the fields.

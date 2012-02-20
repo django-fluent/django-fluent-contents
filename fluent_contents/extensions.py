@@ -72,8 +72,11 @@ class ContentPlugin(object):
     As minimal configuration, specify the :attr:`model` and :attr:`render_template` fields.
     When the plugin is registered in the :attr:`plugin_pool`, it will be instantiated once.
     This is similar to the behavior of the :class:`~django.contrib.admin.ModelAdmin` classes in Django.
+
     To customize the admin, the :attr:`admin_form_template`, :attr:`admin_form` can be defined,
     and a ``class Media`` can be included to provide extra CSS and JavaScript files for the admin interface.
+    Some well known properties of the `ModelAdmin` class can also be specified on plugins;
+    such as the ``raw_id_fields``, ``fieldsets`` and ``readonly_fields`` settings.
     """
     __metaclass__ = forms.MediaDefiningClass
 
@@ -83,7 +86,7 @@ class ContentPlugin(object):
     model = None
 
     #: The form to use in the admin interface. By default it uses a  :class:`fluent_contents.models.ContentItemForm`.
-    admin_form = None
+    form = None
 
     #: The template to render the admin interface with
     admin_form_template = "admin/fluent_contents/contentitem/admin_form.html"
@@ -92,7 +95,7 @@ class ContentPlugin(object):
     admin_init_template = None
 
     #: The fieldsets for the admin view.
-    admin_fieldsets = None
+    fieldsets = None
 
     #: The template to render the frontend HTML output.
     render_template = None
@@ -103,6 +106,26 @@ class ContentPlugin(object):
     #: Alternative template for the view.
     ADMIN_TEMPLATE_WITHOUT_LABELS = "admin/fluent_contents/contentitem/admin_form_without_labels.html"
 
+    #: The fields to display as raw ID
+    raw_id_fields = ()
+
+    #: The fields to display in a vertical filter
+    filter_vertical = ()
+
+    #: The fields to display in a horizontal filter
+    filter_horizontal = ()
+
+    #: The fields to display as radio choice
+    radio_fields = {}
+
+    #: Fields to automatically populate with values
+    prepopulated_fields = {}
+
+    #: Overwritten formfield attributes, e.g. the 'widget'. Allows both the class and fieldname as key.
+    formfield_overrides = {}
+
+    #: The fields to display as readonly.
+    readonly_fields = ()
 
     @property
     def verbose_name(self):

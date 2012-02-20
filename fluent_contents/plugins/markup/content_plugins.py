@@ -22,7 +22,7 @@ class MarkupPluginBase(ContentPlugin):
     """
     model = MarkupItem
     category = _('Markup')
-    admin_form = MarkupItemForm
+    form = MarkupItemForm
     admin_form_template = ContentPlugin.ADMIN_TEMPLATE_WITHOUT_LABELS
 
 
@@ -42,14 +42,14 @@ for language, model in LANGUAGE_MODEL_CLASSES.iteritems():
     if language not in appsettings.FLUENT_MARKUP_LANGUAGES:
         continue
 
-    admin_form = MarkupItemForm.__metaclass__("{0}MarkupItemForm".format(language.capitalize()), (MarkupItemForm,), {
+    form = MarkupItemForm.__metaclass__("{0}MarkupItemForm".format(language.capitalize()), (MarkupItemForm,), {
         'default_language': language,
     })
 
     classname = "{0}MarkupPlugin".format(language.capitalize())
     PluginClass = MarkupPluginBase.__metaclass__(classname, (MarkupPluginBase,), {
         'model': model,
-        'admin_form': admin_form,
+        'form': form,
     })
 
     #globals()[classname] = PluginClass
