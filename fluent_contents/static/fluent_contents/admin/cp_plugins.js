@@ -216,6 +216,9 @@ var cp_plugins = {};
       var input = inputs.eq(i)
         , name = input.attr("name");
 
+      if( input[0].type == 'radio' && !input[0].checked )
+        continue;
+
       if( !ignoreTestFunc || !ignoreTestFunc(name) )
         values[name] = input.val();
     }
@@ -236,10 +239,17 @@ var cp_plugins = {};
        && (!ignoreTestFunc || !ignoreTestFunc(name)) )
       {
         var value = values[name];
-        if(value == null)
-          input.removeAttr('value');
+        if( input[0].type == 'radio' )
+        {
+          input[0].checked = (input[0].value == value);
+        }
         else
-          input.val(value);
+        {
+          if(value == null)
+            input.removeAttr('value');
+          else
+            input.val(value);
+        }
       }
     }
   }
