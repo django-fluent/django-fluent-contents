@@ -40,6 +40,7 @@ class PlaceholderEditorInline(ExtensibleGenericInline):
     ct_fk_field = 'parent_id'
     template = "admin/fluent_contents/placeholder/inline_tabs.html"
     extra = 0
+    is_fluent_editor_inline = True  # Allow admin templates to filter the inlines
 
     class Media:
         # cp_tabs.js is included here, as it's a presentation choice

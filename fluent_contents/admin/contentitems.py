@@ -64,6 +64,7 @@ class ContentItemInlineMixin(InlineModelAdmin):
     ordering = ('sort_order',)
     template = 'admin/fluent_contents/contentitem/inline_container.html'
     form = ContentItemForm
+    is_fluent_editor_inline = True  # Allow admin templates to filter the inlines
 
     # overwritten by subtype
     name = None
