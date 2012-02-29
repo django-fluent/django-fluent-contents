@@ -236,8 +236,12 @@ body.cp-single-placeholder #tab-orphaned .cp-item-move { display: inline; }  /* 
 .cp-placeholderfield {
   /* this combination gives the same space as the label */
   font-size: 12px;
-  padding-left: 10px;
   margin-left: 8em;
+  position: relative;
+
+  /* establish block context, fix jumping effect when adding first item.
+     Also moves the item to the right of the label (9em+10px) */
+  overflow: hidden;
 }
 
 .wide .cp-placeholderfield {
