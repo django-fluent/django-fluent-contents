@@ -84,11 +84,13 @@ class PlaceholderEditorInline(ExtensibleGenericInline):
             data = placeholder_admin.get_placeholder_data(request, obj)
             initial = [d.as_dict() for d in data]
 
+            # Order initial properly,
+
         # Inject as default parameter to the constructor
         # This is the BaseExtendedGenericInlineFormSet constructor
-        formset = super(PlaceholderEditorInline, self).get_formset(request, obj, **kwargs)
-        formset.__init__ = curry(formset.__init__, initial=initial)
-        return formset
+        FormSetClass = super(PlaceholderEditorInline, self).get_formset(request, obj, **kwargs)
+        FormSetClass.__init__ = curry(FormSetClass.__init__, initial=initial)
+        return FormSetClass
 
 
     def _get_parent_modeladmin(self):
