@@ -1,6 +1,3 @@
-"""
-This module provides additional small utility functions which plugins can use.
-"""
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 import re

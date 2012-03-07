@@ -24,35 +24,13 @@ This is done using the following syntax:
 The CMS interface can scan for those tags using the :ref:`fluent_contents.analyzer` module.
 """
 from django.db.models import Manager
-from django.template import Library, Node, TemplateSyntaxError
+from django.template import Library, Node, Variable, TemplateSyntaxError
 from django.utils.safestring import SafeUnicode
 from fluent_contents.models import Placeholder
 from fluent_contents import rendering
-import re
+from fluent_contents.utils.tagparsing import parse_token_kwargs
 
 register = Library()
-
-kwarg_re = re.compile('^(?P<name>\w+)=')
-
-def split_token_args(bits, parser, compile_args=False, compile_kwargs=False):
-    expect_kwarg = False
-    args = []
-    kwargs = {}
-    prev_bit = None
-    for bit in bits[1::]:
-        match = kwarg_re.match(bit)
-        if match:
-            expect_kwarg = True
-            (name, expr) = bit.split('=', 2)
-            kwargs[name] = parser.compile_filter(expr) if compile_args else expr
-        else:
-            if expect_kwarg:
-                raise TemplateSyntaxError("{0} tag may not have a non-keyword argument ({1}) after a keyword argument ({2}).".format(bits[0], bit, prev_bit))
-            args.append(parser.compile_filter(bit) if compile_kwargs else bit)
-
-        prev_bit = bit
-
-    return args, kwargs
 
 
 @register.tag
@@ -107,10 +85,6 @@ class PagePlaceholderNode(Node):
         self.template_expr = template_expr
         self.kwargs = meta_kwargs
 
-        for key in meta_kwargs.keys():
-            if key not in ('title', 'role', 'template'):
-                raise TemplateSyntaxError("Unsupported meta argument: {0}".format(key))
-
 
     @classmethod
     def parse(cls, parser, token):
@@ -118,21 +92,21 @@ class PagePlaceholderNode(Node):
         Parse the node: {% page_placeholder parentobj slotname title="test" role="m" %}
         """
         bits = token.split_contents()
-        arg_bits, kwarg_bits = split_token_args(bits, parser)
+        arg_bits, kwarg_bits = parse_token_kwargs(parser, bits, True, True, ('title', 'role', 'template'))
 
         if len(arg_bits) == 2:
-            (parent, slot) = arg_bits
+            (parent_expr, slot_expr) = arg_bits
         elif len(arg_bits) == 1:
             # Allow 'page' by default. Works with most CMS'es, including django-fluent-pages.
-            (parent, slot) = ('page', arg_bits[0])
+            (parent_expr, slot_expr) = (Variable('page'), arg_bits[0])
         else:
             raise TemplateSyntaxError("""{0} tag allows two arguments: 'parent object' 'slot name' and optionally: title=".." role="..".""".format(bits[0]))
 
         template = kwarg_bits.pop('template', None)
         return cls(
-            parent_expr=parser.compile_filter(parent),
-            slot_expr=parser.compile_filter(slot),
-            template_expr=parser.compile_filter(template) if template else None,
+            parent_expr=parent_expr,
+            slot_expr=slot_expr,
+            template_expr=template,
             meta_kwargs=kwarg_bits
         )
 
