@@ -12,15 +12,21 @@ class CodePlugin(ContentPlugin):
     model = CodeItem
     category = _('Programming')
     admin_form_template = "admin/fluent_contents/plugins/code/admin_form.html"
+    render_template = "fluent_contents/plugins/code/code.html"
 
     class Media:
         css = {'screen': ('fluent_contents/code/code_admin.css',)}
 
-
-    def render(self, request, instance, **kwargs):
+    def get_context(self, request, instance, **kwargs):
         # Style is not stored in the model,
         # it needs to be a side-wide setting (maybe even in the theme)
-        return mark_safe(backend.render_code(instance, style_name=appsettings.FLUENT_CODE_STYLE))
+        code = mark_safe(backend.render_code(instance, style_name=appsettings.FLUENT_CODE_STYLE))
+
+        context = super(CodePlugin, self).get_context(request, instance, **kwargs)
+        context.update({
+            'code': code,
+        })
+        return context
 
 
 plugin_pool.register(CodePlugin)
