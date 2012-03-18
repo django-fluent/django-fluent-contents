@@ -10,9 +10,12 @@ from django.utils.html import conditional_escape, escape
 from django.utils.safestring import mark_safe
 from fluent_contents.cache import get_rendering_cache_key
 from fluent_contents.extensions import PluginNotFound
+import logging
 
 # This code is separate from the templatetags,
 # so it can be called outside the templates as well.
+
+logger = logging.getLogger(__name__)
 
 
 def render_placeholder(request, placeholder, parent_object=None, template_name=None):
@@ -59,20 +62,19 @@ def is_edit_mode(request):
 
 def _render_items(request, placeholder_name, items, template_name=None):
     edit_mode = is_edit_mode(request)
-    remaining_items = []
-    remaining_indexes = []
+    output = {}
+    output_ordering = []
 
     # First try to fetch all items non-polymorphic from memcache
     if not hasattr(items, "non_polymorphic"):
         # Pass the whole queryset as (i, item) list.
-        output = [None] * len(items)
         remaining_items = items
-        remaining_indexes = (i.id for i in items)
+        output_ordering = (item.pk for item in items)
     else:
         items = items.non_polymorphic()
-        output = []
+        remaining_items = []
         for i, contentitem in enumerate(items):
-            output.append(None)
+            output_ordering.append(contentitem.pk)
             html = None
             try:
                 # Respect the cache output setting of the plugin
@@ -83,10 +85,9 @@ def _render_items(request, placeholder_name, items, template_name=None):
                 pass
 
             if html:
-                output[i] = html
+                output[contentitem.pk] = html
             else:
                 remaining_items.append(contentitem)
-                remaining_indexes.append(i)
 
         if remaining_items:
             remaining_items = items.get_real_instances(remaining_items)
@@ -97,7 +98,7 @@ def _render_items(request, placeholder_name, items, template_name=None):
         return u"<!-- no items in placeholder '{0}' -->".format(escape(placeholder_name))
     elif remaining_items:
         # Render remaining items
-        for i, contentitem in zip(remaining_indexes, remaining_items):
+        for contentitem in remaining_items:
             try:
                 plugin = contentitem.plugin
             except PluginNotFound as e:
@@ -112,17 +113,29 @@ def _render_items(request, placeholder_name, items, template_name=None):
                     cache.set(cachekey, html)
 
             if edit_mode:
-                output[i] = _wrap_contentitem_output(html, contentitem)
+                output[contentitem.pk] = _wrap_contentitem_output(html, contentitem)
             else:
-                output[i] = html
+                output[contentitem.pk] = html
+
+    # Order all rendered items in the correct sequence.
+    # The derived tables should be reset, so the base class indexes don't necessary match with the derived indexes.
+    output_ordered = []
+    for pk in output_ordering:
+        try:
+            output_ordered.append(output[pk])
+        except KeyError:
+            # NOTE: if a table is reset, the base class still exists and causes a query to happen every time.
+            item = [item for item in items if item.pk == pk][0]
+            logger.warning("Missing derived model for ContentItem #{id}: {cls}.".format(id=pk, cls=item.plugin.type_name))
+            pass
 
     # Combine all rendered items. Allow rendering the items with a template,
     # to inserting seperators or nice start/end code.
     if not template_name:
-        return mark_safe(''.join(output))
+        return mark_safe(''.join(output_ordered))
     else:
         context = {
-            'contentitems': zip(items, output),
+            'contentitems': zip(items, output_ordered),
             'edit_mode': edit_mode,
         }
         return render_to_string(template_name, context, context_instance=RequestContext(request))
