@@ -101,6 +101,9 @@ class ContentPlugin(object):
     #: The template to render the frontend HTML output.
     render_template = None
 
+    #: By default, rendered output is cached, and updated on admin changes.
+    cache_output = True
+
     #: The category to display the plugin at.
     category = None
 

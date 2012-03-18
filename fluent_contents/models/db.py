@@ -1,10 +1,12 @@
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
 from django.core.exceptions import FieldError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from polymorphic import PolymorphicModel
 from polymorphic.base import PolymorphicModelBase
+from fluent_contents.cache import get_rendering_cache_key
 from fluent_contents.managers import PlaceholderManager, ContentItemManager, get_parent_lookup_kwargs
 
 
@@ -221,3 +223,14 @@ class ContentItem(PolymorphicModel):
             return self.parent.get_absolute_url()
         except AttributeError:
             return None
+
+    def save(self, *args, **kwargs):
+        super(ContentItem, self).save(*args, **kwargs)
+
+        # Clear all caches
+        placeholder_name = self.placeholder.slot
+        cache_keys = [
+            get_rendering_cache_key(placeholder_name, self)
+        ]
+        for cache_key in cache_keys:
+            cache.delete(cache_key)
