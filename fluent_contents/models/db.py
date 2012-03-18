@@ -186,7 +186,13 @@ class ContentItem(PolymorphicModel):
         Access the parent plugin which renders this model.
         """
         from fluent_contents.extensions import plugin_pool
-        return plugin_pool.get_plugin_by_model(self.__class__)
+        if self.__class__ in (ContentItem,):
+            # Also allow a non_polymorphic() queryset to resolve the plugin.
+            # Corresponding plugin_pool method is still private on purpose.
+            # Not sure the utility method should be public, or how it should be named.
+            return plugin_pool._get_plugin_by_content_type(self.polymorphic_ctype_id)
+        else:
+            return plugin_pool.get_plugin_by_model(self.__class__)
 
 
     def __unicode__(self):

@@ -10,6 +10,7 @@ Having to do an explicit register ensures future compatibility with other API's 
 """
 from django.conf import settings
 from django import forms
+from django.contrib.contenttypes.models import ContentType
 from django.core import context_processors
 from django.template.context import Context
 from django.template.loader import render_to_string
@@ -127,6 +128,11 @@ class ContentPlugin(object):
     #: The fields to display as readonly.
     readonly_fields = ()
 
+
+    def __init__(self):
+        self._type_id = None
+
+
     @property
     def verbose_name(self):
         """
@@ -141,6 +147,16 @@ class ContentPlugin(object):
         Return the classname of the model, this is mainly provided for templates.
         """
         return self.model.__name__
+
+
+    @property
+    def type_id(self):
+        """
+        Shortcut to retrieving the ContentType id of the model.
+        """
+        if self._type_id is None:
+            self._type_id = ContentType.objects.get_for_model(self.model).id
+        return self._type_id
 
 
     def get_model_instances(self):
@@ -255,6 +271,7 @@ class PluginPool(object):
     def __init__(self):
         self.plugins = {}
         self.plugin_for_model = {}
+        self.plugin_for_ctype_id = {}
         self.detected = False
 
     def register(self, plugin):
@@ -279,6 +296,8 @@ class PluginPool(object):
         plugin_instance = plugin()
         self.plugins[name] = plugin_instance
         self.plugin_for_model[plugin.model] = name       # Track reverse for rendering
+        self.plugin_for_ctype_id[plugin_instance.type_id] = name
+
         return plugin  # Allow decorator syntax
 
 
@@ -309,6 +328,17 @@ class PluginPool(object):
             name = self.plugin_for_model[model_class]
         except KeyError:
             raise PluginNotFound("No plugin found for model '{0}'.".format(model_class.__name__))
+        return self.plugins[name]
+
+
+    def _get_plugin_by_content_type(self, contenttype):
+        self._import_plugins()
+
+        ct_id = contenttype.id if isinstance(contenttype, ContentType) else int(contenttype)
+        try:
+            name = self.plugin_for_ctype_id[ct_id]
+        except KeyError:
+            raise PluginNotFound("No plugin found for content type '{0}'.".format(contenttype))
         return self.plugins[name]
 
 
