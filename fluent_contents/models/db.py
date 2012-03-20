@@ -179,7 +179,7 @@ class ContentItem(PolymorphicModel):
     # Deleting a placeholder should not remove the items, only makes them orphaned.
     # Also, when updating the page, the PlaceholderEditorInline first adds/deletes placeholders before the items are updated.
     placeholder = models.ForeignKey(Placeholder, related_name='contentitems', null=True, on_delete=models.SET_NULL)
-    sort_order = models.IntegerField(default=1)
+    sort_order = models.IntegerField(default=1, db_index=True)
 
 
     @property

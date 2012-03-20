@@ -36,7 +36,7 @@ class MarkupItem(ContentItem):
     text = models.TextField(_('markup'))
 
     # Store the language to keep rendering intact while switching settings.
-    language = models.CharField(_('Language'), max_length=30, editable=False, choices=backend.LANGUAGE_CHOICES)
+    language = models.CharField(_('Language'), max_length=30, editable=False, db_index=True, choices=backend.LANGUAGE_CHOICES)
 
     class Meta:
         verbose_name = _('Markup item')
