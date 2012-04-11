@@ -1,0 +1,297 @@
+# Copyright (C) 2010-2012
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Diederik van der Boor <vdboor@edoburu.nl>, 2010-2011
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-04-11 19:25+0200\n"
+"PO-Revision-Date: 2011-01-10 23:54+0100\n"
+"Last-Translator: Diederik van der Boor <vdboor@edoburu.nl>\n"
+"Language-Team: Dutch <NL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: extensions.py:197
+#, python-format
+msgid "{No rendering defined for class '%s'}"
+msgstr ""
+
+#: extensions.py:214
+msgid "Error:"
+msgstr "Fout:"
+
+#: models/db.py:36
+msgid "Main content"
+msgstr "Hoofdinhoud"
+
+#: models/db.py:37
+msgid "Sidebar content"
+msgstr "Zijbalk inhoud"
+
+#: models/db.py:38
+msgid "Related content"
+msgstr "Gerelateerde inhoud"
+
+#: models/db.py:41
+msgid "Slot"
+msgstr ""
+
+#: models/db.py:41
+msgid "A short name to identify the placeholder in the template code."
+msgstr "Een korte naam om de placeholder in de template code te identificeren."
+
+#: models/db.py:42
+msgid "Role"
+msgstr "Rol"
+
+#: models/db.py:42
+msgid "This defines where the object is used."
+msgstr "Dit geeft aan waar het object gebruikt word."
+
+#: models/db.py:49
+msgid "Admin title"
+msgstr "Admin titel"
+
+#: models/db.py:55
+msgid "Placeholder"
+msgstr ""
+
+#: models/db.py:56
+msgid "Placeholders"
+msgstr ""
+
+#: models/db.py:211
+msgid "Contentitem link"
+msgstr ""
+
+#: models/db.py:212
+msgid "Contentitem links"
+msgstr ""
+
+#: plugins/code/backend.py:19
+msgid "Combinations"
+msgstr "Combinaties"
+
+#: plugins/code/backend.py:20 plugins/iframe/content_plugins.py:13
+#: plugins/rawhtml/content_plugins.py:14
+msgid "Advanced"
+msgstr "Geavanceerd"
+
+#: plugins/code/content_plugins.py:13 plugins/gist/content_plugins.py:13
+msgid "Programming"
+msgstr "Programmeren"
+
+#: plugins/code/models.py:11 plugins/markup/models.py:39
+msgid "Language"
+msgstr "Taal"
+
+#: plugins/code/models.py:12
+msgid "Code"
+msgstr "Code"
+
+#: plugins/code/models.py:13
+msgid "Show line numbers"
+msgstr "Toon regelnummers"
+
+#: plugins/code/models.py:16
+msgid "Code snippet"
+msgstr "Codefragment"
+
+#: plugins/code/models.py:17
+msgid "Code snippets"
+msgstr "Codefragmenten"
+
+#: plugins/commentsarea/content_plugins.py:25
+#: plugins/disquswidgets/content_plugins.py:9
+#: plugins/formdesignerlink/content_plugins.py:21
+msgid "Interactivity"
+msgstr "Interactief"
+
+#: plugins/commentsarea/models.py:7 plugins/disquswidgets/models.py:7
+msgid "Allow posting new comments"
+msgstr "Sta toe om nieuwe reacties te plaatsen"
+
+#: plugins/commentsarea/models.py:10
+msgid "Comments area"
+msgstr "Reactieveld"
+
+#: plugins/commentsarea/models.py:11
+msgid "Comments areas"
+msgstr "Reactievelden"
+
+#: plugins/disquswidgets/models.py:10
+msgid "Disqus comments area"
+msgstr "Disqus reactieveld"
+
+#: plugins/disquswidgets/models.py:11
+msgid "Disqus comments areas"
+msgstr "Disqus reactieveld"
+
+#: plugins/formdesignerlink/models.py:8
+msgid "Form"
+msgstr "Formulier"
+
+#: plugins/formdesignerlink/models.py:11
+msgid "Form link"
+msgstr "Formulierlink"
+
+#: plugins/formdesignerlink/models.py:12
+msgid "Form links"
+msgstr "Formulierlinks"
+
+#: plugins/gist/models.py:9
+msgid "Gist number"
+msgstr "Gist nummer"
+
+#: plugins/gist/models.py:9
+msgid ""
+"Go to <a href=\"https://gist.github.com/\" target=\"_blank\">https://gist."
+"github.com/</a> and copy the number of the Gist snippet you want to display."
+msgstr ""
+"Ga naar <a href=\"https://gist.github.com/\" target=\"_blank\">https://gist."
+"github.com/</a> en kopieër het nummer van de Gist die je wilt weergeven."
+
+#: plugins/gist/models.py:10
+msgid "Gist filename"
+msgstr "Gist bestandsnaam"
+
+#: plugins/gist/models.py:10
+msgid "Leave the filename empty to display all files in the Gist."
+msgstr "Laat de bestandsnaam leeg om alle bestanden van de Gist weer te geven."
+
+#: plugins/gist/models.py:13
+msgid "GitHub Gist snippet"
+msgstr "GitHub Gist fragment"
+
+#: plugins/gist/models.py:14
+msgid "GitHub Gist snippets"
+msgstr "GitHub Gist fragmenten"
+
+#: plugins/googledocsviewer/content_plugins.py:22
+msgid "Online services"
+msgstr "Online diensten"
+
+#: plugins/googledocsviewer/models.py:11
+msgid "File URL"
+msgstr "Bestands URL"
+
+#: plugins/googledocsviewer/models.py:11
+msgid "Specify the URL of an online document, for example a PDF or DOCX file."
+msgstr "Geef de URL van een online document op, bijvoorbeeld een PDF of DOCX bestand."
+
+#: plugins/googledocsviewer/models.py:12 plugins/iframe/models.py:12
+msgid "Width"
+msgstr "Breedte"
+
+#: plugins/googledocsviewer/models.py:12 plugins/iframe/models.py:12
+msgid "Specify the size in pixels, or a percentage of the container area size."
+msgstr "Geef de grootte in pixels op, of een percentage van het container gebied."
+
+#: plugins/googledocsviewer/models.py:13 plugins/iframe/models.py:13
+msgid "Height"
+msgstr "Hoogte"
+
+#: plugins/googledocsviewer/models.py:13 plugins/iframe/models.py:13
+msgid "Specify the size in pixels."
+msgstr "Geef de grootte in pixels op."
+
+#: plugins/googledocsviewer/models.py:16
+msgid "Google Docs viewer"
+msgstr "Google Documenten-viewer"
+
+#: plugins/googledocsviewer/models.py:17
+msgid "Google Docs viewers"
+msgstr "Google Documenten-viewers"
+
+#: plugins/iframe/models.py:11
+msgid "Page URL"
+msgstr "Pagina URL"
+
+#: plugins/iframe/models.py:16
+msgid "Iframe"
+msgstr "Iframe"
+
+#: plugins/iframe/models.py:17
+msgid "Iframes"
+msgstr "Iframes"
+
+#: plugins/markup/content_plugins.py:24
+msgid "Markup"
+msgstr "Opmaak"
+
+#: plugins/markup/models.py:36
+msgid "markup"
+msgstr "opmaak"
+
+#: plugins/markup/models.py:42
+msgid "Markup item"
+msgstr "Opmaakdeel"
+
+#: plugins/markup/models.py:43
+msgid "Opmaakdelen"
+msgstr ""
+
+#: plugins/markup/models.py:82
+#, python-format
+msgid "%s items"
+msgstr "%s delen"
+
+#: plugins/rawhtml/models.py:7 plugins/rawhtml/models.py:10
+#: plugins/rawhtml/models.py:11
+msgid "HTML code"
+msgstr "HTML code"
+
+#: plugins/rawhtml/models.py:7
+msgid ""
+"Enter the HTML code to display, like the embed code of an online widget."
+msgstr ""
+"Vul de HTML code in om weer te geven, zoals de embed code van een online widget."
+
+#: plugins/text/models.py:14
+msgid "text"
+msgstr "tekst"
+
+#: plugins/text/models.py:17
+msgid "Text item"
+msgstr "Tekstdeel"
+
+#: plugins/text/models.py:18
+msgid "Text items"
+msgstr "Tekstdelen"
+
+#: templates/admin/fluent_contents/placeholder/inline_tabs.html:51
+msgid "Loading layout data..."
+msgstr "Layoutgegevens inladen..."
+
+#: templates/admin/fluent_contents/placeholder/inline_tabs.html:52
+msgid "Orphaned content"
+msgstr "Gevonden inhoud"
+
+#: templates/admin/fluent_contents/placeholder/inline_tabs.html:79
+msgid "There are no placeholders in this template."
+msgstr "Er zijn geen placeholders in deze template."
+
+#: templates/admin/fluent_contents/placeholderfield/controls.html:11
+msgid "Add"
+msgstr "Toevoegen"
+
+#: templates/admin/fluent_contents/placeholderfield/pane.html:3
+msgid "Placeholder empty"
+msgstr "Lege placeholder"
+
+#: templates/admin/fluent_contents/placeholderfield/pane_tabbar.html:3
+msgid "This placeholder is empty"
+msgstr "Deze placeholder is leeg"
+
+#: templates/admin/fluent_contents/placeholderfield/widget.html:10
+msgid "No items added to this field yet."
+msgstr "Er is nog geen inhoud toegevoegd aan dit veld."
+
+#: utils/validators.py:12
+msgid "Value should be a number or percentage."
+msgstr "Waarde moet een getal of percentage zijn."

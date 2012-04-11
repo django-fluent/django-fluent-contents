@@ -38,7 +38,7 @@ class Placeholder(models.Model):
         (RELATED, _('Related content'))
     )
 
-    slot = models.SlugField(_('Slot'), help_text=_("A short name to identify the placeholder in the template code"))
+    slot = models.SlugField(_('Slot'), help_text=_("A short name to identify the placeholder in the template code."))
     role = models.CharField(_('Role'), max_length=1, choices=ROLES, default=MAIN, help_text=_("This defines where the object is used."))
 
     # Track relation to parent (e.g. page or article)
