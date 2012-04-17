@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from polymorphic import PolymorphicModel
 from polymorphic.base import PolymorphicModelBase
 from fluent_contents.cache import get_rendering_cache_key
-from fluent_contents.managers import PlaceholderManager, ContentItemManager, get_parent_lookup_kwargs
+from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_lookup_kwargs
 
 
 class Placeholder(models.Model):

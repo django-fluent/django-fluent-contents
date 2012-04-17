@@ -14,11 +14,13 @@ Finally, to exchange template data, a :class:`PlaceholderData` object is availab
 which mirrors the relevant fields of the :class:`Placeholder` model.
 """
 from fluent_contents.models.db import Placeholder, ContentItem
+from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_lookup_kwargs
 from fluent_contents.models.fields import PlaceholderField, PlaceholderRelation, ContentItemRelation
 
 __all__ = (
     'Placeholder', 'ContentItem',
     'PlaceholderData',
+    'PlaceholderManager', 'ContentItemManager', 'get_parent_lookup_kwargs',
     'PlaceholderField', 'PlaceholderRelation', 'ContentItemRelation',
 )
 
