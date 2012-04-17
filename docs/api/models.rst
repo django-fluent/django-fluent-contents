@@ -9,6 +9,12 @@ The ``Placeholder`` class
 .. autoclass:: fluent_contents.models.Placeholder
    :members:
 
+The ``PlaceholderManager`` class
+--------------------------------
+
+.. autoclass:: fluent_contents.models.PlaceholderManager
+   :members:
+
 The ``ContentItem`` class
 -------------------------
 
@@ -38,3 +44,9 @@ The ``PlaceholderData`` class
 
 .. autoclass:: fluent_contents.models.PlaceholderData
    :members:
+
+The ``get_parent_lookup_kwargs`` function
+-----------------------------------------
+
+.. autofunction:: fluent_contents.models.get_parent_lookup_kwargs
+

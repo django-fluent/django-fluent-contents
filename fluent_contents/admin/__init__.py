@@ -9,8 +9,6 @@ To assist in configuring the admin interface properly, there are a few base clas
 * For CMS models, use the :class:`PlaceholderEditorAdmin` as base class.
 
 Both classes ensure the placeholders and inlines are properly setup.
-Each class also has a mixin version, in case a different base class is already used
-(e.g. the `MPTTModelAdmin` class from `django-mptt <https://github.com/django-mptt/django-mptt>`_)
 """
 from django.contrib import admin
 from fluent_contents.admin.placeholdereditor import PlaceholderEditorAdmin, PlaceholderEditorInline, PlaceholderEditorBaseMixin

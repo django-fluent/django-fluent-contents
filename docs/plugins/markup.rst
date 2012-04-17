@@ -63,7 +63,7 @@ The following settings are available:
 
 
 FLUENT_MARKUP_LANGUAGES
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Define which markup language should be used.
 

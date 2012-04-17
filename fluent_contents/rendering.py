@@ -1,7 +1,7 @@
 """
 This module provides functions to render placeholder content manually.
-This can be used when the placeholder content is rendered outside of a template.
-The templatetags also make use of these functions.
+Contents is cached in memcache whenever possible, only the remaining items are queried.
+The templatetags also use these functions to render the :class:`~fluent_contents.models.ContentItem` objects.
 """
 from django.core.cache import cache
 from django.template.context import RequestContext
@@ -55,7 +55,7 @@ def set_edit_mode(request, state):
 
 def is_edit_mode(request):
     """
-    Return whether edit mode is enabled.
+    Return whether edit mode is enabled; output is wrapped in ``<div>`` elements with metadata for frontend editing.
     """
     return getattr(request, '_fluent_contents_edit_mode', False)
 

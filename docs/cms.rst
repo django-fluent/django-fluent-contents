@@ -5,7 +5,6 @@ Creating a CMS system
 
 Besides the :class:`~fluent_contents.models.PlaceholderField` class,
 thee `fluent_contents` module also provides additional admin classes to build a CMS interface.
-This can be used
 
 The main difference between the CMS interface, and :class:`~fluent_contents.models.PlaceholderField`
 class is that the placeholders will be created dynamically based on the template of the current page.
@@ -18,11 +17,12 @@ The features include:
 * Automaticaly rearrange content items when the layout changes.
 * Allow usage with any parent model.
 
-In the source distribution, see the ``example.simple`` package for a working demonstration.
+In the source distribution, see the ``example.simplecms`` package for a working demonstration.
 
 .. seealso::
 
-    The API documentation of the :ref:`fluent_contents.admin` module provides more details of the classes.
+    The django-fluent-pages_ application is built on top of this API, and provides a ready-to-use CMS that can be implemented with minimal configuration effort.
+    To build a custom CMS, the API documentation of the :ref:`fluent_contents.admin` module provides more details of the classes.
 
 The basic setup
 ---------------
@@ -70,7 +70,7 @@ Variation for django-mptt
 
 For CMS systems that are built with django-mptt_,
 the same :class:`~fluent_contents.admin.PlaceholderEditorAdmin` can be used
-thanks to the MRO (Method Resolution Order) that Python uses:
+thanks to the method resolution order (MRO) that Python has:
 
 .. code-block:: python
 
@@ -114,8 +114,8 @@ Dynamic layout switching
 ------------------------
 
 The ``example`` application also demonstrates how to switch layouts dynamically.
-This happens fully client-side. Currently, the API of the "placeholder editor"
-needs to be accessed directly, notably:
+This happens entirely client-side. Currently, the JavaScript API methods of
+the "placeholder editor" needs to be accessed directly, notably:
 
 .. js:function:: cp_tabs.hide()
 
@@ -156,3 +156,5 @@ needs to be accessed directly, notably:
 
 
 .. _django-mptt: https://github.com/django-mptt/django-mptt
+.. _django-fluent-pages: https://github.com/edoburu/django-fluent-pages
+

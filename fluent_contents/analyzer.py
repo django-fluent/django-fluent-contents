@@ -14,7 +14,7 @@ def get_template_placeholder_data(template):
     wrapped in a :class:`~fluent_contents.models.containers.PlaceholderData` object.
 
     This function looks for the :class:`~fluent_contents.templatetags.placeholder_tags.PagePlaceholderNode` nodes
-    in the template, using the ``get_node_instances`` function of `django-template-analyzer`.
+    in the template, using the ``get_node_instances`` function of `django-template-analyzer <https://github.com/edoburu/django-template-analyzer>`_.
     """
     # Find the instances.
     nodes = get_node_instances(template, PagePlaceholderNode)

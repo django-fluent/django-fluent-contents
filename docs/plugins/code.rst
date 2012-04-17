@@ -53,7 +53,7 @@ FLUENT_CODE_DEFAULT_LANGUAGE
 Define which programming language should be selected by default.
 
 This setting is ideally suited to set personal preferences.
-By default this is "HTML", to be neutral.
+By default this is "HTML", to be as neutral as possible.
 
 FLUENT_CODE_DEFAULT_LINE_NUMBERS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

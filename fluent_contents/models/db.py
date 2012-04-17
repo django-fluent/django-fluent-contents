@@ -141,7 +141,7 @@ class ContentItem(PolymorphicModel):
     [<ArticleTextItem: Main article>, <RawHtmlItem: test>, <CodeItem: def foo(): print 1>,
     <AnnouncementBlockItem: Test>, <ArticleTextItem: Text in sidebar>]
 
-    The `django-polymorphic` code is written in such way, this requires the least amount of queries necessary.
+    Note that the `django-polymorphic` application is written in such way, that this requires the least amount of queries necessary.
     When access to the polymorphic classes is not needed, call :func:`~polymorphic.query.PolymorphicQuerySet.non_polymorphic` on the `QuerySet` to prevent this behavior:
 
     >>> from fluent_contents.models import ContentItem
@@ -162,7 +162,11 @@ class ContentItem(PolymorphicModel):
     Because the `ContentItem` references it's parent, and not the other way around,
     it will be cleaned up automatically by Django when the parent object is deleted.
 
-    The rendering of a `ContentItem` class happens in a :class:`~fluent_contents.extensions.ContentPlugin` class.
+    To use a `ContentItem` in the :class:`~fluent_contents.models.PlaceholderField`,
+    register it via a plugin definition. see the :class:`~fluent_contents.extensions.ContentPlugin` class for details.
+
+    The rendering of a `ContentItem` class happens in the associate :class:`~fluent_contents.extensions.ContentPlugin` class.
+    To render content items outside the template code, use the :mod:`fluent_contents.rendering` module to render the items.
     """
     __metaclass__ = ContentItemMetaClass
     objects = ContentItemManager()
@@ -186,6 +190,8 @@ class ContentItem(PolymorphicModel):
     def plugin(self):
         """
         Access the parent plugin which renders this model.
+
+        :rtype: :class:`~fluent_contents.extensions.ContentPlugin`
         """
         from fluent_contents.extensions import plugin_pool
         if self.__class__ in (ContentItem,):
@@ -226,11 +232,22 @@ class ContentItem(PolymorphicModel):
 
     def save(self, *args, **kwargs):
         super(ContentItem, self).save(*args, **kwargs)
+        self.clear_cache()
 
-        # Clear all caches
+
+    def clear_cache(self):
+        """
+        Delete the cache keys associated with this model.
+        """
+        for cache_key in self.get_cache_keys():
+            cache.delete(cache_key)
+
+
+    def get_cache_keys(self):
+        """
+        Get a list of all cache keys associated with this model.
+        """
         placeholder_name = self.placeholder.slot
-        cache_keys = [
+        return [
             get_rendering_cache_key(placeholder_name, self)
         ]
-        for cache_key in cache_keys:
-            cache.delete(cache_key)

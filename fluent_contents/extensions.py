@@ -57,12 +57,15 @@ class PluginContext(Context):
 
 class ContentPlugin(object):
     """
-    The base class for a plugin.
+    The base class for all content plugins.
 
+    A plugin defines the rendering for a :class:`~fluent_contents.models.ContentItem`, settings and presentation in the admin interface.
     To create a new plugin, derive from this class and call :func:`plugin_pool.register <PluginPool.register>` to enable it.
-    The derived class can define the settings, admin logic, and frontend rendering of the plugin. For example:
+    For example:
 
     .. code-block:: python
+
+        from fluent_contents.extensions import plugin_pool, ContentPlugin
 
         @plugin_pool.register
         class AnnouncementBlockPlugin(ContentPlugin):
@@ -71,13 +74,21 @@ class ContentPlugin(object):
             category = _("Simple blocks")
 
     As minimal configuration, specify the :attr:`model` and :attr:`render_template` fields.
-    When the plugin is registered in the :attr:`plugin_pool`, it will be instantiated once.
-    This is similar to the behavior of the :class:`~django.contrib.admin.ModelAdmin` classes in Django.
+    The :attr:`model` should be a subclass of the :class:`~fluent_contents.models.ContentItem` model class.
+
+    .. note::
+        When the plugin is registered in the :attr:`plugin_pool`, it will be instantiated only once.
+        It is therefore not possible to store per-request state at the plugin object.
+        This is similar to the behavior of the :class:`~django.contrib.admin.ModelAdmin` classes in Django.
 
     To customize the admin, the :attr:`admin_form_template`, :attr:`admin_form` can be defined,
     and a ``class Media`` can be included to provide extra CSS and JavaScript files for the admin interface.
-    Some well known properties of the `ModelAdmin` class can also be specified on plugins;
+    Some well known properties of the :class:`~django.contrib.admin.ModelAdmin` class can also be specified on plugins;
     such as the ``raw_id_fields``, ``fieldsets`` and ``readonly_fields`` settings.
+
+    The rendered output of a plugin is cached by default, assuming that most content is static.
+    This also avoids extra database queries to retrieve the model objects.
+    In case the plugin needs to output content dynamically, include ``cache_output = False`` in the plugin definition.
     """
     __metaclass__ = forms.MediaDefiningClass
 
@@ -188,6 +199,7 @@ class ContentPlugin(object):
         It is recommended to wrap the output in a ``<div>`` tag,
         to prevent the item from being displayed right next to the previous plugin.
 
+        To render raw HTML code, use :func:`~django.utils.safestring.mark_safe` on the returned HTML.
         """
         render_template = self.get_render_template(request, instance, **kwargs)
         if render_template:

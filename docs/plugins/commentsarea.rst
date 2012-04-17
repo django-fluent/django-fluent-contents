@@ -19,6 +19,11 @@ The django.contrib.comments_ module provides these defaults to make it fully cus
 to the design and workflow of the web site where it is being used.
 Hence, this plugin depends on a properly configured django.contrib.comments_ module.
 
+.. tip::
+
+    For an advanced plug&play setup, you can use the django-fluent-comments_ application
+    which includes features such as Ajax-based posting.
+
 Installation
 ------------
 
@@ -142,4 +147,4 @@ Some of the modules worth looking at are:
 These modules can enhance the commentsarea even further.
 
 .. _django.contrib.comments: https://docs.djangoproject.com/en/dev/ref/contrib/comments/
-
+.. _django-fluent-comments: https://github.com/edoburu/django-fluent-comments/

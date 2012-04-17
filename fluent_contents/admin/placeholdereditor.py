@@ -105,7 +105,8 @@ class PlaceholderEditorInline(ExtensibleGenericInline):
 
 class PlaceholderEditorBaseMixin(object):
     """
-    Base mixin for a ``ModelAdmin`` to provide the :class:`PlaceholderEditorInline` with initial data.
+    Base interface/mixin for a ``ModelAdmin`` to provide the :class:`PlaceholderEditorInline` with initial data.
+    This class is implemented by the :class:`PlaceholderEditorAdmin` and :class:`~fluent_contents.admin.PlaceholderFieldAdmin` classes.
     """
     @abstractmethod
     def get_placeholder_data(self, request, obj):

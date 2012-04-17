@@ -29,3 +29,6 @@ Other classes
    :members:
 
 .. autoexception:: fluent_contents.extensions.PluginAlreadyRegistered
+
+.. autoexception:: fluent_contents.extensions.PluginNotFound
+

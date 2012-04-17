@@ -9,7 +9,7 @@ from polymorphic import PolymorphicManager, PolymorphicQuerySet
 
 class PlaceholderManager(models.Manager):
     """
-    Extra methods for the placeholder.
+    Extra methods for the ``Placeholder.objects``.
     """
 
     def parent(self, parent_object):
@@ -40,6 +40,9 @@ class ContentItemQuerySet(PolymorphicQuerySet):
 
 
 class ContentItemManager(PolymorphicManager):
+    """
+    Extra methods for ``ContentItem.objects``.
+    """
     def __init__(self, *args, **kwargs):
         super(ContentItemManager, self).__init__(queryset_class=ContentItemQuerySet, *args, **kwargs)
 

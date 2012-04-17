@@ -19,6 +19,7 @@ from form_designer.views import process_form
 class FormDesignerLinkPlugin(ContentPlugin):
     model = FormDesignerLink
     category = _('Interactivity')
+    cache_output = False
 
 
     def get_render_template(self, request, instance, **kwargs):

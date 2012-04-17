@@ -82,9 +82,9 @@ API documentation
 
    api/admin
    api/analyzer
+   api/cache
    api/extensions
    api/forms
-   api/managers
    api/models
    api/rendering
    api/templatetags/placeholder_tags
@@ -98,7 +98,6 @@ The following features are planned:
 * Frontend editing support
 * Global / shared placeholders
 * Fieldsets in plugins
-* Caching output of content items in memcached (updated on admin edit).
 * Gracefully handle errors when removing plugins (currently causes errors in *django-polymorphic* / *django.contrib.contenttypes*)
 * Bridging other plugin systems, like Django CMS
 * Inline support (e.g. building a linklist plugin).
