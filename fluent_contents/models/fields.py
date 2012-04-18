@@ -78,7 +78,7 @@ class PlaceholderRel(GenericRel):
         # TODO: make sure reverse queries work properly
         super(PlaceholderRel, self).__init__(
             to=Placeholder,
-            related_name='placeholderfield_{0}+'.format(slot),   # TODO: make unique for model (multiple models can use same slotnane)
+            related_name=None,  # NOTE: must be unique for app/model/slot.
             limit_choices_to=limit_choices_to
         )
 
@@ -167,6 +167,16 @@ class PlaceholderField(PlaceholderRelation):
         if not hasattr(cls._meta, 'placeholder_fields'):
             cls._meta.placeholder_fields = {}
         cls._meta.placeholder_fields[name] = self
+
+        # Configure the revere relation if possible.
+        # TODO: make sure reverse queries work properly
+        #if self.rel.related_name is None:
+        #    # Make unique for model (multiple models can use same slotnane)
+        #    self.rel.related_name = '{app}_{model}_{slot}'.format(
+        #        app=cls._meta.app_label,
+        #        model=cls._meta.object_name.lower(),
+        #        slot=self.slot
+        #    )
 
 
     def value_from_object(self, obj):
