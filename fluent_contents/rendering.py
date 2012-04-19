@@ -8,6 +8,7 @@ from django.template.context import RequestContext
 from django.template.loader import render_to_string
 from django.utils.html import conditional_escape, escape
 from django.utils.safestring import mark_safe
+from fluent_contents import appsettings
 from fluent_contents.cache import get_rendering_cache_key
 from fluent_contents.extensions import PluginNotFound
 import logging
@@ -78,7 +79,7 @@ def _render_items(request, placeholder_name, items, template_name=None):
             html = None
             try:
                 # Respect the cache output setting of the plugin
-                if contentitem.plugin.cache_output:
+                if contentitem.plugin.cache_output and appsettings.FLUENT_CONTENTS_CACHE_OUTPUT:
                     cachekey = get_rendering_cache_key(placeholder_name, contentitem)
                     html = cache.get(cachekey)
             except PluginNotFound:
@@ -108,7 +109,7 @@ def _render_items(request, placeholder_name, items, template_name=None):
                 # This is just like Input.render() and unlike Node.render().
                 html = conditional_escape(plugin._render_contentitem(request, contentitem))
 
-                if plugin.cache_output:
+                if plugin.cache_output and appsettings.FLUENT_CONTENTS_CACHE_OUTPUT:
                     cachekey = get_rendering_cache_key(placeholder_name, contentitem)
                     cache.set(cachekey, html)
 
