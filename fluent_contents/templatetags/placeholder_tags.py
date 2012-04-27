@@ -89,7 +89,11 @@ class PagePlaceholderNode(Node):
     @classmethod
     def parse(cls, parser, token):
         """
-        Parse the node: {% page_placeholder parentobj slotname title="test" role="m" %}
+        Parse the node syntax:
+
+        .. code-block:: html+django
+
+            {% page_placeholder parentobj slotname title="test" role="m" %}
         """
         bits = token.split_contents()
         arg_bits, kwarg_bits = parse_token_kwargs(parser, bits, True, True, ('title', 'role', 'template'))

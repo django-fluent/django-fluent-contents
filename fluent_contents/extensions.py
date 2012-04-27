@@ -84,7 +84,10 @@ class ContentPlugin(object):
     To customize the admin, the :attr:`admin_form_template`, :attr:`admin_form` can be defined,
     and a ``class Media`` can be included to provide extra CSS and JavaScript files for the admin interface.
     Some well known properties of the :class:`~django.contrib.admin.ModelAdmin` class can also be specified on plugins;
-    such as the ``raw_id_fields``, ``fieldsets`` and ``readonly_fields`` settings.
+    such as the
+    :attr:`~django.contrib.admin.ModelAdmin.raw_id_fields`,
+    :attr:`~django.contrib.admin.ModelAdmin.fieldsets` and
+    :attr:`~django.contrib.admin.ModelAdmin.readonly_fields` settings.
 
     The rendered output of a plugin is cached by default, assuming that most content is static.
     This also avoids extra database queries to retrieve the model objects.

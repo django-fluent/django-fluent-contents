@@ -119,7 +119,8 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
 
 class ExtensibleGenericInline(GenericInlineModelAdmin):
     """
-    Custom ``GenericStackedInline`` subclass that got some of it's extensibility back.
+    Custom :class:`~django.contrib.contenttypes.generic.GenericInlineModelAdmin` subclass
+    that got some of it's extensibility back.
     """
     exclude_unchecked = None
 

@@ -14,7 +14,7 @@ class PlaceholderFieldInline(PlaceholderEditorInline):
 
 class PlaceholderFieldAdmin(PlaceholderEditorAdmin):
     """
-    The base functionality for ``ModelAdmin`` dialogs to display placeholder fields.
+    The base functionality for :class:`~django.contrib.admin.ModelAdmin` dialogs to display placeholder fields.
 
     This class loads the :class:`~fluent_contents.models.ContentItem` inlines,
     and initializes the frontend editor for the :class:`~fluent_contents.models.PlaceholderField`.

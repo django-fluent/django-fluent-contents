@@ -23,10 +23,10 @@ class PlaceholderInlineFormSet(BaseInitialGenericInlineFormSet):
 class PlaceholderEditorInline(ExtensibleGenericInline):
     """
     The placeholder editor, implemented as an admin inline.
-    It displays tabs for each inline placeholder, and displays ``ContentItem`` plugins in the tabs.
+    It displays tabs for each inline placeholder, and displays :class:`~fluent_contents.models.ContentItem` plugins in the tabs.
 
     It should be inserted in the ``ModelAdmin.inlines`` before the inlines that
-    the :func:`~fluent_contents.admin.contentitems.get_content_item_inlines` function generates.
+    the :func:`~fluent_contents.admin.get_content_item_inlines` function generates.
     The ContentItem inlines look for the ``Placeholder`` object that was created just before their invocation.
 
     To fetch the initial data, the inline will attempt to find the parent model,
@@ -105,7 +105,7 @@ class PlaceholderEditorInline(ExtensibleGenericInline):
 
 class PlaceholderEditorBaseMixin(object):
     """
-    Base interface/mixin for a ``ModelAdmin`` to provide the :class:`PlaceholderEditorInline` with initial data.
+    Base interface/mixin for a :class:`~django.contrib.admin.ModelAdmin` to provide the :class:`PlaceholderEditorInline` with initial data.
     This class is implemented by the :class:`PlaceholderEditorAdmin` and :class:`~fluent_contents.admin.PlaceholderFieldAdmin` classes.
     """
     @abstractmethod
@@ -130,7 +130,7 @@ class PlaceholderEditorBaseMixin(object):
 
 class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, DynamicInlinesModelAdmin):
     """
-    The base functionality for ``ModelAdmin`` dialogs to display a placeholder editor with plugins.
+    The base functionality for :class:`~django.contrib.admin.ModelAdmin` dialogs to display a placeholder editor with plugins.
     It loads the inlines using :func:`get_extra_inlines`.
     """
     placeholder_inline = PlaceholderEditorInline
