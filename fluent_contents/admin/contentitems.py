@@ -44,6 +44,7 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
                 )
 
                 form.cleaned_data['placeholder'] = desired_placeholder
+                form.instance.placeholder = desired_placeholder
 
 
     @classmethod
