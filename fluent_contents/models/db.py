@@ -93,6 +93,11 @@ class Placeholder(models.Model):
         except AttributeError:
             return None
 
+    def delete(self, using=None):
+        # Workaround for the fact that South 0.7.4 does not support on_delete=SET_NULL yet
+        # It doesn't add that attribute to the foreign key, causing a DatabaseError instead.
+        ContentItem.objects.filter(placeholder=self).update(placeholder=None)
+        super(Placeholder, self).delete(using)
 
 
 
