@@ -252,6 +252,10 @@ class ContentItem(PolymorphicModel):
         """
         Get a list of all cache keys associated with this model.
         """
+        if not self.placeholder_id:
+            # TODO: prune old placeholder slot name?
+            return []
+
         placeholder_name = self.placeholder.slot
         return [
             get_rendering_cache_key(placeholder_name, self)
