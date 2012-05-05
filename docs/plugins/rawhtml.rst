@@ -5,22 +5,25 @@ The rawhtml plugin
 
 The `rawhtml` plugin allows inserting raw HTML code in the page.
 
-.. image:: /images/plugins/rawhtml-admin2.*
-   :width: 732px
-   :height: 122px
+  .. image:: /images/plugins/rawhtml-admin2.*
+     :width: 732px
+     :height: 122px
 
-.. image:: /images/plugins/rawhtml-html2.*
-   :width: 420px
-   :height: 315px
+The code is included as-is at the frontend:
 
-.. figure:: /images/plugins/rawhtml-admin.*
-   :width: 732px
-   :height: 212px
+  .. image:: /images/plugins/rawhtml-html2.*
+     :width: 420px
+     :height: 315px
 
-This can be used for example for:
 
-* including `jQuery <http://jquery.org/>`_ snippets in a page.
+This plugin can be used for example for:
+
 * including "embed codes" in a page, provided by sites such as Facebook, Google Docs, YouTube, SlideShare, and Vimeo.
+* including `jQuery <http://jquery.org/>`_ snippets in a page:
+
+  .. image:: /images/plugins/rawhtml-admin.*
+     :width: 732px
+     :height: 212px
 
 Installation
 ------------

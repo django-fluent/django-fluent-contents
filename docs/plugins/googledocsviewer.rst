@@ -6,13 +6,15 @@ The googledocsviewer plugin
 The `googledocsviewer` plugin allows inserting an embedded Google Docs Viewer in the page.
 This can be used to display various files - like PDF or DOCX files - inline in the HTML page.
 
-.. image:: /images/plugins/googledocsviewer-admin.*
-   :width: 732px
-   :height: 208px
+  .. image:: /images/plugins/googledocsviewer-admin.*
+     :width: 732px
+     :height: 208px
 
-.. image:: /images/plugins/googledocsviewer-html.*
-   :width: 552px
-   :height: 602px
+The document is rendered by Google:
+
+  .. image:: /images/plugins/googledocsviewer-html.*
+     :width: 552px
+     :height: 602px
 
 
 Installation

@@ -5,13 +5,15 @@ The formdesignerlink plugin
 
 The `formdesignerlink` plugin displays a form, created by the django-form-designer_ module.
 
-.. image:: /images/plugins/formdesignerlink-admin.*
-   :width: 732px
-   :height: 65px
+  .. image:: /images/plugins/formdesignerlink-admin.*
+     :width: 732px
+     :height: 65px
 
-.. image:: /images/plugins/formdesignerlink-html.*
-   :width: 470px
-   :height: 405px
+The form is displayed at the website:
+
+  .. image:: /images/plugins/formdesignerlink-html.*
+     :width: 470px
+     :height: 405px
 
 .. note::
     While the `form_designer` interface may not be fully up to the "UI standards" of `django-fluent-contents`,

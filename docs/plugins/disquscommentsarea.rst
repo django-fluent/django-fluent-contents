@@ -5,13 +5,15 @@ The disquscommentsarea plugin
 
 The `disquscommentsarea`  plugin displays a comments area powed by DISQUS_.
 
-.. image:: /images/plugins/disquscommentsarea-admin.*
-   :width: 732px
-   :height: 61px
+  .. image:: /images/plugins/disquscommentsarea-admin.*
+     :width: 732px
+     :height: 61px
 
-.. image:: /images/plugins/disquscommentsarea-html.*
-   :width: 441px
-   :height: 490px
+This displays the DISQUS_ comments area:
+
+  .. image:: /images/plugins/disquscommentsarea-html.*
+     :width: 441px
+     :height: 490px
 
 In the background, DISQUS_ uses a JavaScript include to embed the comments.
 Google indexes the comments nevertheless.

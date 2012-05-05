@@ -6,15 +6,16 @@ The gist plugin
 The `gist` plugin provides highlighting of programming code snippets (referred to as `Gists <https://gist.github.com/>`_),
 which are hosted at `GitHub <http://www.github.com/>`_.
 
-.. image:: /images/plugins/gist-admin.*
-   :width: 732px
-   :height: 146px
+  .. image:: /images/plugins/gist-admin.*
+     :width: 732px
+     :height: 146px
 
-.. image:: /images/plugins/gist-html.*
-   :width: 500px
-   :height: 521px
+Gist snippets are built by a JavaScript include, which renders the Gist with syntax highlighting:
 
-In the background, Gist snippets are JavaScript includes which render the Gist with syntax highlighting.
+  .. image:: /images/plugins/gist-html.*
+     :width: 500px
+     :height: 521px
+
 
 Installation
 ------------
