@@ -47,6 +47,14 @@ class ContentItemManager(PolymorphicManager):
         super(ContentItemManager, self).__init__(queryset_class=ContentItemQuerySet, *args, **kwargs)
 
 
+    def parent(self, parent_object):
+        """
+        Return all content items which are associated with a given parent object.
+        """
+        lookup = get_parent_lookup_kwargs(parent_object)
+        return self.get_query_set().filter(**lookup)
+
+
 def get_parent_lookup_kwargs(parent_object):
     """
     Return lookup arguments for the generic ``parent_type`` / ``parent_id`` fields.
