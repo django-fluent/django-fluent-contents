@@ -7,12 +7,12 @@ The `text` plugin provides a standard WYSIWYG ("What You See is What You Get")
 editor in the administration panel, to add HTML contents to the page.
 
 .. image:: /images/plugins/text-admin.*
-   :width: 788px
+   :width: 732px
    :height: 269px
 
 .. not needed: image:: /images/plugins/text-html.*
-   :width: 418px
-   :height: 47px
+   :width: 398px
+   :height: 52px
 
 The plugin is built on top of django-wysiwyg_, making it possible
 to switch to any WYSIWYG editor of your choice.

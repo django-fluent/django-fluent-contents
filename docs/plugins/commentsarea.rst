@@ -7,12 +7,12 @@ The `commentsarea`  plugin displays the form and messagelist
 that django.contrib.comments_ renders.
 
 .. image:: /images/plugins/commentsarea-admin.*
-   :width: 788px
-   :height: 60px
+   :width: 732px
+   :height: 61px
 
 .. image:: /images/plugins/commentsarea-html.*
-   :width: 416px
-   :height: 348px
+   :width: 470px
+   :height: 500px
 
 By default, the displayed comments will look very plain. This is however, not an accident.
 The django.contrib.comments_ module provides these defaults to make it fully customizable

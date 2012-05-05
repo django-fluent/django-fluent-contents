@@ -6,8 +6,8 @@ The disquscommentsarea plugin
 The `disquscommentsarea`  plugin displays a comments area powed by DISQUS_.
 
 .. image:: /images/plugins/disquscommentsarea-admin.*
-   :width: 788px
-   :height: 60px
+   :width: 732px
+   :height: 61px
 
 .. image:: /images/plugins/disquscommentsarea-html.*
    :width: 441px

@@ -6,8 +6,8 @@ The iframe plugin
 The `iframe` plugin allows inserting IFrames to the page.
 
 .. image:: /images/plugins/iframe-admin.*
-   :width: 788px
-   :height: 185px
+   :width: 732px
+   :height: 186px
 
 .. image:: /images/plugins/iframe-html.*
    :width: 552px

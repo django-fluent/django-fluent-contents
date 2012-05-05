@@ -37,10 +37,10 @@ the rest is just standard Django model code.
       Simple content item to make an announcement.
       """
       title = models.CharField(_("Title"), max_length=200)
-      body = models.TextField(_("Body text"))
+      body = models.TextField(_("Body"))
 
-      button_link = models.URLField(_("Button URL"))
-      button_text = models.CharField(_("Button Text"), max_length=200)
+      button_text = models.CharField(_("Text"), max_length=200)
+      button_link = models.URLField(_("URL"))
 
       class Meta:
           verbose_name = _("Announcement block")
@@ -64,17 +64,27 @@ The :file:`content_plugins.py` file can contain multiple plugins, each should in
   from .models import AnnouncementBlockItem
 
 
+  @plugin_pool.register
   class AnnouncementBlockPlugin(ContentPlugin):
      model = AnnouncementBlockItem
      render_template = "plugins/announcementblock.html"
      category = _("Simple blocks")
 
+     fieldsets = (
+         (None, {
+             'fields': ('title', 'body',)
+         }),
+         (_("Button"), {
+             'fields': ('button_text', 'url',)
+         })
+     )
 
-  plugin_pool.register(AnnouncementBlockPlugin)
 
 The plugin class binds all parts together; the model, metadata, and rendering code.
-Either the :func:`~fluent_contents.extensions.ContentPlugin.render` function can be overwritten, or a ``render_template`` can be defined.
-Finally, the plugin should be registered.
+Either the :func:`~fluent_contents.extensions.ContentPlugin.render` function can be overwritten, or a :attr:`~fluent_contents.extensions.ContentPlugin.render_template` can be defined.
+
+The other fields, such as the :attr:`~fluent_contents.extensions.ContentPlugin.fieldsets` are optional.
+The :func:`plugin_pool.register <fluent_contents.extensions.PluginPool.register>` decorator registers the plugin.
 
 
 announcementblock.html
@@ -112,8 +122,8 @@ Now, the plugin will be visible in the editor options:
 After adding it, the admin interface will be visible:
 
 .. image:: images/newplugins/announcementblock-admin.png
-  :width: 1067px
-  :height: 402px
+  :width: 956px
+  :height: 330px
   :scale: 75
   :alt: Announcement block admin interface
 

@@ -6,12 +6,12 @@ The markup plugin
 The `markup` plugin provides support for lightweight "markup" languages.
 
 .. image:: /images/plugins/markup-admin.*
-   :width: 788px
-   :height: 182px
+   :width: 732px
+   :height: 191px
 
 .. image:: /images/plugins/markup-html.*
-   :width: 398px
-   :height: 202px
+   :width: 690px
+   :height: 190px
 
 The plugin provided support for the markup languages:
 

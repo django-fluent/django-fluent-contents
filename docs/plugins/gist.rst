@@ -7,8 +7,8 @@ The `gist` plugin provides highlighting of programming code snippets (referred t
 which are hosted at `GitHub <http://www.github.com/>`_.
 
 .. image:: /images/plugins/gist-admin.*
-   :width: 788px
-   :height: 145px
+   :width: 732px
+   :height: 146px
 
 .. image:: /images/plugins/gist-html.*
    :width: 500px
