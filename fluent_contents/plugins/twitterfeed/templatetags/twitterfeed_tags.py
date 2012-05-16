@@ -6,7 +6,7 @@ register = Library()
 
 
 @register.filter
-def escape_tweet(text):
+def urlize_twitter(text):
     """
     Replace #hashtag and @username references in a tweet with HTML text.
     """

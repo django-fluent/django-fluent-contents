@@ -45,7 +45,7 @@
 </script>
 
 <div class="twitterfeed">
-	<h2>{{ instance.title|escape_tweet }}</h2>
+	<h2>{{ instance.title|urlize_twitter }}</h2>
 	<div id="twitter-container-{{ instance.pk }}">{% block htmlcontainer %}{% endblock %}</div>
-	{% if instance.footer_text %}<p>{{ instance.footer_text|escape_tweet }}</p>{% endif %}
+	{% if instance.footer_text %}<p>{{ instance.footer_text|urlize_twitter }}</p>{% endif %}
 </div>
