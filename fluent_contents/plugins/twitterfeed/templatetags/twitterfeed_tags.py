@@ -1,6 +1,6 @@
 from django.template import Library
 from django.utils.safestring import mark_safe
-import ttp
+from twitter_text import TwitterText
 
 register = Library()
 
@@ -10,4 +10,7 @@ def urlize_twitter(text):
     """
     Replace #hashtag and @username references in a tweet with HTML text.
     """
-    return mark_safe(ttp.Parser(max_url_length=60).parse(text).html.replace('search.twitter.com/search?q=', 'twitter.com/search/realtime/'))
+    tt = TwitterText(text)
+    html = tt.autolink.auto_link()
+    html = html.replace('twitter.com/search?q=', 'twitter.com/search/realtime/')
+    return mark_safe(html)

@@ -18,6 +18,7 @@ setup(
         'formdesignerlink': ['django-form-designer'],
         'markup': ['docutils', 'textile', 'Markdown>=1.7'],
         'text': ['django-wysiwyg>=0.3.0'],
+        'twitter': ['twitter-text-py>=1.0.3'],
     },
     dependency_links = [
         'git+https://github.com/philomat/django-form-designer.git#egg=django-form-designer',
