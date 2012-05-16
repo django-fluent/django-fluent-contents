@@ -7,13 +7,13 @@ The `twitterfeed` plugin provides two widgets to display at the web site:
 
   .. image:: /images/plugins/twitterfeed-user-admin.*
      :width: 732px
-     :height: 272px
+     :height: 310px
 
 |
 
   .. image:: /images/plugins/twitterfeed-search-admin.*
      :width: 732px
-     :height: 295px
+     :height: 333px
 
 The twitterfeed is fetched client-side by JavaScript, and can be styled using CSS.
 

@@ -14,6 +14,7 @@ class TwitterRecentEntriesItem(ContentItem):
 
     footer_text = models.CharField(_('Footer text'), max_length=200, blank=True, help_text=_('You may use twitter markup here, such as a #hashtag or @username.'))
     include_retweets = models.BooleanField(_("Include retweets"))
+    include_replies = models.BooleanField(_("Include replies"))
 
     def __unicode__(self):
         return self.title or self.twitter_user
@@ -34,6 +35,7 @@ class TwitterSearchItem(ContentItem):
 
     footer_text = models.CharField(_('Footer text'), max_length=200, blank=True, help_text=_('You may use twitter markup here, such as a #hashtag or @username'))
     include_retweets = models.BooleanField(_("Include retweets"))
+    include_replies = models.BooleanField(_("Include replies"))
 
     def __unicode__(self):
         return self.title or self.query

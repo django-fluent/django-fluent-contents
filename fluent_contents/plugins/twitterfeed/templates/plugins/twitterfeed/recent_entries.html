@@ -2,6 +2,7 @@
 
 {% block jsoptions %}
       username: '{{ instance.twitter_user }}',
-      {% if not instance.include_retweets %}retweets: false,
-      fetch: Math.max(10, {{ instance.amount }} * 2),{% endif %}
+      {% if not instance.include_retweets %}retweets: false,{% endif %}
+      {% if not instance.include_replies %}filter: function(t){ return t.tweet_raw_text.substring(0,1) != '@'; },{% endif %}
+      {% if not instance.include_retweets or not include_replies %}fetch: Math.max(20, {{ instance.amount }} * 4),{% endif %}
 {% endblock %}
