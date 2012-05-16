@@ -7,12 +7,12 @@ class TwitterRecentEntriesItem(ContentItem):
     """
     Content item to display recent entries of a twitter user.
     """
-    title = models.CharField(_('Title'), max_length=200, blank=True, help_text=_('You may use twitter markup here, such as a #hashtag or @username'))
+    title = models.CharField(_('Title'), max_length=200, blank=True, help_text=_('You may use Twitter markup here, such as a #hashtag or @username.'))
 
     twitter_user = models.CharField(_('Twitter user'), max_length=75)
     amount = models.PositiveSmallIntegerField(_('Number of results'), default=5)
 
-    footer_text = models.CharField(_('Footer text'), max_length=200, blank=True, help_text=_('You may use twitter markup here, such as a #hashtag or @username.'))
+    footer_text = models.CharField(_('Footer text'), max_length=200, blank=True, help_text=_('You may use Twitter markup here, such as a #hashtag or @username.'))
     include_retweets = models.BooleanField(_("Include retweets"))
     include_replies = models.BooleanField(_("Include replies"))
 
@@ -28,12 +28,12 @@ class TwitterSearchItem(ContentItem):
     """
     Content item to display recent entries of a twitter user.
     """
-    title = models.CharField(_('Title'), max_length=200, blank=True, help_text=_('You may use twitter markup here, such as a #hashtag or @username'))
+    title = models.CharField(_('Title'), max_length=200, blank=True, help_text=_('You may use Twitter markup here, such as a #hashtag or @username.'))
 
     query = models.CharField(_('Search for'), max_length=200, default='', help_text=_('<a href="https://support.twitter.com/articles/71577" target="_blank">Twitter search syntax</a> is allowed.'))
     amount = models.PositiveSmallIntegerField(_('Number of results'), default=5)
 
-    footer_text = models.CharField(_('Footer text'), max_length=200, blank=True, help_text=_('You may use twitter markup here, such as a #hashtag or @username'))
+    footer_text = models.CharField(_('Footer text'), max_length=200, blank=True, help_text=_('You may use Twitter markup here, such as a #hashtag or @username.'))
     include_retweets = models.BooleanField(_("Include retweets"))
     include_replies = models.BooleanField(_("Include replies"))
 

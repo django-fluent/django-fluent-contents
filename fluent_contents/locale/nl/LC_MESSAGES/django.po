@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-11 19:25+0200\n"
+"POT-Creation-Date: 2012-05-16 15:03+0200\n"
 "PO-Revision-Date: 2011-01-10 23:54+0100\n"
 "Last-Translator: Diederik van der Boor <vdboor@edoburu.nl>\n"
 "Language-Team: Dutch <NL@li.org>\n"
@@ -16,12 +16,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: extensions.py:197
+#: extensions.py:212
 #, python-format
 msgid "{No rendering defined for class '%s'}"
 msgstr ""
 
-#: extensions.py:214
+#: extensions.py:229
 msgid "Error:"
 msgstr "Fout:"
 
@@ -65,11 +65,11 @@ msgstr ""
 msgid "Placeholders"
 msgstr ""
 
-#: models/db.py:211
+#: models/db.py:222
 msgid "Contentitem link"
 msgstr ""
 
-#: models/db.py:212
+#: models/db.py:223
 msgid "Contentitem links"
 msgstr ""
 
@@ -112,15 +112,15 @@ msgstr "Codefragmenten"
 msgid "Interactivity"
 msgstr "Interactief"
 
-#: plugins/commentsarea/models.py:7 plugins/disquswidgets/models.py:7
+#: plugins/commentsarea/models.py:10 plugins/disquswidgets/models.py:7
 msgid "Allow posting new comments"
 msgstr "Sta toe om nieuwe reacties te plaatsen"
 
-#: plugins/commentsarea/models.py:10
+#: plugins/commentsarea/models.py:13
 msgid "Comments area"
 msgstr "Reactieveld"
 
-#: plugins/commentsarea/models.py:11
+#: plugins/commentsarea/models.py:14
 msgid "Comments areas"
 msgstr "Reactievelden"
 
@@ -173,6 +173,7 @@ msgid "GitHub Gist snippets"
 msgstr "GitHub Gist fragmenten"
 
 #: plugins/googledocsviewer/content_plugins.py:22
+#: plugins/twitterfeed/content_plugins.py:8
 msgid "Online services"
 msgstr "Online diensten"
 
@@ -182,7 +183,8 @@ msgstr "Bestands URL"
 
 #: plugins/googledocsviewer/models.py:11
 msgid "Specify the URL of an online document, for example a PDF or DOCX file."
-msgstr "Geef de URL van een online document op, bijvoorbeeld een PDF of DOCX bestand."
+msgstr ""
+"Geef de URL van een online document op, bijvoorbeeld een PDF of DOCX bestand."
 
 #: plugins/googledocsviewer/models.py:12 plugins/iframe/models.py:12
 msgid "Width"
@@ -190,7 +192,8 @@ msgstr "Breedte"
 
 #: plugins/googledocsviewer/models.py:12 plugins/iframe/models.py:12
 msgid "Specify the size in pixels, or a percentage of the container area size."
-msgstr "Geef de grootte in pixels op, of een percentage van het container gebied."
+msgstr ""
+"Geef de grootte in pixels op, of een percentage van het container gebied."
 
 #: plugins/googledocsviewer/models.py:13 plugins/iframe/models.py:13
 msgid "Height"
@@ -233,8 +236,9 @@ msgid "Markup item"
 msgstr "Opmaakdeel"
 
 #: plugins/markup/models.py:43
-msgid "Opmaakdelen"
-msgstr ""
+#, fuzzy
+msgid "Markup items"
+msgstr "Opmaakdeel"
 
 #: plugins/markup/models.py:82
 #, python-format
@@ -250,7 +254,8 @@ msgstr "HTML code"
 msgid ""
 "Enter the HTML code to display, like the embed code of an online widget."
 msgstr ""
-"Vul de HTML code in om weer te geven, zoals de embed code van een online widget."
+"Vul de HTML code in om weer te geven, zoals de embed code van een online "
+"widget."
 
 #: plugins/text/models.py:14
 msgid "text"
@@ -263,6 +268,60 @@ msgstr "Tekstdeel"
 #: plugins/text/models.py:18
 msgid "Text items"
 msgstr "Tekstdelen"
+
+#: plugins/twitterfeed/models.py:10 plugins/twitterfeed/models.py:31
+msgid "Title"
+msgstr "Titel"
+
+#: plugins/twitterfeed/models.py:10 plugins/twitterfeed/models.py:15
+#: plugins/twitterfeed/models.py:31 plugins/twitterfeed/models.py:36
+msgid "You may use Twitter markup here, such as a #hashtag or @username."
+msgstr "Je mag Twitter opmaak gebruiken, zoals #hashtag of @gebruikersnaam."
+
+#: plugins/twitterfeed/models.py:12
+msgid "Twitter user"
+msgstr "Twitter gebruiker"
+
+#: plugins/twitterfeed/models.py:13 plugins/twitterfeed/models.py:34
+msgid "Number of results"
+msgstr "Aantal resultaten"
+
+#: plugins/twitterfeed/models.py:15 plugins/twitterfeed/models.py:36
+msgid "Footer text"
+msgstr "Onderschrift"
+
+#: plugins/twitterfeed/models.py:16 plugins/twitterfeed/models.py:37
+msgid "Include retweets"
+msgstr "Toon retweets"
+
+#: plugins/twitterfeed/models.py:17 plugins/twitterfeed/models.py:38
+msgid "Include replies"
+msgstr "Toon reacties"
+
+#: plugins/twitterfeed/models.py:23 plugins/twitterfeed/models.py:24
+msgid "Recent twitter entries"
+msgstr "Recente twitterberichten"
+
+#: plugins/twitterfeed/models.py:33
+msgid "Search for"
+msgstr "Zoek naar"
+
+#: plugins/twitterfeed/models.py:33
+msgid ""
+"<a href=\"https://support.twitter.com/articles/71577\" target=\"_blank"
+"\">Twitter search syntax</a> is allowed."
+msgstr ""
+"<a href=\"https://support.twitter.com/articles/71577\" target=\"_blank"
+"\">Twitter zoek syntax</a> is toegestaan."
+
+#: plugins/twitterfeed/models.py:44 plugins/twitterfeed/models.py:45
+msgid "Twitter search feed"
+msgstr "Twitter zoekresultaten"
+
+#: plugins/twitterfeed/templates/plugins/twitterfeed/base.html:32
+#, fuzzy
+msgid "loading tweets..."
+msgstr "Tweets worden opgehaald..."
 
 #: templates/admin/fluent_contents/placeholder/inline_tabs.html:51
 msgid "Loading layout data..."
@@ -292,6 +351,6 @@ msgstr "Deze placeholder is leeg"
 msgid "No items added to this field yet."
 msgstr "Er is nog geen inhoud toegevoegd aan dit veld."
 
-#: utils/validators.py:12
+#: utils/validators.py:13
 msgid "Value should be a number or percentage."
 msgstr "Waarde moet een getal of percentage zijn."
