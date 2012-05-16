@@ -48,6 +48,7 @@ Online services:
    :maxdepth: 2
 
    plugins/googledocsviewer
+   plugins/twitterfeed
 
 Programming:
 

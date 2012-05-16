@@ -1,0 +1,51 @@
+{% load i18n twitterfeed_tags %}
+{% comment %}
+
+  The twitterfeed is currently rendered fully client-side.
+  To add a server-side rendering, look for django-twitter-tag.
+
+  The script uses jQuery.tweet, which offers quite a lot of features with quite decent configuration
+  (granted not all HTML styles and formatting can be defined.. I suggest forking it if that's needed)
+
+  TODO:
+    Currently the feed scripts are included inline,
+    making it impossible to load multiple instances.
+    This still needs to be implemented in django-fluent-contents,
+    either using django-sekizai or a custom media mechanism.
+
+{% endcomment %}
+<script type="text/javascript" src="{{ STATIC_URL }}fluent_contents/twitterfeed/jquery.tweet.js"></script>
+<script type="text/javascript">
+//<![CDATA[
+(function(){
+
+  function setupFeed()
+  {
+    jQuery('#twitter-container-{{ instance.pk }}').tweet({
+      {% block jsoptions %}
+      username: '{{ instance.twitter_user }}',
+      {% endblock %}
+      {% block base_jsoptions %}
+      avatar_size: {{ AVATAR_SIZE }},
+      refresh_interval: {{ REFRESH_INTERVAL }},
+      template: '{{ TEXT_TEMPLATE|escapejs }}',
+      loading_text: '{% trans "loading tweets..." %}',
+      {% endblock %}
+      count: {{ instance.amount }}
+    });
+  }
+
+  if( window.jQuery )
+    jQuery(document).ready(setupFeed);
+  else
+    setTimeout(setupFeed, 10);
+
+})();
+//]]>
+</script>
+
+<div class="twitterfeed">
+	<h2>{{ instance.title|escape_tweet }}</h2>
+	<div id="twitter-container-{{ instance.pk }}">{% block htmlcontainer %}{% endblock %}</div>
+	{% if instance.footer_text %}<p>{{ instance.footer_text|escape_tweet }}</p>{% endif %}
+</div>

@@ -1,0 +1,5 @@
+{% extends "plugins/twitterfeed/base.html" %}
+
+{% block jsoptions %}
+      query: '{{ instance.query }}{% if not instance.include_retweets %}+exclude:retweets{% endif %}',
+{% endblock %}
