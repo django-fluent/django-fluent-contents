@@ -150,6 +150,10 @@ class ContentPlugin(object):
         self._type_id = None
 
 
+    def __repr__(self):
+        return '<{0} for {1} model>'.format(self.__class__.__name__, unicode(self.model.__name__).encode('ascii'))
+
+
     @property
     def verbose_name(self):
         """
