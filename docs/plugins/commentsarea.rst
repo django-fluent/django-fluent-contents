@@ -141,7 +141,6 @@ The framework also supports moderation, flagging, and RSS feeds too. More docume
 
 Some of the modules worth looking at are:
 
-* `django-ajaxcomments <https://bitbucket.org/bkonkle/django-ajaxcomments/>`_
 * `django-comments-spamfighter <https://github.com/bartTC/django-comments-spamfighter>`_
 * `django-threadedcomments <https://github.com/HonzaKral/django-threadedcomments>`_
 * `django-myrecaptcha <https://bitbucket.org/pelletier/django-myrecaptcha/>`_
