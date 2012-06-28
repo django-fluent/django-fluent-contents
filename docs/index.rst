@@ -13,6 +13,14 @@ django-fluent-contents includes:
 To get up and running quickly, consult the :ref:`quick-start guide <quickstart>`.
 The chapters below describe the configuration of each specific plugin in more detail.
 
+Preview
+-------
+
+.. image:: /images/admin/placeholdereditoradmin1.png
+   :width: 770px
+   :height: 362px
+   :alt: django-fluent-contents placeholder editor preview
+
 
 Getting started
 ---------------
@@ -90,6 +98,7 @@ API documentation
    api/rendering
    api/templatetags/placeholder_tags
    api/utils
+
 
 Roadmap
 =======

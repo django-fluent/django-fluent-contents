@@ -18,6 +18,12 @@ class PlaceholderFieldAdmin(PlaceholderEditorAdmin):
 
     This class loads the :class:`~fluent_contents.models.ContentItem` inlines,
     and initializes the frontend editor for the :class:`~fluent_contents.models.PlaceholderField`.
+    The placeholder will be displayed in the admin:
+
+    .. image:: /images/admin/placeholderfieldadmin1.png
+       :width: 770px
+       :height: 562px
+       :alt: django-fluent-contents placeholder field preview
     """
     placeholder_inline = PlaceholderFieldInline
 

@@ -125,6 +125,13 @@ class PlaceholderField(PlaceholderRelation):
     The :attr:`plugins` can be optionally defined to limit which plugins are allowed to be used.
     The data itself is stored as reverse relation in the :class:`~fluent_contents.models.ContentItem` object.
     Hence, all contents will be cleaned up properly when the parent model is deleted.
+
+    The placeholder will be displayed in the admin:
+
+    .. image:: /images/admin/placeholderfieldadmin1.png
+       :width: 770px
+       :height: 562px
+       :alt: django-fluent-contents placeholder field preview
     """
     def __init__(self, slot, plugins=None, **kwargs):
         """

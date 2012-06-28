@@ -24,6 +24,21 @@ In the source distribution, see the ``example.simplecms`` package for a working 
     The django-fluent-pages_ application is built on top of this API, and provides a ready-to-use CMS that can be implemented with minimal configuration effort.
     To build a custom CMS, the API documentation of the :ref:`fluent_contents.admin` module provides more details of the classes.
 
+The final appearance of the CMS would look something like:
+
+    .. image:: /images/admin/placeholdereditoradmin1.png
+       :width: 770px
+       :height: 362px
+       :alt: django-fluent-contents placeholder editor preview
+
+Users can add various plugins to the page, for example by the DISQUS_ plugin:
+
+    .. image:: images/admin/placeholdereditoradmin2.png
+       :width: 755px
+       :height: 418px
+       :alt: django-fluent-contents placeholder editor preview
+
+
 The basic setup
 ---------------
 
@@ -155,6 +170,7 @@ the "placeholder editor" needs to be accessed directly, notably:
     While this API is stable, a clean public API will likely be created in the future.
 
 
+.. _DISQUS: http://disqus.com
 .. _django-mptt: https://github.com/django-mptt/django-mptt
 .. _django-fluent-pages: https://github.com/edoburu/django-fluent-pages
 

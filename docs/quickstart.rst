@@ -96,6 +96,42 @@ it can use the ``placeholder_tags`` to display the contents:
 That's it!
 
 
+Fieldset layout
+---------------
+
+With a small change in the ``fieldsets`` configuration, the admin interface could look like this:
+
+    .. image:: /images/admin/placeholderfieldadmin1.png
+       :width: 770px
+       :height: 562px
+       :alt: django-fluent-contents placeholder field preview
+
+When the placeholder is used in a separate ``fieldset`` that has a ``plugin-holder`` class name,
+the field will be displayed without a label in front of it:
+
+.. code-block:: python
+
+    class ArticleAdmin(PlaceholderFieldAdmin):
+        prepopulated_fields = {'slug': ('title',)}
+
+        fieldsets = (
+            (None, {
+                'fields': ('title', 'slug'),
+            }),
+            ("Contents", {
+                'fields': ('content',),
+                'classes': ('plugin-holder',),
+            })
+        )
+
+|
+
+    .. image:: /images/admin/placeholderfieldadmin2.png
+       :width: 770px
+       :height: 562px
+       :alt: django-fluent-contents placeholder field preview
+
+
 Optional features
 -----------------
 

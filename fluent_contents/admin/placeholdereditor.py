@@ -132,6 +132,13 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, DynamicInlinesModelAdmi
     """
     The base functionality for :class:`~django.contrib.admin.ModelAdmin` dialogs to display a placeholder editor with plugins.
     It loads the inlines using :func:`get_extra_inlines`.
+
+    It loads the :class:`PlaceholderEditorInline`, which displays each placeholder in separate tabs:
+
+    .. image:: /images/admin/placeholdereditoradmin2.png
+       :width: 755px
+       :height: 418px
+       :alt: django-fluent-contents placeholder editor preview
     """
     placeholder_inline = PlaceholderEditorInline
 

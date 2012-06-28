@@ -8,30 +8,48 @@ however, it can be used for any project, or CMS system.
 
 Available default content types:
 
-* Standard content:
+**Standard content:**
 
- * Text content - write rich text in a WYSIWYG editor (provided by `django-wysiwyg`).
- * Google Docs viewer - display a PDF or DOCX file on a page, using the Google Docs Viewer service.
+* Text content - write rich text in a WYSIWYG editor (provided by `django-wysiwyg`).
+* Markup - write content with reStructuredText, Markdown or Textile (provided by `docutils`, `Markdown` or `textile`).
 
-* For programmers:
+**Online services:**
 
- * Code - display code snippets with highlighting (provided by `Pygments`).
- * Gist - display Gist snippets from Github.
- * IFrame - display an ``<iframe>`` on the page.
- * Raw HTML content - include jQuery snippets, or "embed codes" by Google Docs, YouTube, Vimeo or SlideShare.
- * Markup - write content with reStructuredText, Markdown or Textile (provided by `docutils`, `Markdown` or `textile`).
+* Google Docs viewer - display a PDF or DOCX file on a page, using the Google Docs Viewer service.
+* Twitter feed - display a Twitter timeline, or realtime search timeline.
 
-* Interactive:
+**For programmers:**
 
- * Commentsarea - display comments on a page (provided by `django.contrib.comments`).
- * Disqusarea - display DISQUS comments on a page (provided by `django-disqus`).
- * Form-designer link - display a `django-form-designer` form on a page.
+* Code - display code snippets with highlighting (provided by `Pygments`).
+* Gist - display Gist snippets from Github.
+* IFrame - display an ``<iframe>`` on the page.
+* Raw HTML content - include jQuery snippets, or "embed codes" by Google Docs, YouTube, Vimeo or SlideShare.
+
+**Interactive:**
+
+* Commentsarea - display comments on a page (provided by `django.contrib.comments`).
+* Disqusarea - display DISQUS comments on a page (provided by `django-disqus`).
+* Form-designer link - display a `django-form-designer` form on a page.
 
 
 Screenshot
 ==========
 
-TODO
+The ``PlaceholderField`` is nicely integrated in the Django admin interface:
+
+    .. image:: https://github.com/edoburu/django-fluent-contents/raw/master/docs/images/admin/placeholderfieldadmin2.png
+       :width: 770px
+       :height: 562px
+       :alt: django-fluent-contents placeholder field preview
+
+Secondly, it's possible to build a CMS Page interface with the ``PlaceholderEditorAdmin``,
+which displays each content placeholder in a tab:
+
+    .. image:: https://github.com/edoburu/django-fluent-contents/raw/master/docs/images/admin/placeholdereditoradmin1.png
+       :width: 770px
+       :height: 362px
+       :alt: django-fluent-contents placeholder editor preview
+
 
 Installation
 ============
