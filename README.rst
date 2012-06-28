@@ -37,18 +37,18 @@ Screenshot
 
 The ``PlaceholderField`` is nicely integrated in the Django admin interface:
 
-    .. image:: https://github.com/edoburu/django-fluent-contents/raw/master/docs/images/admin/placeholderfieldadmin2.png
-       :width: 770px
-       :height: 562px
-       :alt: django-fluent-contents placeholder field preview
+.. image:: https://github.com/edoburu/django-fluent-contents/raw/master/docs/images/admin/placeholderfieldadmin2.png
+   :width: 770px
+   :height: 562px
+   :alt: django-fluent-contents placeholder field preview
 
 Secondly, it's possible to build a CMS Page interface with the ``PlaceholderEditorAdmin``,
 which displays each content placeholder in a tab:
 
-    .. image:: https://github.com/edoburu/django-fluent-contents/raw/master/docs/images/admin/placeholdereditoradmin1.png
-       :width: 770px
-       :height: 362px
-       :alt: django-fluent-contents placeholder editor preview
+.. image:: https://github.com/edoburu/django-fluent-contents/raw/master/docs/images/admin/placeholdereditoradmin1.png
+   :width: 770px
+   :height: 362px
+   :alt: django-fluent-contents placeholder editor preview
 
 
 Installation
