@@ -1,8 +1,8 @@
 # Settings file to allow parsing API documentation of Django modules,
 # and provide defaults to use in the documentation.
 #
-# This file is placed in a subfolder,
-# so the docs root is not used by find_packages()
+# This file is placed in a subdirectory,
+# so the docs root won't be detected by find_packages()
 
-# Display proper URLs in the docs:
+# Display sane URLs in the docs:
 STATIC_URL = '/static/'

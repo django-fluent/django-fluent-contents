@@ -66,13 +66,14 @@ def _render_items(request, placeholder_name, items, template_name=None):
     output = {}
     output_ordering = []
 
-    # First try to fetch all items non-polymorphic from memcache
     if not hasattr(items, "non_polymorphic"):
-        # Pass the whole queryset as (i, item) list.
+        # Can't deal with caching, pass the whole queryset as (i, item) list.
         remaining_items = items
         output_ordering = (item.pk for item in items)
     else:
         items = items.non_polymorphic()
+
+        # First try to fetch all items non-polymorphic from memcache
         remaining_items = []
         for i, contentitem in enumerate(items):
             output_ordering.append(contentitem.pk)
@@ -113,19 +114,19 @@ def _render_items(request, placeholder_name, items, template_name=None):
                     cachekey = get_rendering_cache_key(placeholder_name, contentitem)
                     cache.set(cachekey, html)
 
-            if edit_mode:
-                output[contentitem.pk] = _wrap_contentitem_output(html, contentitem)
-            else:
-                output[contentitem.pk] = html
+                if edit_mode:
+                    html = _wrap_contentitem_output(html, contentitem)
 
-    # Order all rendered items in the correct sequence.
-    # The derived tables should be reset, so the base class indexes don't necessary match with the derived indexes.
+            output[contentitem.pk] = html
+
+    # Order all rendered items in the correct sequence.  The derived tables should be truncated/reset,
+    # so the base class model indexes don't necessary match with the derived indexes.
     output_ordered = []
     for pk in output_ordering:
         try:
             output_ordered.append(output[pk])
         except KeyError:
-            # NOTE: if a table is reset, the base class still exists and causes a query to happen every time.
+            # NOTE: if a table is truncated/reset, the base class still exists and causes a query to happen every time.
             item = [item for item in items if item.pk == pk][0]
             logger.warning("Missing derived model for ContentItem #{id}: {cls}.".format(id=pk, cls=item.plugin.type_name))
             pass
