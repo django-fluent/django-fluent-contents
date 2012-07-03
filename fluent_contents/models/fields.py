@@ -1,7 +1,7 @@
 from django.contrib.contenttypes.generic import GenericRelation, GenericRel
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.query_utils import Q
-from django.db.utils import DatabaseError
+from django.utils.functional import lazy
 from django.utils.text import capfirst
 from fluent_contents.forms.fields import PlaceholderFormField
 from fluent_contents.models import Placeholder, ContentItem
@@ -32,14 +32,11 @@ class PlaceholderRelation(GenericRelation):
             placeholder_set = PlaceholderRelation()
     """
     def __init__(self, **kwargs):
-        defaults = {}
-        try:
-            defaults['limit_choices_to'] = Q(
-                parent_type=ContentType.objects.get_for_model(Placeholder)
+        defaults = {
+            'limit_choices_to': Q(
+                parent_type=lazy(lambda: ContentType.objects.get_for_model(Placeholder), ContentType)()
             )
-        except DatabaseError:
-            pass   # skip at first syncdb
-
+        }
         defaults.update(kwargs)
         super(PlaceholderRelation, self).__init__(to=Placeholder,
             object_id_field='parent_id', content_type_field='parent_type', **defaults)
@@ -66,14 +63,10 @@ class PlaceholderRel(GenericRel):
     that is used by the :class:`PlaceholderField` to support queries.
     """
     def __init__(self, slot):
-        limit_choices_to=None
-        try:
-            limit_choices_to = Q(
-                parent_type=ContentType.objects.get_for_model(Placeholder),
-                slot=slot,
-            )
-        except DatabaseError:
-            pass   # skip at first syncdb
+        limit_choices_to = Q(
+            parent_type=lazy(lambda: ContentType.objects.get_for_model(Placeholder), ContentType)(),
+            slot=slot,
+        )
 
         # TODO: make sure reverse queries work properly
         super(PlaceholderRel, self).__init__(
