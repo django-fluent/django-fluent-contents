@@ -1,7 +1,7 @@
 Introduction
 ============
 
-The ``fluent_contents`` module offers a widget engine to display various content on a Django page.
+The *fluent_contents* module offers a widget engine to display various content on a Django page.
 
 This engine operates similary like Django CMS, FeinCMS or django-portlets,
 however, it can be used for any project, or CMS system.
@@ -10,8 +10,9 @@ Available default content types:
 
 **Standard content:**
 
-* Text content - write rich text in a WYSIWYG editor (provided by `django-wysiwyg`).
-* Markup - write content with reStructuredText, Markdown or Textile (provided by `docutils`, `Markdown` or `textile`).
+* Text content - write rich text in a WYSIWYG editor (provided by django-wysiwyg_).
+* Markup - write content with reStructuredText, Markdown or Textile (provided by *docutils*, *Markdown* or *textile*).
+* Forms - display forms created with django-form-designer_.
 
 **Online services:**
 
@@ -20,16 +21,18 @@ Available default content types:
 
 **For programmers:**
 
-* Code - display code snippets with highlighting (provided by `Pygments`).
+* Code - display code snippets with highlighting (provided by *Pygments*).
 * Gist - display Gist snippets from Github.
 * IFrame - display an ``<iframe>`` on the page.
 * Raw HTML content - include jQuery snippets, or "embed codes" by Google Docs, YouTube, Vimeo or SlideShare.
 
 **Interactive:**
 
-* Commentsarea - display comments on a page (provided by `django.contrib.comments`).
-* Disqusarea - display DISQUS comments on a page (provided by `django-disqus`).
-* Form-designer link - display a `django-form-designer` form on a page.
+* Commentsarea - display comments on a page (provided by django.contrib.comments_).
+* Disqusarea - display DISQUS comments on a page (provided by django-disqus_).
+* Form-designer link - display a django-form-designer_ form on a page.
+
+For more details, see the documentation_ at Read The Docs.
 
 
 Screenshot
@@ -128,5 +131,21 @@ The most advanced combination, is using the ``PlaceholderEditorAdmin`` or ``Plac
 These classes are designed for CMS-style applications which multiple placeholders on a page.
 See the provided ``example`` application for details.
 
-Details about the various settings are explained in the documentation.
+NOTE:
+
+    The django-fluent-pages_ application is built on top of this API, and provides a ready-to-use CMS that can be implemented with minimal configuration effort.
+    To build a custom CMS, the API documentation of the fluent_contents.admin_ module provides more details of the classes.
+
+Details about the various settings are explained in the documentation_.
+
+.. _documentation: http://django-fluent-contents.readthedocs.org/
+.. _fluent_contents.admin: http://django-fluent-contents.readthedocs.org/en/latest/cms.html
+
+.. _django.contrib.comments: https://docs.djangoproject.com/en/dev/ref/contrib/comments/
+.. _django-disqus: https://github.com/arthurk/django-disqus
+.. _django-fluent-comments: https://github.com/edoburu/django-fluent-comments
+.. _django-fluent-pages: https://github.com/edoburu/django-fluent-pages
+.. _django-form-designer: https://github.com/philomat/django-form-designer.git
+.. _django-polymorphic: https://github.com/bconstantin/django_polymorphic
+.. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg
 
