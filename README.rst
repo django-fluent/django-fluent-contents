@@ -68,7 +68,7 @@ Or the current folder can be installed::
 Configuration
 -------------
 
-Next, create a project which uses the CMS::
+Next, create a project which uses the module::
 
     cd ..
     django-admin.py startproject fluentdemo
@@ -138,6 +138,18 @@ NOTE:
 
 Details about the various settings are explained in the documentation_.
 
+
+Contributing
+------------
+
+This module is designed to be generic. In case there is anything you didn't like about it,
+or think it's not flexible enough, please let us know. We'd love to improve it!
+
+If you have any other valuable contribution, suggestion or idea,
+please let us know as well because we will look into it.
+Pull requests are welcome too. :-)
+
+
 .. _documentation: http://django-fluent-contents.readthedocs.org/
 .. _fluent_contents.admin: http://django-fluent-contents.readthedocs.org/en/latest/cms.html
 
@@ -146,6 +158,6 @@ Details about the various settings are explained in the documentation_.
 .. _django-fluent-comments: https://github.com/edoburu/django-fluent-comments
 .. _django-fluent-pages: https://github.com/edoburu/django-fluent-pages
 .. _django-form-designer: https://github.com/philomat/django-form-designer.git
-.. _django-polymorphic: https://github.com/bconstantin/django_polymorphic
+.. _django-polymorphic: https://github.com/chrisglass/django_polymorphic
 .. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg
 
