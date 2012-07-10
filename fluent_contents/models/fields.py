@@ -178,6 +178,12 @@ class PlaceholderField(PlaceholderRelation):
                 slot=self.slot
             )
 
+            # Remove attribute must exist for the delete page. Currently it's not actively used.
+            # The regular ForeignKey assigns a ForeignRelatedObjectsDescriptor to it for example.
+            # In this case, the PlaceholderRelation is already the reverse relation.
+            # Being able to move forward from the Placeholder to the derived models does not have that much value.
+            setattr(self.rel.to, self.rel.related_name, None)
+
 
     def value_from_object(self, obj):
         """
