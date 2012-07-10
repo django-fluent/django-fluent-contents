@@ -286,7 +286,7 @@ var cp_data = {};
   cp_data.get_formset_item_data = function(child_node)
   {
     if( cp_data.itemtypes == null )
-      throw new Error("cp_data.setContentItemTypes() was never called");
+      throw new Error("cp_data.setContentItemTypes() was never called. Does the ModelAdmin inherit from the correct base class?");
     if( child_node.fs_item )
       return child_node;   // already parsed
 
@@ -322,7 +322,7 @@ var cp_data = {};
   cp_data.get_formset_itemtype = function(typename)
   {
     if( cp_data.itemtypes == null )
-      throw new Error("cp_data.setContentItemTypes() was never called");
+      throw new Error("cp_data.setContentItemTypes() was never called. Does the ModelAdmin inherit from the correct base class?");
 
     return cp_data.itemtypes[typename];
   }
