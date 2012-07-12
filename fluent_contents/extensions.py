@@ -298,8 +298,9 @@ class PluginPool(object):
     def __init__(self):
         self.plugins = {}
         self.plugin_for_model = {}
-        self.plugin_for_ctype_id = {}
+        self._plugin_for_ctype_id = None
         self.detected = False
+
 
     def register(self, plugin):
         """
@@ -322,8 +323,11 @@ class PluginPool(object):
         # Make a single static instance, similar to ModelAdmin.
         plugin_instance = plugin()
         self.plugins[name] = plugin_instance
-        self.plugin_for_model[plugin.model] = name       # Track reverse for rendering
-        self.plugin_for_ctype_id[plugin_instance.type_id] = name
+        self.plugin_for_model[plugin.model] = name       # Track reverse for model.plugin link
+
+        # Only update lazy indexes if already created
+        if self._plugin_for_ctype_id is not None:
+            self._plugin_for_ctype_id[plugin.type_id] = name
 
         return plugin  # Allow decorator syntax
 
@@ -360,10 +364,11 @@ class PluginPool(object):
 
     def _get_plugin_by_content_type(self, contenttype):
         self._import_plugins()
+        self._setup_lazy_indexes()
 
         ct_id = contenttype.id if isinstance(contenttype, ContentType) else int(contenttype)
         try:
-            name = self.plugin_for_ctype_id[ct_id]
+            name = self._plugin_for_ctype_id[ct_id]
         except KeyError:
             raise PluginNotFound("No plugin found for content type '{0}'.".format(contenttype))
         return self.plugins[name]
@@ -387,6 +392,18 @@ class PluginPool(object):
             self.detected = True
         finally:
             self.scanLock.release()
+
+    def _setup_lazy_indexes(self):
+        # The ContentType is not read yet at .register() time, since that enforces the database to exist at that time.
+        # If a plugin library is imported via different paths that might not be the case when `./manage.py syncdb` runs.
+        if self._plugin_for_ctype_id is None:
+            plugin_ctypes = {}  # separate dict to build, thread safe
+            self._import_plugins()
+            for name, plugin in self.plugins.iteritems():
+                plugin_ctypes[plugin.type_id] = name
+
+            self._plugin_for_ctype_id = plugin_ctypes
+
 
 #: The global plugin pool, a instance of the :class:`PluginPool` class.
 plugin_pool = PluginPool()
