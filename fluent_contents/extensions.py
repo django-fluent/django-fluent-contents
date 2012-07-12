@@ -297,8 +297,8 @@ class PluginPool(object):
 
     def __init__(self):
         self.plugins = {}
-        self.plugin_for_model = {}
-        self._plugin_for_ctype_id = None
+        self._name_for_model = {}
+        self._name_for_ctype_id = None
         self.detected = False
 
 
@@ -318,16 +318,17 @@ class PluginPool(object):
 
         name = plugin.__name__
         if name in self.plugins:
-            raise PluginAlreadyRegistered("[%s] a plugin with this name is already registered" % name)
+            raise PluginAlreadyRegistered("{0}: a plugin with this name is already registered".format(name))
+        name = name.lower()
 
         # Make a single static instance, similar to ModelAdmin.
         plugin_instance = plugin()
         self.plugins[name] = plugin_instance
-        self.plugin_for_model[plugin.model] = name       # Track reverse for model.plugin link
+        self._name_for_model[plugin.model] = name       # Track reverse for model.plugin link
 
         # Only update lazy indexes if already created
-        if self._plugin_for_ctype_id is not None:
-            self._plugin_for_ctype_id[plugin.type_id] = name
+        if self._name_for_ctype_id is not None:
+            self._name_for_ctype_id[plugin.type_id] = name
 
         return plugin  # Allow decorator syntax
 
@@ -338,6 +339,26 @@ class PluginPool(object):
         """
         self._import_plugins()
         return self.plugins.values()
+
+
+    def get_plugins_by_name(self, *names):
+        """
+        Return a list of plugins by plugin class, or name.
+        """
+        self._import_plugins()
+        plugin_instances = []
+        for name in names:
+            if isinstance(name, basestring):
+                try:
+                    plugin_instances.append(self.plugins[name.lower()])
+                except KeyError:
+                    raise PluginNotFound("No plugin named '{0}'.".format(name))
+            elif issubclass(name, ContentPlugin):
+                # Will also allow classes instead of strings.
+                plugin_instances.append(self.plugins[self._name_for_model[name.model]])
+            else:
+                raise TypeError("get_plugins_by_name() expects a plugin name or class, not: {0}".format(name))
+        return plugin_instances
 
 
     def get_model_classes(self):
@@ -356,7 +377,7 @@ class PluginPool(object):
         assert issubclass(model_class, ContentItem)  # avoid confusion between model instance and class here!
 
         try:
-            name = self.plugin_for_model[model_class]
+            name = self._name_for_model[model_class]
         except KeyError:
             raise PluginNotFound("No plugin found for model '{0}'.".format(model_class.__name__))
         return self.plugins[name]
@@ -368,7 +389,7 @@ class PluginPool(object):
 
         ct_id = contenttype.id if isinstance(contenttype, ContentType) else int(contenttype)
         try:
-            name = self._plugin_for_ctype_id[ct_id]
+            name = self._name_for_ctype_id[ct_id]
         except KeyError:
             raise PluginNotFound("No plugin found for content type '{0}'.".format(contenttype))
         return self.plugins[name]
@@ -396,13 +417,13 @@ class PluginPool(object):
     def _setup_lazy_indexes(self):
         # The ContentType is not read yet at .register() time, since that enforces the database to exist at that time.
         # If a plugin library is imported via different paths that might not be the case when `./manage.py syncdb` runs.
-        if self._plugin_for_ctype_id is None:
+        if self._name_for_ctype_id is None:
             plugin_ctypes = {}  # separate dict to build, thread safe
             self._import_plugins()
             for name, plugin in self.plugins.iteritems():
                 plugin_ctypes[plugin.type_id] = name
 
-            self._plugin_for_ctype_id = plugin_ctypes
+            self._name_for_ctype_id = plugin_ctypes
 
 
 #: The global plugin pool, a instance of the :class:`PluginPool` class.

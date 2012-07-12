@@ -136,6 +136,10 @@ def get_content_item_inlines(plugins=None, base=GenericContentItemInline):
 
     inlines = []
     for plugin in plugins:  # self.model._supported_...()
+        # Avoid errors that are hard to trace
+        if not isinstance(plugin, extensions.ContentPlugin):
+            raise TypeError("get_content_item_inlines() expects to receive ContentPlugin instances, not {0}".format(plugin))
+
         ContentItemType = plugin.model
 
         # Create a new Type that inherits CmsPageItemInline

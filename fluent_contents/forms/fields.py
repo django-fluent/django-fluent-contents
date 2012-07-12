@@ -10,7 +10,7 @@ class PlaceholderFormField(forms.Field):
     def __init__(self, slot, plugins=None, **kwargs):
         # Pass along...
         self.slot = slot
-        self.plugins = plugins
+        self._plugins = plugins
 
         defaults = {
             'widget': PlaceholderFieldWidget(slot=slot, plugins=plugins),

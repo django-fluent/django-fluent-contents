@@ -107,6 +107,12 @@ class PlaceholderFieldDescriptor(object):
 class PlaceholderField(PlaceholderRelation):
     """
     The model field to add :class:`~fluent_contents.models.ContentItem` objects to a model.
+
+    :param slot: A programmatic name to identify the placeholder.
+    :param plugins: Optional, define which plugins are allowed to be used. This can be a list of names, or :class:`~fluent_contents.extensions.ContentPlugin` references.
+    :type slot: str
+    :type plugins: list
+
     This class provides the form fields for the field. Use this class in a model to use it:
 
     .. code-block:: python
@@ -114,8 +120,6 @@ class PlaceholderField(PlaceholderRelation):
         class Article(models.Model):
             contents = PlaceholderField("article_contents")
 
-    The :attr:`slot` parameter is mandatory to identify the placeholder.
-    The :attr:`plugins` can be optionally defined to limit which plugins are allowed to be used.
     The data itself is stored as reverse relation in the :class:`~fluent_contents.models.ContentItem` object.
     Hence, all contents will be cleaned up properly when the parent model is deleted.
 
@@ -133,7 +137,7 @@ class PlaceholderField(PlaceholderRelation):
         super(PlaceholderField, self).__init__(**kwargs)
 
         self.slot = slot
-        self.plugins = plugins
+        self._plugins = plugins
 
         # Overwrite some hardcoded defaults from the base class.
         self.editable = True
@@ -151,7 +155,7 @@ class PlaceholderField(PlaceholderRelation):
             'required': not self.blank,
         }
         defaults.update(kwargs)
-        return PlaceholderFormField(slot=self.slot, plugins=self.plugins, **defaults)
+        return PlaceholderFormField(slot=self.slot, plugins=self._plugins, **defaults)
 
 
     def contribute_to_class(self, cls, name):
@@ -183,6 +187,18 @@ class PlaceholderField(PlaceholderRelation):
             # In this case, the PlaceholderRelation is already the reverse relation.
             # Being able to move forward from the Placeholder to the derived models does not have that much value.
             setattr(self.rel.to, self.rel.related_name, None)
+
+
+    @property
+    def plugins(self):
+        """
+        Get the set of plugins that this field may display.
+        """
+        from fluent_contents import extensions
+        if self._plugins is None:
+            return extensions.plugin_pool.get_plugins()
+        else:
+            return extensions.plugin_pool.get_plugins_by_name(*self._plugins)
 
 
     def value_from_object(self, obj):
