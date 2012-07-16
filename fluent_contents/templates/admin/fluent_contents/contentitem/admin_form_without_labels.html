@@ -8,7 +8,7 @@
               {% if adminfield.field.is_hidden %}
                 {{ adminfield.field }}
               {% else %}
-                <div class="form-row{% if adminfield.errors %} errors{% endif %}">
+                <div class="form-row no-labels{% if adminfield.errors %} errors{% endif %}">
                   {% if adminfield.errors %}{{ adminfield.errors|linebreaksbr }}{% endif %}
                   {{ adminfield.field }}
                   {% if adminfield.field.help_text %}

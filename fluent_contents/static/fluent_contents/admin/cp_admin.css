@@ -130,6 +130,11 @@ body.cp-single-placeholder #tab-orphaned .cp-item-move { display: inline; }  /* 
   display: none;
 }
 
+form .form-row.no-labels p.help {
+  padding-left: 0;
+  margin-left: 0;
+}
+
 
 /* ---- Inline header fixes ---- */
 
