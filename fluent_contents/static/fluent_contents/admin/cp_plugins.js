@@ -41,6 +41,9 @@ var cp_plugins = {};
     $(".cp-item-controls .cp-item-down").live( 'click', cp_plugins.onItemDownClick );
     $(".cp-item-controls .cp-item-move").live( 'click', cp_plugins.onItemMoveClick );
     $(".cp-item-controls .cp-item-delete a").live( 'click', cp_plugins.onDeleteClick );
+
+    // Allow plugins to initialize
+    cp_plugins._init_view_handlers();
   }
 
 
@@ -636,6 +639,14 @@ var cp_plugins = {};
     //  throw new Error("Plugin Model type unknown: " + typename);
 
     plugin_handlers[ typename ] = view_handler;
+  }
+
+  cp_plugins._init_view_handlers = function()
+  {
+    // Offer plugin view handlers a change to initialize after the placeholder editor is loaded, but before the items are moved.
+    for( var typename in plugin_handlers )
+      if( plugin_handlers.hasOwnProperty(typename) && plugin_handlers[typename].initialize )
+        plugin_handlers[typename].initialize();
   }
 
 
