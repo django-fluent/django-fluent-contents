@@ -224,6 +224,7 @@ else:
     # Taking the same fix as applied in http://south.aeracode.org/ticket/414
     _name_re = "^" + __name__.replace(".", "\.")
     add_ignored_fields((
+        _name_re + "\.PlaceholderField",
         _name_re + "\.PlaceholderRelation",
         _name_re + "\.ContentItemRelation",
     ))
