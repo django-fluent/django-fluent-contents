@@ -1,12 +1,15 @@
 include AUTHORS
 include README.rst
 include LICENSE
-recursive-include fluent_contents/templates/ *.html
-recursive-include fluent_contents/static/ *
-recursive-include fluent_contents/plugins/code/static/ *
-recursive-include fluent_contents/plugins/code/templates/ *.html
-recursive-include fluent_contents/plugins/commentsarea/templates/ *.html
-recursive-include fluent_contents/plugins/disquswidgets/templates/ *.html
-recursive-include fluent_contents/plugins/rawhtml/static/ *
-recursive-include fluent_contents/plugins/text/static/ *
-recursive-include fluent_contents/plugins/text/templates/ *.html
+recursive-include fluent_contents/locale *
+recursive-include fluent_contents/templates *.html
+recursive-include fluent_contents/static *
+recursive-include fluent_contents/plugins/code/static *
+recursive-include fluent_contents/plugins/code/templates *.html
+recursive-include fluent_contents/plugins/commentsarea/templates *.html
+recursive-include fluent_contents/plugins/disquswidgets/templates *.html
+recursive-include fluent_contents/plugins/rawhtml/static *
+recursive-include fluent_contents/plugins/text/static *
+recursive-include fluent_contents/plugins/text/templates *.html
+recursive-include fluent_contents/plugins/twitterfeed/static *
+recursive-include fluent_contents/plugins/twitterfeed/templates *.html
