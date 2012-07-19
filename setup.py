@@ -10,7 +10,7 @@ setup(
     install_requires=[
         'Django>=1.3.0',   # Using staticfiles
         'django-polymorphic>=0.2',
-        'django-template-analyzer>=1.0.0',
+        'django-template-analyzer>=1.1.0',
     ],
     extras_require = {
         'code': ['Pygments'],
