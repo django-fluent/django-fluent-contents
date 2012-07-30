@@ -6,7 +6,18 @@ The *fluent_contents* module offers a widget engine to display various content o
 This engine operates similary like Django CMS, FeinCMS or django-portlets,
 however, it can be used for any project, or CMS system.
 
-Available default content types:
+Page contents can be constructed with multiple "content items".
+You can define your own content items, or use one the available content items out of the box.
+Standard web sites could use the bundled default content items.
+Other advanced designs (such as a web site with a magazine-like design, having many blocks at a page)
+can be implemented quickly by defining content items for the various "style elements" at the page.
+
+Web editors are able to place the "conten items" at the page,
+hence they can fill the content of advanced layouts easily and directly in the Django admin.
+This also applies to pages which have a "free form" or "presentation slide" design,
+this module allows the end-user to manage and configure the designed elements at the page.
+
+By default, the following content items are available:
 
 **Standard content:**
 
