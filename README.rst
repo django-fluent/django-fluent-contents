@@ -150,6 +150,60 @@ NOTE:
 Details about the various settings are explained in the documentation_.
 
 
+Creating custom content items
+-----------------------------
+
+To implement custom elements of a design - while making them editable for admins -
+this module allows you to create custom content items.
+Take a look in the existing types at ``fluent_contents.plugins`` to see how it's being done.
+
+It boils down to creating a package with 2 files:
+
+The ``models.py`` file should define the fields of the content item::
+
+  from django.db import models
+  from fluent_contents.models import ContentItem
+
+  class AnnouncementBlockItem(ContentItem):
+      title = models.CharField("Title", max_length=200)
+      body = models.TextField("Body")
+      button_text = models.CharField("Text", max_length=200)
+      button_link = models.URLField("URL")
+
+      class Meta:
+          verbose_name = "Announcement block"
+          verbose_name_plural = "Announcement blocks"
+
+      def __unicode__(self):
+          return self.title
+
+The ``content_plugins.py`` file defines the metadata and rendering::
+
+  from fluent_contents.extensions import plugin_pool, ContentPlugin
+  from .models import AnnouncementBlockItem
+
+  @plugin_pool.register
+  class AnnouncementBlockPlugin(ContentPlugin):
+     model = AnnouncementBlockItem
+     render_template = "plugins/announcementblock.html"
+     category = "Simple blocks"
+
+The plugin can also define the admin layout, by adding fields such as a ``fieldset``, but that is all optional.
+The template could look like::
+
+    <div class="announcement">
+        <h3>{{ instance.title }}</h3>
+        <div class="text">
+            {{ instance.body|linebreaks }}
+        </div>
+        <p class="button"><a href="{{ instance.button_url }}">{{ instance.button_text }}</a></p>
+    </div>
+
+Et, voila: web editors are now able to place an announcement items at the page
+in a very structured manner! Other content items can be created in the same way,
+either in the same Django application, or in a separate application.
+
+
 Contributing
 ------------
 
