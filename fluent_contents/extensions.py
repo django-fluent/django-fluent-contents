@@ -43,6 +43,7 @@ _STANDARD_REQUEST_CONTEXT_PROCESSORS = (
     _add_debug,
 )
 
+
 class PluginContext(Context):
     """
     A template Context class similar to :class:`~django.template.context.RequestContext`, that enters some pre-filled data.
@@ -235,7 +236,7 @@ class ContentPlugin(object):
         A default implementation to render an exception.
         """
         return '<div style="color: red; border: 1px solid red; padding: 5px;">' \
-                  '<p><strong>%s</strong></p>%s</div>' % (_('Error:'), linebreaks(escape(str(error))))
+               '<p><strong>%s</strong></p>%s</div>' % (_('Error:'), linebreaks(escape(str(error))))
 
 
     def get_render_template(self, request, instance, **kwargs):
@@ -311,7 +312,7 @@ class PluginPool(object):
         The plugin will be instantiated, just like Django does this with :class:`~django.contrib.admin.ModelAdmin` classes.
         If a plugin is already registered, this will raise a :class:`PluginAlreadyRegistered` exception.
         """
-        # Duct-Typing does not suffice here, avoid hard to debug problems by upfront checks.
+        # Duck-Typing does not suffice here, avoid hard to debug problems by upfront checks.
         assert issubclass(plugin, ContentPlugin), "The plugin must inherit from `ContentPlugin`"
         assert plugin.model, "The plugin has no model defined"
         assert issubclass(plugin.model, ContentItem), "The plugin model must inherit from `ContentItem`"

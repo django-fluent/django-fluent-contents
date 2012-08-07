@@ -26,9 +26,9 @@ class Placeholder(models.Model):
     Since a :class:`ContentItem` is polymorphic, the actual sub classes of the :class:`ContentItem` will be returned by the query.
     To prevent this behavior, call :func:`~polymorphic.query.PolymorphicQuerySet.non_polymorphic` on the `QuerySet`.
     """
-    # The 'role' field is useful for migrations by a CMS,
+    # The 'role' field is useful for layout switching by a CMS,
     # e.g. moving from a 2-col layout to a 3-col layout.
-    # Based on the role of a pageitem, meaningful conversions can be made.
+    # Based on the role of the placeholders, meaningful conversions can be made.
     MAIN = 'm'
     SIDEBAR = 's'
     RELATED = 'r'
@@ -84,7 +84,7 @@ class Placeholder(models.Model):
     def get_absolute_url(self):
         """
         Return the URL of the parent object, if it has one.
-        This method mainly exists to refreshing cache mechanisms.
+        This method mainly exists to support cache mechanisms (e.g. refreshing a Varnish cache), and assist in debugging.
         """
         # Allows quick debugging, and cache refreshes.
         parent = self.parent
@@ -128,7 +128,7 @@ class ContentItemMetaClass(PolymorphicModelBase):
 
 class ContentItem(PolymorphicModel):
     """
-    A `ContentItem` represents a content part (also called pagelet) which is displayed in a :class:`Placeholder`.
+    A `ContentItem` represents a content part (also called pagelet in other systems) which is displayed in a :class:`Placeholder`.
     To use the `ContentItem`, derive it in your model class:
 
     .. code-block:: python
