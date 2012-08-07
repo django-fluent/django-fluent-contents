@@ -8,6 +8,7 @@ from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.iframe.models import IframeItem
 
 
+@plugin_pool.register
 class IframePlugin(ContentPlugin):
     model = IframeItem
     category = _('Advanced')
@@ -19,6 +20,3 @@ class IframePlugin(ContentPlugin):
             width=instance.width,
             height=instance.height
         ))
-
-
-plugin_pool.register(IframePlugin)

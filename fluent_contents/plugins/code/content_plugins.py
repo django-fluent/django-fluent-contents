@@ -8,6 +8,7 @@ from fluent_contents.plugins.code.models import CodeItem
 from fluent_contents.plugins.code import appsettings, backend
 
 
+@plugin_pool.register
 class CodePlugin(ContentPlugin):
     model = CodeItem
     category = _('Programming')
@@ -27,6 +28,3 @@ class CodePlugin(ContentPlugin):
             'code': code,
         })
         return context
-
-
-plugin_pool.register(CodePlugin)

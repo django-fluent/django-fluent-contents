@@ -8,6 +8,7 @@ from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.gist.models import GistItem
 
 
+@plugin_pool.register
 class GistPlugin(ContentPlugin):
     model = GistItem
     category = _('Programming')
@@ -19,6 +20,3 @@ class GistPlugin(ContentPlugin):
             url += u'?file={0}'.format(urlquote(instance.filename))
 
         return mark_safe(u'<script src="{0}"></script>'.format(url))
-
-
-plugin_pool.register(GistPlugin)

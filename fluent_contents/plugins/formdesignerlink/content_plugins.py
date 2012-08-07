@@ -16,6 +16,7 @@ from form_designer import settings as form_designer_settings
 from form_designer.views import process_form
 
 
+@plugin_pool.register
 class FormDesignerLinkPlugin(ContentPlugin):
     model = FormDesignerLink
     category = _('Interactivity')
@@ -33,4 +34,3 @@ class FormDesignerLinkPlugin(ContentPlugin):
         return process_form(request, instance.form_definition, context, is_cms_plugin=True)
 
 
-plugin_pool.register(FormDesignerLinkPlugin)

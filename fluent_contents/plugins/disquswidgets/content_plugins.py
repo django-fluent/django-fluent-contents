@@ -4,6 +4,7 @@ from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.disquswidgets.models import DisqusCommentsAreaItem
 
 
+@plugin_pool.register
 class DisqusCommentsPlugin(ContentPlugin):
     model = DisqusCommentsAreaItem
     category = _('Interactivity')
@@ -22,6 +23,3 @@ class DisqusCommentsPlugin(ContentPlugin):
             'disqus_developer': 0,
             #disqus_title
         }
-
-
-plugin_pool.register(DisqusCommentsPlugin)

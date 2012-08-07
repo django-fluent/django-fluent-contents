@@ -20,10 +20,8 @@ from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.commentsarea.models import CommentsAreaItem
 
 
+@plugin_pool.register
 class CommentsAreaPlugin(ContentPlugin):
     model = CommentsAreaItem
     category = _('Interactivity')
     render_template = "fluent_contents/plugins/commentsarea/commentsarea.html"
-
-
-plugin_pool.register(CommentsAreaPlugin)

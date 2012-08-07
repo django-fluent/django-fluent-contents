@@ -4,6 +4,7 @@ from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.rawhtml.models import RawHtmlItem
 
 
+@plugin_pool.register
 class RawHtmlPlugin(ContentPlugin):
     """
     Plugin for rendering raw HTML output.
@@ -20,6 +21,3 @@ class RawHtmlPlugin(ContentPlugin):
 
     def render(self, request, instance, **kwargs):
         return mark_safe(instance.html)
-
-
-plugin_pool.register(RawHtmlPlugin)

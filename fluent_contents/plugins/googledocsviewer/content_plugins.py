@@ -9,6 +9,7 @@ from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.googledocsviewer.models import GoogleDocsViewerItem
 
 
+@plugin_pool.register
 class GoogleDocsViewerPlugin(ContentPlugin):
     """
     Plugin to add a Google Docs viewer to the page.
@@ -29,6 +30,3 @@ class GoogleDocsViewerPlugin(ContentPlugin):
             width=instance.width,
             height=instance.height
         ))
-
-
-plugin_pool.register(GoogleDocsViewerPlugin)
