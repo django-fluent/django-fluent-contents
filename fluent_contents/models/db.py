@@ -86,8 +86,9 @@ class Placeholder(models.Model):
         Return the URL of the parent object, if it has one.
         This method mainly exists to support cache mechanisms (e.g. refreshing a Varnish cache), and assist in debugging.
         """
-        # Allows quick debugging, and cache refreshes.
-        parent = self.parent
+        if not self.parent_id or not self.parent_type_id:
+            return None
+
         try:
             return self.parent.get_absolute_url()
         except AttributeError:
