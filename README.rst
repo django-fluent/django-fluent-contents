@@ -12,7 +12,7 @@ Standard web sites could use the bundled default content items.
 Other advanced designs (such as a web site with a magazine-like design, having many blocks at a page)
 can be implemented quickly by defining content items for the various "style elements" at the page.
 
-Web editors are able to place the "conten items" at the page,
+Web editors are able to place the "content items" at the page,
 hence they can fill the content of advanced layouts easily and directly in the Django admin.
 This also applies to pages which have a "free form" or "presentation slide" design,
 this module allows the end-user to manage and configure the designed elements at the page.

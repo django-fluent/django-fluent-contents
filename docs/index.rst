@@ -29,51 +29,18 @@ Getting started
    :maxdepth: 2
 
    quickstart
-   newplugins
+   configuration
 
-Content plugins
----------------
 
-Standard plugins:
-
-.. toctree::
-   :maxdepth: 2
-
-   plugins/text
-
-Interactivity:
+Using the plugins
+-----------------
 
 .. toctree::
    :maxdepth: 2
 
-   plugins/commentsarea
-   plugins/disquscommentsarea
-   plugins/formdesignerlink
+   newplugins/index
+   plugins/index
 
-Online services:
-
-.. toctree::
-   :maxdepth: 2
-
-   plugins/googledocsviewer
-   plugins/twitterfeed
-
-Programming:
-
-.. toctree::
-   :maxdepth: 2
-
-   plugins/code
-   plugins/gist
-   plugins/markup
-
-Advanced:
-
-.. toctree::
-   :maxdepth: 2
-
-   plugins/iframe
-   plugins/rawhtml
 
 Advanced topics
 ---------------
@@ -82,6 +49,7 @@ Advanced topics
    :maxdepth: 2
 
    cms
+
 
 API documentation
 -----------------
