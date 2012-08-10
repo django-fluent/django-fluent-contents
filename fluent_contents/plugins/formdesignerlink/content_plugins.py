@@ -24,13 +24,17 @@ class FormDesignerLinkPlugin(ContentPlugin):
 
 
     def get_render_template(self, request, instance, **kwargs):
+        # Overwritten to return a template from the instance.
         return instance.form_definition.form_template_name or self.render_template or form_designer_settings.DEFAULT_FORM_TEMPLATE
 
 
-    def get_context(self, request, instance, **kwargs):
-        context = {}
+    def render(self, request, instance, **kwargs):
+        # While overwriting get_context() would be sufficient here, this is rather easier to understand.
+        # Implemented a custom rendering function instead.
+
         # The process_form() function is designed with Django CMS in mind,
         # and responds to both the GET and POST request.
-        return process_form(request, instance.form_definition, context, is_cms_plugin=True)
+        context = process_form(request, instance.form_definition, {}, is_cms_plugin=True)
+        render_template = self.get_render_template(request, instance, **kwargs)
 
-
+        return self.render_to_string(request, render_template, context)
