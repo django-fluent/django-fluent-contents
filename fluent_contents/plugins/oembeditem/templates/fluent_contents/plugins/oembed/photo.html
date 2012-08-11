@@ -1,0 +1,4 @@
+<figure class="oembed">
+  {% if instance.author_url %}<a href="{{ instance.author_url }}">{% endif %}<img src="{{ instance.url }}" width="{{ instance.width }}" height="{{ instance.height }}" alt="{{ instance.title }}" />{% if instance.author_url %}</a>{% endif %}
+  {% if instance.title %}<figcaption>{{ instance.title }}</figcaption>{% endif %}
+</figure>
