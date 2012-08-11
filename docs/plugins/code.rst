@@ -9,7 +9,7 @@ The `code` plugin provides highlighting for programming code.
      :width: 732px
      :height: 225px
 
-The plugin uses `Pygments <http://pygments.org/>`_ as backend to perform the highlighting:
+The plugin uses Pygments_ as backend to perform the highlighting:
 
   .. image:: /images/plugins/code-html.*
      :width: 380px
@@ -65,10 +65,10 @@ Define whether line number should be enabled by default for any new plugins.
 FLUENT_CODE_STYLE
 ~~~~~~~~~~~~~~~~~
 
-The desired highlighting style. This can be any of the themes that Pygments provides.
+The desired highlighting style. This can be any of the themes that Pygments_ provides.
 
 Each style name refers to a python module in the :mod:`pygments.styles` package.
-The styles provided by Pygments 1.4 are:
+The styles provided by Pygments_ 1.4 are:
 
 * *autumn*
 * *borland*
@@ -107,3 +107,6 @@ FLUENT_CODE_SHORTLIST_ONLY
 
 Enable this setting to only show the programming languages of the shortlist.
 This can be used to simplify the code plugin for end users.
+
+
+.. _Pygments: http://pygments.org/

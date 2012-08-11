@@ -184,4 +184,3 @@ This happens entirely client-side. There is a public JavaScript API available to
 .. _DISQUS: http://disqus.com
 .. _django-mptt: https://github.com/django-mptt/django-mptt
 .. _django-fluent-pages: https://github.com/edoburu/django-fluent-pages
-

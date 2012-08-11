@@ -75,7 +75,7 @@ The following features are on the radar for future releases:
 
 * Frontend editing support
 * Global / shared placeholders
-* Gracefully handle errors when removing plugins (currently causes errors in *django-polymorphic* / *django.contrib.contenttypes*)
+* Gracefully handle errors when removing plugins (currently causes errors in django-polymorphic_ / `django.contrib.contenttypes`_)
 * Bridging other plugin systems, like Django CMS
 * Inline support (e.g. building a linklist plugin).
 
@@ -86,3 +86,6 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+
+.. _django-polymorphic: https://github.com/chrisglass/django_polymorphic
+.. _django.contrib.contenttypes: https://docs.djangoproject.com/en/dev/ref/contrib/contenttypes/

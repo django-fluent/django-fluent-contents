@@ -6,7 +6,7 @@ Quick start guide
 Installing django-fluent-contents
 ---------------------------------
 
-The base installation of django-fluent-contents requires Django version 1.3 or higher and `django-polymorphic` 0.2 or higher.
+The base installation of django-fluent-contents requires Django version 1.3 or higher and django-polymorphic_ 0.2 or higher.
 
 The package can be installed with the following commands::
 
@@ -168,19 +168,24 @@ To add even more plugins, use::
 Most of the features are glue to existing Python or Django modules,
 hence these packages need to be installed:
 
-* ``django-wysiwyg`` (for the :ref:`text <text>` plugin)
-* ``Pygments`` (for the :ref:`code <code>` plugin)
-* ``docutils`` (for the :ref:`markup <markup>` plugin)
-* ``django-disqus`` (for the :ref:`disquscommentsarea <disquscommentsarea>` plugin)
-* `django-form-designer <http://github.com/philomat/django-form-designer>`_ (for the :ref:`formdesignerlink <formdesignerlink>` plugin)
+* django-wysiwyg_ (for the :ref:`text <text>` plugin)
+* Pygments_ (for the :ref:`code <code>` plugin)
+* docutils_ (for the :ref:`markup <markup>` plugin)
+* django-disqus_ (for the :ref:`disquscommentsarea <disquscommentsarea>` plugin)
+* `django-form-designer`_ (for the :ref:`formdesignerlink <formdesignerlink>` plugin)
 
-The reason all these features are optional is make them easily swappable for other implementations.
+They can be installed using::
+
+    pip install django-wysiwyg Pygments docutils django-disqus
+    pip install -e https://github.com/philomat/django-form-designer.git#egg=django-form-designer
+
+The reason that all these features are optional is make them easily swappable for other implementations.
 You can use a different comments module, or invert new content plugins.
 It makes the CMS configurable in the way that you see fit.
 
-Some plugins, like the commentsarea from `django.contrib.comments`, might make a bad first impression
-because they have no default layout. This turns out however, to make them highly adaptable
-to your design and requirements.
+Some plugins, like the :ref:`commentsarea <commentsarea>` based on `django.contrib.comments`_,
+might make a bad first impression because they have no default layout.
+This turns out however to be by design, to make them highly adaptable to your design and requirements.
 
 
 Creating a CMS system
@@ -196,3 +201,11 @@ Testing your new shiny project
 Congrats! At this point you should have a working installation.
 Now you can just login to your admin site and see what changed.
 
+
+.. _docutils: http://docutils.sourceforge.net/
+.. _django.contrib.comments: https://docs.djangoproject.com/en/dev/ref/contrib/comments/
+.. _django-disqus: https://github.com/arthurk/django-disqus
+.. _django-form-designer: https://github.com/philomat/django-form-designer
+.. _django-polymorphic: https://github.com/chrisglass/django_polymorphic
+.. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg/
+.. _Pygments: http://pygments.org/
