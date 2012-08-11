@@ -177,8 +177,8 @@ This happens entirely client-side. There is a public JavaScript API available to
 
 .. note::
 
-   Other JavaScript functions of the content placeholder editor are private,
-   and may be changed in future releases.
+   Other JavaScript functions of the content placeholder editor that live outside the ``fluent_contents`` namespace
+   are private, and may be changed in future releases.
 
 
 .. _DISQUS: http://disqus.com
