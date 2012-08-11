@@ -36,7 +36,7 @@ var simplecms_layouts = {};
     {
       // At Firefox refresh, the form field value was restored,
       // Update the DOM content by fetching the data.
-      cp_tabs.hide();
+      fluent_contents.tabs.hide();
       layout_selector.change();
 
       console.log("<select> box updated on load, fetching new layout; old=", initial_template_name, "new=", selected_template_name);
@@ -69,17 +69,18 @@ var simplecms_layouts = {};
     var template_name = this.value;
     if( ! template_name )
     {
-      cp_tabs.hide(true);
+      fluent_contents.tabs.hide(true);
       return;
     }
 
     // Disable content
-    cp_tabs.expire_all_tabs();
+    fluent_contents.layout.expire();
 
     if( event.originalEvent )
     {
       // Real change event, no manual invocation made above
-      cp_tabs.show(true);
+      // The tabs will show a "loading" indicator.
+      fluent_contents.tabs.show(true);
     }
 
     simplecms_layouts.fetch_layout(template_name);
@@ -94,7 +95,7 @@ var simplecms_layouts = {};
       success: function(layout, textStatus, xhr)
       {
         // Ask to update the tabs!
-        cp_tabs.load_layout(layout);
+        fluent_contents.layout.load(layout);
       },
       dataType: 'json',
       error: function(xhr, textStatus, ex)

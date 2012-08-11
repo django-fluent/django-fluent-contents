@@ -129,26 +129,27 @@ Dynamic layout switching
 ------------------------
 
 The ``example`` application also demonstrates how to switch layouts dynamically.
-This happens entirely client-side. Currently, the JavaScript API methods of
-the "placeholder editor" needs to be accessed directly, notably:
+This happens entirely client-side. There is a public JavaScript API available to integrate with the layout manager.
 
-.. js:function:: cp_tabs.hide()
+.. js:function:: fluent_contents.layout.onInit(callback)
 
-   Hide the content placeholder tab interface.
-   This can be used in case no layout is selected.
+   Register a function this is called when the module initializes the layout for the first time.
+   By letting the handler return ``true``, it will abort the layout initialization.
 
-.. js:function:: cp_tabs.expire_all_tabs()
+   The handler will be required to call ``fluent_contents.loadLayout()`` manually instead.
+   This feature is typically used to restore a previous client-side selection of the user,
+   instead of loading the last known layout at the server-side.
 
-   Hide the tabs, but don't remove them yet.
+.. js:function:: fluent_contents.layout.expire()
+
+   Hide the placeholder tabs, but don't remove them yet.
    This can be used when the new layout is being fetched;
    the old content will be hidden and is ready to move.
 
-.. js:function:: cp_tabs.load_layout(layout)
+.. js:function:: fluent_contents.layout.load(layout)
 
-   Load the new layout, this will create new tabs and move the existing
-   content items to the new location.
-   Content items are migrated to the apropriate placeholder,
-   first matched by slot name, secondly matched by role.
+   Load the new layout, this will create new tabs and move the existing content items to the new location.
+   Content items are migrated to the apropriate placeholder, first matched by slot name, secondly matched by role.
 
    The ``layout`` parameter should be a JSON object with a structure like:
 
@@ -165,9 +166,19 @@ the "placeholder editor" needs to be accessed directly, notably:
    what the :func:`~fluent_contents.models.PlaceholderData.as_dict` method
    of the :class:`~fluent_contents.models.PlaceholderData` class returns.
 
+.. js:function:: fluent_contents.tabs.show(animate)
+
+   Show the content placeholder tab interface.
+
+.. js:function:: fluent_contents.tabs.hide(animate)
+
+   Hide the content placeholder tab interface.
+   This can be used in case no layout is selected.
+
 .. note::
-    Currently the ``example`` application access the ``cp_tabs`` namespace directly.
-    While this API is stable, a clean public API will likely be created in the future.
+
+   Other JavaScript functions of the content placeholder editor are private,
+   and may be changed in future releases.
 
 
 .. _DISQUS: http://disqus.com
