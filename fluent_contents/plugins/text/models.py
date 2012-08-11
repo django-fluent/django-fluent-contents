@@ -27,4 +27,4 @@ class TextItem(ContentItem):
         if appsettings.FLUENT_TEXT_SANITIZE_HTML:
             self.text = sanitize_html(self.text)
 
-        super(ContentItem, self).save(*args, **kwargs)
+        super(TextItem, self).save(*args, **kwargs)
