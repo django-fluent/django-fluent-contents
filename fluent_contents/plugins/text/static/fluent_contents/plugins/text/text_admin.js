@@ -59,7 +59,7 @@
 
 
   // Make sure the WYSIWYG editor is loaded for our models.
-  cp_plugins.register_view_handler('TextItem', {
+  fluent_contents.plugins.registerViewHandler('TextItem', {
     'enable': enable_wysiwyg,
     'disable': disable_wysiwyg
   })

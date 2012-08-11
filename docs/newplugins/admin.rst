@@ -181,7 +181,7 @@ In case of the Announcement Block plugin, the general layout of the file would l
       };
 
       // Register the view handler for the 'AnnouncementBlockItem' model.
-      cp_plugins.register_view_handler('AnnouncementBlockItem', AnnouncementBlockHandler);
+      fluent_contents.plugins.registerViewHandler('AnnouncementBlockItem', AnnouncementBlockHandler);
 
     })(window.jQuery || django.jQuery);
 
