@@ -241,6 +241,11 @@ class ContentItem(PolymorphicModel):
         self.clear_cache()
 
 
+    def delete(self, *args, **kwargs):
+        super(ContentItem, self).delete(*args, **kwargs)
+        self.clear_cache()
+
+
     def clear_cache(self):
         """
         Delete the cache keys associated with this model.
