@@ -16,9 +16,16 @@ import sys, os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('_ext'))
 sys.path.insert(0, os.path.abspath('..'))
 os.environ['DJANGO_SETTINGS_MODULE'] = 'djangodummy.settings'
+
+# Generate docstrings for Django model fields
+# Register the docstring processor with sphinx
+from apidocs.docstrings import improve_model_docstring
+def setup(app):
+    app.connect('autodoc-process-docstring', improve_model_docstring)
+
 
 # -- General configuration -----------------------------------------------------
 
