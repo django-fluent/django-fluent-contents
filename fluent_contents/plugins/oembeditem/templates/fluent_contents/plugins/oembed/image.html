@@ -1,0 +1,4 @@
+{# yfrog returns 'image' #}<figure class="oembed">
+  <a href="{{ instance.url }}"><img src="{{ instance.url }}" width="{{ instance.width }}" height="{{ instance.height }}" alt="{{ instance.title|default:'' }}" /></a>
+  {% if instance.title %}<figcaption>{{ instance.title }}</figcaption>{% endif %}
+</figure>
