@@ -25,9 +25,10 @@ By default, the following content items are available:
 * Markup - write content with reStructuredText, Markdown or Textile (provided by *docutils*, *Markdown* or *textile*).
 * Forms - display forms created with django-form-designer_.
 
-**Online services:**
+**Online content:**
 
 * Google Docs viewer - display a PDF or DOCX file on a page, using the Google Docs Viewer service.
+* OEmbed support - embed content from YouTube, Vimeo, SlideShare, Twitter, and more.
 * Twitter feed - display a Twitter timeline, or realtime search timeline.
 
 **For programmers:**
@@ -35,7 +36,7 @@ By default, the following content items are available:
 * Code - display code snippets with highlighting (provided by *Pygments*).
 * Gist - display Gist snippets from Github.
 * IFrame - display an ``<iframe>`` on the page.
-* Raw HTML content - include jQuery snippets, or "embed codes" by Google Docs, YouTube, Vimeo or SlideShare.
+* Raw HTML content - include jQuery snippets, or "embed codes" by other services.
 
 **Interactive:**
 
