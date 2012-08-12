@@ -34,6 +34,7 @@ Online content
    :maxdepth: 1
 
    googledocsviewer
+   oembeditem
    twitterfeed
 
 

@@ -18,7 +18,8 @@ The code is included as-is at the frontend:
 
 This plugin can be used for example for:
 
-* including "embed codes" in a page, provided by sites such as Facebook, Google Docs, YouTube, SlideShare, and Vimeo.
+* prototyping extra markup quickly
+* including "embed codes" in a page, in case the :ref:`oembeditem <oembeditem>` plugin does not support it.
 * including `jQuery <http://jquery.org/>`_ snippets in a page:
 
   .. image:: /images/plugins/rawhtml-admin.*
