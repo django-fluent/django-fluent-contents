@@ -22,6 +22,10 @@ The form is displayed at the website:
 Installation
 ------------
 
+Make sure the django-form-designer_ module is installed via pip::
+
+    pip install -e https://github.com/philomat/django-form-designer.git#egg=django-form-designer
+
 Add the following settings to ``settings.py``:
 
 .. code-block:: python
