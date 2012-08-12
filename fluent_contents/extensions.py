@@ -18,6 +18,7 @@ from django.template.loader import render_to_string
 from django.utils.html import linebreaks, escape
 from django.utils.importlib import import_module
 from django.utils.translation import ugettext as _
+from fluent_contents.forms import ContentItemForm
 from fluent_contents.models import ContentItem
 from threading import Lock
 
@@ -103,7 +104,7 @@ class ContentPlugin(object):
     model = None
 
     #: The form to use in the admin interface. By default it uses a  :class:`fluent_contents.models.ContentItemForm`.
-    form = None
+    form = ContentItemForm
 
     #: The template to render the admin interface with
     admin_form_template = "admin/fluent_contents/contentitem/admin_form.html"
@@ -316,6 +317,7 @@ class PluginPool(object):
         assert issubclass(plugin, ContentPlugin), "The plugin must inherit from `ContentPlugin`"
         assert plugin.model, "The plugin has no model defined"
         assert issubclass(plugin.model, ContentItem), "The plugin model must inherit from `ContentItem`"
+        assert issubclass(plugin.form, ContentItemForm), "The plugin form must inherit from `ContentItemForm`"
 
         name = plugin.__name__
         if name in self.plugins:
