@@ -22,6 +22,8 @@ By default, the following services are supported:
 * `DailyMotion <http://www.dailymotion.com/>`_
 * `Flickr <http://www.flickr.com/>`_  (both videos and images)
 * `FunnyOrDie <http://www.funnyordie.com/>`_
+* `Instagram <http://instagram.com>`_
+* `Imgur <http://imgur.com/>`_
 * `GitHub Gists <https://gist.github.com/>`_
 * `Hulu <http://www.hulu.com/>`_
 * `Mobypicture <http://www.mobypicture.com/>`_
@@ -39,7 +41,7 @@ By default, the following services are supported:
 * `yfrog <http://yfrog.com/>`_
 * `YouTube <http://www.youtube.com/>`_  (public videos and playlists)
 
-By using the paid `embed.ly`_ service, many other sites are supported.
+By using the paid-for `embed.ly`_ service, `many other sites <http://embed.ly/providers>`_ can be supported too.
 
 
 Installation
@@ -111,7 +113,7 @@ Each item is a tuple with two fields:
 * The OEmbed provider endpoint.
 
 Note that the regular expressions never test for ``.*`` but use ``\S*`` instead
-so *micawber* can also detect the URL within a larger fragment.
+so micawber_ can also detect the URL within a larger fragment.
 
 
 FLUENT_OEMBED_PROVIDER_LIST_EXTRA

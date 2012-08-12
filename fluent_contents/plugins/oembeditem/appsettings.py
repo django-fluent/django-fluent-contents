@@ -40,6 +40,9 @@ FLUENT_OEMBED_PROVIDER_LIST = getattr(settings, 'FLUENT_OEMBED_PROVIDER_LIST', (
     (r'http://(\S*\.)?yfrog\.com/\S*',                  'http://www.yfrog.com/api/oembed'),
     (r'http://www.mobypicture.com/user/\S*?/view/\S*',  'http://api.mobypicture.com/oEmbed'),
     (r'http://moby.to/\S*',                             'http://api.mobypicture.com/oEmbed'),
+    (r'http://(\S+\.)imgur\.com/\S*',                   'http://api.imgur.com/oembed'),
+    (r'http://instagr\.am/p/\S*',                       'http://api.instagram.com/oembed'),
+    (r'http://instagram\.com/p/\S*',                    'http://api.instagram.com/oembed'),
 ))
 
 # Allow to extend from the settings file
