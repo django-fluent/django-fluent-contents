@@ -13,8 +13,8 @@ class GoogleDocsViewerItem(ContentItem):
     height = models.CharField(_("Height"), max_length=10, validators=[validate_html_size], default="600", help_text=_("Specify the size in pixels."))
 
     class Meta:
-        verbose_name = _("Google Docs viewer")
-        verbose_name_plural = _("Google Docs viewers")
+        verbose_name = _("Embedded document")
+        verbose_name_plural = _("Embedded document")
 
     def __unicode__(self):
         return self.url

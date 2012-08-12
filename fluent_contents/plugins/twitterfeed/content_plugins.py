@@ -5,7 +5,7 @@ from fluent_contents.plugins.twitterfeed.models import TwitterRecentEntriesItem,
 
 
 class BaseTwitterPlugin(ContentPlugin):
-    category = _("Online services")
+    category = _("Online content")
 
     def get_context(self, request, instance, **kwargs):
         context = super(BaseTwitterPlugin, self).get_context(request, instance, **kwargs)

@@ -38,8 +38,8 @@ class OEmbedItem(ContentItem):
 
 
     class Meta:
-        verbose_name = _("Embedded content")
-        verbose_name_plural = _("Embeddded contents")
+        verbose_name = _("Embedded media")
+        verbose_name_plural = _("Embeddded media")
 
 
     def __unicode__(self):

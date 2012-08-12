@@ -10,7 +10,7 @@ from fluent_contents.plugins.oembeditem.models import OEmbedItem
 @plugin_pool.register
 class OEmbedPlugin(ContentPlugin):
     model = OEmbedItem
-    category = _('Online services')
+    category = _('Online content')
     form = OEmbedItemForm
     render_template = "fluent_contents/plugins/oembed/default.html"
 
