@@ -12,6 +12,8 @@ from django.conf import settings
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.core import context_processors
+from django.contrib.auth import context_processors as auth_context_processors
+from django.contrib.messages import context_processors as messages_context_processors
 from django.db import DatabaseError
 from django.template.context import Context
 from django.template.loader import render_to_string
@@ -41,6 +43,8 @@ _STANDARD_REQUEST_CONTEXT_PROCESSORS = (
     context_processors.csrf,
     context_processors.media,
     context_processors.i18n,
+    auth_context_processors.auth,
+    messages_context_processors.messages,
     _add_debug,
 )
 

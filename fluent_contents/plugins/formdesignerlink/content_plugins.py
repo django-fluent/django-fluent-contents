@@ -9,6 +9,7 @@ For example, use:
  * ``FORM_DESIGNER_FIELD_CLASSES`` to define which field types are allowed.
  * ``FORM_DESIGNER_WIDGET_CLASSES`` to define which widgets are allowed.
 """
+from django.contrib.messages.api import get_messages
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.formdesignerlink.models import FormDesignerLink
@@ -35,6 +36,8 @@ class FormDesignerLinkPlugin(ContentPlugin):
         # The process_form() function is designed with Django CMS in mind,
         # and responds to both the GET and POST request.
         context = process_form(request, instance.form_definition, {}, is_cms_plugin=True)
-        render_template = self.get_render_template(request, instance, **kwargs)
+        context['messages'] = get_messages(request)  # No matter what, because the template needs it.
 
+        # Render the plugin
+        render_template = self.get_render_template(request, instance, **kwargs)
         return self.render_to_string(request, render_template, context)
