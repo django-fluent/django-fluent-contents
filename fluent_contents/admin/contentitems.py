@@ -53,6 +53,12 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
         opts = cls.model._meta
         return opts.object_name.lower()
 
+    @property
+    def type_name(self):
+        """
+        Return the classname of the model, this is mainly provided for templates.
+        """
+        return self.model.__name__
 
 
 class ContentItemInlineMixin(InlineModelAdmin):
