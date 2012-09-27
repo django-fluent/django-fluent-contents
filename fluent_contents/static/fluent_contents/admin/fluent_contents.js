@@ -20,11 +20,11 @@ var fluent_contents = {
 
     layout: {
         /**
-         * Bind an event before the final layout is organized.
+         * Bind an event handler before the final layout is organized.
          * The callback can return true to stop the initialisation of the plugin.
          * When the layout is blocked, call `loadLayout()` manually.
          */
-        onInit: function(handler) {
+        onInitialize: function(handler) {
           cp_plugins.on_init_layout(handler);
         },
 
@@ -68,4 +68,9 @@ var fluent_contents = {
        */
       hide: function(animate) { cp_tabs.hide(animate); },
     }
-}
+};
+
+// Backwards compatibility:
+// Renamed the onInit function because it's inconsistently abbreviated
+// when taking the view handler's initialize() callback into consideration.
+fluent_contents.layout.onInit = fluent_contents.layout.onInitialize;

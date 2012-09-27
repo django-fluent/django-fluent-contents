@@ -131,7 +131,7 @@ Dynamic layout switching
 The ``example`` application also demonstrates how to switch layouts dynamically.
 This happens entirely client-side. There is a public JavaScript API available to integrate with the layout manager.
 
-.. js:function:: fluent_contents.layout.onInit(callback)
+.. js:function:: fluent_contents.layout.onInitialize(callback)
 
    Register a function this is called when the module initializes the layout for the first time.
    By letting the handler return ``true``, it will abort the layout initialization.
