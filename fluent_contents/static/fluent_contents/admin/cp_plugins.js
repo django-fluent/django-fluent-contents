@@ -173,7 +173,7 @@ var cp_plugins = {};
     for(var i in dom_placeholder.items)
     {
       var fs_item = dom_placeholder.items[i];
-      dom_placeholder.items[i] = cp_plugins._move_item_to( fs_item, function(fs_item)
+      dom_placeholder.items[i] = cp_plugins._move_item_to( fs_item, function _move_to_pane(fs_item)
       {
         pane.content.append(fs_item);
 
@@ -205,7 +205,7 @@ var cp_plugins = {};
     // Remove the item.
     cp_plugins.disable_pageitem(fs_item);   // needed for WYSIWYG editors!
     var values = cp_plugins._get_input_values(fs_item, ignoreTest);
-    add_action( fs_item.remove() );
+    add_action( fs_item );
 
     // Fetch the node reference as it was added to the DOM.
     fs_item = $("#" + itemId);
@@ -371,7 +371,7 @@ var cp_plugins = {};
     if(!relative.length) return;
 
     cp_plugins._fixate_item_height(fs_item);
-    fs_item = cp_plugins._move_item_to( fs_item, function(fs_item) { fs_item[isUp ? 'insertBefore' : 'insertAfter'](relative); } );
+    fs_item = cp_plugins._move_item_to( fs_item, function _moveUpDown(fs_item) { fs_item[isUp ? 'insertBefore' : 'insertAfter'](relative); } );
     cp_plugins._restore_item_height(fs_item);
     cp_plugins.update_sort_order(pane);
   }
