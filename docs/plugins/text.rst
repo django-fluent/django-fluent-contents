@@ -68,14 +68,18 @@ about `extending django-wysiwyg <http://django-wysiwyg.readthedocs.org/en/latest
 FLUENT_TEXT_CLEAN_HTML
 ~~~~~~~~~~~~~~~~~~~~~~
 
-If ``True``, bad HTML tags will be cleaned up server side using either one of the following modules:
+If ``True``, the HTML tags will be rewritten to be well-formed.
+This happens using either one of the following packages:
 
-* ``html5lib``
-* ``pytidylib``
+* html5lib_
+* pytidylib_
+
 
 FLUENT_TEXT_SANITIZE_HTML
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-if ``True``, the HTML insecure items will be removed server side using ``html5lib``.
+if ``True``, unwanted HTML tags will be removed server side using html5lib_.
 
 .. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg
+.. _html5lib: http://code.google.com/p/html5lib/
+.. _pytidylib: http://countergram.com/open-source/pytidylib

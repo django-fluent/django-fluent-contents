@@ -21,9 +21,11 @@ class TextItem(ContentItem):
         return truncate_words(strip_tags(self.text), 20)
 
     def save(self, *args, **kwargs):
-        # Cleanup the HTML if requested
+        # Make well-formed if requested
         if appsettings.FLUENT_TEXT_CLEAN_HTML:
             self.text = clean_html(self.text)
+
+        # Remove unwanted tags if requested
         if appsettings.FLUENT_TEXT_SANITIZE_HTML:
             self.text = sanitize_html(self.text)
 
