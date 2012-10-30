@@ -1,15 +1,11 @@
 (function($){
 
   var has_load_error = false;
-  var is_first_init = true;
 
 
   // A bit of a HACK, maybe needs migration later on:
-  function init_wysiwyg()
+  function initialize_wysiwyg($group)
   {
-    if( ! is_first_init ) return;
-    is_first_init = false;
-
     // Extra customizations for the YUI editor
     if( window.django_wysiwyg_editor_config && window.YAHOO )
     {
@@ -32,7 +28,6 @@
 
   function enable_wysiwyg(root)
   {
-    init_wysiwyg();
     var textareas = root.find("textarea.vLargeTextField:not([id=~__prefix__])");
 
     if( ! django_wysiwyg.is_loaded() )
@@ -60,6 +55,7 @@
 
   // Make sure the WYSIWYG editor is loaded for our models.
   fluent_contents.plugins.registerViewHandler('TextItem', {
+    'initialize': initialize_wysiwyg,
     'enable': enable_wysiwyg,
     'disable': disable_wysiwyg
   })

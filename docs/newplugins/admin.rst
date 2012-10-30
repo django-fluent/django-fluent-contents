@@ -200,7 +200,7 @@ The view handler is a JavaScript object, which should have the following methods
    The :func:`disable` function is called just before the user removes the content item.
    It receives a ``jQuery`` object that points to the root of the content item object in the DOM.
 
-.. js:function:: initialize()
+.. js:function:: initialize($formset_group)
 
    The :func:`initialize` function is not required. In case it exists, it will be called once at the start of the page.
    It's called right after all plugins are initialized, but just before they are moved to the proper location in the DOM.

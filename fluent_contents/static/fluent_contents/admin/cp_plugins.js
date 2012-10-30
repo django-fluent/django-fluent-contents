@@ -645,8 +645,14 @@ var cp_plugins = {};
   {
     // Offer plugin view handlers a change to initialize after the placeholder editor is loaded, but before the items are moved.
     for( var typename in plugin_handlers )
+    {
       if( plugin_handlers.hasOwnProperty(typename) && plugin_handlers[typename].initialize )
-        plugin_handlers[typename].initialize();
+      {
+        var itemtype = cp_data.get_formset_itemtype(typename);
+        var $formset_group = $("#" + itemtype.prefix + "-group");
+        plugin_handlers[typename].initialize($formset_group);
+      }
+    }
   }
 
 
