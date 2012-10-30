@@ -16,9 +16,18 @@ var cp_plugins = {};
 
   // Settings
   var plugin_handlers = {};
+  var on_init_callbacks = [];
   var before_layout_callbacks = [];
   var is_first_layout = true;
 
+
+  /**
+   * Bind an event handler before the plugins are initialized.
+   */
+  cp_plugins.on_init = function(callback)
+  {
+    on_init_callbacks.push(callback);
+  },
 
   /**
    * Bind an event before the final layout is organized.
@@ -643,6 +652,12 @@ var cp_plugins = {};
 
   cp_plugins._init_view_handlers = function()
   {
+    // Allow a global initialization (e.g. have a script that handles things for multiple plugins)
+    for( var i = 0; i < on_init_callbacks.length; i++ )
+    {
+      on_init_callbacks[i]();
+    }
+
     // Offer plugin view handlers a change to initialize after the placeholder editor is loaded, but before the items are moved.
     for( var typename in plugin_handlers )
     {

@@ -7,6 +7,16 @@
 var fluent_contents = {
     plugins: {
         /**
+         * Register a function to call before initialization of all plugins scripts.
+         * This handler may still register new view handlers.
+         *
+         * @param handler  The event handler callback/
+         */
+        onInitialize: function(handler) {
+          cp_plugins.on_init(handler);
+        },
+
+        /**
          * Register a handler to capture events
          *
          * @param model_typename The classname of the model.
