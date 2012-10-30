@@ -1,0 +1,10 @@
+/* Similar to code plugin */
+
+.inline-MarkdownMarkupItem textarea.vLargeTextField,
+.inline-RestructuredtextMarkupItem textarea.vLargeTextField,
+.inline-TextileMarkupItem textarea.vLargeTextField {
+  /* allow the OS to come up with something better then Courier New */
+  font-family: "Consolas", "Menlo", "Monaco", "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", monospace;
+  padding: 5px; /* 3px is standard */
+  width: 606px;
+}

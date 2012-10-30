@@ -25,6 +25,9 @@ class MarkupPluginBase(ContentPlugin):
     form = MarkupItemForm
     admin_form_template = ContentPlugin.ADMIN_TEMPLATE_WITHOUT_LABELS
 
+    class Media:
+        css = {'screen': ('fluent_contents/plugins/markup/markup_admin.css',)}
+
 
     def render(self, request, instance, **kwargs):
         try:
