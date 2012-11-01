@@ -1,6 +1,17 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
 from os.path import dirname, join
+import sys
+
+# When creating the sdist, make sure the django.mo file also exists:
+if 'sdist' in sys.argv:
+    try:
+        os.chdir('fluent_blogs')
+        from django.core.management.commands.compilemessages import compile_messages
+        compile_messages(sys.stderr)
+    finally:
+        os.chdir('..')
+
 
 setup(
     name='django-fluent-contents',
