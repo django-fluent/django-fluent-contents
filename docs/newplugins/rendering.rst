@@ -25,7 +25,7 @@ Simple rendering
 To quickly create plugins with little to no effort, only the :attr:`~fluent_contents.extensions.ContentPlugin.render_template` needs to be specified.
 The template code receives the model object via the ``instance`` variable.
 
-To switch the template depending on the mdel, the :func:`~fluent_contents.extensions.ContentPlugin.get_render_template` method
+To switch the template depending on the model, the :func:`~fluent_contents.extensions.ContentPlugin.get_render_template` method
 can be overwritten instead. For example:
 
 .. code-block:: python

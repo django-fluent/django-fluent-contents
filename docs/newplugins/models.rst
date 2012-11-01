@@ -7,7 +7,7 @@ A plugin is a standard Django/Python package.
 As quick example, let's create an announcement block.
 
 This is a typical module that is found on many websites; a title text, some intro text and "call to action" button at the bottom.
-Such item could be created in a WYSIWYG editor, but in this case we'll provide a clear interface for the redactional content.
+Such item could be created in a WYSIWYG editor, but in this case we'll provide a clear interface for the editorial content.
 
 The plugin can be created in your Django project, in a separate app
 which can be named something like ``plugins.announcementblock`` or ``mysite.contentitems``.

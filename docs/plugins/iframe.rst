@@ -15,7 +15,7 @@ The frame is displayed at the website:
      :width: 552px
      :height: 202px
 
-Generally, such feature is useful for large web sites where a specific service or contactform needs to be embedded.
+Generally, such feature is useful for large web sites where a specific service or contact form needs to be embedded.
 In case a variation is needed, this plugin can easily be used as starting point for writing a custom plugin.
 
 Installation

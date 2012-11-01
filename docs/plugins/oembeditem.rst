@@ -4,7 +4,7 @@ The oembeditem plugin
 ===========================
 
 The `oembeditem` plugin allows inserting an embedded online content in the page,
-such as a YouTube video, Slideshare presentation, Twitter status, Flickr photo, etc..
+such as a YouTube video, SlideShare presentation, Twitter status, Flickr photo, etc..
 
   .. image:: /images/plugins/oembeditem-admin.*
      :width: 957px

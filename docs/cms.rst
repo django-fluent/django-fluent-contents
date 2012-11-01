@@ -14,7 +14,7 @@ in a separate tabbar interface.
 The features include:
 
 * Detecting placeholders from a Django template.
-* Automaticaly rearrange content items when the layout changes.
+* Automatically rearrange content items when the layout changes.
 * Allow usage with any parent model.
 
 In the source distribution, see the ``example.simplecms`` package for a working demonstration.
