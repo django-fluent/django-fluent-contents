@@ -70,6 +70,7 @@ The :file:`content_plugins.py` file can contain multiple plugins, each should in
      model = AnnouncementBlockItem
      render_template = "plugins/announcementblock.html"
      category = _("Simple blocks")
+     cache_output = False    # Temporary set for development
 
      fieldsets = (
          (None, {
@@ -103,6 +104,15 @@ This can be used to generate the HTML:
         </div>
         <p class="button"><a href="{{ instance.button_url }}">{{ instance.button_text }}</a></p>
     </div>
+
+.. important::
+
+    By default, the output of plugins is cached; changes to the template file
+    are only visible when the model is saved in the Django admin.
+    You can set :ref:`FLUENT_CONTENTS_CACHE_OUTPUT` to ``False``, or use 
+    the :attr:`~fluent_contents.extensions.ContentPlugin.cache_output` setting temporary in development.
+    The setting is enabled by default to let plugin authors make a conscious decision about caching
+    and avoid unexpected results in production.
 
 Wrapping up
 ~~~~~~~~~~~

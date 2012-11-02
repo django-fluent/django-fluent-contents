@@ -14,10 +14,10 @@ A quick overview of the available settings:
 FLUENT_CONTENTS_CACHE_OUTPUT
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, the output of all plugins is cached.
-It only updates when a staff member saves saves changes in in the admin screen.
-This greatly improves the performance of the web site, as very little database queries are needed,
-and most pages look the same for every visitor anyways.
+By default, the HTML output of all plugins is cached.
+The output is only updated when a staff member saves changes in in the Django admin.
+Caching greatly improves the performance of the web site, as very little database queries are needed.
+Most pages look the same for every visitor anyways.
 
 In case this conflicts with your caching setup,
-you can disable this feature side-wide bu setting this to ``False``.
+disable this feature side-wide by setting this flag to ``False``.
