@@ -5,7 +5,7 @@
 # For simplecms
 Django>=1.3.0
 django-mptt==0.5.2
-django-fluent-contents>=0.8.0dev
+django-fluent-contents>=0.8.1
 django-template-analyzer>=1.1.0
 
 # For code plugin
@@ -23,4 +23,4 @@ Markdown==2.1.0
 textile==2.1.5
 
 # For text plugin
-django-wysiwyg==0.4.1
+django-wysiwyg==0.5.0
