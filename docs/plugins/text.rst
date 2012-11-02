@@ -16,6 +16,17 @@ editor in the administration panel, to add HTML contents to the page.
 
 The plugin is built on top of django-wysiwyg_, making it possible
 to switch to any WYSIWYG editor of your choice.
+The default editor is the YUI editor, because it works out of the box.
+Other editors, like the CKEditor_, Redactor_ and TinyMCE_ are supported
+with some additional configuration.
+See the django-wysiwyg_ documentation for details
+
+.. important::
+
+    There is no reason to feel constrained to a specific editor.
+    Firstly, the editor can be configured by configuring django-wysiwyg_.
+    Secondly, it's possible to create a different text plugin yourself,
+    and let this plugin serve as canonical example.
 
 Installation
 ------------
@@ -50,11 +61,14 @@ DJANGO_WYSIWYG_FLAVOR
 ~~~~~~~~~~~~~~~~~~~~~
 
 The ``DJANGO_WYSIWYG_FLAVOR`` setting defines which WYSIWYG editor will be used.
-As of django-wysiwyg 0.3, the following editors are available:
+As of django-wysiwyg_ 0.5, the following editors are available:
 
-* **ckeditor**: The CKEditor, formally known as FCKEditor
-* **yui**: The YAHOO editor.
-* **yui_advanced**: The YAHOO editor with more toolbar buttons.
+* **ckeditor** - The CKEditor_, formally known as FCKEditor.
+* **redactor** - The Redactor_ editor (requires a license).
+* **tinymce** - The TinyMCE_ editor, in simple mode.
+* **tinymce_advanced** - The TinyMCE_ editor with many more toolbar buttons.
+* **yui** - The YAHOO_ editor (the default)
+* **yui_advanced** - The YAHOO_ editor with more toolbar buttons.
 
 Additional editors can be easily added, as the setting refers to a set of templates names:
 
@@ -80,6 +94,13 @@ FLUENT_TEXT_SANITIZE_HTML
 
 if ``True``, unwanted HTML tags will be removed server side using html5lib_.
 
+.. _CKEditor: http://ckeditor.com/
+.. _Redactor: http://redactorjs.com/
+.. _TinyMCE: http://www.tinymce.com/
+.. _YAHOO: http://developer.yahoo.com/yui/editor/
+.. _django-ckeditor: https://github.com/shaunsephton/django-ckeditor
+.. _django-tinymce: https://github.com/aljosa/django-tinymce
 .. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg
 .. _html5lib: http://code.google.com/p/html5lib/
 .. _pytidylib: http://countergram.com/open-source/pytidylib
+
