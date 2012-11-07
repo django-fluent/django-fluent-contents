@@ -168,9 +168,10 @@ class PlaceholderField(PlaceholderRelation):
         setattr(cls, name, PlaceholderFieldDescriptor(self.slot))
 
         # Make placeholder fields easy to find
-        if not hasattr(cls._meta, 'placeholder_fields'):
-            cls._meta.placeholder_fields = {}
-        cls._meta.placeholder_fields[name] = self
+        # Can't assign this to cls._meta because that gets overwritten by every level of model inheritance.
+        if not hasattr(cls, '_meta_placeholder_fields'):
+            cls._meta_placeholder_fields = {}
+        cls._meta_placeholder_fields[name] = self
 
         # Configure the revere relation if possible.
         # TODO: make sure reverse queries work properly

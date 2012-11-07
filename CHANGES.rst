@@ -1,3 +1,9 @@
+Version 0.8.2
+-------------
+
+* Fixed ``PlaceholderField`` usage with inherited models.
+
+
 Version 0.8.1
 -------------
 

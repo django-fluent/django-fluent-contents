@@ -33,11 +33,11 @@ class PlaceholderFieldAdmin(PlaceholderEditorAdmin):
         Return the data of the placeholder fields.
         """
         # Return all placeholder fields in the model.
-        if not hasattr(self.model._meta, 'placeholder_fields'):
+        if not hasattr(self.model, '_meta_placeholder_fields'):
             return []
 
         data = []
-        for name, field in self.model._meta.placeholder_fields.iteritems():
+        for name, field in self.model._meta_placeholder_fields.iteritems():
             assert isinstance(field, PlaceholderField)
             data.append(PlaceholderData(
                 slot=field.slot,
@@ -52,12 +52,12 @@ class PlaceholderFieldAdmin(PlaceholderEditorAdmin):
         Return which plugins are allowed by the placeholder fields.
         """
         # Get all allowed plugins of the various placeholders together.
-        if not hasattr(self.model._meta, 'placeholder_fields'):
+        if not hasattr(self.model, '_meta_placeholder_fields'):
             # No placeholder fields in the model, no need for inlines.
             return []
 
         plugins = []
-        for name, field in self.model._meta.placeholder_fields.iteritems():
+        for name, field in self.model._meta_placeholder_fields.iteritems():
             assert isinstance(field, PlaceholderField)
             if field.plugins is None:
                 # no limitations, so all is allowed
