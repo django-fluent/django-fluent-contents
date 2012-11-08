@@ -320,6 +320,7 @@ var cp_plugins = {};
     // Configure it
     cp_plugins._set_pageitem_data(fs_item, placeholder, new_index);
     cp_plugins.enable_pageitem(fs_item);
+    cp_plugins.update_sort_order(pane);  // Not required, but keep the form state consistent all the time.
   }
 
 
@@ -481,6 +482,8 @@ var cp_plugins = {};
 
   cp_plugins.onFormSubmit = function(event)
   {
+    // The form state should be consistent all the time,
+    // but to be sure, update the sort ordering.
     var panes = cp_data.get_placeholder_panes();
     for(var i = 0; i < panes.length; i++)
     {
