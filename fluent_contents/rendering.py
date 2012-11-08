@@ -67,20 +67,22 @@ def _render_items(request, placeholder_name, items, template_name=None):
     output_ordering = []
 
     if not hasattr(items, "non_polymorphic"):
-        # Can't deal with caching, pass the whole queryset as (i, item) list.
+        # The items is either a list of manually created items, or it's a QuerySet.
+        # Can't prevent reading the subclasses only, so don't bother with caching here.
         remaining_items = items
-        output_ordering = (item.pk for item in items)
+        output_ordering = [item.pk or id(item) for item in items]
     else:
         items = items.non_polymorphic()
 
         # First try to fetch all items non-polymorphic from memcache
+        # If these are found, there is no need to query the derived data from the database.
         remaining_items = []
         for i, contentitem in enumerate(items):
             output_ordering.append(contentitem.pk)
             html = None
             try:
                 # Respect the cache output setting of the plugin
-                if contentitem.plugin.cache_output and appsettings.FLUENT_CONTENTS_CACHE_OUTPUT:
+                if contentitem.plugin.cache_output and contentitem.pk and appsettings.FLUENT_CONTENTS_CACHE_OUTPUT:
                     cachekey = get_rendering_cache_key(placeholder_name, contentitem)
                     html = cache.get(cachekey)
             except PluginNotFound:
@@ -91,11 +93,12 @@ def _render_items(request, placeholder_name, items, template_name=None):
             else:
                 remaining_items.append(contentitem)
 
+        # Fetch derived table data for all objects not found in memcached
         if remaining_items:
             remaining_items = items.get_real_instances(remaining_items)
 
     # See if the queryset contained anything.
-    # This test is moved here, to prevent earlier query execution,
+    # This test is moved here, to prevent earlier query execution.
     if not items:
         return u"<!-- no items in placeholder '{0}' -->".format(escape(placeholder_name))
     elif remaining_items:
@@ -107,17 +110,17 @@ def _render_items(request, placeholder_name, items, template_name=None):
                 html = '<!-- error: {0} -->\n'.format(str(e))
             else:
                 # Plugin output is likely HTML, but it should be placed in mark_safe() to raise awareness about escaping.
-                # This is just like Input.render() and unlike Node.render().
+                # This is just like Django's Input.render() and unlike Node.render().
                 html = conditional_escape(plugin._render_contentitem(request, contentitem))
 
-                if plugin.cache_output and appsettings.FLUENT_CONTENTS_CACHE_OUTPUT:
+                if plugin.cache_output and contentitem.pk and appsettings.FLUENT_CONTENTS_CACHE_OUTPUT:
                     cachekey = get_rendering_cache_key(placeholder_name, contentitem)
                     cache.set(cachekey, html)
 
                 if edit_mode:
                     html = _wrap_contentitem_output(html, contentitem)
 
-            output[contentitem.pk] = html
+            output[contentitem.pk or id(contentitem)] = html
 
     # Order all rendered items in the correct sequence.  The derived tables should be truncated/reset,
     # so the base class model indexes don't necessary match with the derived indexes.
