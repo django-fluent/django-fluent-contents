@@ -101,7 +101,7 @@ class PlaceholderFieldDescriptor(object):
         if value == "-DUMMY-":
             return
 
-        raise NotImplementedError("Setting Placeholder value is not supported, use Placeholder.objects.create_for_parent() instead.")
+        raise NotImplementedError("Setting Placeholder value is not supported, use Placeholder.objects.create_for_object() instead.")
 
 
 class PlaceholderField(PlaceholderRelation):
