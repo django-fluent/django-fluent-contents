@@ -13,7 +13,7 @@ class RenderCommentsTreeNode(comments.CommentListNode):
     """
     A custom node to render the comments tree, for django-threadedcomments.
     """
-    template_name = "tree.html"
+    template_name = "list.html"
 
     @classmethod
     def handle_token(cls, parser, token):
@@ -31,9 +31,9 @@ class RenderCommentsTreeNode(comments.CommentListNode):
         ctype, object_pk = self.get_target_ctype_pk(context)
         if object_pk:
             template_search_list = [
-                "threadedcomments/%s/%s/%s" % (ctype.app_label, ctype.model, self.template_name),
-                "threadedcomments/%s/%s" % (ctype.app_label, self.template_name),
-                "threadedcomments/%s" % self.template_name
+                "comments/%s/%s/%s" % (ctype.app_label, ctype.model, self.template_name),
+                "comments/%s/%s" % (ctype.app_label, self.template_name),
+                "comments/%s" % self.template_name
             ]
             qs = self.get_query_set(context)
             context.push()
@@ -52,10 +52,13 @@ if appsettings.FLUENT_COMMENTSAREA_THREADEDCOMMENTS:
     register.filters.update(threadedcomments_tags.register.filters)
     register.tags.update(threadedcomments_tags.register.tags)
 
-    # Add missing render_comment_list tag.
-    @register.tag
-    def render_comment_list(parser, token):
-        return RenderCommentsTreeNode.handle_token(parser, token)
+    # https://github.com/HonzaKral/django-threadedcomments still doesn't have a 'render_comment_list' tag,
+    # the pull request at https://github.com/HonzaKral/django-threadedcomments/pull/39 adds this.
+    if 'render_comment_list' not in register.tags:
+        # Add missing render_comment_list tag.
+        @register.tag
+        def render_comment_list(parser, token):
+            return RenderCommentsTreeNode.handle_token(parser, token)
 
 else:
     # Standard comments

@@ -1,3 +1,10 @@
+In development
+--------------
+
+* Fix template name for django-threadedcomments_ to ``comment/list.html``,
+  to be compatible with the pull request at https://github.com/HonzaKral/django-threadedcomments/pull/39.
+
+
 Version 0.8.3
 -------------
 
@@ -25,3 +32,7 @@ First PyPI release.
 
 The module design has been stable for quite some time,
 so it's time to show this module to the public.
+
+
+.. _django-threadedcomments: https://github.com/HonzaKral/django-threadedcomments.git
+
