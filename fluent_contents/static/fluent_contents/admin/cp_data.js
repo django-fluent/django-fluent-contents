@@ -50,30 +50,30 @@ var cp_data = {};
   cp_data.init = function()
   {
     // Find all formset items.
-    var all_items   = $(".inline-contentitem-group > .inline-related");
-    var empty_items = all_items.filter(".empty-form");
-    var fs_items    = all_items.filter(":not(.empty-form)");
+    var $all_items   = $(".inline-contentitem-group > .inline-related");
+    var $empty_items = $all_items.filter(".empty-form");
+    var $fs_items    = $all_items.filter(":not(.empty-form)");
 
     if( cp_data.placeholders )
     {
       // Split formset items by the placeholder they belong to.
-      for(var i = 0; i < fs_items.length; i++)
+      for(var i = 0; i < $fs_items.length; i++)
       {
         // Get formset DOM elements
-        var fs_item           = fs_items.eq(i);
-        var placeholder_input = fs_item.find("input[name$=-placeholder], select[name$=-placeholder]");  // allow <select> for debugging.
+        var $fs_item           = $fs_items.eq(i);
+        var $placeholder_input = $fs_item.find("input[name$=-placeholder], select[name$=-placeholder]");  // allow <select> for debugging.
 
         // placeholder_slot may be __main__, placeholder.slot will be the real one.
-        var placeholder_id = placeholder_input.val();
+        var placeholder_id = $placeholder_input.val();
 
         // Append item to administration
         var placeholder = cp_data.get_placeholder_by_id(placeholder_id);   // can be null if item became orphaned.
         var dom_placeholder = cp_data.get_or_create_dom_placeholder(placeholder, placeholder_id);
-        dom_placeholder.items.push(fs_item);
+        dom_placeholder.items.push($fs_item);
 
         if( dom_placeholder.is_fallback )
         {
-          placeholder_input.val('');
+          $placeholder_input.val('');
         }
       }
 
@@ -82,9 +82,9 @@ var cp_data = {};
     }
 
     // Add the empty items to the itemtypes dictionary.
-    for(i = 0; i < empty_items.length; i++)
+    for(i = 0; i < $empty_items.length; i++)
     {
-      var empty_item = cp_data.get_formset_item_data(empty_items[i]);   // {fs_item, index, itemtype: {..}}
+      var empty_item = cp_data.get_formset_item_data($empty_items[i]);   // {fs_item, index, itemtype: {..}}
       empty_item.itemtype.item_template = empty_item.fs_item;
     }
   }
@@ -207,9 +207,9 @@ var cp_data = {};
   /**
    * Return the placeholder pane for a given FormSet item.
    */
-  cp_data.get_placeholder_pane_for_item = function(fs_item)
+  cp_data.get_placeholder_pane_for_item = function($fs_item)
   {
-    var pane = fs_item.closest(".cp-content").parent();
+    var pane = $fs_item.closest(".cp-content").parent();
     return cp_data.get_object_for_pane(pane, undefined);
   }
 
@@ -290,8 +290,8 @@ var cp_data = {};
     if( child_node.fs_item )
       return child_node;   // already parsed
 
-    var fs_item = $(child_node).closest(".inline-related");
-    var id = fs_item.attr("id");
+    var $fs_item = $(child_node).closest(".inline-related");
+    var id = $fs_item.attr("id");
     var pos = id.lastIndexOf('-');      // have to split at last '-' for generic inlines (inlinetype-id / app-model-ctfield-ctfkfield-id)
     var prefix = id.substring(0, pos);
     var suffix = id.substring(pos + 1);
@@ -309,7 +309,7 @@ var cp_data = {};
     }
 
     return {
-      fs_item: fs_item,
+      fs_item: $fs_item,
       itemtype: itemtype,
       index: parseInt(suffix)
     };
