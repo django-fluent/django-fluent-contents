@@ -77,6 +77,10 @@ Or the current folder can be installed::
 
     pip install .
 
+The dependencies of plugins are not included by default. To install those, include the plugin names as extra option::
+
+    pip install --force-reinstall django-fluent-contents[code,disquscommentsarea,formdesignerlink,markup,oembeditem,text,twitterfeed]
+
 Configuration
 -------------
 

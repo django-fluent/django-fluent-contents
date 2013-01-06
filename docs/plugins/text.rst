@@ -40,9 +40,12 @@ Add the following settings to ``settings.py``:
         'django_wysiwyg',
     )
 
-The dependencies can be installed via `pip`::
+Install the dependencies via `pip` / *pip*::
 
-    pip install django-wysiwyg
+    pip install --force-reinstall django-fluent-contents[text]
+
+This installs the django-wysiwyg_ package.
+
 
 Configuration
 -------------

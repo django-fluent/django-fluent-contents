@@ -30,6 +30,10 @@ hence it supports any markup language that django.contrib.markup_ has a filter f
 Installation
 ------------
 
+Install the dependencies via `pip` / *pip*::
+
+    pip install --force-reinstall django-fluent-contents[markup]
+
 Add the following settings to ``settings.py``:
 
 .. code-block:: python

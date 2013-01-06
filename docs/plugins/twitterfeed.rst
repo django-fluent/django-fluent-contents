@@ -28,9 +28,12 @@ Add the following settings to ``settings.py``:
         'fluent_contents.plugins.twitterfeed',
     )
 
-The dependencies can be installed via `pip`::
+Install the dependencies via `pip` / *pip*::
 
-    pip install twitter-text-python
+    pip install --force-reinstall django-fluent-contents[twitterfeed]
+
+This installs the ``twitter-text-py`` package.
+
 
 Configuration
 -------------

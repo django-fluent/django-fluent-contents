@@ -28,9 +28,12 @@ Add the following settings to ``settings.py``:
         'fluent_contents.plugins.code',
     )
 
-The dependencies can be installed via `pip`::
+Install the dependencies via `pip` / *pip*::
 
-    pip install Pygments
+    pip install --force-reinstall django-fluent-contents[code]
+
+This installs the Pygments_ package.
+
 
 Configuration
 -------------
