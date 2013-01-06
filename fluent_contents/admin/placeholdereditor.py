@@ -1,7 +1,9 @@
 from abc import abstractmethod
+from django.db.models import signals
+from django.dispatch import receiver
 from django.utils.functional import curry
 from fluent_contents import extensions
-from fluent_contents.admin.contentitems import get_content_item_inlines
+from fluent_contents.admin.contentitems import get_content_item_inlines, BaseContentItemFormSet
 from fluent_contents.admin.genericextensions import ExtensibleGenericInline, BaseInitialGenericInlineFormSet, DynamicInlinesModelAdmin
 from fluent_contents.models import Placeholder
 
@@ -17,7 +19,6 @@ class PlaceholderInlineFormSet(BaseInitialGenericInlineFormSet):
     def get_default_prefix(cls):
         # Make output less verbose, easier to read, and less kB to transmit.
         return 'placeholder-fs'
-
 
 
 class PlaceholderEditorInline(ExtensibleGenericInline):
@@ -149,3 +150,24 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, DynamicInlinesModelAdmi
         It loads the :attr:`placeholder_inline` first, followed by the inlines for the :class:`~fluent_contents.models.ContentItem` classes.
         """
         return [self.placeholder_inline] + get_content_item_inlines(plugins=self.get_all_allowed_plugins())
+
+    def save_formset(self, request, form, formset, change):
+        # Track deletion of Placeholders across the formsets.
+        # When a Placeholder is deleted, the ContentItem can't be saved anymore with the old placeholder_id
+        # That ID did exist at the beginning of the transaction, but won't be when all forms are saved.
+        # Pass the knowledge of deleted placeholders to the ContentItem formset, so it can deal with it.
+        if isinstance(formset, BaseContentItemFormSet):
+            formset._deleted_placeholders = getattr(request, '_deleted_placeholders', ())
+
+        saved_instances = super(PlaceholderEditorAdmin, self).save_formset(request, form, formset, change)
+
+        if isinstance(formset, PlaceholderInlineFormSet):
+            request._deleted_placeholders = [obj._old_pk for obj in formset.deleted_objects]
+
+        return saved_instances
+
+
+@receiver(signals.post_delete, sender=Placeholder)
+def _get_pk_on_placeholder_delete(instance, **kwargs):
+    # Make sure the old PK can still be tracked
+    instance._old_pk = instance.pk

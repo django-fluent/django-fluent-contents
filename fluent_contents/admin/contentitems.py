@@ -11,6 +11,11 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
     """
     Correctly save placeholder fields.
     """
+    def __init__(self, *args, **kwargs):
+        super(BaseContentItemFormSet, self).__init__(*args, **kwargs)
+        self._deleted_placeholders = ()  # internal property, set by PlaceholderEditorAdmin
+
+
     def save_new(self, form, commit=True):
         # This is the moment to link the form 'placeholder_slot' field to a placeholder..
         # Notice that the PlaceholderEditorInline needs to be included before any ContentItemInline,
@@ -45,6 +50,11 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
 
                 form.cleaned_data['placeholder'] = desired_placeholder
                 form.instance.placeholder = desired_placeholder
+
+            elif form.instance.placeholder_id in self._deleted_placeholders:
+                # ContentItem was in a deleted placeholder, and gets orphaned.
+                form.cleaned_data['placeholder'] = None
+                form.instance.placeholder = None
 
 
     @classmethod
