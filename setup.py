@@ -19,9 +19,11 @@ setup(
     license='Apache License, Version 2.0',
 
     install_requires=[
-        'Django>=1.3.0',   # Using staticfiles
         'django-polymorphic>=0.2',
         'django-template-analyzer>=1.1.0',
+    ],
+    requires=[
+        'Django (>=1.3)',   # Using staticfiles
     ],
     extras_require = {
         'code': ['Pygments'],
@@ -55,6 +57,7 @@ setup(
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
         'Framework :: Django',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
     ]
