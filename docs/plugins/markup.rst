@@ -32,7 +32,7 @@ Installation
 
 Install the dependencies via `pip` / *pip*::
 
-    pip install --force-reinstall django-fluent-contents[markup]
+    pip install django-fluent-contents[markup]
 
 Add the following settings to ``settings.py``:
 

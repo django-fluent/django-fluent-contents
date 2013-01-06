@@ -30,7 +30,7 @@ Add the following settings to ``settings.py``:
 
 Install the dependencies via `pip` / *pip*::
 
-    pip install --force-reinstall django-fluent-contents[twitterfeed]
+    pip install django-fluent-contents[twitterfeed]
 
 This installs the ``twitter-text-py`` package.
 

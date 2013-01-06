@@ -24,7 +24,7 @@ Installation
 
 Install the dependencies via `pip` / *pip*::
 
-    pip install --force-reinstall django-fluent-contents[formdesignerlink]
+    pip install django-fluent-contents[formdesignerlink]
 
 This installs the django-form-designer_.
 

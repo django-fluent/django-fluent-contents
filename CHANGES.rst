@@ -3,6 +3,7 @@ In development
 
 * Fix template name for django-threadedcomments_ to ``comment/list.html``,
   to be compatible with the pull request at https://github.com/HonzaKral/django-threadedcomments/pull/39.
+* Use plugin dependencies installation via the optional dependency specifier (e.g. ``django-fluent-contents[text]``).
 
 
 Version 0.8.3

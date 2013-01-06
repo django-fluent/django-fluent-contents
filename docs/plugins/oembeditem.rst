@@ -57,7 +57,7 @@ Add the following settings to ``settings.py``:
 
 Install the dependencies via `pip` / *pip*::
 
-    pip install --force-reinstall django-fluent-contents[oembeditem]
+    pip install django-fluent-contents[oembeditem]
 
 This installs the micawber_ package.
 
