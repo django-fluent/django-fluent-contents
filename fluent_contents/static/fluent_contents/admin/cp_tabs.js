@@ -28,7 +28,7 @@ var cp_tabs = {};
   {
     // Get the tab templates
     $empty_tabnav = $("#cp-tabnav-template");
-    $empty_tab = $("#tab-template");
+    $empty_tab = $(".cp-tab.empty-form");
     $loading_tabnav = $("#cp-tabnav-loading");
     $orphaned_tabnav = $("#cp-tabnav-orphaned");
     $orphaned_tab = $("#tab-orphaned");
@@ -108,7 +108,7 @@ var cp_tabs = {};
 
       // Prepare data for administration
       // Reuse old ID's when possible.
-      placeholder.domnode = "tab-region-" + placeholder.slot;
+      placeholder.domnode = null;
       placeholder.role = placeholder.role || 'm';
       placeholder.id = placeholder_id;
       placeholders.push(placeholder);
@@ -141,7 +141,9 @@ var cp_tabs = {};
       // Create DOM nodes
       placeholder = newplaceholders[i];
       $loading_tabnav.before( cp_tabs._create_tab_title(placeholder) );
-      $tabs_root.append( cp_tabs._create_tab_content(placeholder, ( placeholder.id ? id_index : new_index )) );
+      var $new_tab = cp_tabs._create_tab_content(placeholder, ( placeholder.id ? id_index : new_index ));
+      $tabs_root.append( $new_tab );
+      placeholder.domnode = $new_tab.attr('id');
 
       if( placeholder.id )
         id_index++;
@@ -175,7 +177,8 @@ var cp_tabs = {};
   {
     // The 'cp-region' class is not part of the template, to avoid matching the actual tabs.
     var $tabtitle = $empty_tabnav.clone().removeAttr("id").addClass("cp-region").show();
-    $tabtitle.find("a").attr("href", '#' + placeholder.domnode).text(placeholder.title);
+    $tabtitle.attr('data-tab-region', placeholder.slot);
+    $tabtitle.find("a").text(placeholder.title);
     return $tabtitle;
   }
 
@@ -183,7 +186,7 @@ var cp_tabs = {};
   cp_tabs._create_tab_content = function(placeholder, new_index)
   {
     // The 'cp-region-tab' class is not part of the template, but added here to avoid matching the actual tabs earlier on.
-    var $tab = $empty_tab.clone().attr("id", placeholder.domnode).addClass("cp-region-tab");
+    var $tab = $empty_tab.clone().attr("id", placeholder_group_prefix + "-" + new_index).attr('data-tab-region', placeholder.slot).addClass("cp-region-tab");
     $tab.find(".cp-plugin-add-button").attr({
         'data-placeholder-id': placeholder.id,
         'data-placeholder-slot': placeholder.slot
@@ -284,7 +287,7 @@ var cp_tabs = {};
     var $tab;
     var oldtab = ($.cookie ? $.cookie('cp-last-tab') : null);
     if( oldtab )
-      $tab = $tabnav_root.find('li.cp-region > a[href$=#' + oldtab + ']');  // .children() gave no results (note Django 1.3 ships jQuery v1.4.2)
+      $tab = $tabnav_root.find('li.cp-region[data-tab-region=' + oldtab + '] > a');  // .children() gave no results (note Django 1.3 ships jQuery v1.4.2)
 
     if( ! $tab || $tab.length == 0 )
     {
@@ -342,10 +345,9 @@ var cp_tabs = {};
   cp_tabs.enable_tab = function($thisnav)
   {
     // Find new pane to activate
-    var href  = $thisnav.find("a").attr('href');
-    var active = href.substring( href.indexOf("#") + 1 );
+    var tab_region = $thisnav.attr('data-tab-region');
     var $panes = $tabs_root.children('.cp-tab');
-    var $activePane = $panes.filter("#" + active);
+    var $activePane = $panes.filter("[data-tab-region=" + tab_region + "]");
 
     // And switch
     $panes.hide();
@@ -358,7 +360,7 @@ var cp_tabs = {};
     // Store as current tab
     if( $.cookie )
     {
-      $.cookie('cp-last-tab', active);
+      $.cookie('cp-last-tab', tab_region);
     }
   }
 
