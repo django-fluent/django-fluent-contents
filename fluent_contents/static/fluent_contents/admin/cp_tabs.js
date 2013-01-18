@@ -58,7 +58,7 @@ var cp_tabs = {};
   cp_tabs.get_fallback_pane = function(role, last_known_nr)
   {
     $orphaned_tabnav.css("display", "inline");
-    return cp_data.get_object_for_pane($("#tab-orphaned"));
+    return cp_data.get_object_for_pane($("#tab-orphaned"), undefined);
   }
 
 

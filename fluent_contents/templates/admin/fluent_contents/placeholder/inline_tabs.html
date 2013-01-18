@@ -15,24 +15,24 @@
 <script type="text/javascript">
   // Pass database data to the cp_admin.js file.
   // Each tab hosts a placeholder pane.
-  var placeholders = {% block js_placeholders %}[ {% for inline_admin_form in inline_admin_formset %}{% with form=inline_admin_form.form placeholder=inline_admin_form.original %}{% if not forloop.last %}{% if not forloop.first %}, {% endif %}{
-                      id: {% if placeholder and placeholder.id %}{{ placeholder.id }}{% else %}''{% endif %},{# if test added to support TEMPLATE_STRING_IF_INVALID #}
-                      slot: '{{ form.slot.value|default:forloop.counter0|escapejs }}',
-                      title: '{{ form.title.value|default:"?"|escapejs }}',
-                      role: '{{ form.role.value|default:'?' }}',
-                      domnode: '{{ inline_admin_formset.formset.prefix }}-{{ forloop.counter0 }}'
-                    }{% endif %}
-                  {% endwith %}{% endfor %}]{% endblock %};
-  var itemtypes = {% block js_contentitemtypes %}{ {% for fs in inline_admin_formsets|only_content_item_formsets %}'{{ fs.opts.type_name|escapejs }}': {
-                      type: '{{ fs.opts.type_name|escapejs }}',{# fs.opts = GenericContentItemInline #}
-                      name: '{{ fs.opts.name|escapejs }}',
-                      prefix: '{{ fs.formset.prefix|escapejs }}',{# fs.formset = targetobjectformFormSet #}
-                      rel_name: '{{ fs.formset.rel_name|escapejs }}',
-                      auto_id: '{{ fs.formset.auto_id|escapejs }}'
-                    }{% if not forloop.last %}, {% endif %}
-                  {% endfor %}}{% endblock %};
-  cp_data.set_placeholders( placeholders );
-  cp_data.set_content_item_types( itemtypes );
+  var placeholder_metadata = {% block js_placeholders %}[ {% for inline_admin_form in inline_admin_formset %}{% with form=inline_admin_form.form placeholder=inline_admin_form.original %}{% if not forloop.last %}{% if not forloop.first %}, {% endif %}{
+      id: {% if placeholder and placeholder.id %}{{ placeholder.id }}{% else %}''{% endif %},{# if test added to support TEMPLATE_STRING_IF_INVALID #}
+      slot: '{{ form.slot.value|default:forloop.counter0|escapejs }}',
+      title: '{{ form.title.value|default:"?"|escapejs }}',
+      role: '{{ form.role.value|default:'?' }}',
+      domnode: '{{ inline_admin_formset.formset.prefix }}-{{ forloop.counter0 }}'
+    }{% endif %}
+  {% endwith %}{% endfor %}]{% endblock %};
+  var contentitem_metadata = {% block js_contentitemtypes %}{ {% for fs in inline_admin_formsets|only_content_item_formsets %}'{{ fs.opts.type_name|escapejs }}': {
+      type: '{{ fs.opts.type_name|escapejs }}',{# fs.opts = GenericContentItemInline #}
+      name: '{{ fs.opts.name|escapejs }}',
+      prefix: '{{ fs.formset.prefix|escapejs }}',{# fs.formset = targetobjectformFormSet #}
+      rel_name: '{{ fs.formset.rel_name|escapejs }}',
+      auto_id: '{{ fs.formset.auto_id|escapejs }}'
+    }{% if not forloop.last %}, {% endif %}
+  {% endfor %}}{% endblock %};
+  cp_data.set_placeholders( placeholder_metadata );
+  cp_data.set_contentitem_metadata( contentitem_metadata );
 </script>
 
   <div id="{{ inline_admin_formset.formset.prefix }}-group" class="inline-group inline-placeholder-group">

@@ -1,5 +1,5 @@
 {% load i18n %}
-  <div id="{{ inline_admin_formset.formset.prefix }}-group" class="inline-group inline-contentitem-group inline-{{ inline_admin_formset.formset.type_name }}-group">
+  <div id="{{ inline_admin_formset.formset.prefix }}-group" class="inline-group inline-contentitem-group inline-{{ inline_admin_formset.formset.type_name }}-group" data-inline-model="{{ inline_admin_formset.formset.type_name }}">
     {{ inline_admin_formset.formset.management_form }}
     {{ inline_admin_formset.formset.non_form_errors }}
 

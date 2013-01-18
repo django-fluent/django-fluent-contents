@@ -82,8 +82,9 @@ var cp_plugins = {};
   {
     // Count number of seen tabs per role.
     var roles_seen = {};
-    for(var i in cp_data.placeholders)
-      roles_seen[cp_data.placeholders[i].role] = 0;
+    var placeholders = cp_data.get_placeholders();
+    for(var i in placeholders)
+      roles_seen[placeholders[i].role] = 0;
 
     // Move all items to the tabs.
     // TODO: direct access to dom_placeholder data, should be cleaned up.
@@ -104,7 +105,7 @@ var cp_plugins = {};
     // Initialisation completed!
     if( is_first_layout )
     {
-      console.log("Initialized editor, placeholders=", cp_data.placeholders, " itemtypes=", cp_data.itemtypes);
+      console.log("Initialized editor, placeholders=", cp_data.get_placeholders(), " contentitems=", cp_data.contentitem_metadata);
       is_first_layout = false;
     }
   }
@@ -276,22 +277,22 @@ var cp_plugins = {};
   {
     var $add_button = $(event.target);
     var placeholder_key = $add_button.attr("data-placeholder-slot");  // TODO: use ID?
-    var itemtype_name = $add_button.siblings("select").val();
-    cp_plugins.add_formset_item( placeholder_key, itemtype_name );
+    var model_name = $add_button.siblings("select").val();
+    cp_plugins.add_formset_item( placeholder_key, model_name );
   }
 
 
   /**
    * Add an item to a tab.
    */
-  cp_plugins.add_formset_item = function( placeholder_slot, itemtype_name )
+  cp_plugins.add_formset_item = function( placeholder_slot, model_name )
   {
     // The Django admin/media/js/inlines.js API is not public, or easy to use.
     // Recoded the inline model dynamics.
 
     // Get objects
-    var itemtype = cp_data.get_formset_itemtype(itemtype_name);
-    var group_prefix = itemtype.auto_id.replace(/%s/, itemtype.prefix);
+    var inline_meta = cp_data.get_contentitem_metadata_by_type(model_name);
+    var group_prefix = inline_meta.auto_id.replace(/%s/, inline_meta.prefix);
     var placeholder = cp_data.get_placeholder_by_slot(placeholder_slot);
     var dom_placeholder = cp_data.get_or_create_dom_placeholder(placeholder);
 
@@ -301,8 +302,8 @@ var cp_plugins = {};
 
     // Clone the item.
     var new_index = total.value;
-    var item_id   = itemtype.prefix + "-" + new_index;
-    var newhtml   = itemtype.item_template.get_outerHtml().replace(/__prefix__/g, new_index);
+    var item_id   = inline_meta.prefix + "-" + new_index;
+    var newhtml   = inline_meta.item_template.get_outerHtml().replace(/__prefix__/g, new_index);
     var $newitem  = $(newhtml).removeClass("empty-form").attr("id", item_id);
 
     // Add it
@@ -324,11 +325,11 @@ var cp_plugins = {};
   }
 
 
-  cp_plugins._set_pageitem_data = function(fs_item, placeholder, new_sort_index)
+  cp_plugins._set_pageitem_data = function($fs_item, placeholder, new_sort_index)
   {
     // Currently redetermining group_prefix, avoid letting fs_item to go out of sync with different call paths.
-    var current_item = cp_data.get_formset_item_data(fs_item);
-    var group_prefix = current_item.itemtype.auto_id.replace(/%s/, current_item.itemtype.prefix);
+    var current_item = cp_data.get_inline_formset_item_info($fs_item);
+    var group_prefix = current_item.auto_id.replace(/%s/, current_item.prefix);
     var field_prefix = group_prefix + "-" + current_item.index;
 
     $("#" + field_prefix + "-placeholder").val(placeholder.id);
@@ -363,7 +364,7 @@ var cp_plugins = {};
 
   cp_plugins.swap_formset_item = function(child_node, isUp)
   {
-    var current_item = cp_data.get_formset_item_data(child_node);
+    var current_item = cp_data.get_inline_formset_item_info(child_node);
     var $fs_item = current_item.fs_item;
     var pane = cp_data.get_placeholder_pane_for_item($fs_item);
 
@@ -381,7 +382,7 @@ var cp_plugins = {};
   cp_plugins.move_item_to_placeholder = function(child_node, slot)
   {
     var dominfo = cp_data.get_formset_dom_info(child_node);
-    var current_item = cp_data.get_formset_item_data(child_node);  // childnode is likely already a current_item object.
+    var current_item = cp_data.get_inline_formset_item_info(child_node);  // childnode is likely already a current_item object.
     var $fs_item = current_item.fs_item;
 
     var old_pane = cp_data.get_placeholder_pane_for_item($fs_item);
@@ -409,7 +410,7 @@ var cp_plugins = {};
 
   cp_plugins._show_move_popup = function(child_node)
   {
-    var current_item = cp_data.get_formset_item_data(child_node);
+    var current_item = cp_data.get_inline_formset_item_info(child_node);
     var dominfo      = cp_data.get_formset_dom_info(current_item);
     var placeholders = cp_data.get_placeholders();
 
@@ -566,10 +567,9 @@ var cp_plugins = {};
   cp_plugins.remove_formset_item = function(child_node)
   {
     // Get dom info
-    var current_item = cp_data.get_formset_item_data(child_node);
+    var current_item = cp_data.get_inline_formset_item_info(child_node);
     var dominfo      = cp_data.get_formset_dom_info(current_item);
     var pane         = cp_data.get_placeholder_pane_for_item(current_item.fs_item);
-    var itemtype     = current_item.itemtype;
 
     // Get administration
     // dominfo slot is always filled in, id may be unknown yet.
@@ -597,8 +597,8 @@ var cp_plugins = {};
       // Newly added item, renumber in reverse order
       for( var i = current_item.index + 1; i < total_count; i++ )
       {
-        var $fs_item = $("#" + itemtype.prefix + "-" + i);
-        cp_admin.renumber_formset_item($fs_item, itemtype.prefix, i - 1);
+        var $fs_item = $("#" + current_item.prefix + "-" + i);
+        cp_admin.renumber_formset_item($fs_item, current_item.prefix, i - 1);
       }
 
       dominfo.total_forms.value--;
@@ -663,13 +663,13 @@ var cp_plugins = {};
     }
 
     // Offer plugin view handlers a change to initialize after the placeholder editor is loaded, but before the items are moved.
-    for( var typename in plugin_handlers )
+    for( var model_name in plugin_handlers )
     {
-      if( plugin_handlers.hasOwnProperty(typename) && plugin_handlers[typename].initialize )
+      if( plugin_handlers.hasOwnProperty(model_name) && plugin_handlers[model_name].initialize )
       {
-        var itemtype = cp_data.get_formset_itemtype(typename);
-        var $formset_group = $("#" + itemtype.prefix + "-group");
-        plugin_handlers[typename].initialize($formset_group);
+        var item_meta = cp_data.get_contentitem_metadata_by_type(model_name);
+        var $formset_group = $("#" + item_meta.prefix + "-group");
+        plugin_handlers[model_name].initialize($formset_group);
       }
     }
   }
@@ -677,9 +677,8 @@ var cp_plugins = {};
 
   cp_plugins.get_view_handler = function($fs_item)
   {
-    var itemdata = cp_data.get_formset_item_data($fs_item);
-    var itemtype = itemdata.itemtype.type;
-    return plugin_handlers[ itemtype ];
+    var itemdata = cp_data.get_inline_formset_item_info($fs_item);
+    return plugin_handlers[ itemdata.type ];
   }
 
 
