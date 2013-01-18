@@ -57,7 +57,7 @@ and implement the :func:`~fluent_contents.admin.PlaceholderEditorAdmin.get_place
     class PageAdmin(PlaceholderEditorAdmin):
 
         def get_placeholder_data(self, request, obj):
-          # Tell the base class which tabs to create
+            # Tell the base class which tabs to create
             template = self.get_page_template(obj)
             return get_template_placeholder_data(template)
 
@@ -71,13 +71,13 @@ and implement the :func:`~fluent_contents.admin.PlaceholderEditorAdmin.get_place
 
     admin.site.register(Page, PageAdmin)
 
-Now, the placeholder editor will show itself with tabs for each placeholder.
-The placeholder editor is implemented as inline, so it will be displayed nicely below
+Now, the placeholder editor will show tabs for each placeholder.
+The placeholder editor is implemented as a :class:`~django.contrib.admin.InlineModelAdmin`, so it will be displayed nicely below
 the standard forms.
 
-The :func:`~fluent_contents.admin.PlaceholderEditorAdmin.get_placeholder_data` method instructs
+The :func:`~fluent_contents.admin.PlaceholderEditorAdmin.get_placeholder_data` method tells
 the "placeholder editor" which tabbar items it should create.
-It can use the :ref:`fluent_contents.analyzer` module for example to find the placeholders
+It can use the :func:`~fluent_contents.analyzer.get_template_placeholder_data` function for example to find the placeholders
 in the template.
 
 Variation for django-mptt
@@ -94,9 +94,8 @@ thanks to the method resolution order (MRO) that Python has:
 
     class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
 
-        # Same code as above
-
         def get_placeholder_data(self, request, obj):
+            # Same code as above
             pass
 
 Optional model enhancements
@@ -134,8 +133,8 @@ This happens entirely client-side. There is a public JavaScript API available to
 .. js:function:: fluent_contents.layout.onInitialize(callback)
 
    Register a function this is called when the module initializes the layout for the first time.
-   By letting the handler return ``true``, it will abort the layout initialization.
 
+   By letting the handler return ``true``, it will abort the layout initialization.
    The handler will be required to call ``fluent_contents.loadLayout()`` manually instead.
    This feature is typically used to restore a previous client-side selection of the user,
    instead of loading the last known layout at the server-side.
