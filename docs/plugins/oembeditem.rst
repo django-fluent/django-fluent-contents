@@ -47,6 +47,12 @@ By using the paid-for `embed.ly`_ service, `many other sites <http://embed.ly/pr
 Installation
 ------------
 
+Install the dependencies via *pip*::
+
+    pip install django-fluent-contents[oembeditem]
+
+This installs the micawber_ package.
+
 Add the following settings to ``settings.py``:
 
 .. code-block:: python
@@ -54,12 +60,6 @@ Add the following settings to ``settings.py``:
     INSTALLED_APPS += (
         'fluent_contents.plugins.oembeditem',
     )
-
-Install the dependencies via `pip` / *pip*::
-
-    pip install django-fluent-contents[oembeditem]
-
-This installs the micawber_ package.
 
 
 Configuration

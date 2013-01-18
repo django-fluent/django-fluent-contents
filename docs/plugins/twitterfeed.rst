@@ -20,6 +20,12 @@ The twitterfeed is fetched client-side by JavaScript, and can be styled using CS
 Installation
 ------------
 
+Install the dependencies via *pip*::
+
+    pip install django-fluent-contents[twitterfeed]
+
+This installs the twitter-text-py_ package.
+
 Add the following settings to ``settings.py``:
 
 .. code-block:: python
@@ -27,12 +33,6 @@ Add the following settings to ``settings.py``:
     INSTALLED_APPS += (
         'fluent_contents.plugins.twitterfeed',
     )
-
-Install the dependencies via `pip` / *pip*::
-
-    pip install django-fluent-contents[twitterfeed]
-
-This installs the ``twitter-text-py`` package.
 
 
 Configuration
@@ -72,3 +72,6 @@ Various fields of the JavaScript code are available to use. The most relevant ar
 * ``{time}``:  the relative time
 * ``{user_url}``:  The URL to the user profile
 * ``{tweet_url}``:  The permalink URL of the twitter status.
+
+
+.. _twitter-text-py: https://github.com/dryan/twitter-text-py

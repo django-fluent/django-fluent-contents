@@ -26,6 +26,7 @@ Hence, this plugin depends on a properly configured django.contrib.comments_ mod
     For an advanced plug&play setup, you can use the django-fluent-comments_ application
     which includes features such as Ajax-based posting.
 
+
 Installation
 ------------
 
@@ -49,6 +50,7 @@ Add the following to ``urls.py``:
 
 This URL can be anything off course, like ``/comments/``, ``/respond/comments/`` or ``/blog/comments/`` for example.
 
+
 Configuration
 -------------
 
@@ -60,6 +62,7 @@ To get a usable comments module, the least you need to do, is providing two temp
 
 * ``comments/base.html``
 * ``comments/posted.html``
+
 
 The base.html template
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -86,6 +89,7 @@ It's contents could be something like:
     {% endblock %}
 
 The :file:`comments/base.html` file can be stored in the :file:`templates` folder of your site theme.
+
 
 The posted.html template
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -128,24 +132,32 @@ For example, try something like:
 The template now contains links back to the blog page, and no longer appears as dead end.
 It will automatically redirect back to the blog in a few seconds.
 
+
 Additional configuration
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 The django.contrib.comments_ module can be further extended with other modules.
-In fact, django.contrib.comments_ only establishes a standard methology for integrating comments to a Django site.
+In fact, django.contrib.comments_ only establishes a standard methodology for integrating comments to a Django site.
 The framework also supports moderation, flagging, and RSS feeds too. More documentation can be found at:
 
 * `Django's comments framework <https://docs.djangoproject.com/en/dev/ref/contrib/comments/>`_
 * `Customizing the comments framework <http://docs.djangoproject.com/en/dev/ref/contrib/comments/custom/>`_
 * `Example of using the in-built comments app <http://docs.djangoproject.com/en/dev/ref/contrib/comments/example/>`_
 
-Some of the modules worth looking at are:
+Some Django applications already implement these features. For example:
+
+* django-fluent-comments_, which includes:
+
+ * Ajax-based previews and posting of comments.
+ * Comment moderation, and Akismet_ based filtering.
+ * E-mail notifications.
+ * `django-threadedcomments <https://github.com/HonzaKral/django-threadedcomments>`_
 
 * `django-comments-spamfighter <https://github.com/bartTC/django-comments-spamfighter>`_
-* `django-threadedcomments <https://github.com/HonzaKral/django-threadedcomments>`_
 * `django-myrecaptcha <https://bitbucket.org/pelletier/django-myrecaptcha/>`_
 
 These modules can enhance the commentsarea even further.
 
+.. _Akismet: http://akismet.com/
 .. _django.contrib.comments: https://docs.djangoproject.com/en/dev/ref/contrib/comments/
 .. _django-fluent-comments: https://github.com/edoburu/django-fluent-comments/

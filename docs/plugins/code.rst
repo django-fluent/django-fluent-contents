@@ -17,8 +17,15 @@ The plugin uses Pygments_ as backend to perform the highlighting:
 
 The color theme can be configured in the settings.
 
+
 Installation
 ------------
+
+Install the dependencies via *pip*::
+
+    pip install django-fluent-contents[code]
+
+This installs the Pygments_ package.
 
 Add the following settings to ``settings.py``:
 
@@ -27,12 +34,6 @@ Add the following settings to ``settings.py``:
     INSTALLED_APPS += (
         'fluent_contents.plugins.code',
     )
-
-Install the dependencies via `pip` / *pip*::
-
-    pip install django-fluent-contents[code]
-
-This installs the Pygments_ package.
 
 
 Configuration
@@ -60,10 +61,12 @@ Define which programming language should be selected by default.
 This setting is ideally suited to set personal preferences.
 By default this is "HTML", to be as neutral as possible.
 
+
 FLUENT_CODE_DEFAULT_LINE_NUMBERS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Define whether line number should be enabled by default for any new plugins.
+
 
 FLUENT_CODE_STYLE
 ~~~~~~~~~~~~~~~~~
@@ -97,6 +100,7 @@ The styles provided by Pygments_ 1.4 are:
     This setting cannot be updated per plugin instance, to avoid a mix of different styles used together.
     The entire site uses a single consistent style.
 
+
 FLUENT_CODE_SHORTLIST
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -104,6 +108,7 @@ The plugin displays a shortlist of popular programming languages in the "Languag
 since Pygments provides highlighting support for many many programming languages.
 
 This settings allows the shortlist to be customized.
+
 
 FLUENT_CODE_SHORTLIST_ONLY
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

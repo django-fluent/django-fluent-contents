@@ -23,8 +23,15 @@ The django-disqus_ module also offers management commands
 to import the comments of django.contrib.comments_ to DISQUS_,
 or export the comments from DISQUS_ as JSON or WXR feed.
 
+
 Installation
 ------------
+
+Install the dependencies via *pip*::
+
+    pip install django-fluent-contents[disquscommentsarea]
+
+This installs django-disqus_.
 
 Add the following settings to ``settings.py``:
 
@@ -38,18 +45,19 @@ Add the following settings to ``settings.py``:
     DISQUS_API_KEY = '..'     # Insert API key here.
     DISQUS_SHORTNAME = '..'   # Insert the website shortname.
 
+
 Configuration
 -------------
 
 The plugin does not provide any additional configuration,
 it fully relies on the templatetags of django-disqus_ to provide a proper comments area.
 
-The API key can be created at the DISQUS_ website.
-You can `get your API key here`_ (you must be logged in on the DISQUS_ website).
-To see the shortname of your website, navigate to Settings->General on the DISQUS_ website.
+* The API key can be created at the DISQUS_ website.
+  You can `get your API key here`_ (you must be logged in on the DISQUS_ website).
+  To see the shortname of your website, navigate to Settings->General on the DISQUS_ website.
 
-Secondly, make sure the `django.contrib.sites` framework is configured,
-including the domain name where the pages should be displayed.
+* Secondly, make sure the `django.contrib.sites` framework is configured,
+  including the domain name where the pages should be displayed.
 
 .. tip::
 

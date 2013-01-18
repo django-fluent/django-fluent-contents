@@ -26,6 +26,7 @@ This plugin can be used for example for:
      :width: 732px
      :height: 212px
 
+
 Installation
 ------------
 

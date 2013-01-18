@@ -27,12 +27,27 @@ or publish wiki/RST documentation online.
 The plugin uses django.contrib.markup_ internally to provide the translation of the markup to HTML,
 hence it supports any markup language that django.contrib.markup_ has a filter for.
 
+
 Installation
 ------------
 
-Install the dependencies via `pip` / *pip*::
+Install the dependencies via *pip*::
 
     pip install django-fluent-contents[markup]
+
+Depending on the choosen markup language, the required dependencies can also installed separately using `pip`:
+
+For **reStructuredText**, use::
+
+    pip install docutils
+
+For **Markdown**, use::
+
+    pip install Markdown
+
+For **Textile**, use::
+
+    pip install textile
 
 Add the following settings to ``settings.py``:
 
@@ -44,19 +59,6 @@ Add the following settings to ``settings.py``:
 
     FLUENT_MARKUP_LANGUAGES = ['restructuredtext', 'markdown', 'textile']
 
-Depending on the choosen markup language, the required dependency needs to be installed using `pip`:
-
-For **restructuredtext**, use::
-
-    pip install docutils
-
-For **markdown**, use::
-
-    pip install Markdown
-
-For **textile**, use::
-
-    pip install textile
 
 Configuration
 -------------
@@ -65,7 +67,8 @@ The following settings are available:
 
 .. code-block:: python
 
-    FLUENT_MARKUP_LANGUAGE = 'restructuredtext'
+    FLUENT_MARKUP_LANGUAGES = ['restructuredtext', 'markdown', 'textile']
+    FLUENT_MARKUP_MARKDOWN_EXTRAS = ["extension1_name", "extension2_name", "..."]
 
 
 FLUENT_MARKUP_LANGUAGES
@@ -80,6 +83,7 @@ This is a list/tuple, which can contain the following values:
 * *textile*
 
 By default, all languages are added.
+
 
 FLUENT_MARKUP_MARKDOWN_EXTRAS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
