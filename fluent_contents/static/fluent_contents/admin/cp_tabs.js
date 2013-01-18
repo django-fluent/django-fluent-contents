@@ -18,6 +18,7 @@ var cp_tabs = {};
 
   var placeholder_group_prefix = null;
   var placeholder_id_prefix = null;
+  var plahceolder_name_prefix = null;
 
   // Allow debugging
   var stub = function() {};
@@ -88,44 +89,46 @@ var cp_tabs = {};
       return;
     }
 
-    // Cache globally
+
+    // The following code rearranges the placeholder inline forms.
+    // It reuses what is available, and deletes the remaining items.
+    // Each time a load_layout() occurs, a different set of placeholders may be removed or recreated.
+    // This way, one consistent update is sent to the server when the page is saved.
+
     console.log("Received placeholders: ", layout.placeholders, "dom_regions=", cp_data.dom_placeholders );
     var dbplaceholders = cp_data.get_initial_placeholders();
     var newplaceholders = layout.placeholders;
-    var placeholders = [];
-
-    // Create map of old IDs
-    var dbplaceholderids = {};
-    for( var i = 0, len = dbplaceholders.length; i < len; i++ )
-      dbplaceholderids[dbplaceholders[i].slot] = dbplaceholders[i].id;
 
     // Amend the placeholder data with old ID's and dommnode info.
+    // Make sure the same ID is preserved for the same "slot".
+    var dbplaceholderids = {};
     var reused_ids = {};
-    for( i = 0, len = newplaceholders.length; i < len; i++ )
+
+    for( var i = 0; i < dbplaceholders.length; i++ )
+      dbplaceholderids[dbplaceholders[i].slot] = dbplaceholders[i].id;
+
+    for( i = 0; i < newplaceholders.length; i++ )
     {
-      var placeholder = newplaceholders[i];
-      var placeholder_id = dbplaceholderids[placeholder.slot] || '';
+      var newplaceholder = newplaceholders[i];
+      var newplaceholder_id = dbplaceholderids[newplaceholder.slot] || '';
 
-      // Prepare data for administration
-      // Reuse old ID's when possible.
-      placeholder.domnode = null;
-      placeholder.role = placeholder.role || 'm';
-      placeholder.id = placeholder_id;
-      placeholders.push(placeholder);
+      newplaceholder.domnode = null;
+      newplaceholder.role = newplaceholder.role || 'm';
+      newplaceholder.id = newplaceholder_id;
 
-      if( newplaceholders[i].id )
-        reused_ids[newplaceholders[i].id] = true;
+      if( newplaceholder_id )
+        reused_ids[newplaceholder_id] = true;
     }
 
-    // Find out how many items are deleted
-    // Remove the ones which are no longer available.
+    // Find out which placeholders should be deleted
     var id_index = 0;
-    $tabs_root.children('.cp-placeholder-delete, .cp-placeholder-delete').remove();
+    $tabs_root.children('.cp-placeholder-delete').remove();  // removes old DELETE fields
     for( var i = 0; i < dbplaceholders.length; i++ )
     {
       var id = dbplaceholders[i].id;
       if( !reused_ids[id] )
       {
+        // Recreate the DELETE field for the placeholders that should be removed now.
         var name = placeholder_group_prefix + '-' + id_index++;
         $tabs_root.prepend(
           '<input type="checkbox" class="cp-placeholder-delete" name="' + name + '-DELETE" checked="checked" />' +
@@ -139,13 +142,13 @@ var cp_tabs = {};
     for( i = 0, len = newplaceholders.length; i < len; i++ )
     {
       // Create DOM nodes
-      placeholder = newplaceholders[i];
-      $loading_tabnav.before( cp_tabs._create_tab_title(placeholder) );
-      var $new_tab = cp_tabs._create_tab_content(placeholder, ( placeholder.id ? id_index : new_index ));
+      newplaceholder = newplaceholders[i];
+      $loading_tabnav.before( cp_tabs._create_tab_title(newplaceholder) );
+      var $new_tab = cp_tabs._create_tab_content(newplaceholder, ( newplaceholder.id ? id_index : new_index ));
       $tabs_root.append( $new_tab );
-      placeholder.domnode = $new_tab.attr('id');
+      newplaceholder.domnode = $new_tab.attr('id');
 
-      if( placeholder.id )
+      if( newplaceholder.id )
         id_index++;
       else
         new_index++;
@@ -154,16 +157,19 @@ var cp_tabs = {};
     // Total forms should also incorporate deleted records, so always be >= dbamount
     $("#" + placeholder_id_prefix + "-TOTAL_FORMS").val(new_index);
 
-    // Rebind event
+    // Rebind events
     var $tab_links = $tabnav_root.children("li.cp-region").children("a");
     $tab_links.mousedown( cp_tabs.onTabMouseDown ).click( cp_tabs.onTabClick );
 
-    // Migrate formset items.
-    cp_data.set_placeholders( placeholders );
+
+    // Wrap up.
+    // At this point, the old expired tabs and newly created tabs still exist.
+    // Move the content items to the newly created tabs.
+    cp_data.set_placeholders( newplaceholders );
     cp_plugins.move_items_to_placeholders();
 
     // Cleanup. The previous old tabs can be removed now.
-    cp_tabs._remove_old_tabs();
+    cp_tabs._remove_expired_tabs();
     cp_tabs._ensure_active_tab();
     cp_tabs.update_empty_message();
     cp_tabs._restore_tabmain_height();
@@ -186,13 +192,21 @@ var cp_tabs = {};
   cp_tabs._create_tab_content = function(placeholder, new_index)
   {
     // The 'cp-region-tab' class is not part of the template, but added here to avoid matching the actual tabs earlier on.
-    var $tab = $empty_tab.clone().attr("id", placeholder_group_prefix + "-" + new_index).attr('data-tab-region', placeholder.slot).addClass("cp-region-tab");
-    $tab.find(".cp-plugin-add-button").attr({
-        'data-placeholder-id': placeholder.id,
-        'data-placeholder-slot': placeholder.slot
-    });
+    var inline_id = placeholder_group_prefix + "-" + new_index;
+    var $tab = $empty_tab.clone()
+      .addClass("cp-region-tab")
+      .attr({
+        'id': inline_id,
+        'data-tab-region': placeholder.slot
+      })
 
-    // Set placeholder form fields (id, slot, name, title) from placeholder object.
+    $tab.find(".cp-plugin-add-button")
+      .attr({
+          'data-placeholder-id': placeholder.id,
+          'data-placeholder-slot': placeholder.slot
+      });
+
+    // Set value of placeholder form fields (id, slot, name, title) from the placeholder object.
     var $inputs = $tab.children('input[name*=__prefix__]');
     for( var i = 0; i < $inputs.length; i++ )
     {
@@ -205,9 +219,8 @@ var cp_tabs = {};
         $inputs[i].value = placeholder[fieldname];
     }
 
-    // TODO: this is tricky, temporary there will be two elements with the same ID.
-    var name_prefix = $inputs.filter('[name$=-__prefix__-id]').attr('name').replace(/-__prefix__-id/, '');
-    cp_admin.renumber_formset_item($tab, name_prefix, new_index);
+    // NOTE: temporary there will be placeholder input elements with the same ID, before the expired tabs are removed.
+    cp_admin.renumber_formset_item($tab, placeholder_group_prefix, new_index);
     return $tab;
   }
 
@@ -251,15 +264,16 @@ var cp_tabs = {};
       $tabs_root.css("height", height + "px");
     }
 
-    // Hide and mark as old.
+    // Hide and mark as expired (will be deleted soon).
+    // Remove ID so the tab can't be found anymore by cp_data.get_placeholder_by_id()
     var all_tabs = $tabs_root.children(".cp-region-tab:not(#tab-template)");
-    all_tabs.removeClass("cp-region-tab").addClass("cp-oldtab").removeAttr("id").hide();
+    all_tabs.removeClass("cp-region-tab").addClass("cp-expired-tab").removeAttr("id").hide();
   }
 
 
   cp_tabs.is_expired_tab = function($node)
   {
-    return $node.closest('.cp-tab').hasClass('cp-oldtab');
+    return $node.closest('.cp-tab').hasClass('cp-expired-tab');
   }
 
 
@@ -306,9 +320,9 @@ var cp_tabs = {};
   }
 
 
-  cp_tabs._remove_old_tabs = function()
+  cp_tabs._remove_expired_tabs = function()
   {
-    $tabs_root.children(".cp-oldtab").remove();
+    $tabs_root.children(".cp-expired-tab").remove();
 
     // Remove empty/obsolete dom regions
     cp_data.cleanup_empty_placeholders();
