@@ -1,10 +1,12 @@
-In development
+Version 0.8.4
 --------------
 
+* Fix 500 error when content items get orphaned after switching layouts.
+* Fix plugin dependencies installation via the optional dependency specifier (e.g. ``django-fluent-contents[text]``).
+* Fix missing dependency check for OEmbed plugin
+* Fix Django dependency in ``setup.py``, moved from ``install_requires`` to the ``requires`` section.
 * Fix template name for django-threadedcomments_ to ``comment/list.html``,
   to be compatible with the pull request at https://github.com/HonzaKral/django-threadedcomments/pull/39.
-* Use plugin dependencies installation via the optional dependency specifier (e.g. ``django-fluent-contents[text]``).
-* Fix 500 error when content items get orphaned after switching layouts.
 
 
 Version 0.8.3
