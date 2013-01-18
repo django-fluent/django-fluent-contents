@@ -380,11 +380,12 @@ var cp_plugins = {};
 
   cp_plugins.move_item_to_placeholder = function(child_node, slot)
   {
+    var dominfo = cp_data.get_formset_dom_info(child_node);
     var current_item = cp_data.get_formset_item_data(child_node);  // childnode is likely already a current_item object.
     var $fs_item = current_item.fs_item;
 
     var old_pane = cp_data.get_placeholder_pane_for_item($fs_item);
-    var old_placeholder = cp_data.get_placeholder_by_slot(current_item.placeholder_slot);  // slot is always filled in.
+    var old_placeholder = cp_data.get_placeholder_by_slot(dominfo.placeholder_slot);  // slot is always filled in.
     var new_placeholder = cp_data.get_placeholder_by_slot(slot);
     var dom_placeholder = cp_data.get_or_create_dom_placeholder(new_placeholder);
     var new_pane = cp_data.get_placeholder_pane(new_placeholder);
