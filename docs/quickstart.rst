@@ -8,10 +8,9 @@ Installing django-fluent-contents
 
 The base installation of django-fluent-contents requires Django version 1.3 or higher and django-polymorphic_ 0.2 or higher.
 
-The package can be installed with the following commands::
+The package can be installed using::
 
-    cd django-fluent-contents
-    python setup.py install .
+    pip install django-fluent-contents
 
 The additional plugins may add additional requirements; the plugins will warn about then when they are used for the first time.
 For optional dependency management, it is strongly recommended that you run the application inside a `virtualenv`.
@@ -41,7 +40,7 @@ The basic module can be installed and optional plugins can be added:
 
 Since some extra plugins are used here, make sure their applications are installed::
 
-    pip install django-wysiwyg pygments
+    pip install django-fluent-contents[text,code]
 
 
 .. note::
@@ -176,8 +175,7 @@ hence these packages need to be installed:
 
 They can be installed using::
 
-    pip install django-wysiwyg Pygments docutils django-disqus
-    pip install -e https://github.com/philomat/django-form-designer.git#egg=django-form-designer
+    pip install django-fluent-contents[text,code,markup,disquscommentsarea,formdesignerlink]
 
 The reason that all these features are optional is make them easily swappable for other implementations.
 You can use a different comments module, or invert new content plugins.
