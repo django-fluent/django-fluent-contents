@@ -30,6 +30,7 @@ Getting started
 
    quickstart
    configuration
+   templatetags
 
 
 Using the plugins
@@ -38,8 +39,8 @@ Using the plugins
 .. toctree::
    :maxdepth: 2
 
-   newplugins/index
    plugins/index
+   newplugins/index
 
 
 Advanced topics
@@ -57,15 +58,7 @@ API documentation
 .. toctree::
    :maxdepth: 2
 
-   api/admin
-   api/analyzer
-   api/cache
-   api/extensions
-   api/forms
-   api/models
-   api/rendering
-   api/templatetags/placeholder_tags
-   api/utils
+   api/index
 
 
 Roadmap

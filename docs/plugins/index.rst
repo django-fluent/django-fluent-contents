@@ -1,3 +1,5 @@
+.. _bundled-content-plugins:
+
 Bundled Content Plugins
 =======================
 
