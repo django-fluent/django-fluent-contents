@@ -220,11 +220,11 @@ class ContentPlugin(object):
         To render raw HTML code, use :func:`~django.utils.safestring.mark_safe` on the returned HTML.
         """
         render_template = self.get_render_template(request, instance, **kwargs)
-        if render_template:
-            context = self.get_context(request, instance, **kwargs)
-            return self.render_to_string(request, render_template, context)
-        else:
+        if not render_template:
             return unicode(_(u"{No rendering defined for class '%s'}" % self.__class__.__name__))
+
+        context = self.get_context(request, instance, **kwargs)
+        return self.render_to_string(request, render_template, context)
 
 
     def render_to_string(self, request, template, context, content_instance=None):
