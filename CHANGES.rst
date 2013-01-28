@@ -1,5 +1,11 @@
+Version 0.8.5 (in development)
+------------------------------
+
+* Fix *code* plugin compatibility with Pygments 1.6rc1.
+
+
 Version 0.8.4
---------------
+-------------
 
 * Fix 500 error when content items get orphaned after switching layouts.
 * Fix plugin dependencies installation via the optional dependency specifier (e.g. ``django-fluent-contents[text]``).

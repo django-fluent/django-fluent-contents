@@ -11,7 +11,7 @@ from fluent_contents.plugins.code import appsettings
 STYLE_CHOICES = map(lambda x: (x,x), get_all_styles())
 STYLE_CHOICES.sort(lambda x,y: cmp(x[1].lower(), y[1].lower()))
 
-_languageChoices = map(lambda x: (x[1][0], x[0]), get_all_lexers())
+_languageChoices = [(x[1][0], x[0]) for x in get_all_lexers() if x[1]]   # x = ('Title', ('name1', 'name2', 'nameN'), ('*.ext1', '*.ext2'), ('mimetype1',))
 _languageChoices.sort(lambda x,y: cmp(x[1].lower(), y[1].lower()))
 
 LANGUAGE_CHOICES = tuple([t for t in _languageChoices if t[0] in appsettings.FLUENT_CODE_SHORTLIST])
