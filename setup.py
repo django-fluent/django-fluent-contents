@@ -31,7 +31,7 @@ setup(
         'formdesignerlink': ['django-form-designer'],
         'markup': ['docutils', 'textile', 'Markdown>=1.7'],
         'oembeditem': ['micawber'],
-        'text': ['django-wysiwyg>=0.3.0'],
+        'text': ['django-wysiwyg>=0.5.1'],
         'twitterfeed': ['twitter-text-py>=1.0.3'],
     },
     dependency_links = [

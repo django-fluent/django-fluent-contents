@@ -65,7 +65,7 @@ DJANGO_WYSIWYG_FLAVOR
 ~~~~~~~~~~~~~~~~~~~~~
 
 The ``DJANGO_WYSIWYG_FLAVOR`` setting defines which WYSIWYG editor will be used.
-As of django-wysiwyg_ 0.5, the following editors are available:
+As of django-wysiwyg_ 0.5.1, the following editors are available:
 
 * **ckeditor** - The CKEditor_, formally known as FCKEditor.
 * **redactor** - The Redactor_ editor (requires a license).

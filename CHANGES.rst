@@ -2,6 +2,7 @@ Version 0.8.5 (in development)
 ------------------------------
 
 * Fix *code* plugin compatibility with Pygments 1.6rc1.
+* Bump version of django-wysiwyg_ to 0.5.1 because it fixes TinyMCE integration.
 
 
 Version 0.8.4
@@ -45,4 +46,5 @@ so it's time to show this module to the public.
 
 
 .. _django-threadedcomments: https://github.com/HonzaKral/django-threadedcomments.git
+.. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg
 
