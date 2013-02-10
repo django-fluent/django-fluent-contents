@@ -30,7 +30,7 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
 
     if is_edit_mode(request):
         html = _wrap_placeholder_output(html, placeholder)
-    return html
+    return mark_safe(html)
 
 
 def render_content_items(request, items, template_name=None):
@@ -44,7 +44,7 @@ def render_content_items(request, items, template_name=None):
 
     if is_edit_mode(request):
         html = _wrap_anonymous_output(html)
-    return html
+    return mark_safe(html)
 
 
 def set_edit_mode(request, state):
