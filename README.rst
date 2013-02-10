@@ -37,6 +37,7 @@ By default, the following content items are available:
 * Gist - display Gist snippets from Github.
 * IFrame - display an ``<iframe>`` on the page.
 * Raw HTML content - include jQuery snippets, or "embed codes" by other services.
+* Shared content - display a set of items at multiple locations.
 
 **Interactive:**
 

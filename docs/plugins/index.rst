@@ -59,3 +59,4 @@ Advanced
 
    iframe
    rawhtml
+   sharedcontent

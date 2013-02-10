@@ -167,7 +167,7 @@ class PagePlaceholderNode(Node):
 
 
     def render(self, context):
-        request = _get_request(context)
+        request = get_request_var(context)
 
         # Get the placeholder
         parent = self.parent_expr.resolve(context)
@@ -215,7 +215,7 @@ class RenderPlaceholderNode(Node):
 
 
     def render(self, context):
-        request = _get_request(context)
+        request = get_request_var(context)
         placeholder = self.placeholder_expr.resolve(context)
 
         if placeholder is None:
@@ -223,6 +223,7 @@ class RenderPlaceholderNode(Node):
         elif isinstance(placeholder, Placeholder):
             pass
         elif isinstance(placeholder, basestring):
+            # This feature only exists at database level, the "sharedcontent" plugin solves this issue.
             slot = placeholder
             try:
                 placeholder = Placeholder.objects.get_by_slot(None, slot)
@@ -239,7 +240,7 @@ class RenderPlaceholderNode(Node):
         return rendering.render_placeholder(request, placeholder)
 
 
-def _get_request(context):
+def get_request_var(context):
     """
     Fetch the request from the context.
 

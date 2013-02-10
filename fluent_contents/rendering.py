@@ -26,7 +26,7 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
     # Filter the items both by placeholder and parent;
     # this mimics the behavior of CMS pages.
     items = placeholder.get_content_items(parent_object)
-    html = _render_items(request, placeholder.slot, items, template_name=template_name)
+    html = _render_items(request, _get_placeholder_cache_name(placeholder), items, template_name=template_name)
 
     if is_edit_mode(request):
         html = _wrap_placeholder_output(html, placeholder)
@@ -172,3 +172,13 @@ def _wrap_contentitem_output(html, contentitem):
         itemtype=contentitem.__class__.__name__,  # Same as ContentPlugin.type_name
         id=contentitem.id,
     ))
+
+
+def _get_placeholder_cache_name(placeholder):
+    # TODO: Cheating here with knowledge of "fluent_contents.plugins.sharedcontent" package:
+    #       prevent unclear message in <!-- no items in '..' placeholder --> debug output.
+    if placeholder.slot == 'shared_content':
+        sharedcontent = placeholder.parent
+        return "shared_content:{0}".format(sharedcontent.slug)
+
+    return placeholder.slot

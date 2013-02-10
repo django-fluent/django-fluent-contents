@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-01 17:46+0100\n"
+"POT-Creation-Date: 2013-02-10 22:40+0100\n"
 "PO-Revision-Date: 2011-01-10 23:54+0100\n"
 "Last-Translator: Diederik van der Boor <vdboor@edoburu.nl>\n"
 "Language-Team: Dutch <NL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: extensions.py:227
+#: extensions.py:224
 #, python-format
 msgid "{No rendering defined for class '%s'}"
 msgstr ""
@@ -79,6 +79,7 @@ msgstr "Combinaties"
 
 #: plugins/code/backend.py:20 plugins/iframe/content_plugins.py:14
 #: plugins/rawhtml/content_plugins.py:15
+#: plugins/sharedcontent/content_plugins.py:14
 msgid "Advanced"
 msgstr "Geavanceerd"
 
@@ -86,23 +87,23 @@ msgstr "Geavanceerd"
 msgid "Programming"
 msgstr "Programmeren"
 
-#: plugins/code/models.py:11 plugins/markup/models.py:39
+#: plugins/code/models.py:12 plugins/markup/models.py:39
 msgid "Language"
 msgstr "Taal"
 
-#: plugins/code/models.py:12
+#: plugins/code/models.py:13
 msgid "Code"
 msgstr "Code"
 
-#: plugins/code/models.py:13
+#: plugins/code/models.py:14
 msgid "Show line numbers"
 msgstr "Toon regelnummers"
 
-#: plugins/code/models.py:16
+#: plugins/code/models.py:17
 msgid "Code snippet"
 msgstr "Codefragment"
 
-#: plugins/code/models.py:17
+#: plugins/code/models.py:18
 msgid "Code snippets"
 msgstr "Codefragmenten"
 
@@ -254,8 +255,8 @@ msgid ""
 "Enter the URL of the online content to embed (e.g. a YouTube or Vimeo video, "
 "SlideShare presentation, etc..)"
 msgstr ""
-"Vul de URL in van de online inhoud die ingesloten moet worden (bijv. een YouTube of Vimeo video, "
-"SlideShare presentatie, etc..)"
+"Vul de URL in van de online inhoud die ingesloten moet worden (bijv. een "
+"YouTube of Vimeo video, SlideShare presentatie, etc..)"
 
 #: plugins/oembeditem/models.py:17
 msgid "Max width"
@@ -285,6 +286,36 @@ msgstr ""
 "Vul de HTML code in om weer te geven, zoals de embed code van een online "
 "widget."
 
+#: plugins/sharedcontent/models.py:10 plugins/twitterfeed/models.py:10
+#: plugins/twitterfeed/models.py:31
+msgid "Title"
+msgstr "Titel"
+
+#: plugins/sharedcontent/models.py:11
+msgid "Template code"
+msgstr "Template naam"
+
+#: plugins/sharedcontent/models.py:11
+msgid "This unique name can be used refer to this content in in templates."
+msgstr "Deze unieke naam kan gebruikt worden om in de template naar deze inhoud te verwijzen."
+
+#: plugins/sharedcontent/models.py:12
+msgid "Contents"
+msgstr "Inhoud"
+
+#: plugins/sharedcontent/models.py:17 plugins/sharedcontent/models.py:18
+#: plugins/sharedcontent/models.py:28
+msgid "Shared content"
+msgstr "Gedeelde inhoud"
+
+#: plugins/sharedcontent/models.py:31
+msgid "Shared content item"
+msgstr "Gedeelde inhouddeel"
+
+#: plugins/sharedcontent/models.py:32
+msgid "Shared content items"
+msgstr "Gedeelde inhouddelen"
+
 #: plugins/text/models.py:14
 msgid "text"
 msgstr "tekst"
@@ -296,10 +327,6 @@ msgstr "Tekstdeel"
 #: plugins/text/models.py:18
 msgid "Text items"
 msgstr "Tekstdelen"
-
-#: plugins/twitterfeed/models.py:10 plugins/twitterfeed/models.py:31
-msgid "Title"
-msgstr "Titel"
 
 #: plugins/twitterfeed/models.py:10 plugins/twitterfeed/models.py:15
 #: plugins/twitterfeed/models.py:31 plugins/twitterfeed/models.py:36
