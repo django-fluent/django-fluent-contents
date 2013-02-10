@@ -20,7 +20,7 @@
                       slot: '{{ form.slot.value|default:forloop.counter0|escapejs }}',
                       title: '{{ form.title.value|default:"?"|escapejs }}',
                       role: '{{ form.role.value|default:'?' }}',
-                      domnode: 'tab-region-{{ form.slot.value|default:forloop.counter0 }}'
+                      domnode: 'tab-region-{{ form.slot.value|default:forloop.counter0|escapejs }}'
                     }{% endif %}
                   {% endwith %}{% endfor %}]{% endblock %};
   var itemtypes = {% block js_contentitemtypes %}{ {% for fs in inline_admin_formsets|only_content_item_formsets %}'{{ fs.opts.type_name|escapejs }}': {
@@ -46,7 +46,7 @@
     {# each inline object is a placeholders #}
     <ul id="cp-tabnav" class="cp-clearfix">
       {% for form in inline_admin_formset.formset %}
-      <li class="cp-region{% if forloop.first %} active{% endif %}"><a href="#tab-region-{{ form.slot.value|default:forloop.counter0 }}">{{ form.title.value|default_if_none:"new..." }}</a></li>
+      <li class="cp-region{% if forloop.first %} active{% endif %}"><a href="#tab-region-{{ form.slot.value|default:forloop.counter0|slugify }}">{{ form.title.value|default_if_none:"new..." }}</a></li>
       {% endfor %}
       <li id="cp-tabnav-loading" style="display: none"><a href="#">{% trans "Loading layout data..." %}</a></li>
       <li id="cp-tabnav-orphaned" style="display: none"><a href="#tab-orphaned">{% trans "Orphaned content" %}</a></li>
@@ -60,7 +60,7 @@
         {% getfirstof inline_admin_form.original.get_allowed_plugins inline_admin_formset.opts.get_all_allowed_plugins as cp_plugin_list %}
         {% getfirstof inline_admin_form.form.slot.value '__EMPTY__' as placeholder_slot %}
         {% getfirstof inline_admin_form.original.id '' as placeholder_id %}{# used by pane.html / controls.html #}
-        <div class="cp-tab{% if not forloop.last %} cp-region-tab{% endif %}{% if forloop.first %} cp-tab-active{% endif %}" id="{% if forloop.last %}tab-template{% else %}tab-region-{{ placeholder_slot }}{% endif %}">
+        <div class="cp-tab{% if not forloop.last %} cp-region-tab{% endif %}{% if forloop.first %} cp-tab-active{% endif %}" id="{% if forloop.last %}tab-template{% else %}tab-region-{{ placeholder_slot|slugify }}{% endif %}">
 
           {% include "admin/fluent_contents/placeholderfield/pane_tabbar.html" %}
 

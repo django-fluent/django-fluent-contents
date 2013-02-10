@@ -2,6 +2,7 @@ Version 0.8.5 (in development)
 ------------------------------
 
 * Fix *code* plugin compatibility with Pygments 1.6rc1.
+* Fix escaping slot name in templates
 * Bump version of django-wysiwyg_ to 0.5.1 because it fixes TinyMCE integration.
 
 

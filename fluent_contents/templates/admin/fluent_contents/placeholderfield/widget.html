@@ -1,7 +1,7 @@
 {% extends "admin/fluent_contents/placeholderfield/pane.html" %}{% load i18n %}
 
 {% block pane %}
-<div class="cp-placeholderfield" id="cp-placeholderfield-{{ placeholder_slot }}">
+<div class="cp-placeholderfield" id="cp-placeholderfield-{{ placeholder_slot|slugify }}">
   {{ block.super }}
 </div>
 {% endblock %}

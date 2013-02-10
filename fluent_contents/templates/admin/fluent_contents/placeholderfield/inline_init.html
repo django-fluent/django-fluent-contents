@@ -13,7 +13,7 @@
     slot: '{{ form.slot.value|default:forloop.counter0|escapejs }}',
     title: '{{ form.title.value|default:"?"|escapejs }}',
     role: '{{ form.role.value|default:'?' }}',
-    domnode: 'cp-placeholderfield-{{ form.slot.value|default:forloop.counter0 }}'
+    domnode: 'cp-placeholderfield-{{ form.slot.value|default:forloop.counter0|slugify }}'
   }{% endif %}
     {% endwith %}{% endfor %}]{% endblock %};
   var itemtypes = {% block js_contentitemtypes %}{ {% for fs in inline_admin_formsets|only_content_item_formsets %}'{{ fs.opts.type_name|escapejs }}': {
