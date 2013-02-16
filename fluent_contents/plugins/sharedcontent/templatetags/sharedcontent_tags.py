@@ -1,14 +1,14 @@
-from django.template import Library, Node, TemplateSyntaxError
+from django.template import Library, TemplateSyntaxError
 from fluent_contents import rendering
 from fluent_contents.plugins.sharedcontent.models import SharedContent
-from fluent_contents.templatetags.placeholder_tags import get_request_var
-from fluent_contents.utils.tagparsing import parse_token_kwargs
+from tag_parser import template_tag
+from tag_parser.basetags import BaseNode
 
 register = Library()
 
 
-@register.tag
-def sharedcontent(parser, token):
+@template_tag(register, 'sharedcontent')
+class SharedContentNode(BaseNode):
     """
     Render a shared content block. Usage:
 
@@ -31,51 +31,28 @@ def sharedcontent(parser, token):
           {{ html }}
         {% endfor %}
     """
-    return SharedContentNode.parse(parser, token)
-
-
-class SharedContentNode(Node):
-    """
-    The template node of the ``sharedplaceholder`` tag.
-    """
-    def __init__(self, slot_expr, template_expr):
-        self.slot_expr = slot_expr
-        self.template_expr = template_expr
+    min_args = 1
+    max_args = 1
+    allowed_kwargs = ('template',)
 
 
     @classmethod
-    def parse(cls, parser, token):
-        """
-        Parse the node syntax:
+    def validate_args(cls, tag_name, *args, **kwargs):
+        if len(args) != 1:
+            raise TemplateSyntaxError("""{0} tag allows one arguments: 'slot name' and optionally: template="..".""".format(tag_name))
 
-        .. code-block:: html+django
-
-            {% sharedcontent slotname template="" %}
-        """
-        bits = token.split_contents()
-        arg_bits, kwarg_bits = parse_token_kwargs(parser, bits, True, True, ('template',))
-
-        if len(arg_bits) == 1:
-            slot_expr = arg_bits[0]
-        else:
-            raise TemplateSyntaxError("""{0} tag allows one arguments: 'slot name' and optionally: template="..".""".format(bits[0]))
-
-        template = kwarg_bits.pop('template', None)
-        return cls(
-            slot_expr=slot_expr,
-            template_expr=template,
-        )
+        super(SharedContentNode, cls).validate_args(tag_name, *args)
 
 
-    def render(self, context):
-        request = get_request_var(context)
+    def render_tag(self, context, *tag_args, **tag_kwargs):
+        request = self.get_request(context)
+        (slot,) = tag_args
 
         # Get the placeholder
-        slot = self.slot_expr.resolve(context)
         try:
             sharedcontent = SharedContent.objects.get(slug=slot)
         except SharedContent.DoesNotExist:
             return "<!-- shared content '{0}' does not yet exist -->".format(slot)
 
-        template_name = self.template_expr.resolve(context) if self.template_expr else None
+        template_name = tag_kwargs.get('template') or None
         return rendering.render_placeholder(request, sharedcontent.contents, sharedcontent, template_name=template_name)

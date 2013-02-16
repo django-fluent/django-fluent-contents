@@ -1,6 +1,7 @@
 from django.template import Library, Node
 from django.template.base import TemplateSyntaxError
 from fluent_contents.admin.contentitems import GenericContentItemInline
+from tag_parser import template_tag, parse_as_var, parse_token_kwargs
 
 register = Library()
 
@@ -62,6 +63,7 @@ def plugin_categories_to_choices(categories):
     return choices
 
 
+@template_tag(register, 'getfirstof')
 class GetFirstOfNode(Node):
     def __init__(self, filters, var_name):
         self.filters = filters    # list of FilterExpression nodes.
@@ -69,10 +71,10 @@ class GetFirstOfNode(Node):
 
     def render(self, context):
         value = None
-        for filter in self.filters:
+        for filterexpr in self.filters:
             # The ignore_failures argument is the most important, otherwise
             # the value is converted to the TEMPLATE_STRING_IF_INVALID which happens with the with block.
-            value = filter.resolve(context, ignore_failures=True)
+            value = filterexpr.resolve(context, ignore_failures=True)
             if value is not None:
                 break
 
@@ -86,17 +88,10 @@ class GetFirstOfNode(Node):
         parser: a Parser class.
         token: a Token class.
         """
-        bits = token.contents.split()  # splits on whitespace
-        if len(bits) < 5:
-            raise TemplateSyntaxError("'{0}' tag takes at least 4 arguments".format(bits[0]))
-        if bits[-2] != 'as':
-            raise TemplateSyntaxError("Expected syntax: {{% {0} val1 val2 as val %}}".format(bits[0]))
+        bits, var_name = parse_as_var(parser, token)
+        tag_name, choices, _ = parse_token_kwargs(parser, bits, allowed_kwargs=())
 
-        choices = bits[1:-2]
-        var_name = bits[-1]
-        filters = [parser.compile_filter(bit) for bit in choices]
-        return cls(filters, var_name)
+        if var_name is None:
+            raise TemplateSyntaxError("Expected syntax: {{% {0} val1 val2 as val %}}".format(tag_name))
 
-@register.tag
-def getfirstof(parser, token):
-    return GetFirstOfNode.parse(parser, token)
+        return cls(choices, var_name)

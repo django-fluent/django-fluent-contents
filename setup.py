@@ -20,6 +20,7 @@ setup(
 
     install_requires=[
         'django-polymorphic>=0.2',
+        'django-tag-parser>=1.0.0',
         'django-template-analyzer>=1.1.0',
     ],
     requires=[

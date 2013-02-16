@@ -28,7 +28,8 @@ from django.template import Library, Node, Variable, TemplateSyntaxError
 from django.utils.safestring import SafeUnicode
 from fluent_contents.models import Placeholder
 from fluent_contents import rendering
-from fluent_contents.utils.tagparsing import parse_token_kwargs
+from tag_parser import parse_token_kwargs
+from tag_parser.basetags import BaseNode
 
 register = Library()
 
@@ -72,18 +73,25 @@ def page_placeholder(parser, token):
     return PagePlaceholderNode.parse(parser, token)
 
 
-class PagePlaceholderNode(Node):
+class PagePlaceholderNode(BaseNode):
     """
     The template node of the ``page_placeholder`` tag.
     It renders a placeholder of a provided parent object.
     The template tag can also contain additional metadata,
     which can be returned by scanning for this node using the :ref:`fluent_contents.analyzer` module.
     """
-    def __init__(self, parent_expr, slot_expr, template_expr, meta_kwargs):
+    allowed_kwargs = ('title', 'role', 'template',)
+    min_args = 1
+    max_args = 2
+
+
+    def __init__(self, tag_name, parent_expr, slot_expr, template_expr, meta_kwargs):
+        super(PagePlaceholderNode, self).__init__(tag_name, parent_expr, slot_expr, template=template_expr, **meta_kwargs)
+
         self.parent_expr = parent_expr
         self.slot_expr = slot_expr
         self.template_expr = template_expr
-        self.kwargs = meta_kwargs
+        self.meta_kwargs = meta_kwargs
 
 
     @classmethod
@@ -95,23 +103,28 @@ class PagePlaceholderNode(Node):
 
             {% page_placeholder parentobj slotname title="test" role="m" %}
         """
-        bits = token.split_contents()
-        arg_bits, kwarg_bits = parse_token_kwargs(parser, bits, True, True, ('title', 'role', 'template'))
+        tag_name, args, kwargs = parse_token_kwargs(parser, token, allowed_kwargs=cls.allowed_kwargs, compile_args=True, compile_kwargs=True)
+        cls.validate_args(tag_name, *args, **kwargs)
 
-        if len(arg_bits) == 2:
-            (parent_expr, slot_expr) = arg_bits
-        elif len(arg_bits) == 1:
+        if len(args) == 2:
+            parent_expr = args[0]
+            slot_expr = args[1]
+        elif len(args) == 1:
             # Allow 'page' by default. Works with most CMS'es, including django-fluent-pages.
-            (parent_expr, slot_expr) = (Variable('page'), arg_bits[0])
+            parent_expr = Variable('page')
+            slot_expr = args[0]
         else:
-            raise TemplateSyntaxError("""{0} tag allows two arguments: 'parent object' 'slot name' and optionally: title=".." role="..".""".format(bits[0]))
+            raise TemplateSyntaxError("""{0} tag allows two arguments: 'parent object' 'slot name' and optionally: title=".." role="..".""".format(tag_name))
 
-        template = kwarg_bits.pop('template', None)
+        cls.validate_args(tag_name, *args, **kwargs)
+
+        template_expr = kwargs.pop('template', None)
         return cls(
+            tag_name=tag_name,
             parent_expr=parent_expr,
             slot_expr=slot_expr,
-            template_expr=template,
-            meta_kwargs=kwarg_bits
+            template_expr=template_expr,
+            meta_kwargs=kwargs
         )
 
 
@@ -145,8 +158,8 @@ class PagePlaceholderNode(Node):
         Return the string literal that is used in the template.
         The title is used in the admin screens.
         """
-        if self.kwargs.has_key('title'):
-            return self._extract_literal(self.kwargs['title'])
+        if self.meta_kwargs.has_key('title'):
+            return self._extract_literal(self.meta_kwargs['title'])
 
         slot = self.get_slot()
         if slot is not None:
@@ -160,14 +173,14 @@ class PagePlaceholderNode(Node):
         Return the string literal that is used in the template.
         The role can be "main", "sidebar" or "related", or shorted to "m", "s", "r".
         """
-        if self.kwargs.has_key('role'):
-            return self._extract_literal(self.kwargs['role'])
+        if self.meta_kwargs.has_key('role'):
+            return self._extract_literal(self.meta_kwargs['role'])
         else:
             return None
 
 
     def render(self, context):
-        request = get_request_var(context)
+        request = self.get_request(context)
 
         # Get the placeholder
         parent = self.parent_expr.resolve(context)
@@ -194,29 +207,25 @@ def render_placeholder(parser, token):
     return RenderPlaceholderNode.parse(parser, token)
 
 
-class RenderPlaceholderNode(Node):
+class RenderPlaceholderNode(BaseNode):
     """
     The template node of the ``render_placeholder`` tag.
     It renders the provided placeholder object.
     """
-    def __init__(self, placeholder_expr):
-        self.placeholder_expr = placeholder_expr
-
+    min_args = 1
+    max_args = 1
 
     @classmethod
-    def parse(cls, parser, token):
-        bits = token.split_contents()
-        if len(bits) == 2:
-            return cls(
-                placeholder_expr=parser.compile_filter(bits[1])
-            )
-        else:
-            raise TemplateSyntaxError("""{0} tag allows only one parameter: 'slotname'.""".format(bits[0]))
+    def validate_args(cls, tag_name, *args, **kwargs):
+        if len(args) != 1:
+            raise TemplateSyntaxError("""{0} tag allows only one parameter: 'slotname'.""".format(tag_name))
+
+        super(RenderPlaceholderNode, cls).validate_args(tag_name, *args, **kwargs)
 
 
-    def render(self, context):
-        request = get_request_var(context)
-        placeholder = self.placeholder_expr.resolve(context)
+    def render_tag(self, context, *tag_args, **tag_kwargs):
+        request = self.get_request(context)
+        (placeholder,) = tag_args
 
         if placeholder is None:
             return "<!-- placeholder object is None -->"
@@ -233,21 +242,8 @@ class RenderPlaceholderNode(Node):
             try:
                 placeholder = placeholder.all()[0]
             except IndexError:
-                return "<!-- No placeholders found for query -->".format(self.placeholder_expr)
+                return "<!-- No placeholders found for query -->".format(self.args[0])
         else:
-            raise ValueError("The field '{0}' does not refer to a placeholder or slotname!".format(self.placeholder_expr))
+            raise ValueError("The field '{0}' does not refer to a placeholder or slotname!".format(self.args[0]))
 
         return rendering.render_placeholder(request, placeholder)
-
-
-def get_request_var(context):
-    """
-    Fetch the request from the context.
-
-    This enforces the use of a RequestProcessor, e.g.
-
-        render_to_response("page.html", context, context_instance=RequestContext(request))
-    """
-    # This error message is issued to help newcomers find solutions faster!
-    assert context.has_key('request'), "The placeholder functions require a 'request' object in the context, is 'RequestContext' not used or 'TEMPLATE_CONTEXT_PROCESSORS' not defined?"
-    return context['request']

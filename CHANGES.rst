@@ -4,6 +4,7 @@ Version 0.8.5 (in development)
 * Added support for shared content.
 * Fix *code* plugin compatibility with Pygments 1.6rc1.
 * Fix escaping slot name in templates
+* Moved the template tag parsing to a separate package, django-tag-parser_.
 * Bump version of django-wysiwyg_ to 0.5.1 because it fixes TinyMCE integration.
 
 
@@ -47,6 +48,6 @@ The module design has been stable for quite some time,
 so it's time to show this module to the public.
 
 
+.. _django-tag-parser: https://github.com/edoburu/django-tag-parser
 .. _django-threadedcomments: https://github.com/HonzaKral/django-threadedcomments.git
 .. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg
-
