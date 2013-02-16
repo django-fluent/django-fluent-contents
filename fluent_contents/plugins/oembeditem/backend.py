@@ -46,7 +46,7 @@ def _build_provider_list():
             params['key'] = appsettings.MICAWBER_EMBEDLY_KEY
         return micawber.bootstrap_embedly(**params)
     elif appsettings.FLUENT_OEMBED_SOURCE == 'list':
-        # Fi
+        # Fill list manually in the settings, e.g. to have a fixed set of supported secure providers.
         registry = ProviderRegistry()
         for regex, provider in appsettings.FLUENT_OEMBED_PROVIDER_LIST:
             registry.register(regex, Provider(provider))
