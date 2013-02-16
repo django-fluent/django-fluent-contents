@@ -36,6 +36,7 @@ class PlaceholderData(object):
         'related': Placeholder.RELATED
     }
 
+
     def __init__(self, slot, title=None, role=None):
         """
         Create the placeholder data with a slot, and optional title and role.
@@ -67,3 +68,7 @@ class PlaceholderData(object):
             'title': self.title,
             'role': self.role
         }
+
+
+    def __repr__(self):
+        return '<{0}: slot={1} role={2} title={3}>'.format(self.__class__.__name__, self.slot, self.role, self.title)
