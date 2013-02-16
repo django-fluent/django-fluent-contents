@@ -55,6 +55,19 @@ class ContentItemManager(PolymorphicManager):
         return self.get_query_set().filter(**lookup)
 
 
+    def create_for_placeholder(self, placeholder, sort_order=1, **kwargs):
+        """
+        Create a Content Item with the given parameters
+        """
+        return self.create(
+            placeholder=placeholder,
+            parent_type_id=placeholder.parent_type_id,
+            parent_id=placeholder.parent_id,
+            sort_order=sort_order,
+            **kwargs
+        )
+
+
 def get_parent_lookup_kwargs(parent_object):
     """
     Return lookup arguments for the generic ``parent_type`` / ``parent_id`` fields.

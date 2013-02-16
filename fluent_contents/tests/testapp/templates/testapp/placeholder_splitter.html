@@ -1,0 +1,4 @@
+{% for contentitem, html in contentitems %}
+{% if not forloop.first %}<div class="splitter"></div>{% endif %}
+{{ html }}
+{% endfor %}

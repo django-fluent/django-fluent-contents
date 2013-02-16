@@ -104,7 +104,6 @@ class PagePlaceholderNode(BaseNode):
             {% page_placeholder parentobj slotname title="test" role="m" %}
         """
         tag_name, args, kwargs = parse_token_kwargs(parser, token, allowed_kwargs=cls.allowed_kwargs, compile_args=True, compile_kwargs=True)
-        cls.validate_args(tag_name, *args, **kwargs)
 
         if len(args) == 2:
             parent_expr = args[0]
