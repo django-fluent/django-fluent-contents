@@ -3,7 +3,7 @@ Introduction
 
 The *fluent_contents* module offers a widget engine to display various content on a Django page.
 
-This engine operates similary like Django CMS, FeinCMS or django-portlets,
+This engine operates similarly like Django CMS, FeinCMS or django-portlets,
 however, it can be used for any project, or CMS system.
 
 Page contents can be constructed with multiple "content items".

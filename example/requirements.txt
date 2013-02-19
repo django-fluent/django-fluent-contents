@@ -24,3 +24,6 @@ textile==2.1.5
 
 # For text plugin
 django-wysiwyg==0.5.0
+
+#for placeholder tags
+django-tag-parser
