@@ -14,7 +14,7 @@ Pygments==1.4
 # For disquswidgets plugin
 django-disqus==0.4.1
 
-# For formdesignerlihnk plugin
+# For formdesignerlink plugin
 -e git+https://github.com/philomat/django-form-designer.git#egg=django_form_designer-dev
 
 # For markup plugin
