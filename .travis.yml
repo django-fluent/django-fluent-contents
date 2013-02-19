@@ -10,10 +10,13 @@ install:
   - pip install -q -e . --use-mirrors
 script:
   - python runtests.py
+branches:
+  only:
+    - master
 notifications:
   irc: "irc.freenode.org#django-fluent"
   email:
     recipients:
-    - travis@edoburu.nl
+      - travis@edoburu.nl
     on_success: never
     on_failure: always
