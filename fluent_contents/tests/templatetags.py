@@ -118,6 +118,7 @@ class TemplateTagTests(AppTestCase):
         self.assertEqual(html, u'<!-- placeholder object is None -->')
 
         # Test if invalid objects are reported.
+        # This requires `TEMPLATE_DEBUG = False` in Django 1.3
         self.assertRaises(ValueError, lambda: self._render("""{% load placeholder_tags %}{% render_placeholder 123 %}""", {}))
         self.assertRaises(ValueError, lambda: self._render("""{% load placeholder_tags %}{% render_placeholder int_object %}""", {'int_object': 456}))
 

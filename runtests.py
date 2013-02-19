@@ -12,7 +12,7 @@ module_root = dirname(realpath(__file__))
 # Inline settings file
 settings.configure(
     DEBUG = False,  # will be False anyway by DjangoTestRunner.
-    TEMPLATE_DEBUG = True,
+    TEMPLATE_DEBUG = False,
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
