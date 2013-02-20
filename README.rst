@@ -1,3 +1,7 @@
+.. image::  https://travis-ci.org/edoburu/django-fluent-contents.png?branch=master
+  :target: http://travis-ci.org/edoburu/django-fluent-contents
+  :alt: build-status
+
 Introduction
 ============
 
