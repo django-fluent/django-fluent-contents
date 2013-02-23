@@ -153,7 +153,7 @@ Most plugins deliver exactly the same content for every request, hence the setti
 For special circumstances, the caching can be disabled entirely project-wide using the :ref:`FLUENT_CONTENTS_CACHE_OUTPUT` setting.
 
 In case a rendering needs to do a lot of processing
-(e.g. requesting a web service, parsing text, sanitizing HTML, or do XSL tramsformations of content),
+(e.g. requesting a web service, parsing text, sanitizing HTML, or do XSL transformations of content),
 consider storing the intermediate rendering results in the database using the :func:`~django.db.models.Model.save` method of the model.
 The :ref:`code plugin <code>` uses this for example to store the highlighted code syntax.
 The :func:`~fluent_contents.extensions.ContentPlugin.render` method can just read the value.
