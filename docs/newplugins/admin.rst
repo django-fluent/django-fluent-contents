@@ -38,7 +38,7 @@ General metadata
 The following attributes control the appearance in the plugin ``<select>`` box:
 
 * :attr:`~fluent_contents.extensions.ContentPlugin.verbose_name` -
-  The title of the plugin, which readsthe ``verbose_name`` of the model by default.
+  The title of the plugin, which reads the ``verbose_name`` of the model by default.
 
 * :attr:`~fluent_contents.extensions.ContentPlugin.category` -
   The title of the category.
