@@ -3,8 +3,10 @@ Version 0.8.5 (in development)
 
 * Added support for shared content.
 * Added ``ContentPlugin.HORIZONTAL`` and ``ContentPlugin.VERTICAL`` constants for convenience.
+* Added SoundCloud_ support to OEmbed plugin.
 * Fix *code* plugin compatibility with Pygments 1.6rc1.
 * Fix escaping slot name in templates
+* Fix https support for OEmbed plugin.
 * Moved the template tag parsing to a separate package, django-tag-parser_.
 * Bump version of django-wysiwyg_ to 0.5.1 because it fixes TinyMCE integration.
 
@@ -52,3 +54,4 @@ so it's time to show this module to the public.
 .. _django-tag-parser: https://github.com/edoburu/django-tag-parser
 .. _django-threadedcomments: https://github.com/HonzaKral/django-threadedcomments.git
 .. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg
+.. _SoundCloud: https://soundcloud.com/

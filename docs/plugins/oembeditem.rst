@@ -34,6 +34,7 @@ By default, the following services are supported:
 * `Scribd <http://www.scribd.com/>`_
 * `Slideshare <http://www.slideshare.net/>`_
 * `SmugMug <http://www.smugmug.com/>`_
+* `SoundCloud <https://soundcloud.com/>`_
 * `Twitter <http://twitter.com/>`_ (status messages)
 * `Viddler <http://www.viddler.com/>`_
 * `Vimeo <http://vimeo.com/>`_
@@ -72,10 +73,10 @@ The following settings are available:
     FLUENT_OEMBED_SOURCE = 'list'   # "list", "basic" or "embedly"
 
     FLUENT_OEMBED_PROVIDER_LIST = (
-        (r'http://(www\.)?youtube\.com/watch\S*',  'http://www.youtube.com/oembed'),
+        (r'https?://(www\.)?youtube\.com/watch\S*',  'http://www.youtube.com/oembed'),
         (r'http://youtu\.be/\S*',                  'http://www.youtube.com/oembed'),
         (r'http://blip\.tv/\S*',                   'http://blip.tv/oembed/'),
-        (r'http://(www\.)?vimeo\.com/\S*',         'http://vimeo.com/api/oembed.json'),
+        (r'https?://(www\.)?vimeo\.com/\S*',         'http://vimeo.com/api/oembed.json'),
 
         # ...
     )
