@@ -3,13 +3,16 @@
 The sharedcontent plugin
 ========================
 
-The `sharedcontent` plugin allows inserting an content at multiple locations in the site.
+.. versionadded:: 0.8.5
+   The `sharedcontent` plugin allows inserting an content at multiple locations in the site.
+
+..
 
   .. image:: /images/plugins/sharedcontent-admin1.*
      :width: 770px
      :height: 422px
 
-  The shared content can be included in the site:
+The shared content can be included in the site:
 
   .. image:: /images/plugins/sharedcontent-admin2.*
      :width: 733px
