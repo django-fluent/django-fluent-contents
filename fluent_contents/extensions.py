@@ -10,6 +10,7 @@ Having to do an explicit register ensures future compatibility with other API's 
 """
 from django.conf import settings
 from django import forms
+from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
 from django.core import context_processors
 from django.contrib.auth import context_processors as auth_context_processors
@@ -131,6 +132,14 @@ class ContentPlugin(object):
     #: Alternative template for the view.
     ADMIN_TEMPLATE_WITHOUT_LABELS = "admin/fluent_contents/contentitem/admin_form_without_labels.html"
 
+    #: .. versionadded:: 0.8.5
+    #:    The ``HORIZONTAL`` constant for the :attr:`radio_fields`.
+    HORIZONTAL = admin.HORIZONTAL
+
+    #: .. versionadded:: 0.8.5
+    #:    The ``VERTICAL`` constant for the :attr:`radio_fields`.
+    VERTICAL = admin.VERTICAL
+
     #: The fields to display as raw ID
     raw_id_fields = ()
 
@@ -140,7 +149,13 @@ class ContentPlugin(object):
     #: The fields to display in a horizontal filter
     filter_horizontal = ()
 
-    #: The fields to display as radio choice
+    #: The fields to display as radio choice. For example::
+    #:
+    #:    radio_fields = {
+    #:        'align': ContentPlugin.VERTICAL,
+    #:    }
+    #:
+    #: The value can be :attr:`ContentPlugin.HORIZONTAL` or :attr:`ContentPlugin.VERTICAL`.
     radio_fields = {}
 
     #: Fields to automatically populate with values

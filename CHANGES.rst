@@ -2,6 +2,7 @@ Version 0.8.5 (in development)
 ------------------------------
 
 * Added support for shared content.
+* Added ``ContentPlugin.HORIZONTAL`` and ``ContentPlugin.VERTICAL`` constants for convenience.
 * Fix *code* plugin compatibility with Pygments 1.6rc1.
 * Fix escaping slot name in templates
 * Moved the template tag parsing to a separate package, django-tag-parser_.
