@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from django.core.exceptions import ImproperlyConfigured
 from django.db.models import signals
 from django.dispatch import receiver
 from django.utils.functional import curry
@@ -97,7 +98,10 @@ class PlaceholderEditorInline(ExtensibleGenericInline):
 
     def _get_parent_modeladmin(self):
         # HACK: accessing private field.
-        parentadmin = self.admin_site._registry[self.parent_model]
+        try:
+            parentadmin = self.admin_site._registry[self.parent_model]
+        except KeyError:
+            raise ImproperlyConfigured("Model admin for '{0}' not found in admin_site!".format(self.parent_model.__name__))
 
         # Do some "type" checking to developers are aided in inheriting their parent ModelAdmin screens with the proper classes.
         assert isinstance(parentadmin, PlaceholderEditorBaseMixin), "The '{0}' class can only be used in admin screens which implement a PlaceholderEditor mixin class.".format(self.__class__.__name__)
