@@ -44,6 +44,7 @@ FLUENT_OEMBED_PROVIDER_LIST = getattr(settings, 'FLUENT_OEMBED_PROVIDER_LIST', (
     (r'http://www.mobypicture.com/user/\S*?/view/\S*',  'http://api.mobypicture.com/oEmbed'),
     (r'http://moby.to/\S*',                             'http://api.mobypicture.com/oEmbed'),
     (r'http://(\S+\.)imgur\.com/\S*',                   'http://api.imgur.com/oembed'),
+    (r'https?://speakerdeck\.com/\S*',                  'https://speakerdeck.com/oembed.json'),
 ))
 
 # Allow to extend from the settings file

@@ -35,6 +35,7 @@ By default, the following services are supported:
 * `Slideshare <http://www.slideshare.net/>`_
 * `SmugMug <http://www.smugmug.com/>`_
 * `SoundCloud <https://soundcloud.com/>`_
+* `Speaker Desk <https://speakerdeck.com/>`_
 * `Twitter <http://twitter.com/>`_ (status messages)
 * `Viddler <http://www.viddler.com/>`_
 * `Vimeo <http://vimeo.com/>`_
