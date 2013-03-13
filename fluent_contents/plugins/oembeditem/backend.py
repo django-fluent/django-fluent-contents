@@ -72,7 +72,7 @@ def get_oembed_data(url, max_width=None, max_height=None):
     Fetch the OEmbed object, return the response as dictionary.
     """
     params = {}
-    if max_width:  params['maxhwidth'] = max_width
+    if max_width:  params['maxwidth'] = max_width
     if max_height: params['maxheight'] = max_height
 
     registry = get_oembed_providers()
