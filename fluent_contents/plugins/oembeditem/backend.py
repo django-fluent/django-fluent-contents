@@ -1,13 +1,15 @@
-from threading import Lock
-from django.core.exceptions import ImproperlyConfigured
+import json
+import threading
 import micawber
+import urllib2
 from micawber.providers import Provider, ProviderRegistry
+from django.core.exceptions import ImproperlyConfigured
 from . import appsettings
 
 # Globally cached provider list,
 # so embed.ly list is fetched only once.
 _provider_list = None
-_provider_lock = Lock()
+_provider_lock = threading.Lock()
 
 
 def get_oembed_providers():
@@ -45,6 +47,8 @@ def _build_provider_list():
         if appsettings.MICAWBER_EMBEDLY_KEY:
             params['key'] = appsettings.MICAWBER_EMBEDLY_KEY
         return micawber.bootstrap_embedly(**params)
+    elif appsettings.FLUENT_OEMBED_SOURCE == 'noembed':
+        return _bootstrap_noembed()
     elif appsettings.FLUENT_OEMBED_SOURCE == 'list':
         # Fill list manually in the settings, e.g. to have a fixed set of supported secure providers.
         registry = ProviderRegistry()
@@ -52,7 +56,7 @@ def _build_provider_list():
             registry.register(regex, Provider(provider))
         return registry
     else:
-        raise ImproperlyConfigured("Invalid value of FLUENT_OEMBED_SOURCE, only 'basic', 'list' or 'embedly' is supported.")
+        raise ImproperlyConfigured("Invalid value of FLUENT_OEMBED_SOURCE, only 'basic', 'list', 'noembed' or 'embedly' is supported.")
 
 
 def has_provider_for_url(url):
@@ -73,3 +77,25 @@ def get_oembed_data(url, max_width=None, max_height=None):
 
     registry = get_oembed_providers()
     return registry.request(url, **params)
+
+
+def _bootstrap_noembed(cache=None, **params):
+    """
+    Bootstrap the request for
+    """
+    endpoint = 'http://noembed.com/embed?nowrap=1'
+    schema_url = 'http://noembed.com/providers'
+
+    pr = ProviderRegistry(cache)
+
+    # fetch the schema
+    resp = urllib2.urlopen(schema_url)
+    contents = resp.read()
+    resp.close()
+
+    json_data = json.loads(contents)
+
+    for provider_meta in json_data:
+        for regex in provider_meta['patterns']:
+            pr.register(regex, Provider(endpoint, **params))
+    return pr

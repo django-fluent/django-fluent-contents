@@ -96,6 +96,7 @@ The source to use for the OEmbed provider list. This can be one the following va
 
 * **list** Use the provides defined in ``FLUENT_OEMBED_PROVIDER_LIST``.
 * **basic** Use the basic list defined in the micawber_ package.
+* **noembed** Use the embed service from `noembed`_
 * **embedly** Use the embed service from `embed.ly`_
 
 The `embed.ly`_ service contains many providers, including sites which do not have an OEmbed implementation themselves.
@@ -144,4 +145,5 @@ Hence, the OEmbed discovery protocol is not supported either.
 
 
 .. _embed.ly: http://embed.ly/
+.. _noembed: http://noembed.com/
 .. _micawber: https://github.com/coleifer/micawber/

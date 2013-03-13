@@ -3,7 +3,7 @@ from django.conf import settings
 
 # Define the source for the OEmbed provider list.
 # By default, use a fixed set of providers, to avoid random other HTML content in the web site.
-FLUENT_OEMBED_SOURCE = getattr(settings, 'FLUENT_OEMBED_SOURCE', 'list')   # basic, embedly, list
+FLUENT_OEMBED_SOURCE = getattr(settings, 'FLUENT_OEMBED_SOURCE', 'list')   # basic, embedly, noembed, list
 
 
 FLUENT_OEMBED_PROVIDER_LIST = getattr(settings, 'FLUENT_OEMBED_PROVIDER_LIST', (
