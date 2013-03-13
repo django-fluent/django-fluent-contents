@@ -75,15 +75,16 @@ The following settings are available:
 
     FLUENT_OEMBED_PROVIDER_LIST = (
         (r'https?://(www\.)?youtube\.com/watch\S*',  'http://www.youtube.com/oembed'),
-        (r'http://youtu\.be/\S*',                  'http://www.youtube.com/oembed'),
-        (r'http://blip\.tv/\S*',                   'http://blip.tv/oembed/'),
+        (r'http://youtu\.be/\S*',                    'http://www.youtube.com/oembed'),
+        (r'http://blip\.tv/\S*',                     'http://blip.tv/oembed/'),
         (r'https?://(www\.)?vimeo\.com/\S*',         'http://vimeo.com/api/oembed.json'),
 
         # ...
     )
 
     FLUENT_OEMBED_PROVIDER_LIST_EXTRA = (
-
+        (r'http://\S+.wordpress\.com/\S*',  'http://public-api.wordpress.com/oembed/?for=my-domain-name'),
+        (r'http://\S+.wp\.me/\S*',          'http://public-api.wordpress.com/oembed/?for=my-domain-name'),
     )
 
     MICAWBER_EMBEDLY_KEY = ''
@@ -102,7 +103,7 @@ The source to use for the OEmbed provider list. This can be one the following va
 The `embed.ly`_ service contains many providers, including sites which do not have an OEmbed implementation themselves.
 The service does cost money, and requires an API key. For a list of providers supported by `embed.ly`_ see http://embed.ly/providers
 
-The *list* setting is the default, and contains the services known to provide an OEmbed endpoint.
+The *list* setting is the default, and contains well known services that provide an OEmbed endpoint.
 
 
 FLUENT_OEMBED_PROVIDER_LIST

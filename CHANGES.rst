@@ -3,7 +3,7 @@ Version 0.8.5 (in development)
 
 * Added support for shared content.
 * Added ``ContentPlugin.HORIZONTAL`` and ``ContentPlugin.VERTICAL`` constants for convenience.
-* Added SoundCloud_ support to OEmbed plugin.
+* Added SoundCloud_, `Speaker Desk`_ and noembed_ support to the OEmbed plugin.
 * Fix *code* plugin compatibility with Pygments 1.6rc1.
 * Fix escaping slot name in templates
 * Fix https support for OEmbed plugin.
@@ -56,3 +56,5 @@ so it's time to show this module to the public.
 .. _django-threadedcomments: https://github.com/HonzaKral/django-threadedcomments.git
 .. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg
 .. _SoundCloud: https://soundcloud.com/
+.. _noembed: http://noembed.com/
+.. _`Speaker Desk`: https://speakerdeck.com/
