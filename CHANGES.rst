@@ -3,13 +3,19 @@ Version 0.8.5 (in development)
 
 * Added support for shared content.
 * Added ``ContentPlugin.HORIZONTAL`` and ``ContentPlugin.VERTICAL`` constants for convenience.
-* Added SoundCloud_, `Speaker Desk`_ and noembed_ support to the OEmbed plugin.
+* Added support for noembed_ in ``FLUENT_OEMBED_SOURCE`` setting.
+* Added ``FLUENT_OEMBED_EXTRA_PROVIDERS`` setting to the OEmbed plugin.
 * Fix *code* plugin compatibility with Pygments 1.6rc1.
 * Fix escaping slot name in templates
 * Fix https support for OEmbed plugin.
 * Fix maxwidth parameter for OEmbed plugin.
 * Moved the template tag parsing to a separate package, django-tag-parser_.
 * Bump version of django-wysiwyg_ to 0.5.1 because it fixes TinyMCE integration.
+* Bump version of micawber_ to 0.2.6, which contains an up to date list of known OEmbed providers.
+* **BIC:** As micawber_ is actively updated, we no longer maintain a local list of known OEmbed providers.
+  This only affects installations where ``FLUENT_OEMBED_SOURCE = "list"`` was explicitly defined in ``settings.py``,
+  without providing a list for ``FLUENT_OEMBED_PROVIDER_LIST``. The new defaults are: ``FLUENT_OEMBED_SOURCE = "basic"``
+  and ``FLUENT_OEMBED_PROVIDER_LIST = ()``.
 
 
 Version 0.8.4

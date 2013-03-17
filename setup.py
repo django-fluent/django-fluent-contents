@@ -31,7 +31,7 @@ setup(
         'disquscommentsarea': ['django-disqus'],
         'formdesignerlink': ['django-form-designer'],
         'markup': ['docutils', 'textile', 'Markdown>=1.7'],
-        'oembeditem': ['micawber'],
+        'oembeditem': ['micawber>=0.2.6'],
         'text': ['django-wysiwyg>=0.5.1'],
         'twitterfeed': ['twitter-text-py>=1.0.3'],
     },
