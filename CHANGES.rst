@@ -9,6 +9,7 @@ Version 0.8.5 (in development)
 * Fix escaping slot name in templates
 * Fix https support for OEmbed plugin.
 * Fix maxwidth parameter for OEmbed plugin.
+* Fix updating OEmbed code after changing maxwidth/maxheight parameters.
 * Moved the template tag parsing to a separate package, django-tag-parser_.
 * Bump version of django-wysiwyg_ to 0.5.1 because it fixes TinyMCE integration.
 * Bump version of micawber_ to 0.2.6, which contains an up to date list of known OEmbed providers.

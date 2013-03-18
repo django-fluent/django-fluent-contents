@@ -49,6 +49,8 @@ class OEmbedItem(ContentItem):
     def __init__(self, *args, **kwargs):
         super(OEmbedItem, self).__init__(*args, **kwargs)
         self._old_embed_url = self.embed_url
+        self._old_embed_max_width = self.embed_max_width
+        self._old_embed_max_height = self.embed_max_height
 
 
     def save(self, *args, **kwargs):
@@ -57,7 +59,11 @@ class OEmbedItem(ContentItem):
 
 
     def update_oembed_data(self):
-        if not self.type or self._old_embed_url != self.embed_url:
+        if not self.type \
+        or self._old_embed_url != self.embed_url \
+        or self._old_embed_max_width != self.embed_max_width \
+        or self._old_embed_max_height != self.embed_max_height:
+            # Fetch new embed code
             response = backend.get_oembed_data(self.embed_url, self.embed_max_width, self.embed_max_height)
             self.store_response(response)
             self._old_embed_url = self.embed_url
