@@ -91,7 +91,15 @@ class PlaceholderFieldDescriptor(object):
         """Return the placeholder by slot."""
         if instance is None:
             return self
-        return Placeholder.objects.get_by_slot(instance, self.slot)
+        try:
+            return Placeholder.objects.get_by_slot(instance, self.slot)
+        except Placeholder.DoesNotExist:
+            raise Placeholder.DoesNotExist("Placeholder does not exist for parent {0} (type_id: {1}, parent_id: {2}), slot: '{3}'".format(
+                repr(instance),
+                ContentType.objects.get_for_model(instance).pk,
+                instance.pk,
+                self.slot
+            ))
 
 
     def __set__(self, instance, value):
