@@ -1,0 +1,21 @@
+        <div class="form-row{% if line.fields|length_is:'1' and line.errors %} errors{% endif %}{% for adminfield in line %} {{ adminfield.field.name }}{% if adminfield.field.is_hidden %} cp-has-hidden-field{% endif %}{% endfor %}">
+            {% if line.fields|length_is:'1' %}{{ line.errors|linebreaksbr }}{% endif %}
+            {% for adminfield in line %}{% if not adminfield.field.is_hidden %}
+                <div{% if not line.fields|length_is:'1' %} class="field-box{% if not adminfield.is_readonly and adminfield.errors %} errors{% endif %}"{% endif %}>
+                    {% if not line.fields|length_is:'1' and not adminfield.is_readonly %}{{ adminfield.errors }}{% endif %}
+                    {% if adminfield.is_checkbox %}
+                        {{ adminfield.field }}{{ adminfield.label_tag }}
+                    {% else %}
+                        {{ adminfield.label_tag }}
+                        {% if adminfield.is_readonly %}
+                            <p>{{ adminfield.contents }}</p>
+                        {% else %}
+                            {{ adminfield.field }}
+                        {% endif %}
+                    {% endif %}
+                    {% if adminfield.field.help_text %}
+                        <p class="help">{{ adminfield.field.help_text|safe }}</p>
+                    {% endif %}
+                </div>
+            {% endif %}{% endfor %}
+        </div>

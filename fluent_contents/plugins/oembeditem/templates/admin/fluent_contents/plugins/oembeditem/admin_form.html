@@ -1,0 +1,24 @@
+{% load i18n %}
+{% for fieldset in inline_admin_form %}
+  {% for line in fieldset %}{% for adminfield in line %}{% if adminfield.field.is_hidden %}
+    {{ adminfield.field }}{# render all hidden fields top level, compacter and easier to debug #}
+  {% endif %}{% endfor %}{% endfor %}
+
+  <fieldset class="module aligned {{ fieldset.classes }}">
+    {% if fieldset.name %}<h2>{{ fieldset.name }}</h2>{% endif %}
+    {% if fieldset.description %}<div class="description">{{ fieldset.description|safe }}</div>{% endif %}
+    {% for line in fieldset %}
+      {% if 'embed_max_width' in line.fields %}
+        <div class="form-row{% if line.errors %} errors{% endif %}">
+          {{ line.errors }}
+          <div class="field-box">
+            <label for="{{ form.embed_max_width.auto_id }}" class="required">{% trans "Max size" %}:</label>
+            {{ form.embed_max_width }} &nbsp;&times;&nbsp; {{ form.embed_max_height }}&nbsp; {% trans "pixels" %}
+          </div>
+        </div>
+      {% else %}
+        {% include "admin/fluent_contents/fieldset_line.html" %}
+      {% endif %}
+    {% endfor %}
+  </fieldset>
+{% endfor %}

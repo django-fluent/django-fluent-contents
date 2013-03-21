@@ -14,8 +14,18 @@ re_safe = re.compile(r'[^\w_-]')
 class OEmbedPlugin(ContentPlugin):
     model = OEmbedItem
     category = _('Online content')
-    form = OEmbedItemForm
+    admin_form_template = "admin/fluent_contents/plugins/oembeditem/admin_form.html"
     render_template = "fluent_contents/plugins/oembed/default.html"
+
+    form = OEmbedItemForm
+    fieldsets = (
+        (None, {
+            'fields': (
+                'embed_url',
+                ('embed_max_width', 'embed_max_height'),
+            ),
+        }),
+    )
 
     class Media:
         css = {
