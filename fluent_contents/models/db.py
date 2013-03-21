@@ -232,7 +232,7 @@ class ContentItem(PolymorphicModel):
         # Allows quick debugging, and cache refreshes.
         parent = self.parent
         try:
-            return self.parent.get_absolute_url()
+            return parent.get_absolute_url()
         except AttributeError:
             return None
 
