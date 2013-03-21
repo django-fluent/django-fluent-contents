@@ -28,7 +28,9 @@ settings.configure(
     INSTALLED_APPS = (
         'django.contrib.auth',
         'django.contrib.contenttypes',
+        'django.contrib.messages',
         'django.contrib.sites',
+        'django.contrib.admin',
         'fluent_contents',
         'fluent_contents.tests.testapp',
     ),
