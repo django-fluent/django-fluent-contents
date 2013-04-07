@@ -5,6 +5,7 @@ Version 0.8.5 (in development)
 * Added ``ContentPlugin.HORIZONTAL`` and ``ContentPlugin.VERTICAL`` constants for convenience.
 * Added support for noembed_ in ``FLUENT_OEMBED_SOURCE`` setting.
 * Added ``FLUENT_OEMBED_EXTRA_PROVIDERS`` setting to the OEmbed plugin.
+* Fix Django 1.5 compatibility.
 * Fix *code* plugin compatibility with Pygments 1.6rc1.
 * Fix escaping slot name in templates
 * Fix https support for OEmbed plugin.
