@@ -12,7 +12,7 @@
         <div class="form-row{% if line.errors %} errors{% endif %}">
           {{ line.errors }}
           <div class="field-box">
-            <label for="{{ form.embed_max_width.auto_id }}" class="required">{% trans "Max size" %}:</label>
+            <label for="{{ form.embed_max_width.auto_id }}">{% trans "Max size" %}:</label>
             {{ form.embed_max_width }} &nbsp;&times;&nbsp; {{ form.embed_max_height }}&nbsp; {% trans "pixels" %}
           </div>
         </div>
