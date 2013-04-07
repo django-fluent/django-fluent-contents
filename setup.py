@@ -15,7 +15,7 @@ if 'sdist' in sys.argv:
 
 setup(
     name='django-fluent-contents',
-    version='0.8.4',
+    version='0.8.5',
     license='Apache License, Version 2.0',
 
     install_requires=[

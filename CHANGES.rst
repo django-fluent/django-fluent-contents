@@ -1,5 +1,5 @@
-Version 0.8.5 (in development)
-------------------------------
+Version 0.8.5
+-------------
 
 * Added support for shared content.
 * Added ``ContentPlugin.HORIZONTAL`` and ``ContentPlugin.VERTICAL`` constants for convenience.
