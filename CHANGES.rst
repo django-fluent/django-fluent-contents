@@ -63,6 +63,7 @@ so it's time to show this module to the public.
 .. _django-tag-parser: https://github.com/edoburu/django-tag-parser
 .. _django-threadedcomments: https://github.com/HonzaKral/django-threadedcomments.git
 .. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg
+.. _micawber: https://github.com/coleifer/micawber
 .. _SoundCloud: https://soundcloud.com/
 .. _noembed: http://noembed.com/
 .. _`Speaker Desk`: https://speakerdeck.com/
