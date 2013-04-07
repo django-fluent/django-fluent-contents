@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.test import RequestFactory
 from fluent_contents.models import Placeholder
 from fluent_contents.tests.testapp.admin import PlaceholderFieldTestPageAdmin
-from fluent_contents.tests.testapp.models import PlaceholderFieldTestPage
+from fluent_contents.tests.testapp.models import PlaceholderFieldTestPage, RawHtmlTestItem
 from fluent_contents.tests.utils import AppTestCase, override_settings
 
 
@@ -53,17 +53,34 @@ class AdminTest(AppTestCase):
             'placeholder-fs-TOTAL_FORMS': '1',
             'placeholder-fs-0-slot': contents_slot,
             'placeholder-fs-0-role': Placeholder.MAIN,
+            'rawhtmltestitem-TOTAL_FORMS': '1',
+            'rawhtmltestitem-0-placeholder': '',                   # The placeholder is not defined yet, as item is not yet created.
+            'rawhtmltestitem-0-placeholder_slot': contents_slot,   # BaseContentItemFormSet resolves the placeholder after it's created
+            'rawhtmltestitem-0-sort_order': '1',
+            'rawhtmltestitem-0-html': u'<b>foo</b>',
         })
         response = self._post_add(modeladmin, formdata)
-        self.assertEquals(response.status_code, 302, "No redirect, received: {0}".format(self._render_response(response)))
+        self.assertEquals(response.status_code, 302, "No redirect, received:\n\n{0}".format(self._render_response(response)))
 
         # Check that the page exists.
         page = PlaceholderFieldTestPage.objects.get(title='TEST1')
 
-        # Check that the placeholder is created.
+        # Check that the placeholder is created,
+        # and properly links back to it's parent.
         placeholder = page.contents
         self.assertEqual(placeholder.slot, contents_slot)
         self.assertEqual(placeholder.role, Placeholder.MAIN)
+        self.assertEqual(placeholder.parent, page)
+
+        # Check that the ContentItem is created,
+        # and properly links back to it's parent.
+        rawhtmltestitem = RawHtmlTestItem.objects.get(html=u'<b>foo</b>')
+        self.assertEqual(rawhtmltestitem.placeholder, placeholder)
+        self.assertEqual(rawhtmltestitem.parent, page)
+
+        # Also check reverse relation of placeholder
+        rawhtmltestitem = placeholder.contentitems.all()[0]
+        self.assertEqual(rawhtmltestitem.html, u'<b>foo</b>')
 
 
     def _post_add(self, modeladmin, formdata):
@@ -116,7 +133,6 @@ class AdminTest(AppTestCase):
     def _render_response(self, response):
         if hasattr(response, 'render'):
             # TemplateResponse
-            #return response.render().content
-            return pformat(response.context_data)
+            return u"== Context ==\n{0}\n\n== Response ==\n{1}".format(pformat(response.context_data), response.render().content)
         else:
             return response.content
