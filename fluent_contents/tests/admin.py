@@ -51,9 +51,13 @@ class AdminTest(AppTestCase):
         formdata.update({
             'title': 'TEST1',
             'placeholder-fs-TOTAL_FORMS': '1',
+            'placeholder-fs-MAX_NUM_FORMS': '',   # Needed for Django <= 1.4.3
+            'placeholder-fs-INITIAL_FORMS': '0',  # Needed for Django 1.3
             'placeholder-fs-0-slot': contents_slot,
             'placeholder-fs-0-role': Placeholder.MAIN,
             'rawhtmltestitem-TOTAL_FORMS': '1',
+            'rawhtmltestitem-MAX_NUM_FORMS': '',
+            'rawhtmltestitem-INITIAL_FORMS': '0',
             'rawhtmltestitem-0-placeholder': '',                   # The placeholder is not defined yet, as item is not yet created.
             'rawhtmltestitem-0-placeholder_slot': contents_slot,   # BaseContentItemFormSet resolves the placeholder after it's created
             'rawhtmltestitem-0-sort_order': '1',

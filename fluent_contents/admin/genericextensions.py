@@ -55,15 +55,16 @@ class DynamicInlinesModelAdmin(ModelAdmin):
         return inline_instances
 
 
-    # Django 1.4: Inlines are created per request
-    # Django 1.5: 'obj' parameter was added so it can be passed to 'has_change_permission' and friends.
+    if hasattr(ModelAdmin, 'get_inline_instances'):
+        # Django 1.4: Inlines are created per request
+        # Django 1.5: 'obj' parameter was added so it can be passed to 'has_change_permission' and friends.
 
-    def get_inline_instances(self, request, *args, **kwargs):
-        inlines = super(DynamicInlinesModelAdmin, self).get_inline_instances(request, *args, **kwargs)
-        if self.extra_inlines_first:
-            return self._get_extra_inline_instances() + inlines
-        else:
-            return inlines + self._get_extra_inline_instances()
+        def get_inline_instances(self, request, *args, **kwargs):
+            inlines = super(DynamicInlinesModelAdmin, self).get_inline_instances(request, *args, **kwargs)
+            if self.extra_inlines_first:
+                return self._get_extra_inline_instances() + inlines
+            else:
+                return inlines + self._get_extra_inline_instances()
 
 
 
