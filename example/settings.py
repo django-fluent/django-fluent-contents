@@ -113,6 +113,7 @@ INSTALLED_APPS = (
     'django_wysiwyg',
     #'disqus',
     #'form_designer',
+    'tinymce',
 )
 
 SIMPLECMS_TEMPLATE_CHOICES = (
