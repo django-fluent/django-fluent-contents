@@ -1,11 +1,13 @@
 from abc import abstractmethod
+from django.contrib.admin import ModelAdmin
+from django.contrib.contenttypes.generic import GenericInlineModelAdmin
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import signals
 from django.dispatch import receiver
 from django.utils.functional import curry
 from fluent_contents import extensions
 from fluent_contents.admin.contentitems import get_content_item_inlines, BaseContentItemFormSet
-from fluent_contents.admin.genericextensions import ExtensibleGenericInline, BaseInitialGenericInlineFormSet, DynamicInlinesModelAdmin
+from fluent_contents.admin.genericextensions import BaseInitialGenericInlineFormSet
 from fluent_contents.models import Placeholder
 
 
@@ -22,7 +24,7 @@ class PlaceholderInlineFormSet(BaseInitialGenericInlineFormSet):
         return 'placeholder-fs'
 
 
-class PlaceholderEditorInline(ExtensibleGenericInline):
+class PlaceholderEditorInline(GenericInlineModelAdmin):
     """
     The placeholder editor, implemented as an admin inline.
     It displays tabs for each inline placeholder, and displays :class:`~fluent_contents.models.ContentItem` plugins in the tabs.
@@ -134,7 +136,7 @@ class PlaceholderEditorBaseMixin(object):
 
 
 
-class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, DynamicInlinesModelAdmin):
+class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
     """
     The base functionality for :class:`~django.contrib.admin.ModelAdmin` dialogs to display a placeholder editor with plugins.
     It loads the inlines using :func:`get_extra_inlines`.
@@ -148,12 +150,32 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, DynamicInlinesModelAdmi
     """
     placeholder_inline = PlaceholderEditorInline
 
+
+    def get_inline_instances(self, request, *args, **kwargs):
+        """
+        Create the inlines for the admin, including the placeholder and contentitem inlines.
+        """
+        # Django 1.3: inlines were created once in self.inline_instances (not supported anymore)
+        # Django 1.4: inlines are created per request
+        # Django 1.5: 'obj' parameter was added so it can be passed to 'has_change_permission' and friends.
+        inlines = super(PlaceholderEditorAdmin, self).get_inline_instances(request, *args, **kwargs)
+
+        extra_inline_instances = []
+        inlinetypes = self.get_extra_inlines()
+        for InlineType in inlinetypes:
+            inline_instance = InlineType(self.model, self.admin_site)
+            extra_inline_instances.append(inline_instance)
+
+        return extra_inline_instances + inlines
+
+
     def get_extra_inlines(self):
         """
         Return the extra inlines for the placeholder editor.
         It loads the :attr:`placeholder_inline` first, followed by the inlines for the :class:`~fluent_contents.models.ContentItem` classes.
         """
         return [self.placeholder_inline] + get_content_item_inlines(plugins=self.get_all_allowed_plugins())
+
 
     def save_formset(self, request, form, formset, change):
         # Track deletion of Placeholders across the formsets.

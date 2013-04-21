@@ -1,7 +1,6 @@
-from django.contrib.contenttypes.generic import BaseGenericInlineFormSet
+from django.contrib.contenttypes.generic import BaseGenericInlineFormSet, GenericInlineModelAdmin
 from django.contrib.contenttypes.models import ContentType
 from fluent_contents import extensions
-from fluent_contents.admin.genericextensions import ExtensibleGenericInline
 from fluent_contents.forms import ContentItemForm
 from fluent_contents.models.db import Placeholder
 
@@ -70,7 +69,7 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
         return self.model.__name__
 
 
-class BaseContentItemInline(ExtensibleGenericInline):
+class BaseContentItemInline(GenericInlineModelAdmin):
     """
     The ``InlineModelAdmin`` class used for all content items.
     """
@@ -79,7 +78,7 @@ class BaseContentItemInline(ExtensibleGenericInline):
     ct_fk_field = "parent_id"
     formset = BaseContentItemFormSet
     form = ContentItemForm
-    exclude_unchecked = ('contentitem_ptr',)    # Fix django-polymorphic
+    exclude = ('contentitem_ptr',)    # Fix django-polymorphic
     extra = 0
     ordering = ('sort_order',)
     template = 'admin/fluent_contents/contentitem/inline_container.html'
