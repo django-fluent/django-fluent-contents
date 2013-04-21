@@ -152,7 +152,7 @@ def get_content_item_inlines(plugins=None, base=BaseContentItemInline):
         # Create a new Type that inherits CmsPageItemInline
         # Read the static fields of the ItemType to override default appearance.
         # This code is based on FeinCMS, (c) Simon Meers, BSD licensed
-        name = '%s_AutoInline' %  ContentItemType.__name__
+        class_name = '%s_AutoInline' %  ContentItemType.__name__
         attrs = {
             '__module__': plugin.__class__.__module__,
             'model': ContentItemType,
@@ -171,7 +171,7 @@ def get_content_item_inlines(plugins=None, base=BaseContentItemInline):
             if getattr(plugin, name):
                 attrs[name] = getattr(plugin, name)
 
-        inlines.append(type(name, (base,), attrs))
+        inlines.append(type(class_name, (base,), attrs))
 
     # For consistency, enforce ordering
     inlines.sort(key=lambda inline: inline.name.lower())
