@@ -19,7 +19,7 @@ setup(
     license='Apache License, Version 2.0',
 
     install_requires=[
-        'django-polymorphic>=0.4.2',
+        'django-polymorphic>=0.2',
         'django-tag-parser>=1.0.0',
         'django-template-analyzer>=1.1.0',
     ],

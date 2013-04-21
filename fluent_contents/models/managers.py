@@ -43,7 +43,9 @@ class ContentItemManager(PolymorphicManager):
     """
     Extra methods for ``ContentItem.objects``.
     """
-    queryset_class = ContentItemQuerySet
+    def __init__(self, *args, **kwargs):
+        super(ContentItemManager, self).__init__(queryset_class=ContentItemQuerySet, *args, **kwargs)
+
 
     def parent(self, parent_object):
         """
