@@ -93,8 +93,11 @@ INSTALLED_APPS = (
     'fluent_contents.plugins.googledocsviewer',
     'fluent_contents.plugins.iframe',
     'fluent_contents.plugins.markup',
+    'fluent_contents.plugins.oembeditem',
     'fluent_contents.plugins.rawhtml',
+    'fluent_contents.plugins.sharedcontent',
     'fluent_contents.plugins.text',
+    'fluent_contents.plugins.twitterfeed',
 
 
     # Example app
@@ -118,14 +121,20 @@ SIMPLECMS_TEMPLATE_CHOICES = (
 )
 SIMPLECMS_DEFAULT_TEMPLATE = SIMPLECMS_TEMPLATE_CHOICES[0][0]
 
-DJANGO_WYSIWYG_FLAVOR = 'yui_advanced'
+DJANGO_WYSIWYG_FLAVOR = 'tinymce_advanced'
 
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
+            'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
         }
     },
