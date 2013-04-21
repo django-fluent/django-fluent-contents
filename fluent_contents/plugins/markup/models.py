@@ -84,7 +84,7 @@ def _create_markup_model(fixed_language):
 
     classname = "{0}MarkupItem".format(fixed_language.capitalize())
 
-    new_class = MarkupItem.__metaclass__(classname, (MarkupItem,), {
+    new_class = type(classname, (MarkupItem,), {
         '__module__': MarkupItem.__module__,
         'objects': objects,
         'save': save,

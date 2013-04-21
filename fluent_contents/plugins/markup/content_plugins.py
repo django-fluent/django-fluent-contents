@@ -45,12 +45,12 @@ for language, model in LANGUAGE_MODEL_CLASSES.iteritems():
     if language not in appsettings.FLUENT_MARKUP_LANGUAGES:
         continue
 
-    form = MarkupItemForm.__metaclass__("{0}MarkupItemForm".format(language.capitalize()), (MarkupItemForm,), {
+    form = type("{0}MarkupItemForm".format(language.capitalize()), (MarkupItemForm,), {
         'default_language': language,
     })
 
     classname = "{0}MarkupPlugin".format(language.capitalize())
-    PluginClass = MarkupPluginBase.__metaclass__(classname, (MarkupPluginBase,), {
+    PluginClass = type(classname, (MarkupPluginBase,), {
         'model': model,
         'form': form,
     })
