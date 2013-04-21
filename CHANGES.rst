@@ -1,3 +1,11 @@
+Version 0.8.6
+-------------
+
+* Fixed metaclass errors in markup plugin for Django 1.5 / six.
+* Updated django-polymorphic_ version to 0.4.2, addressed deprecation warnings.
+* Updated example app to show latest features.
+
+
 Version 0.8.5
 -------------
 
@@ -60,6 +68,7 @@ The module design has been stable for quite some time,
 so it's time to show this module to the public.
 
 
+.. _django-polymorphic: https://github.com/chrisglass/django_polymorphic
 .. _django-tag-parser: https://github.com/edoburu/django-tag-parser
 .. _django-threadedcomments: https://github.com/HonzaKral/django-threadedcomments.git
 .. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg
