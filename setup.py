@@ -15,7 +15,7 @@ if 'sdist' in sys.argv:
 
 setup(
     name='django-fluent-contents',
-    version='0.8.6',
+    version='0.9dev',
     license='Apache License, Version 2.0',
 
     install_requires=[
@@ -24,7 +24,7 @@ setup(
         'django-template-analyzer>=1.1.0',
     ],
     requires=[
-        'Django (>=1.3)',   # Using staticfiles
+        'Django (>=1.4)',
     ],
     extras_require = {
         'code': ['Pygments'],
