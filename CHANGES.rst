@@ -1,3 +1,10 @@
+Version 0.9
+-------------
+
+* Added model fields for plugin developers, to have a consistent interface.
+  The model fields integrate with django-any-urlfield_ and django-any-imagefield_.
+
+
 Version 0.8.6
 -------------
 
@@ -68,6 +75,8 @@ The module design has been stable for quite some time,
 so it's time to show this module to the public.
 
 
+.. _django-any-urlfield: https://github.com/edoburu/django-any-urlfield
+.. _django-any-imagefield: https://github.com/edoburu/django-any-imagefield
 .. _django-polymorphic: https://github.com/chrisglass/django_polymorphic
 .. _django-tag-parser: https://github.com/edoburu/django-tag-parser
 .. _django-threadedcomments: https://github.com/HonzaKral/django-threadedcomments.git
