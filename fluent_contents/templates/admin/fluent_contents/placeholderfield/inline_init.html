@@ -17,7 +17,7 @@
   }{% endif %}
     {% endwith %}{% endfor %}]{% endblock %};
   var contentitem_metadata = {% block js_contentitemtypes %}{ {% for fs in inline_admin_formsets|only_content_item_formsets %}'{{ fs.opts.type_name|escapejs }}': {
-    type: '{{ fs.opts.type_name|escapejs }}',{# fs.opts = GenericContentItemInline #}
+    type: '{{ fs.opts.type_name|escapejs }}',{# fs.opts = BaseContentItemInline #}
     name: '{{ fs.opts.name|escapejs }}',
     prefix: '{{ fs.formset.prefix|escapejs }}',{# fs.formset = targetobjectformFormSet #}
     rel_name: '{{ fs.formset.rel_name|escapejs }}',

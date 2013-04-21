@@ -1,4 +1,3 @@
-from django.contrib.admin.options import InlineModelAdmin
 from django.contrib.contenttypes.generic import BaseGenericInlineFormSet
 from django.contrib.contenttypes.models import ContentType
 from fluent_contents import extensions
@@ -71,16 +70,19 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
         return self.model.__name__
 
 
-class ContentItemInlineMixin(InlineModelAdmin):
+class BaseContentItemInline(ExtensibleGenericInline):
     """
-    Base functionality for a ContentItem inline.
-    This class can be mixed with a regular `InlineModelAdmin` or `GenericInlineModelAdmin`.
+    The ``InlineModelAdmin`` class used for all content items.
     """
     # inline settings
+    ct_field = "parent_type"
+    ct_fk_field = "parent_id"
+    formset = BaseContentItemFormSet
+    form = ContentItemForm
+    exclude_unchecked = ('contentitem_ptr',)    # Fix django-polymorphic
     extra = 0
     ordering = ('sort_order',)
     template = 'admin/fluent_contents/contentitem/inline_container.html'
-    form = ContentItemForm
     is_fluent_editor_inline = True  # Allow admin templates to filter the inlines
 
     # overwritten by subtype
@@ -96,13 +98,13 @@ class ContentItemInlineMixin(InlineModelAdmin):
 
 
     def __init__(self, *args, **kwargs):
-        super(ContentItemInlineMixin, self).__init__(*args, **kwargs)
+        super(BaseContentItemInline, self).__init__(*args, **kwargs)
         self.verbose_name_plural = u'---- ContentItem Inline: %s' % (self.verbose_name_plural,)
 
 
     @property
     def media(self):
-        media = super(ContentItemInlineMixin, self).media
+        media = super(BaseContentItemInline, self).media
         if self.plugin:
             media += self.plugin.media  # form fields first, plugin afterwards
         return media
@@ -111,7 +113,7 @@ class ContentItemInlineMixin(InlineModelAdmin):
     def get_fieldsets(self, request, obj=None):
         # If subclass declares fieldsets, this is respected
         if not self.extra_fieldsets or self.declared_fieldsets:
-            return super(ContentItemInlineMixin, self).get_fieldsets(request, obj)
+            return super(BaseContentItemInline, self).get_fieldsets(request, obj)
 
         return ((None, {'fields': self.base_fields}),) + self.extra_fieldsets
 
@@ -124,21 +126,11 @@ class ContentItemInlineMixin(InlineModelAdmin):
             kwargs = dict(attrs, **kwargs)
         except KeyError:
             pass
-        return super(ContentItemInlineMixin, self).formfield_for_dbfield(db_field, **kwargs)
-
-
-class GenericContentItemInline(ContentItemInlineMixin, ExtensibleGenericInline):
-    """
-    Custom ``InlineModelAdmin`` subclass used for content types.
-    """
-    ct_field = "parent_type"
-    ct_fk_field = "parent_id"
-    formset = BaseContentItemFormSet
-    exclude_unchecked = ('contentitem_ptr',)    # Fix django-polymorphic
+        return super(BaseContentItemInline, self).formfield_for_dbfield(db_field, **kwargs)
 
 
 
-def get_content_item_inlines(plugins=None, base=GenericContentItemInline):
+def get_content_item_inlines(plugins=None, base=BaseContentItemInline):
     """
     Dynamically generate genuine django inlines for all registered content item types.
     When the `plugins` parameter is ``None``, all plugin inlines are returned.
