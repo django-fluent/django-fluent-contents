@@ -105,6 +105,10 @@ class ContentPlugin(object):
     #: The fieldsets for the admin view.
     fieldsets = None
 
+    #: Any inlines for the admin view. Use the :class:`~fluent_contents.extensions.TabularPluginInline`
+    #: and :class:`~fluent_contents.extensions.StackedPluginInline` classes as base class.
+    inlines = ()
+
     #: The template to render the frontend HTML output.
     render_template = None
 

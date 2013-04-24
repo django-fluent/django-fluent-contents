@@ -31,6 +31,17 @@
         {% endblock %}
 
         {% if inline_admin_form.has_auto_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
+
+        {% block nested_inlines %}
+          {% if inline_admin_form.form.nested_formsets %}
+            <div class="nested-inlines">
+              {% for nested_inline_admin_formset in inline_admin_form.form.nested_formsets %}
+                {% include nested_inline_admin_formset.opts.template with recursive_formset=inline_admin_formset inline_admin_formset=nested_inline_admin_formset %}
+                <div class="nested-inline-bottom-border"></div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endblock %}
       </div>
     {% endfor %}
   </div>

@@ -155,6 +155,26 @@ form .form-row.no-labels p.help {
   color: #999999;
 }
 
+.cp-content .inline-group.nested-inline {
+    border-color: #ddd;
+}
+
+.cp-content .inline-group.nested-inline fieldset h2 {
+  /* Similar to cp-formset-item-title */
+  background-image: url('img/admin/nav-bg.gif');
+  background-position: left bottom;
+  color: #999999;
+}
+
+.cp-content .inline-group.nested-inline td.original p {
+  /* Hide the original title */
+  display: none;
+}
+
+.cp-content .inline-group.nested-inline .tabular tr.has_original td {
+   padding-top: 5px;
+}
+
 
 /* ---- Tabbar interface ---- */
 

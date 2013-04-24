@@ -1,0 +1,10 @@
+<div class="linklist">
+    <h3>{{ instance.title }}</h3>
+    {% if instance.links.all %}
+        <ul>
+        {% for link in instance.links.all %}
+          <li><a href="{{ link.urkl }}">{{ link.title }}</a></li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+</div>

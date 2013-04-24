@@ -1,0 +1,42 @@
+{% load i18n admin_static %}
+<div class="inline-group{% if recursive_formset %} {{ recursive_formset.formset.prefix|default:"Root" }}-nested-inline nested-inline{% endif %}" id="{{ inline_admin_formset.formset.prefix }}-group">
+{% with recursive_formset=inline_admin_formset stacked_template='admin/edit_inline/stacked.html' tabular_template='admin/edit_inline/tabular.html'%}
+  <h2>{{ recursive_formset.opts.verbose_name_plural|title }}</h2>
+{{ recursive_formset.formset.management_form }}
+{{ recursive_formset.formset.non_form_errors }}
+
+{% for inline_admin_form in recursive_formset %}<div class="inline-related{% if forloop.last %} empty-form last-related{% endif %}" id="{{ recursive_formset.formset.prefix }}-{% if not forloop.last %}{{ forloop.counter0 }}{% else %}empty{% endif %}">
+  <h3><b>{{ recursive_formset.opts.verbose_name|title }}:</b>&nbsp;<span class="inline_label">{% if inline_admin_form.original %}{{ inline_admin_form.original }}{% else %}#{{ forloop.counter }}{% endif %}</span>
+    {% if inline_admin_form.show_url %}<a href="../../../r/{{ inline_admin_form.original_content_type_id }}/{{ inline_admin_form.original.id }}/">{% trans "View on site" %}</a>{% endif %}
+    {% if recursive_formset.formset.can_delete and inline_admin_form.original %}<span class="delete">{{ inline_admin_form.deletion_field.field }} {{ inline_admin_form.deletion_field.label_tag }}</span>{% endif %}
+  </h3>
+  {% if inline_admin_form.form.non_field_errors %}{{ inline_admin_form.form.non_field_errors }}{% endif %}
+  {% for fieldset in inline_admin_form %}
+    {% include "admin/includes/fieldset.html" %}
+  {% endfor %}
+  {% if inline_admin_form.has_auto_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
+  {{ inline_admin_form.fk_field.field }}
+  {% if inline_admin_form.form.nested_formsets %}
+    {% for inline_admin_formset in inline_admin_form.form.nested_formsets %}
+      {% if inline_admin_formset.opts.template == stacked_template %}
+        {% include stacked_template %}
+      {% else %}
+        {% include tabular_template %}
+      {% endif %}
+      <div class="nested-inline-bottom-border"></div>
+    {% endfor %}
+  {% endif %}
+</div>{% endfor %}
+</div>
+
+<script type="text/javascript">
+(function($) {
+  $("#{{ recursive_formset.formset.prefix }}-group > .inline-related").stackedFormset({
+    prefix: '{{ recursive_formset.formset.prefix }}',
+    adminStaticPrefix: '{% static "admin/" %}',
+    addText: "{% blocktrans with verbose_name=recursive_formset.opts.verbose_name|title %}Add another {{ verbose_name }}{% endblocktrans %}",
+    deleteText: "{% trans "Remove" %}"
+  });
+})(django.jQuery);
+</script>
+{% endwith %}

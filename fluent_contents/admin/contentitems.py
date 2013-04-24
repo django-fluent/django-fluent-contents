@@ -1,11 +1,12 @@
 from django.contrib.contenttypes.generic import BaseGenericInlineFormSet, GenericInlineModelAdmin
 from django.contrib.contenttypes.models import ContentType
 from fluent_contents import extensions
+from fluent_contents.admin.nestedinlines import NestedInlineMixin, NestedFormSetMixin
 from fluent_contents.forms import ContentItemForm
 from fluent_contents.models.db import Placeholder
 
 
-class BaseContentItemFormSet(BaseGenericInlineFormSet):
+class BaseContentItemFormSet(NestedFormSetMixin, BaseGenericInlineFormSet):
     """
     Correctly save placeholder fields.
     """
@@ -69,7 +70,7 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
         return self.model.__name__
 
 
-class BaseContentItemInline(GenericInlineModelAdmin):
+class BaseContentItemInline(NestedInlineMixin, GenericInlineModelAdmin):
     """
     The ``InlineModelAdmin`` class used for all content items.
     """
@@ -161,6 +162,7 @@ def get_content_item_inlines(plugins=None, base=BaseContentItemInline):
             'name': plugin.verbose_name,
             'plugin': plugin,
             'type_name': plugin.type_name,
+            'inlines': plugin.inlines,
             'extra_fieldsets': plugin.fieldsets,
             'cp_admin_form_template': plugin.admin_form_template,
             'cp_admin_init_template': plugin.admin_init_template,

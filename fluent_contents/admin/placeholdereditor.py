@@ -8,6 +8,7 @@ from django.utils.functional import curry
 from fluent_contents import extensions
 from fluent_contents.admin.contentitems import get_content_item_inlines, BaseContentItemFormSet
 from fluent_contents.admin.genericextensions import BaseInitialGenericInlineFormSet
+from fluent_contents.admin.nestedinlines import NestedModelAdmin
 from fluent_contents.models import Placeholder
 
 
@@ -136,7 +137,7 @@ class PlaceholderEditorBaseMixin(object):
 
 
 
-class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
+class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, NestedModelAdmin):
     """
     The base functionality for :class:`~django.contrib.admin.ModelAdmin` dialogs to display a placeholder editor with plugins.
     It loads the inlines using :func:`get_extra_inlines`.

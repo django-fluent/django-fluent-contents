@@ -1,6 +1,8 @@
 Version 0.9
 -------------
 
+* Added inlines support to plugins.
+* Added linklist plugin.
 * Added ``FLUENT_CONTENTS_PLACEHOLDER_CONFIG`` variable to limit plugins in specific placeholder slots.
 * Added model fields for plugin developers, to have a consistent interface.
   The model fields integrate with django-any-urlfield_ and django-any-imagefield_.

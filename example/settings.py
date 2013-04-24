@@ -92,6 +92,7 @@ INSTALLED_APPS = (
     'fluent_contents.plugins.gist',
     'fluent_contents.plugins.googledocsviewer',
     'fluent_contents.plugins.iframe',
+    'fluent_contents.plugins.linklist',
     'fluent_contents.plugins.markup',
     'fluent_contents.plugins.oembeditem',
     'fluent_contents.plugins.rawhtml',
