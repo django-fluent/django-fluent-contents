@@ -207,7 +207,10 @@ class PlaceholderField(PlaceholderRelation):
         if self._plugins is None:
             return extensions.plugin_pool.get_plugins()
         else:
-            return extensions.plugin_pool.get_plugins_by_name(*self._plugins)
+            try:
+                return extensions.plugin_pool.get_plugins_by_name(*self._plugins)
+            except extensions.PluginNotFound as e:
+                raise extensions.PluginNotFound(str(e) + " Update the plugin list of '{0}.{1}'".format(self.model._meta.object_name, self.name))
 
 
     def value_from_object(self, obj):
