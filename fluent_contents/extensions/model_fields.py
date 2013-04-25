@@ -6,6 +6,7 @@ This package contains model fields which are usable for extensions.
 """
 from django.conf import settings
 from django.db import models
+from django.utils.safestring import mark_safe
 from fluent_contents.forms.widgets import WysiwygWidget
 
 
@@ -37,6 +38,9 @@ class HtmlField(models.TextField):
         defaults.update(kwargs)
 
         return super(HtmlField, self).formfield(**defaults)
+
+    def to_python(self, value):
+        return mark_safe(value)
 
 
 # Tell South how to create custom fields
