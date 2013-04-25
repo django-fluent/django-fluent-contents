@@ -13,7 +13,7 @@ re_safe = re.compile(r'[^\w_-]')
 @plugin_pool.register
 class OEmbedPlugin(ContentPlugin):
     model = OEmbedItem
-    category = _('Online content')
+    category = _('Media')
     admin_form_template = "admin/fluent_contents/plugins/oembeditem/admin_form.html"
     render_template = "fluent_contents/plugins/oembed/default.html"
 

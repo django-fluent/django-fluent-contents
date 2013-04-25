@@ -20,7 +20,7 @@ class GoogleDocsViewerPlugin(ContentPlugin):
     see: https://docs.google.com/viewer/TOS
     """
     model = GoogleDocsViewerItem
-    category = _('Online content')
+    category = _('Media')
 
 
     def render(self, request, instance, **kwargs):

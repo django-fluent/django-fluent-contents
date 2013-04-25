@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-25 02:43+0200\n"
+"POT-Creation-Date: 2013-04-25 11:24+0200\n"
 "PO-Revision-Date: 2011-01-10 23:54+0100\n"
 "Last-Translator: Diederik van der Boor <vdboor@edoburu.nl>\n"
 "Language-Team: Dutch <NL@li.org>\n"
@@ -175,9 +175,10 @@ msgstr "GitHub Gist fragmenten"
 
 #: plugins/googledocsviewer/content_plugins.py:23
 #: plugins/oembeditem/content_plugins.py:16
+#: plugins/picture/content_plugins.py:13
 #: plugins/twitterfeed/content_plugins.py:8
-msgid "Online content"
-msgstr "Online inhoud"
+msgid "Media"
+msgstr ""
 
 #: plugins/googledocsviewer/models.py:11
 msgid "File URL"
@@ -262,13 +263,9 @@ msgstr "Max. breedte"
 msgid "Max height"
 msgstr "Max. hoogte"
 
-#: plugins/oembeditem/models.py:41
-msgid "Embedded media"
-msgstr "Ingesloten media"
-
-#: plugins/oembeditem/models.py:42
-msgid "Embeddded media"
-msgstr "Ingesloten media"
+#: plugins/oembeditem/models.py:41 plugins/oembeditem/models.py:42
+msgid "Online media"
+msgstr "Online media"
 
 #: plugins/oembeditem/templates/admin/fluent_contents/plugins/oembeditem/admin_form.html:15
 msgid "Max size"
@@ -277,6 +274,42 @@ msgstr "Maximale grootte"
 #: plugins/oembeditem/templates/admin/fluent_contents/plugins/oembeditem/admin_form.html:16
 msgid "pixels"
 msgstr "pixels"
+
+#: plugins/picture/models.py:16
+msgid "Left"
+msgstr "Links"
+
+#: plugins/picture/models.py:17
+msgid "Center"
+msgstr "Midden"
+
+#: plugins/picture/models.py:18
+msgid "Right"
+msgstr "Rechts"
+
+#: plugins/picture/models.py:21
+msgid "Image"
+msgstr "Afbeelding"
+
+#: plugins/picture/models.py:22
+msgid "Caption"
+msgstr "Onderschrift"
+
+#: plugins/picture/models.py:23
+msgid "Align"
+msgstr "Uitlijning"
+
+#: plugins/picture/models.py:24
+msgid "URL"
+msgstr "URL"
+
+#: plugins/picture/models.py:27
+msgid "Picture"
+msgstr "Afbeelding"
+
+#: plugins/picture/models.py:28
+msgid "Pictures"
+msgstr "Afbeeldingen"
 
 #: plugins/rawhtml/models.py:7 plugins/rawhtml/models.py:10
 #: plugins/rawhtml/models.py:11
