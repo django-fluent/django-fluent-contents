@@ -28,8 +28,8 @@ class SharedContentItem(ContentItem):
     shared_content = models.ForeignKey(SharedContent, verbose_name=_('Shared content'), related_name='shared_content_items')
 
     class Meta:
-        verbose_name = _('Shared content item')
-        verbose_name_plural = _('Shared content items')
+        verbose_name = _('Shared content')
+        verbose_name_plural = _('Shared content')
 
     def __unicode__(self):
         return unicode(self.shared_content)

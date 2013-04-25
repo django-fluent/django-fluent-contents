@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-10 22:40+0100\n"
+"POT-Creation-Date: 2013-04-25 02:43+0200\n"
 "PO-Revision-Date: 2011-01-10 23:54+0100\n"
 "Last-Translator: Diederik van der Boor <vdboor@edoburu.nl>\n"
 "Language-Team: Dutch <NL@li.org>\n"
@@ -16,62 +16,62 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: extensions.py:224
+#: extensions/pluginbase.py:224
 #, python-format
 msgid "{No rendering defined for class '%s'}"
 msgstr ""
 
-#: extensions.py:244
+#: extensions/pluginbase.py:244
 msgid "Error:"
 msgstr "Fout:"
 
-#: models/db.py:36
+#: models/db.py:37
 msgid "Main content"
 msgstr "Hoofdinhoud"
 
-#: models/db.py:37
+#: models/db.py:38
 msgid "Sidebar content"
 msgstr "Zijbalk inhoud"
 
-#: models/db.py:38
+#: models/db.py:39
 msgid "Related content"
 msgstr "Gerelateerde inhoud"
 
-#: models/db.py:41
+#: models/db.py:42
 msgid "Slot"
 msgstr ""
 
-#: models/db.py:41
+#: models/db.py:42
 msgid "A short name to identify the placeholder in the template code."
 msgstr "Een korte naam om de placeholder in de template code te identificeren."
 
-#: models/db.py:42
+#: models/db.py:43
 msgid "Role"
 msgstr "Rol"
 
-#: models/db.py:42
+#: models/db.py:43
 msgid "This defines where the object is used."
 msgstr "Dit geeft aan waar het object gebruikt word."
 
-#: models/db.py:49
+#: models/db.py:50
 msgid "Admin title"
 msgstr "Admin titel"
 
-#: models/db.py:55
+#: models/db.py:56
 msgid "Placeholder"
 msgstr "Plaatsaanduiding"
 
-#: models/db.py:56
+#: models/db.py:57
 msgid "Placeholders"
 msgstr "Plaatsaanduidingen"
 
-#: models/db.py:223
+#: models/db.py:241
 msgid "Contentitem link"
-msgstr ""
+msgstr "Blokverwijzing"
 
-#: models/db.py:224
+#: models/db.py:242
 msgid "Contentitem links"
-msgstr ""
+msgstr "Blokverwijzingen"
 
 #: plugins/code/backend.py:19
 msgid "Combinations"
@@ -113,15 +113,15 @@ msgstr "Codefragmenten"
 msgid "Interactivity"
 msgstr "Interactief"
 
-#: plugins/commentsarea/models.py:10 plugins/disquswidgets/models.py:7
+#: plugins/commentsarea/models.py:13 plugins/disquswidgets/models.py:7
 msgid "Allow posting new comments"
 msgstr "Sta toe om nieuwe reacties te plaatsen"
 
-#: plugins/commentsarea/models.py:13
+#: plugins/commentsarea/models.py:16
 msgid "Comments area"
 msgstr "Reactieveld"
 
-#: plugins/commentsarea/models.py:14
+#: plugins/commentsarea/models.py:17
 msgid "Comments areas"
 msgstr "Reactievelden"
 
@@ -174,7 +174,7 @@ msgid "GitHub Gist snippets"
 msgstr "GitHub Gist fragmenten"
 
 #: plugins/googledocsviewer/content_plugins.py:23
-#: plugins/oembeditem/content_plugins.py:13
+#: plugins/oembeditem/content_plugins.py:16
 #: plugins/twitterfeed/content_plugins.py:8
 msgid "Online content"
 msgstr "Online inhoud"
@@ -229,18 +229,14 @@ msgstr "Opmaak"
 msgid "markup"
 msgstr "opmaak"
 
-#: plugins/markup/models.py:42
-msgid "Markup item"
-msgstr "Opmaakdeel"
-
-#: plugins/markup/models.py:43
-msgid "Markup items"
-msgstr "Opmaakdelen"
+#: plugins/markup/models.py:42 plugins/markup/models.py:43
+msgid "Markup code"
+msgstr "Opmaak code"
 
 #: plugins/markup/models.py:82
 #, python-format
 msgid "%s items"
-msgstr "%s delen"
+msgstr "%s blokken"
 
 #: plugins/oembeditem/forms.py:14
 msgid "The URL is not valid for embedding content"
@@ -274,6 +270,14 @@ msgstr "Ingesloten media"
 msgid "Embeddded media"
 msgstr "Ingesloten media"
 
+#: plugins/oembeditem/templates/admin/fluent_contents/plugins/oembeditem/admin_form.html:15
+msgid "Max size"
+msgstr "Maximale grootte"
+
+#: plugins/oembeditem/templates/admin/fluent_contents/plugins/oembeditem/admin_form.html:16
+msgid "pixels"
+msgstr "pixels"
+
 #: plugins/rawhtml/models.py:7 plugins/rawhtml/models.py:10
 #: plugins/rawhtml/models.py:11
 msgid "HTML code"
@@ -297,36 +301,27 @@ msgstr "Template naam"
 
 #: plugins/sharedcontent/models.py:11
 msgid "This unique name can be used refer to this content in in templates."
-msgstr "Deze unieke naam kan gebruikt worden om in de template naar deze inhoud te verwijzen."
+msgstr ""
+"Deze unieke naam kan gebruikt worden om in de template naar deze inhoud te "
+"verwijzen."
 
 #: plugins/sharedcontent/models.py:12
 msgid "Contents"
 msgstr "Inhoud"
 
 #: plugins/sharedcontent/models.py:17 plugins/sharedcontent/models.py:18
-#: plugins/sharedcontent/models.py:28
+#: plugins/sharedcontent/models.py:28 plugins/sharedcontent/models.py:31
+#: plugins/sharedcontent/models.py:32
 msgid "Shared content"
 msgstr "Gedeelde inhoud"
-
-#: plugins/sharedcontent/models.py:31
-msgid "Shared content item"
-msgstr "Gedeelde inhouddeel"
-
-#: plugins/sharedcontent/models.py:32
-msgid "Shared content items"
-msgstr "Gedeelde inhouddelen"
 
 #: plugins/text/models.py:14
 msgid "text"
 msgstr "tekst"
 
-#: plugins/text/models.py:17
-msgid "Text item"
-msgstr "Tekstdeel"
-
-#: plugins/text/models.py:18
-msgid "Text items"
-msgstr "Tekstdelen"
+#: plugins/text/models.py:17 plugins/text/models.py:18
+msgid "Text"
+msgstr "Tekst"
 
 #: plugins/twitterfeed/models.py:10 plugins/twitterfeed/models.py:15
 #: plugins/twitterfeed/models.py:31 plugins/twitterfeed/models.py:36

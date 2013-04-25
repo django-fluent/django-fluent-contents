@@ -14,8 +14,8 @@ class TextItem(ContentItem):
     text = models.TextField(_('text'), blank=True)
 
     class Meta:
-        verbose_name = _('Text item')
-        verbose_name_plural = _('Text items')
+        verbose_name = _('Text')
+        verbose_name_plural = _('Text')
 
     def __unicode__(self):
         return truncate_words(strip_tags(self.text), 20)

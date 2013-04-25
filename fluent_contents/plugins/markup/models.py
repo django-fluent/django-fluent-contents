@@ -39,8 +39,8 @@ class MarkupItem(ContentItem):
     language = models.CharField(_('Language'), max_length=30, editable=False, db_index=True, choices=backend.LANGUAGE_CHOICES)
 
     class Meta:
-        verbose_name = _('Markup item')
-        verbose_name_plural = _('Markup items')
+        verbose_name = _('Markup code')
+        verbose_name_plural = _('Markup code')
 
     def __unicode__(self):
         return truncate_words(self.text, 20)
