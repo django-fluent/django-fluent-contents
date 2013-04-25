@@ -1,6 +1,11 @@
+from django.contrib.admin.widgets import AdminTextareaWidget
 from django.forms.widgets import Widget
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
+from django.forms.widgets import flatatt
+from django.utils.html import escape
+from fluent_contents.utils.compat import smart_unicode
+
 
 class PlaceholderFieldWidget(Widget):
     """
@@ -57,3 +62,23 @@ class PlaceholderFieldWidget(Widget):
             return extensions.plugin_pool.get_plugins()
         else:
             return extensions.plugin_pool.get_plugins_by_name(*self._plugins)
+
+
+class WysiwygWidget(AdminTextareaWidget):
+    """
+    WYSIWYG widget
+    """
+
+    def __init__(self, attrs=None):
+        super(WysiwygWidget, self).__init__(attrs)
+
+    def render(self, name, value, attrs=None):
+        value = smart_unicode(value or u'')
+        final_attrs = self.build_attrs(attrs, name=name)
+
+        if 'class' in final_attrs:
+            final_attrs['class'] += ' cp-wysiwyg-widget'
+        else:
+            final_attrs['class'] = 'cp-wysiwyg-widget'
+
+        return mark_safe(u'<textarea{0}>{1}</textarea>'.format(flatatt(final_attrs), escape(value)))

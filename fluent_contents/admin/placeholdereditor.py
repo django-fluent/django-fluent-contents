@@ -56,6 +56,7 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
             'fluent_contents/admin/cp_data.js',
             'fluent_contents/admin/cp_tabs.js',
             'fluent_contents/admin/cp_plugins.js',
+            'fluent_contents/admin/cp_widgets.js',
             'fluent_contents/admin/fluent_contents.js',
         )
         css = {

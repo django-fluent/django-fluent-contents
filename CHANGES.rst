@@ -3,7 +3,7 @@ Version 0.9
 
 * Added ``FLUENT_CONTENTS_PLACEHOLDER_CONFIG`` variable to limit plugins in specific placeholder slots.
 * Added model fields for plugin developers, to have a consistent interface.
-  The model fields integrate with django-any-urlfield_ and django-any-imagefield_.
+  The model fields integrate with django-any-urlfield_, django-any-imagefield_ and django-wysiwyg_.
 
 
 Version 0.8.6

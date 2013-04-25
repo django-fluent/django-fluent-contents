@@ -27,7 +27,8 @@ var cp_plugins = {};
   cp_plugins.on_init = function(callback)
   {
     on_init_callbacks.push(callback);
-  },
+  }
+
 
   /**
    * Bind an event before the final layout is organized.
@@ -684,6 +685,10 @@ var cp_plugins = {};
 
   cp_plugins.enable_pageitem = function($fs_item)
   {
+    // Default actions:
+    cp_widgets.enable_wysiwyg($fs_item);
+
+    // Custom view handler
     var view_handler = cp_plugins.get_view_handler($fs_item);
     if( view_handler ) view_handler.enable($fs_item);
   }
@@ -691,6 +696,10 @@ var cp_plugins = {};
 
   cp_plugins.disable_pageitem = function($fs_item)
   {
+    // Default actions:
+    cp_widgets.disable_wysiwyg($fs_item);
+
+    // Custom code
     var view_handler = cp_plugins.get_view_handler($fs_item);
     if( view_handler ) view_handler.disable($fs_item);
   }
