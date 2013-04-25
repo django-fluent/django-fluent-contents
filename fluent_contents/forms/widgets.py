@@ -68,8 +68,10 @@ class WysiwygWidget(AdminTextareaWidget):
     """
     WYSIWYG widget
     """
-
     def __init__(self, attrs=None):
+        defaults = {'rows': 4}
+        if attrs:
+            defaults.update(attrs)
         super(WysiwygWidget, self).__init__(attrs)
 
     def render(self, name, value, attrs=None):
