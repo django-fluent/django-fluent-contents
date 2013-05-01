@@ -29,7 +29,7 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
     # Filter the items both by placeholder and parent;
     # this mimics the behavior of CMS pages.
     items = placeholder.get_content_items(parent_object)
-    html = _render_items(request, _get_placeholder_cache_name(placeholder), items, template_name=template_name)
+    html = _render_items(request, placeholder, items, template_name=template_name)
 
     if is_edit_mode(request):
         html = _wrap_placeholder_output(html, placeholder)
@@ -43,7 +43,7 @@ def render_content_items(request, items, template_name=None):
     if not items:
         html = "<!-- no items to render -->"
     else:
-        html = _render_items(request, '@global@', items, template_name=template_name)
+        html = _render_items(request, None, items, template_name=template_name)
 
     if is_edit_mode(request):
         html = _wrap_anonymous_output(html)
@@ -64,10 +64,11 @@ def is_edit_mode(request):
     return getattr(request, '_fluent_contents_edit_mode', False)
 
 
-def _render_items(request, placeholder_name, items, template_name=None):
+def _render_items(request, placeholder, items, template_name=None):
     edit_mode = is_edit_mode(request)
     output = {}
     output_ordering = []
+    placeholder_cache_name = '@global@' if placeholder is None else placeholder.slot
 
     if not hasattr(items, "non_polymorphic"):
         # The items is either a list of manually created items, or it's a QuerySet.
@@ -87,7 +88,7 @@ def _render_items(request, placeholder_name, items, template_name=None):
             try:
                 # Respect the cache output setting of the plugin
                 if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and contentitem.plugin.cache_output and contentitem.pk:
-                    cachekey = get_rendering_cache_key(placeholder_name, contentitem)
+                    cachekey = get_rendering_cache_key(placeholder_cache_name, contentitem)
                     html = cache.get(cachekey)
             except PluginNotFound:
                 pass
@@ -108,7 +109,7 @@ def _render_items(request, placeholder_name, items, template_name=None):
     # See if the queryset contained anything.
     # This test is moved here, to prevent earlier query execution.
     if not items:
-        return u"<!-- no items in placeholder '{0}' -->".format(escape(placeholder_name))
+        return u"<!-- no items in placeholder '{0}' -->".format(escape(_get_placeholder_name(placeholder)))
     elif remaining_items:
         # Render remaining items
         for contentitem in remaining_items:
@@ -122,7 +123,7 @@ def _render_items(request, placeholder_name, items, template_name=None):
                 html = conditional_escape(plugin._render_contentitem(request, contentitem))
 
                 if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and plugin.cache_output and contentitem.pk:
-                    cachekey = get_rendering_cache_key(placeholder_name, contentitem)
+                    cachekey = get_rendering_cache_key(placeholder_cache_name, contentitem)
                     cache.set(cachekey, html)
 
                 if edit_mode:
@@ -182,7 +183,7 @@ def _wrap_contentitem_output(html, contentitem):
     ))
 
 
-def _get_placeholder_cache_name(placeholder):
+def _get_placeholder_name(placeholder):
     # TODO: Cheating here with knowledge of "fluent_contents.plugins.sharedcontent" package:
     #       prevent unclear message in <!-- no items in '..' placeholder --> debug output.
     if placeholder.slot == 'shared_content':
