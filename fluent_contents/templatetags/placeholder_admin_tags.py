@@ -16,6 +16,21 @@ def only_content_item_formsets(formsets):
 
 
 @register.filter
+def has_no_visible_fields(fieldset):
+    # fieldset = admin Fieldset object.
+    fields = fieldset.fields
+    for name_slot in fields:
+        # Lines can include (field, field)
+        if not hasattr(name_slot, "__iter__"):
+            name_slot = [name_slot]
+        for name in name_slot:
+            if not fieldset.form.fields[name].widget.is_hidden:
+                return False
+
+    return True
+
+
+@register.filter
 def group_plugins_into_categories(plugins):
     """
     Return all plugins, grouped by category.

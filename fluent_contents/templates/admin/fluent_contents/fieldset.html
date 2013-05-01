@@ -1,3 +1,4 @@
+{% load placeholder_admin_tags i18n %}
 {# this is essentially admin/includes/fieldset.html, with detection of hidden fields. #}
 {# context structure: InlineFieldset -> Fieldline -> AdminField -> form field (BoundField instance) #}
 {# The hidden field handling is made in advance of https://code.djangoproject.com/ticket/11277 getting merged to trunk #}
@@ -9,7 +10,13 @@
     {% if fieldset.description %}
         <div class="description">{{ fieldset.description|safe }}</div>
     {% endif %}
-    {% for line in fieldset %}
-        {% include "admin/fluent_contents/fieldset_line.html" %}
-    {% endfor %}
+    {% if fieldset|has_no_visible_fields %}
+        <div class="form-row">
+            <p class='plugin-without-fields'>{% trans "There are no options to configure for this element." %}</p>
+        </div>
+    {% else %}
+        {% for line in fieldset %}
+            {% include "admin/fluent_contents/fieldset_line.html" %}
+        {% endfor %}
+    {% endif %}
 </fieldset>
