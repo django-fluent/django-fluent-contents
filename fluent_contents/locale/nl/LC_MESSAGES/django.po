@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-25 11:24+0200\n"
+"POT-Creation-Date: 2013-05-01 23:43+0200\n"
 "PO-Revision-Date: 2011-01-10 23:54+0100\n"
 "Last-Translator: Diederik van der Boor <vdboor@edoburu.nl>\n"
 "Language-Team: Dutch <NL@li.org>\n"
@@ -404,6 +404,10 @@ msgstr "Twitter zoekresultaten"
 #: plugins/twitterfeed/templates/plugins/twitterfeed/base.html:32
 msgid "loading tweets..."
 msgstr "Tweets worden opgehaald..."
+
+#: templates/admin/fluent_contents/fieldset.html:15
+msgid "There are no options to configure for this element."
+msgstr "Er zijn geen instellingen nodig voor dit element."
 
 #: templates/admin/fluent_contents/placeholder/inline_tabs.html:51
 msgid "Loading layout data..."
