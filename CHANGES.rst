@@ -5,6 +5,7 @@ Version 0.9
 * Added model fields for plugin developers, to have a consistent interface.
   The model fields integrate with django-any-urlfield_, django-any-imagefield_ and django-wysiwyg_.
 * Added picture plugin.
+* For development (``DEBUG=True``), changes in plugin templates update the stored version in the output cache.
 
 
 Version 0.8.6

@@ -3,14 +3,17 @@ This module provides functions to render placeholder content manually.
 Contents is cached in memcache whenever possible, only the remaining items are queried.
 The templatetags also use these functions to render the :class:`~fluent_contents.models.ContentItem` objects.
 """
+import os
+from django.conf import settings
 from django.core.cache import cache
+from django.template import TemplateDoesNotExist
 from django.template.context import RequestContext
-from django.template.loader import render_to_string
+from django.template.loader import render_to_string, select_template
 from django.utils.html import conditional_escape, escape
 from django.utils.safestring import mark_safe
 from fluent_contents import appsettings
 from fluent_contents.cache import get_rendering_cache_key
-from fluent_contents.extensions import PluginNotFound
+from fluent_contents.extensions import PluginNotFound, ContentPlugin
 import logging
 
 # This code is separate from the templatetags,
@@ -80,13 +83,18 @@ def _render_items(request, placeholder_name, items, template_name=None):
         for i, contentitem in enumerate(items):
             output_ordering.append(contentitem.pk)
             html = None
+            cachekey = None
             try:
                 # Respect the cache output setting of the plugin
-                if contentitem.plugin.cache_output and contentitem.pk and appsettings.FLUENT_CONTENTS_CACHE_OUTPUT:
+                if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and contentitem.plugin.cache_output and contentitem.pk:
                     cachekey = get_rendering_cache_key(placeholder_name, contentitem)
                     html = cache.get(cachekey)
             except PluginNotFound:
                 pass
+
+            # For debugging, ignore cached values when the template is updated.
+            if html and settings.DEBUG and _is_template_updated(request, contentitem, cachekey):
+                html = None
 
             if html:
                 output[contentitem.pk] = html
@@ -113,7 +121,7 @@ def _render_items(request, placeholder_name, items, template_name=None):
                 # This is just like Django's Input.render() and unlike Node.render().
                 html = conditional_escape(plugin._render_contentitem(request, contentitem))
 
-                if plugin.cache_output and contentitem.pk and appsettings.FLUENT_CONTENTS_CACHE_OUTPUT:
+                if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and plugin.cache_output and contentitem.pk:
                     cachekey = get_rendering_cache_key(placeholder_name, contentitem)
                     cache.set(cachekey, html)
 
@@ -182,3 +190,38 @@ def _get_placeholder_cache_name(placeholder):
         return "shared_content:{0}".format(sharedcontent.slug)
 
     return placeholder.slot
+
+
+def _is_template_updated(request, contentitem, cachekey):
+    if not settings.DEBUG:
+        return False
+    # For debugging only: tell whether the template is updated,
+    # so the cached values can be ignored.
+
+    plugin = contentitem.plugin
+    if plugin.get_render_template.__func__ is not ContentPlugin.get_render_template.__func__:
+        # oh oh, really need to fetch the real object.
+        # Won't be needed that often.
+        contentitem = contentitem.get_real_instance()  # This is only needed with DEBUG=True
+        template_names = plugin.get_render_template(request, contentitem)
+    else:
+        template_names = plugin.render_template
+
+    if not template_names:
+        return False
+    if isinstance(template_names, basestring):
+        template_names = [template_names]
+
+    # With TEMPLATE_DEBUG = True, each node tracks it's origin.
+    node0 = select_template(template_names).nodelist[0]
+    attr = 'source' if hasattr(node0, 'source') else 'origin'  # attribute depends on object type
+    try:
+        template_filename = getattr(node0, attr)[0].name
+    except (AttributeError, IndexError):
+        return False
+
+    cache_stat = cache.get(cachekey + ".debug-stat")
+    current_stat = os.path.getmtime(template_filename)
+    if cache_stat != current_stat:
+        cache.set(cachekey + ".debug-stat", current_stat)
+        return True
