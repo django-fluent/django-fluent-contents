@@ -1,5 +1,12 @@
-{# The admin_form only displays the widgets, no form labels etc.. in front of it #}
+{% load placeholder_admin_tags i18n %}{# The admin_form only displays the widgets, no form labels etc.. in front of it #}
         {% block before_fieldsets %}{% endblock %}
+        {% block plugin-message %}
+          {% if inline_admin_form|has_no_visible_fields %}
+            <div class="form-row">
+              <p class='plugin-without-fields'>{% trans "There are no options to configure for this element." %}</p>
+            </div>
+          {% endif %}
+        {% endblock %}
         {% block fieldsets %}
         {% for fieldset in inline_admin_form %}
           {% for line in fieldset %}
