@@ -228,8 +228,8 @@ class ContentItem(PolymorphicModel):
 
 
     def __unicode__(self):
-        return u"{type} {id:d} in '{placeholder}'".format(
-            type=self.polymorphic_ctype or self._meta.verbose_name,
+        return u"'{type} {id:d}' in '{placeholder}'".format(
+            type=ContentType.objects.get_for_id(self.polymorphic_ctype_id).model_class()._meta.verbose_name,
             id=self.id or 0,
             placeholder=self.placeholder
         )

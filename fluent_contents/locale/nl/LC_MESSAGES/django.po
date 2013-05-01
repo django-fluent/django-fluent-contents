@@ -59,19 +59,19 @@ msgstr "Admin titel"
 
 #: models/db.py:56
 msgid "Placeholder"
-msgstr "Plaatsaanduiding"
+msgstr "Blokruimte"
 
 #: models/db.py:57
 msgid "Placeholders"
-msgstr "Plaatsaanduidingen"
+msgstr "Blokruimtes"
 
 #: models/db.py:241
 msgid "Contentitem link"
-msgstr "Blokverwijzing"
+msgstr "Blokkoppeling"
 
 #: models/db.py:242
 msgid "Contentitem links"
-msgstr "Blokverwijzingen"
+msgstr "Blokkoppelingen"
 
 #: plugins/code/backend.py:19
 msgid "Combinations"
