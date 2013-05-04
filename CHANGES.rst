@@ -2,6 +2,7 @@ Version 0.8.6
 -------------
 
 * Fixed metaclass errors in markup plugin for Django 1.5 / six.
+* Fix initial south migrations, added missing dependencies.
 * Fixed cache clearing of sharedcontent plugin.
 * Updated django-polymorphic_ version to 0.4.2, addressed deprecation warnings.
 * Updated example app to show latest features.
