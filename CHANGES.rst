@@ -7,6 +7,7 @@ Version 0.9
 * Added picture plugin.
 * Added development (``DEBUG=True``) feature, changes in plugin templates update the stored version in the output cache.
 * Fix admin appearance of plugins without fields.
+* Fix initial south migrations, added missing dependencies.
 
 
 Version 0.8.6
