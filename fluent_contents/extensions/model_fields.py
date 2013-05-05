@@ -29,7 +29,7 @@ else:
     PluginImageField = models.ImageField
 
 
-class HtmlField(models.TextField):
+class PluginHtmlField(models.TextField):
     """
     A large string field for HTML content; it's replaced with django-wysiwyg in the admin.
     """
@@ -37,7 +37,7 @@ class HtmlField(models.TextField):
         defaults = {'widget': WysiwygWidget}
         defaults.update(kwargs)
 
-        return super(HtmlField, self).formfield(**defaults)
+        return super(PluginHtmlField, self).formfield(**defaults)
 
     def to_python(self, value):
         return mark_safe(value)
@@ -47,11 +47,11 @@ class HtmlField(models.TextField):
 try:
     from south.modelsinspector import add_introspection_rules
     add_introspection_rules([], [
-        "^fluent_contents\.extensions\.model_fields\.HtmlField",
+        "^fluent_contents\.extensions\.model_fields\.PluginHtmlField",
     ])
 except ImportError:
     pass
 
 # Tell the Django admin it shouldn't override the widget because it's a TextField
 from django.contrib.admin import options
-options.FORMFIELD_FOR_DBFIELD_DEFAULTS[HtmlField] = {'widget': WysiwygWidget}
+options.FORMFIELD_FOR_DBFIELD_DEFAULTS[PluginHtmlField] = {'widget': WysiwygWidget}

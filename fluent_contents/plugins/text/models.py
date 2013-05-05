@@ -1,7 +1,7 @@
 from django.utils.html import strip_tags
 from django.utils.text import truncate_words
 from django.utils.translation import ugettext_lazy as _
-from fluent_contents.extensions import HtmlField
+from fluent_contents.extensions import PluginHtmlField
 from fluent_contents.models import ContentItem
 from fluent_contents.plugins.text import appsettings
 from django_wysiwyg.utils import clean_html, sanitize_html
@@ -11,7 +11,7 @@ class TextItem(ContentItem):
     """
     A snippet of HTML text to display on a page.
     """
-    text = HtmlField(_('text'), blank=True)
+    text = PluginHtmlField(_('text'), blank=True)
 
     class Meta:
         verbose_name = _('Text')
