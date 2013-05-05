@@ -10,7 +10,7 @@ Having to do an explicit register ensures future compatibility with other API's 
 """
 from .model_fields import PluginUrlField, PluginFileField, PluginImageField, PluginHtmlField
 from .pluginbase import PluginContext, ContentPlugin
-from .pluginpool import plugin_pool, PluginNotFound, PluginAlreadyRegistered
+from .pluginpool import plugin_pool, PluginPool, PluginNotFound, PluginAlreadyRegistered
 from fluent_contents.forms import ContentItemForm   # Expose over here now, still leave at old location.
 from fluent_contents.models import ContentItem      # Allow plugins to pick everything from 'extensions'
 
@@ -20,6 +20,6 @@ __all__ = (
     'ContentItem',
     'PluginUrlField', 'PluginFileField', 'PluginImageField', 'PluginHtmlField',
     'ContentItemForm',
-    'plugin_pool',
+    'plugin_pool', 'PluginPool',
     'PluginNotFound', 'PluginAlreadyRegistered',
 )

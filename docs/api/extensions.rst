@@ -22,6 +22,37 @@ The ``plugin_pool`` attribute
 
     The global plugin pool, a instance of the :class:`PluginPool` class.
 
+
+Model fields
+------------
+
+.. versionadded:: 0.9.0
+
+The model fields ensure a consistent look and feel between plugins. See :ref:`optional-integration` for more details.
+
+.. autoclass:: fluent_contents.extensions.PluginFileField
+   :members:
+
+.. autoclass:: fluent_contents.extensions.PluginHtmlField
+   :members:
+
+.. autoclass:: fluent_contents.extensions.PluginImageField
+   :members:
+
+.. autoclass:: fluent_contents.extensions.PluginUrlField
+   :members:
+
+
+Classes for custom forms
+------------------------
+
+.. versionadded:: 0.9.0
+   The canonical place to import this class has moved, previously it was available via :mod:`fluent_contents.forms`.
+
+.. autoclass:: fluent_contents.extensions.ContentItemForm
+   :members:
+
+
 Other classes
 -------------
 

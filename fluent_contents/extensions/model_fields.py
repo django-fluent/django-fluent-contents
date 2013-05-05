@@ -33,6 +33,10 @@ class PluginHtmlField(models.TextField):
     """
     A large string field for HTML content; it's replaced with django-wysiwyg in the admin.
     """
+    def __init__(self, *args, **kwargs):
+        # This method override is primary included to improve the API documentation
+        super(PluginHtmlField, self).__init__(*args, **kwargs)
+
     def formfield(self, **kwargs):
         defaults = {'widget': WysiwygWidget}
         defaults.update(kwargs)
