@@ -1,8 +1,8 @@
-from any_imagefield.models import AnyImageField
-from any_urlfield.models import AnyUrlField
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from fluent_contents.extensions import PluginImageField, PluginUrlField
 from fluent_contents.models.db import ContentItem
+from . import appsettings
 
 
 class PictureItem(ContentItem):
@@ -18,10 +18,10 @@ class PictureItem(ContentItem):
         (ALIGN_RIGHT, _("Right")),
     )
 
-    image = AnyImageField(_("Image"))
+    image = PluginImageField(_("Image"), upload_to=appsettings.FLUENT_PICTURE_UPLOAD_TO)
     caption = models.TextField(_("Caption"), blank=True)
     align = models.CharField(_("Align"), max_length=10, choices=ALIGN_CHOICES, blank=True)
-    url = AnyUrlField(_("URL"), blank=True)
+    url = PluginUrlField(_("URL"), blank=True)
 
     class Meta:
         verbose_name = _("Picture")
