@@ -1,5 +1,5 @@
 from django.utils.html import strip_tags
-from django.utils.text import truncate_words
+from django.utils.text import Truncator
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import PluginHtmlField
 from fluent_contents.models import ContentItem
@@ -18,7 +18,7 @@ class TextItem(ContentItem):
         verbose_name_plural = _('Text')
 
     def __unicode__(self):
-        return truncate_words(strip_tags(self.text), 20)
+        return Truncator(strip_tags(self.text)).words(20)
 
     def save(self, *args, **kwargs):
         # Make well-formed if requested
