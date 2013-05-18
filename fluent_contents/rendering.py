@@ -148,9 +148,9 @@ def _render_items(request, placeholder, items, template_name=None):
             except PluginNotFound:
                 # Derived table isn't there because the model has been removed.
                 # There is a stale ContentType object, no plugin associated or loaded.
-                class_name = '(content type is stale)'
+                class_name = 'content type is stale'
 
-            output_ordered.append("<!-- Missing derived model for ContentItem #{id}: {cls}. -->".format(id=pk, cls=class_name))
+            output_ordered.append("<!-- Missing derived model for ContentItem #{id}: {cls}. -->\n".format(id=pk, cls=class_name))
             logger.warning("Missing derived model for ContentItem #{id}: {cls}.".format(id=pk, cls=class_name))
             pass
 
