@@ -112,6 +112,7 @@ class AdminTest(AppTestCase):
         opts = modeladmin.opts
         url = reverse('admin:{0}_{1}_add'.format(opts.app_label, opts.module_name))
         request = self.factory.get(url)
+        request.user = self.admin_user
 
         if hasattr(modeladmin, 'get_inline_instances'):
             inline_instances = modeladmin.get_inline_instances(request)  # Django 1.4
