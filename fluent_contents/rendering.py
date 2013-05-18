@@ -138,9 +138,20 @@ def _render_items(request, placeholder, items, template_name=None):
         try:
             output_ordered.append(output[pk])
         except KeyError:
-            # NOTE: if a table is truncated/reset, the base class still exists and causes a query to happen every time.
-            item = [item for item in items if item.pk == pk][0]
-            logger.warning("Missing derived model for ContentItem #{id}: {cls}.".format(id=pk, cls=item.plugin.type_name))
+            # The get_real_instances() didn't return an item for the derived table. This happens when either:
+            # - that table is truncated/reset, while there is still an entry in the base ContentItem table.
+            #   A query at the derived table happens every time the page is being rendered.
+            # - the model was completely removed which means there is also a stale ContentType object.
+            item = next(item for item in items if item.pk == pk)
+            try:
+                class_name = item.plugin.type_name
+            except PluginNotFound:
+                # Derived table isn't there because the model has been removed.
+                # There is a stale ContentType object, no plugin associated or loaded.
+                class_name = '(content type is stale)'
+
+            output_ordered.append("<!-- Missing derived model for ContentItem #{id}: {cls}. -->".format(id=pk, cls=class_name))
+            logger.warning("Missing derived model for ContentItem #{id}: {cls}.".format(id=pk, cls=class_name))
             pass
 
     # Combine all rendered items. Allow rendering the items with a template,
