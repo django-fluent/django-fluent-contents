@@ -39,7 +39,7 @@ settings.configure(
     FLUENT_CONTENTS_CACHE_OUTPUT = True,
 )
 
-call_command('syncdb', verbosity=1, interactive=False)
+call_command('syncdb', verbosity=1, interactive=False, traceback=True)
 
 
 # ---- app start
