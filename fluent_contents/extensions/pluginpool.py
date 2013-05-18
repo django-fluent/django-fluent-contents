@@ -153,7 +153,16 @@ class PluginPool(object):
         try:
             name = self._name_for_ctype_id[ct_id]
         except KeyError:
-            raise PluginNotFound("No plugin found for content type '{0}'.".format(contenttype))
+            # ContentType not found, likely a plugin is no longer registered or the app has been removed.
+            try:
+                # ContentType could be stale
+                ct = contenttype if isinstance(contenttype, ContentType) else ContentType.objects.get_for_id(ct_id)
+            except AttributeError:  # should return the stale type but Django <1.6 raises an AttributeError in fact.
+                ct_name = 'stale content type'
+            else:
+                ct_name = '{0}.{1}'.format(ct.app_label, ct.model)
+            raise PluginNotFound("No plugin found for content type #{0} ({1}).".format(contenttype, ct_name))
+
         return self.plugins[name]
 
 
