@@ -1,3 +1,4 @@
+import django
 from django.contrib.contenttypes.generic import GenericRelation, GenericRel
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.query_utils import Q
@@ -63,18 +64,26 @@ class PlaceholderRel(GenericRel):
     The internal :class:`~django.contrib.contenttypes.generic.GenericRel`
     that is used by the :class:`PlaceholderField` to support queries.
     """
-    def __init__(self, slot):
+    def __init__(self, field):
         limit_choices_to = Q(
             parent_type=lazy(lambda: ContentType.objects.get_for_model(Placeholder), ContentType)(),
-            slot=slot,
+            slot=field.slot,
         )
 
         # TODO: make sure reverse queries work properly
-        super(PlaceholderRel, self).__init__(
-            to=Placeholder,
-            related_name=None,  # NOTE: must be unique for app/model/slot.
-            limit_choices_to=limit_choices_to
-        )
+        if django.VERSION >= (1, 6, 0):
+            super(PlaceholderRel, self).__init__(
+                field=field,
+                to=Placeholder,
+                related_name=None,  # NOTE: must be unique for app/model/slot.
+                limit_choices_to=limit_choices_to
+            )
+        else:
+            super(PlaceholderRel, self).__init__(
+                to=Placeholder,
+                related_name=None,  # NOTE: must be unique for app/model/slot.
+                limit_choices_to=limit_choices_to
+            )
 
 
 class PlaceholderFieldDescriptor(object):
@@ -153,7 +162,7 @@ class PlaceholderField(PlaceholderRelation):
         # Overwrite some hardcoded defaults from the base class.
         self.editable = True
         self.blank = True                     # TODO: support blank: False to enforce adding at least one plugin.
-        self.rel = PlaceholderRel(self.slot)  # This support queries
+        self.rel = PlaceholderRel(self)       # This support queries
 
 
     def formfield(self, **kwargs):
