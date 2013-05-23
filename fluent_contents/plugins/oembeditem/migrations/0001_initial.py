@@ -72,7 +72,7 @@ class Migration(SchemaMigration):
             'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'embed_max_height': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
             'embed_max_width': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
-            'embed_url': ('django.db.models.fields.URLField', [], {'max_length': '200'}),
+            'embed_url': ('fluent_contents.plugins.oembeditem.fields.OEmbedUrlField', [], {'max_length': '200'}),
             'height': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'html': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
             'provider_name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),

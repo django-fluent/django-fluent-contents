@@ -3,7 +3,6 @@ Definition of the plugin.
 """
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import ContentPlugin, plugin_pool
-from fluent_contents.plugins.oembeditem.forms import OEmbedItemForm
 from fluent_contents.plugins.oembeditem.models import OEmbedItem
 import re
 
@@ -17,7 +16,6 @@ class OEmbedPlugin(ContentPlugin):
     admin_form_template = "admin/fluent_contents/plugins/oembeditem/admin_form.html"
     render_template = "fluent_contents/plugins/oembed/default.html"
 
-    form = OEmbedItemForm
     fieldsets = (
         (None, {
             'fields': (

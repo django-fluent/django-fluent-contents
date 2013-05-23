@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents.models.db import ContentItem
+from fluent_contents.plugins.oembeditem.fields import OEmbedUrlField
 from fluent_contents.plugins.oembeditem import backend
 
 class OEmbedItem(ContentItem):
@@ -13,7 +14,7 @@ class OEmbedItem(ContentItem):
     TYPE_LINK = 'link'
 
     # Fetch parameters
-    embed_url = models.URLField(_("URL to embed"), help_text=_("Enter the URL of the online content to embed (e.g. a YouTube or Vimeo video, SlideShare presentation, etc..)"))
+    embed_url = OEmbedUrlField(_("URL to embed"))
     embed_max_width = models.PositiveIntegerField(_("Max width"), blank=True, null=True)
     embed_max_height = models.PositiveIntegerField(_("Max height"), blank=True, null=True)
 
