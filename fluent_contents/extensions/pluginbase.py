@@ -9,11 +9,13 @@ from django.contrib.contenttypes.models import ContentType
 from django.core import context_processors
 from django.contrib.auth import context_processors as auth_context_processors
 from django.contrib.messages import context_processors as messages_context_processors
+from django.core.cache import cache
 from django.db import DatabaseError
 from django.template.context import Context
 from django.template.loader import render_to_string
 from django.utils.html import linebreaks, escape
 from django.utils.translation import ugettext as _
+from fluent_contents.cache import get_rendering_cache_key
 from fluent_contents.forms import ContentItemForm
 
 
@@ -202,6 +204,48 @@ class ContentPlugin(object):
         # Internal wrapper for render(), to allow updating the method signature easily.
         # It also happens to really simplify code navigation.
         return self.render(request=request, instance=instance)
+
+
+    def get_output_cache_keys(self, placeholder_name, instance):
+        """
+        .. versionadded:: 0.9
+           Return the possible cache keys for a rendered item.
+
+           This method should be overwritten when implementing a function :func:`set_cached_output` method.
+           By default, this function generates the cache key using :func:`~fluent_contents.cache.get_rendering_cache_key`.
+        """
+        return [
+            get_rendering_cache_key(placeholder_name, instance)
+        ]
+
+
+    def get_cached_output(self, placeholder_name, instance):
+        """
+        .. versionadded:: 0.9
+           Return the cached output for a rendered item, or ``None`` if no output is cached.
+
+           This method can be overwritten to implement custom caching mechanisms.
+           By default, this function generates the cache key using :func:`~fluent_contents.cache.get_rendering_cache_key`
+           and retrieves the results from the configured Django cache backend (e.g. memcached).
+        """
+        cachekey = get_rendering_cache_key(placeholder_name, instance)
+        return cache.get(cachekey)
+
+
+    def set_cached_output(self, placeholder_name, instance, html):
+        """
+        .. versionadded:: 0.9
+           Store the cached output for a rendered item.
+
+           This method can be overwritten to implement custom caching mechanisms.
+           By default, this function generates the cache key using :func:`~fluent_contents.cache.get_rendering_cache_key`
+           and stores the results in the configured Django cache backend (e.g. memcached).
+
+           When custom cache keys are used, also include those in :func:`get_output_cache_keys`
+           so the cache will be cleared when needed.
+        """
+        cachekey = get_rendering_cache_key(placeholder_name, instance)
+        cache.set(cachekey, html)
 
 
     def render(self, request, instance, **kwargs):

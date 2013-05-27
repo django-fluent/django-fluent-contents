@@ -7,7 +7,6 @@ from django.utils.translation import ugettext_lazy as _
 from polymorphic import PolymorphicModel
 from polymorphic.base import PolymorphicModelBase
 from fluent_contents import appsettings
-from fluent_contents.cache import get_rendering_cache_key
 from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_lookup_kwargs
 
 
@@ -255,8 +254,10 @@ class ContentItem(PolymorphicModel):
             return None
 
     def save(self, *args, **kwargs):
+        is_new = not self.pk
         super(ContentItem, self).save(*args, **kwargs)
-        self.clear_cache()
+        if not is_new:
+            self.clear_cache()
 
 
     def delete(self, *args, **kwargs):
@@ -275,12 +276,15 @@ class ContentItem(PolymorphicModel):
     def get_cache_keys(self):
         """
         Get a list of all cache keys associated with this model.
+        This queries the associated plugin for the cache keys it used to store the output at.
         """
         if not self.placeholder_id:
             # TODO: prune old placeholder slot name?
             return []
 
+        # As plugins can change the output caching,
+        # they should also return which keys content is stored at.
         placeholder_name = self.placeholder.slot
-        return [
-            get_rendering_cache_key(placeholder_name, self)
-        ]
+        keys = []  # ensure list return type.
+        keys.extend(self.plugin.get_output_cache_keys(placeholder_name, self))
+        return keys

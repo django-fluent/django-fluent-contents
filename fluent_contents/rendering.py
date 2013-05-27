@@ -6,7 +6,6 @@ The templatetags also use these functions to render the :class:`~fluent_contents
 import os
 from django.conf import settings
 from django.core.cache import cache
-from django.template import TemplateDoesNotExist
 from django.template.context import RequestContext
 from django.template.loader import render_to_string, select_template
 from django.utils.html import conditional_escape, escape
@@ -84,18 +83,18 @@ def _render_items(request, placeholder, items, template_name=None):
         for i, contentitem in enumerate(items):
             output_ordering.append(contentitem.pk)
             html = None
-            cachekey = None
             try:
                 # Respect the cache output setting of the plugin
                 if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and contentitem.plugin.cache_output and contentitem.pk:
-                    cachekey = get_rendering_cache_key(placeholder_cache_name, contentitem)
-                    html = cache.get(cachekey)
+                    html = contentitem.plugin.get_cached_output(placeholder_cache_name, contentitem)
             except PluginNotFound:
                 pass
 
             # For debugging, ignore cached values when the template is updated.
-            if html and settings.DEBUG and _is_template_updated(request, contentitem, cachekey):
-                html = None
+            if html and settings.DEBUG:
+                cachekey = get_rendering_cache_key(placeholder_cache_name, contentitem)
+                if _is_template_updated(request, contentitem, cachekey):
+                    html = None
 
             if html:
                 output[contentitem.pk] = html
@@ -123,8 +122,7 @@ def _render_items(request, placeholder, items, template_name=None):
                 html = conditional_escape(plugin._render_contentitem(request, contentitem))
 
                 if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and plugin.cache_output and contentitem.pk:
-                    cachekey = get_rendering_cache_key(placeholder_cache_name, contentitem)
-                    cache.set(cachekey, html)
+                    contentitem.plugin.set_cached_output(placeholder_cache_name, contentitem, html)
 
                 if edit_mode:
                     html = _wrap_contentitem_output(html, contentitem)
