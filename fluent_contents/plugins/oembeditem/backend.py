@@ -81,11 +81,10 @@ def has_provider_for_url(url):
     return registry.provider_for_url(url) is not None
 
 
-def get_oembed_data(url, max_width=None, max_height=None):
+def get_oembed_data(url, max_width=None, max_height=None, **params):
     """
     Fetch the OEmbed object, return the response as dictionary.
     """
-    params = {}
     if max_width:  params['maxwidth'] = max_width
     if max_height: params['maxheight'] = max_height
 
