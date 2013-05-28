@@ -49,11 +49,12 @@ var cp_plugins = {};
 
     if($.fn.on) {
       // jQuery 1.7+
-      $(".cp-plugin-add-button").on( 'click', cp_plugins.onAddButtonClick );
-      $(".cp-item-controls .cp-item-up").on( 'click', cp_plugins.onItemUpClick );
-      $(".cp-item-controls .cp-item-down").on( 'click', cp_plugins.onItemDownClick );
-      $(".cp-item-controls .cp-item-move").on( 'click', cp_plugins.onItemMoveClick );
-      $(".cp-item-controls .cp-item-delete a").on( 'click', cp_plugins.onDeleteClick );
+      $("#content-main")
+        .on('click', ".cp-plugin-add-button", cp_plugins.onAddButtonClick )
+        .on('click', ".cp-item-controls .cp-item-up", cp_plugins.onItemUpClick )
+        .on('click', ".cp-item-controls .cp-item-down", cp_plugins.onItemDownClick )
+        .on('click', ".cp-item-controls .cp-item-move", cp_plugins.onItemMoveClick )
+        .on('click', ".cp-item-controls .cp-item-delete a", cp_plugins.onDeleteClick );
     }
     else {
       $(".cp-plugin-add-button").live( 'click', cp_plugins.onAddButtonClick );
