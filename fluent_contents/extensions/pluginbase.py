@@ -6,6 +6,7 @@ from django.conf import settings
 from django import forms
 from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 from django.core import context_processors
 from django.contrib.auth import context_processors as auth_context_processors
 from django.contrib.messages import context_processors as messages_context_processors
@@ -113,6 +114,10 @@ class ContentPlugin(object):
     #: By default, rendered output is cached, and updated on admin changes.
     cache_output = True
 
+    #: .. versionadded:: 0.9
+    #: Cache the plugin output per :ref:`SITE_ID <site-id>`.
+    cache_output_per_site = False
+
     #: The category to display the plugin at.
     category = None
 
@@ -206,17 +211,38 @@ class ContentPlugin(object):
         return self.render(request=request, instance=instance)
 
 
+    def get_output_cache_key(self, placeholder_name, instance):
+        """
+        .. versionadded:: 0.9
+           Return the default cache key which is used to store a rendered item.
+           By default, this function generates the cache key using :func:`~fluent_contents.cache.get_rendering_cache_key`.
+        """
+        cachekey = get_rendering_cache_key(placeholder_name, instance)
+        if self.cache_output_per_site:
+            cachekey = "{0}-s{1}".format(cachekey, settings.SITE_ID)
+        return cachekey
+
+
     def get_output_cache_keys(self, placeholder_name, instance):
         """
         .. versionadded:: 0.9
            Return the possible cache keys for a rendered item.
 
-           This method should be overwritten when implementing a function :func:`set_cached_output` method.
-           By default, this function generates the cache key using :func:`~fluent_contents.cache.get_rendering_cache_key`.
+           This method should be overwritten when implementing a function :func:`set_cached_output` method
+           or implementing a :func:`get_output_cache_key` function which can return multiple results.
+           By default, this function generates the cache key using :func:`get_output_cache_key`.
         """
-        return [
-            get_rendering_cache_key(placeholder_name, instance)
-        ]
+        if self.cache_output_per_site:
+            site_ids = list(Site.objects.values_list('pk', flat=True))
+            if settings.SITE_ID not in site_ids:
+                site_ids.append(settings.SITE_ID)
+
+            base_key = get_rendering_cache_key(placeholder_name, instance)
+            return ["{0}-s{1}".format(base_key, site_id) for site_id in site_ids]
+        else:
+            return [
+                self.get_output_cache_key(placeholder_name, instance)
+            ]
 
 
     def get_cached_output(self, placeholder_name, instance):
@@ -225,10 +251,10 @@ class ContentPlugin(object):
            Return the cached output for a rendered item, or ``None`` if no output is cached.
 
            This method can be overwritten to implement custom caching mechanisms.
-           By default, this function generates the cache key using :func:`~fluent_contents.cache.get_rendering_cache_key`
+           By default, this function generates the cache key using :func:`get_output_cache_key`
            and retrieves the results from the configured Django cache backend (e.g. memcached).
         """
-        cachekey = get_rendering_cache_key(placeholder_name, instance)
+        cachekey = self.get_output_cache_key(placeholder_name, instance)
         return cache.get(cachekey)
 
 
@@ -244,7 +270,7 @@ class ContentPlugin(object):
            When custom cache keys are used, also include those in :func:`get_output_cache_keys`
            so the cache will be cleared when needed.
         """
-        cachekey = get_rendering_cache_key(placeholder_name, instance)
+        cachekey = self.get_output_cache_key(placeholder_name, instance)
         cache.set(cachekey, html)
 
 
