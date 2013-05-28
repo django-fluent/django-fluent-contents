@@ -46,11 +46,22 @@ var cp_plugins = {};
   cp_plugins.init = function()
   {
     $("#content-main > form").submit( cp_plugins.onFormSubmit );
-    $(".cp-plugin-add-button").live( 'click', cp_plugins.onAddButtonClick );
-    $(".cp-item-controls .cp-item-up").live( 'click', cp_plugins.onItemUpClick );
-    $(".cp-item-controls .cp-item-down").live( 'click', cp_plugins.onItemDownClick );
-    $(".cp-item-controls .cp-item-move").live( 'click', cp_plugins.onItemMoveClick );
-    $(".cp-item-controls .cp-item-delete a").live( 'click', cp_plugins.onDeleteClick );
+
+    if($.fn.on) {
+      // jQuery 1.7+
+      $(".cp-plugin-add-button").on( 'click', cp_plugins.onAddButtonClick );
+      $(".cp-item-controls .cp-item-up").on( 'click', cp_plugins.onItemUpClick );
+      $(".cp-item-controls .cp-item-down").on( 'click', cp_plugins.onItemDownClick );
+      $(".cp-item-controls .cp-item-move").on( 'click', cp_plugins.onItemMoveClick );
+      $(".cp-item-controls .cp-item-delete a").on( 'click', cp_plugins.onDeleteClick );
+    }
+    else {
+      $(".cp-plugin-add-button").live( 'click', cp_plugins.onAddButtonClick );
+      $(".cp-item-controls .cp-item-up").live( 'click', cp_plugins.onItemUpClick );
+      $(".cp-item-controls .cp-item-down").live( 'click', cp_plugins.onItemDownClick );
+      $(".cp-item-controls .cp-item-move").live( 'click', cp_plugins.onItemMoveClick );
+      $(".cp-item-controls .cp-item-delete a").live( 'click', cp_plugins.onDeleteClick );
+    }
 
     // Allow plugins to initialize
     cp_plugins._init_view_handlers();

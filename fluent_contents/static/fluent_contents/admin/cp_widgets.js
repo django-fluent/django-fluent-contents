@@ -22,7 +22,7 @@ var cp_widgets = {};
   cp_widgets.disable_wysiwyg = function(root, selector)
   {
     selector = selector || 'textarea.cp-wysiwyg-widget';
-    var textareas = root.find(selector + ":not([id=~__prefix__])").toArray();
+    var textareas = root.find(selector + ":not([id~=__prefix__])").toArray();
     for(var i = 0; i < textareas.length; i++)
     {
       var textarea = textareas[i];
@@ -34,7 +34,7 @@ var cp_widgets = {};
   cp_widgets.enable_wysiwyg = function(root, selector)
   {
     selector = selector || 'textarea.cp-wysiwyg-widget';
-    var textareas = root.find(selector + ":not([id=~__prefix__])");
+    var textareas = root.find(selector + ":not([id~=__prefix__])");
 
     if( ! django_wysiwyg.is_loaded() )
     {
