@@ -6,3 +6,6 @@
 
 # Display sane URLs in the docs:
 STATIC_URL = '/static/'
+
+# Avoid error for missing the secret key
+SECRET_KEY = 'docs'
