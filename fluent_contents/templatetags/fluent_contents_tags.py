@@ -200,7 +200,6 @@ def render_placeholder(parser, token):
 
     .. code-block:: html+django
 
-        {% render_placeholder "slotname" %}{# for global objects. #}
         {% render_placeholder someobject.placeholder %}
     """
     return RenderPlaceholderNode.parse(parser, token)
@@ -217,7 +216,7 @@ class RenderPlaceholderNode(BaseNode):
     @classmethod
     def validate_args(cls, tag_name, *args, **kwargs):
         if len(args) != 1:
-            raise TemplateSyntaxError("""{0} tag allows only one parameter: 'slotname'.""".format(tag_name))
+            raise TemplateSyntaxError("""{0} tag allows only one parameter: a placeholder object.""".format(tag_name))
 
         super(RenderPlaceholderNode, cls).validate_args(tag_name, *args, **kwargs)
 
@@ -230,13 +229,6 @@ class RenderPlaceholderNode(BaseNode):
             return "<!-- placeholder object is None -->"
         elif isinstance(placeholder, Placeholder):
             pass
-        elif isinstance(placeholder, basestring):
-            # This feature only exists at database level, the "sharedcontent" plugin solves this issue.
-            slot = placeholder
-            try:
-                placeholder = Placeholder.objects.get_by_slot(None, slot)
-            except Placeholder.DoesNotExist:
-                return "<!-- global placeholder '{0}' does not yet exist -->".format(slot)
         elif isinstance(placeholder, Manager):
             try:
                 placeholder = placeholder.all()[0]
