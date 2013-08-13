@@ -85,11 +85,11 @@ This makes sure additional inlines are added the the admin screen:
 
 No extra configuration is required, the field will simply blend in with the rest of the form fields.
 Gven that the article is displayed by a template (i.e. ``article/details.html``)
-it can use the ``placeholder_tags`` to display the contents:
+it can use the ``fluent_contents_tags`` to display the contents:
 
 .. code-block:: html+django
 
-    {% load placeholder_tags %}
+    {% load fluent_contents_tags %}
     {% render_placeholder article.content %}
 
 That's it!

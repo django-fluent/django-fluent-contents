@@ -1,6 +1,7 @@
 Version 1.0 (dev)
 -----------------
 
+* **API Change:** Renamed template tag library ``placeholder_tags`` to ``fluent_contents_tags`` (the old name still works).
 * Removed unneeded ``render_comment_list`` templatetag as it was upstreamed to django-threadedcomments_ 0.9.
 
 

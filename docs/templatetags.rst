@@ -8,14 +8,13 @@ Load the tags using:
 
 .. code-block:: html+django
 
-    {% load placeholder_tags %}
+    {% load fluent_contents_tags %}
 
 To render a placeholder for a given object, use:
 
 .. code-block:: html+django
 
     {% render_placeholder myobject.placeholder_field %}
-
 
 CMS Page placeholders
 ---------------------
@@ -50,5 +49,17 @@ Extra meta information can be provided for the admin interface:
 
     {% page_placeholder currentpage "slotname" title="Tab title" role="main %}
 
-The metadata can be extracted with the :class:`~fluent_contents.templatetags.placeholder_tags.PagePlaceholderNode` class,
+The metadata can be extracted with the :class:`~fluent_contents.templatetags.fluent_contents_tags.PagePlaceholderNode` class,
 and :mod:`fluent_contents.analyzer` module.
+
+
+Note for existing projects
+--------------------------
+
+.. deprecated:: 1.0
+   Previously, the template tag library was called *placeholder_tags*.
+   Using the old style import still works. It's recommended to change it:
+
+.. code-block:: html+django
+
+    {% load placeholder_tags %}

@@ -13,5 +13,5 @@ API documentation
    forms
    models
    rendering
-   templatetags.placeholder_tags
+   templatetags.fluent_contents_tags
    utils
