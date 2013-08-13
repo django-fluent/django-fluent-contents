@@ -1,3 +1,9 @@
+Version 1.0 (dev)
+-----------------
+
+* Removed unneeded ``render_comment_list`` templatetag as it was upstreamed to django-threadedcomments_ 0.9.
+
+
 Version 0.9
 -------------
 
