@@ -7,7 +7,7 @@ Version 0.9
   The model fields integrate with django-any-urlfield_, django-any-imagefield_ and django-wysiwyg_.
 * Added picture plugin.
 * Added development (``DEBUG=True``) feature, changes in plugin templates update the stored version in the output cache.
-* Added cache methods to plugins which can be overwritten.
+* Added cache methods to plugins which can be overwritten (``get_output_cache_key()``, ``get_cached_output()``, etc..)
 * Added ``cache_output_per_site`` option to plugins.
 * Fix admin appearance of plugins without fields.
 * Fix initial south migrations, added missing dependencies.
