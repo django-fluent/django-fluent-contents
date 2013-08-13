@@ -1,18 +1,34 @@
 from django.template import Library, Node
 from django.template.base import TemplateSyntaxError
-from fluent_contents.admin.contentitems import GenericContentItemInline
+from fluent_contents.admin.contentitems import BaseContentItemInline
 from tag_parser import template_tag, parse_as_var, parse_token_kwargs
 
 register = Library()
 
 @register.filter
 def only_content_item_inlines(inlines):
-    return [i for i in inlines if isinstance(i, GenericContentItemInline)]
+    return [i for i in inlines if isinstance(i, BaseContentItemInline)]
 
 
 @register.filter
 def only_content_item_formsets(formsets):
-    return [f for f in formsets if isinstance(f.opts, GenericContentItemInline)]
+    return [f for f in formsets if isinstance(f.opts, BaseContentItemInline)]
+
+
+@register.filter
+def has_no_visible_fields(inline_admin_form):
+    # fieldset = admin Fieldset object.
+
+    for name, options in inline_admin_form.fieldsets:
+        for name_slot in options.get('fields', ()):
+            # Lines can include (field, field)
+            if not hasattr(name_slot, "__iter__"):
+                name_slot = [name_slot]
+            for name in name_slot:
+                if not inline_admin_form.form.fields[name].widget.is_hidden:
+                    return False
+
+    return True
 
 
 @register.filter

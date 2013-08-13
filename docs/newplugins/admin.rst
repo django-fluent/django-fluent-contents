@@ -38,7 +38,7 @@ General metadata
 The following attributes control the appearance in the plugin ``<select>`` box:
 
 * :attr:`~fluent_contents.extensions.ContentPlugin.verbose_name` -
-  The title of the plugin, which readsthe ``verbose_name`` of the model by default.
+  The title of the plugin, which reads the ``verbose_name`` of the model by default.
 
 * :attr:`~fluent_contents.extensions.ContentPlugin.category` -
   The title of the category.
@@ -113,6 +113,31 @@ The following attributes control the overall appearance of form fields in the ad
 
 * :attr:`~fluent_contents.extensions.ContentPlugin.readonly_fields` -
   A list of fields to display as readonly.
+
+
+Custom model fields
+-------------------
+
+.. versionadded:: 0.9.0
+
+To maintain consistency between plugins, this package provides a few additional model fields which plugins can use.
+By default, these fields use the standard Django model fields. When one of the :ref:`optional packages <optional-integration>`
+is installed, the fields will use those additional features:
+
+* :class:`fluent_contents.extensions.PluginFileField` -
+  The file field uses :class:`~django.db.models.FileField` by default. It displays a file browser when django-any-imagefield_ is installed.
+
+* :class:`fluent_contents.extensions.PluginHtmlField` -
+  The HTML field displays the WYSIWYG editor, which is also used by the :ref:`text plugin <text>`.
+
+* :class:`fluent_contents.extensions.PluginImageField` -
+  The file field uses :class:`~django.db.models.ImageField` by default. It displays a file browser when django-any-imagefield_ is installed.
+
+* :class:`fluent_contents.extensions.PluginUrlField` -
+  The URL field uses :class:`~django.db.models.URLField` by default. It displays a URL selector for internal models when django-any-urlfield_ is installed.
+
+Whenever your plugin uses an image field, file field, WISYWIG editor, or URL field that may refer to internal URL's,
+consider using these classes instead of the regular Django fields.
 
 
 Adding CSS to the admin interface
@@ -220,7 +245,6 @@ After the :func:`initialize` function has run, the items are moved to the apropr
 so the group selectors can only select all items reliably in the :func:`initialize` function.
 The other selectors remain valid, as they operate on individual elements.
 
-.. seealso::
 
-   The :ref:`text plugin <text>` uses this feature to enable or disable the WYSIWYG editor.
-
+.. _django-any-urlfield: https://github.com/edoburu/django-any-urlfield
+.. _django-any-imagefield: https://github.com/edoburu/django-any-imagefield

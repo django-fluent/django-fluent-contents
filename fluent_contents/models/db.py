@@ -6,7 +6,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from polymorphic import PolymorphicModel
 from polymorphic.base import PolymorphicModelBase
-from fluent_contents.cache import get_rendering_cache_key
+from fluent_contents import appsettings
 from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_lookup_kwargs
 
 
@@ -65,7 +65,17 @@ class Placeholder(models.Model):
         Return the plugins which are supported in this placeholder.
         """
         from fluent_contents import extensions  # avoid circular import
-        return extensions.plugin_pool.get_plugins()
+
+        # See if there is a limit imposed.
+        slot_config = self.get_slot_config()
+        plugins = slot_config.get('plugins')
+        if not plugins:
+            return extensions.plugin_pool.get_plugins()
+        else:
+            try:
+                return extensions.plugin_pool.get_plugins_by_name(*plugins)
+            except extensions.PluginNotFound as e:
+                raise extensions.PluginNotFound(str(e) + " Update the plugin list of the FLUENT_CONTENTS_PLACEHOLDER_CONFIG['{0}'] setting.".format(self.slot))
 
 
     def get_content_items(self, parent=None):
@@ -79,6 +89,13 @@ class Placeholder(models.Model):
             item_qs = item_qs.filter(**get_parent_lookup_kwargs(parent))
 
         return item_qs
+
+
+    def get_slot_config(self):
+        """
+        Return the site-wide configuration associated with this slot.
+        """
+        return appsettings.FLUENT_CONTENTS_PLACEHOLDER_CONFIG.get(self.slot) or {}
 
 
     def get_absolute_url(self):
@@ -210,8 +227,8 @@ class ContentItem(PolymorphicModel):
 
 
     def __unicode__(self):
-        return u"{type} {id:d} in '{placeholder}'".format(
-            type=self.polymorphic_ctype or self._meta.verbose_name,
+        return u"'{type} {id:d}' in '{placeholder}'".format(
+            type=ContentType.objects.get_for_id(self.polymorphic_ctype_id).model_class()._meta.verbose_name,
             id=self.id or 0,
             placeholder=self.placeholder
         )
@@ -237,8 +254,10 @@ class ContentItem(PolymorphicModel):
             return None
 
     def save(self, *args, **kwargs):
+        is_new = not self.pk
         super(ContentItem, self).save(*args, **kwargs)
-        self.clear_cache()
+        if not is_new:
+            self.clear_cache()
 
 
     def delete(self, *args, **kwargs):
@@ -257,12 +276,15 @@ class ContentItem(PolymorphicModel):
     def get_cache_keys(self):
         """
         Get a list of all cache keys associated with this model.
+        This queries the associated plugin for the cache keys it used to store the output at.
         """
         if not self.placeholder_id:
             # TODO: prune old placeholder slot name?
             return []
 
+        # As plugins can change the output caching,
+        # they should also return which keys content is stored at.
         placeholder_name = self.placeholder.slot
-        return [
-            get_rendering_cache_key(placeholder_name, self)
-        ]
+        keys = []  # ensure list return type.
+        keys.extend(self.plugin.get_output_cache_keys(placeholder_name, self))
+        return keys

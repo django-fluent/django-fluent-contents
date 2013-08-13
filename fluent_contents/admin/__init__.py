@@ -19,11 +19,3 @@ __all__ = (
     'PlaceholderEditorAdmin', 'PlaceholderEditorInline', 'PlaceholderEditorBaseMixin', 'PlaceholderFieldAdmin',
     'get_content_item_inlines',
 )
-
-
-# For debugging mostly:
-#from fluent_contents.admin.debug import PlaceholderAdmin
-#from fluent_contents.models.db import Placeholder, ContentItem
-#admin.site.register(Placeholder, PlaceholderAdmin)
-#admin.site.register(ContentItem)
-

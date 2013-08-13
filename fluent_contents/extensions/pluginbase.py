@@ -1,36 +1,24 @@
 """
-Special classes to extend the module; e.g. plugins.
-
-The extension mechanism is provided for projects that benefit
-from a tighter integration then the Django URLconf can provide.
-
-The API uses a registration system.
-While plugins can be easily detected via ``__subclasses__()``, the register approach is less magic and more explicit.
-Having to do an explicit register ensures future compatibility with other API's like reversion.
+Internal module for the plugin system,
+the API is exposed via __init__.py
 """
 from django.conf import settings
 from django import forms
 from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.sites.models import Site
 from django.core import context_processors
 from django.contrib.auth import context_processors as auth_context_processors
 from django.contrib.messages import context_processors as messages_context_processors
+from django.core.cache import cache
 from django.db import DatabaseError
 from django.template.context import Context
 from django.template.loader import render_to_string
 from django.utils.html import linebreaks, escape
-from django.utils.importlib import import_module
 from django.utils.translation import ugettext as _
+from fluent_contents.cache import get_rendering_cache_key
 from fluent_contents.forms import ContentItemForm
-from fluent_contents.models import ContentItem
-from threading import Lock
 
-__all__ = ('PluginContext', 'ContentPlugin', 'plugin_pool')
-
-
-# This mechanism is mostly inspired by Django CMS,
-# which nice job at defining a clear extension model.
-# (c) Django CMS developers, BSD licensed.
 
 # Some standard request processors to use in the plugins,
 # Naturally, you want STATIC_URL to be available in plugins.
@@ -126,6 +114,10 @@ class ContentPlugin(object):
     #: By default, rendered output is cached, and updated on admin changes.
     cache_output = True
 
+    #: .. versionadded:: 0.9
+    #: Cache the plugin output per :ref:`SITE_ID <site-id>`.
+    cache_output_per_site = False
+
     #: The category to display the plugin at.
     category = None
 
@@ -219,6 +211,69 @@ class ContentPlugin(object):
         return self.render(request=request, instance=instance)
 
 
+    def get_output_cache_key(self, placeholder_name, instance):
+        """
+        .. versionadded:: 0.9
+           Return the default cache key which is used to store a rendered item.
+           By default, this function generates the cache key using :func:`~fluent_contents.cache.get_rendering_cache_key`.
+        """
+        cachekey = get_rendering_cache_key(placeholder_name, instance)
+        if self.cache_output_per_site:
+            cachekey = "{0}-s{1}".format(cachekey, settings.SITE_ID)
+        return cachekey
+
+
+    def get_output_cache_keys(self, placeholder_name, instance):
+        """
+        .. versionadded:: 0.9
+           Return the possible cache keys for a rendered item.
+
+           This method should be overwritten when implementing a function :func:`set_cached_output` method
+           or implementing a :func:`get_output_cache_key` function which can return multiple results.
+           By default, this function generates the cache key using :func:`get_output_cache_key`.
+        """
+        if self.cache_output_per_site:
+            site_ids = list(Site.objects.values_list('pk', flat=True))
+            if settings.SITE_ID not in site_ids:
+                site_ids.append(settings.SITE_ID)
+
+            base_key = get_rendering_cache_key(placeholder_name, instance)
+            return ["{0}-s{1}".format(base_key, site_id) for site_id in site_ids]
+        else:
+            return [
+                self.get_output_cache_key(placeholder_name, instance)
+            ]
+
+
+    def get_cached_output(self, placeholder_name, instance):
+        """
+        .. versionadded:: 0.9
+           Return the cached output for a rendered item, or ``None`` if no output is cached.
+
+           This method can be overwritten to implement custom caching mechanisms.
+           By default, this function generates the cache key using :func:`get_output_cache_key`
+           and retrieves the results from the configured Django cache backend (e.g. memcached).
+        """
+        cachekey = self.get_output_cache_key(placeholder_name, instance)
+        return cache.get(cachekey)
+
+
+    def set_cached_output(self, placeholder_name, instance, html):
+        """
+        .. versionadded:: 0.9
+           Store the cached output for a rendered item.
+
+           This method can be overwritten to implement custom caching mechanisms.
+           By default, this function generates the cache key using :func:`~fluent_contents.cache.get_rendering_cache_key`
+           and stores the results in the configured Django cache backend (e.g. memcached).
+
+           When custom cache keys are used, also include those in :func:`get_output_cache_keys`
+           so the cache will be cleared when needed.
+        """
+        cachekey = self.get_output_cache_key(placeholder_name, instance)
+        cache.set(cachekey, html)
+
+
     def render(self, request, instance, **kwargs):
         """
         The rendering/view function that displays a plugin model instance.
@@ -275,178 +330,3 @@ class ContentPlugin(object):
         return {
             'instance': instance,
         }
-
-
-
-# -------- Some utils --------
-
-def _import_apps_submodule(submodule):
-    """
-    Look for a submodule is a series of packages, e.g. ".content_plugins" in all INSTALLED_APPS.
-    """
-    for app in settings.INSTALLED_APPS:
-        try:
-            import_module('.' + submodule, app)
-        except ImportError, e:
-            if submodule not in str(e):
-                raise   # import error is a level deeper.
-            else:
-                pass
-
-
-# -------- API to access plugins --------
-
-class PluginAlreadyRegistered(Exception):
-    """
-    Raised when attemping to register a plugin twice.
-    """
-    pass
-
-
-class PluginNotFound(Exception):
-    """
-    Raised when the plugin could not be found in the rendering process.
-    """
-    pass
-
-
-class PluginPool(object):
-    """
-    The central administration of plugins.
-    """
-    scanLock = Lock()
-
-    def __init__(self):
-        self.plugins = {}
-        self._name_for_model = {}
-        self._name_for_ctype_id = None
-        self.detected = False
-
-
-    def register(self, plugin):
-        """
-        Make a plugin known by the CMS.
-
-        :param plugin: The plugin class, deriving from :class:`ContentPlugin`.
-
-        The plugin will be instantiated, just like Django does this with :class:`~django.contrib.admin.ModelAdmin` classes.
-        If a plugin is already registered, this will raise a :class:`PluginAlreadyRegistered` exception.
-        """
-        # Duck-Typing does not suffice here, avoid hard to debug problems by upfront checks.
-        assert issubclass(plugin, ContentPlugin), "The plugin must inherit from `ContentPlugin`"
-        assert plugin.model, "The plugin has no model defined"
-        assert issubclass(plugin.model, ContentItem), "The plugin model must inherit from `ContentItem`"
-        assert issubclass(plugin.form, ContentItemForm), "The plugin form must inherit from `ContentItemForm`"
-
-        name = plugin.__name__
-        if name in self.plugins:
-            raise PluginAlreadyRegistered("{0}: a plugin with this name is already registered".format(name))
-        name = name.lower()
-
-        # Make a single static instance, similar to ModelAdmin.
-        plugin_instance = plugin()
-        self.plugins[name] = plugin_instance
-        self._name_for_model[plugin.model] = name       # Track reverse for model.plugin link
-
-        # Only update lazy indexes if already created
-        if self._name_for_ctype_id is not None:
-            self._name_for_ctype_id[plugin.type_id] = name
-
-        return plugin  # Allow decorator syntax
-
-
-    def get_plugins(self):
-        """
-        Return the list of all plugin instances which are loaded.
-        """
-        self._import_plugins()
-        return self.plugins.values()
-
-
-    def get_plugins_by_name(self, *names):
-        """
-        Return a list of plugins by plugin class, or name.
-        """
-        self._import_plugins()
-        plugin_instances = []
-        for name in names:
-            if isinstance(name, basestring):
-                try:
-                    plugin_instances.append(self.plugins[name.lower()])
-                except KeyError:
-                    raise PluginNotFound("No plugin named '{0}'.".format(name))
-            elif issubclass(name, ContentPlugin):
-                # Will also allow classes instead of strings.
-                plugin_instances.append(self.plugins[self._name_for_model[name.model]])
-            else:
-                raise TypeError("get_plugins_by_name() expects a plugin name or class, not: {0}".format(name))
-        return plugin_instances
-
-
-    def get_model_classes(self):
-        """
-        Return all :class:`~fluent_contents.models.ContentItem` model classes which are exposed by plugins.
-        """
-        self._import_plugins()
-        return [plugin.model for plugin in self.plugins.values()]
-
-
-    def get_plugin_by_model(self, model_class):
-        """
-        Return the corresponding plugin for a given model.
-        """
-        self._import_plugins()                       # could happen during rendering that no plugin scan happened yet.
-        assert issubclass(model_class, ContentItem)  # avoid confusion between model instance and class here!
-
-        try:
-            name = self._name_for_model[model_class]
-        except KeyError:
-            raise PluginNotFound("No plugin found for model '{0}'.".format(model_class.__name__))
-        return self.plugins[name]
-
-
-    def _get_plugin_by_content_type(self, contenttype):
-        self._import_plugins()
-        self._setup_lazy_indexes()
-
-        ct_id = contenttype.id if isinstance(contenttype, ContentType) else int(contenttype)
-        try:
-            name = self._name_for_ctype_id[ct_id]
-        except KeyError:
-            raise PluginNotFound("No plugin found for content type '{0}'.".format(contenttype))
-        return self.plugins[name]
-
-
-    def _import_plugins(self):
-        """
-        Internal function, ensure all plugin packages are imported.
-        """
-        if self.detected:
-            return
-
-        # In some cases, plugin scanning may start during a request.
-        # Make sure there is only one thread scanning for plugins.
-        self.scanLock.acquire()
-        if self.detected:
-            return  # previous threaded released + completed
-
-        try:
-            _import_apps_submodule("content_plugins")
-            self.detected = True
-        finally:
-            self.scanLock.release()
-
-    def _setup_lazy_indexes(self):
-        # The ContentType is not read yet at .register() time, since that enforces the database to exist at that time.
-        # If a plugin library is imported via different paths that might not be the case when `./manage.py syncdb` runs.
-        if self._name_for_ctype_id is None:
-            plugin_ctypes = {}  # separate dict to build, thread safe
-            self._import_plugins()
-            for name, plugin in self.plugins.iteritems():
-                plugin_ctypes[plugin.type_id] = name
-
-            self._name_for_ctype_id = plugin_ctypes
-
-
-#: The global plugin pool, a instance of the :class:`PluginPool` class.
-plugin_pool = PluginPool()

@@ -31,6 +31,7 @@ Getting started
    quickstart
    configuration
    templatetags
+   optional-integration
 
 
 Using the plugins

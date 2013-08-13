@@ -1,8 +1,10 @@
+import django
 from django.contrib.contenttypes.generic import GenericRelation, GenericRel
 from django.contrib.contenttypes.models import ContentType
 from django.db.models.query_utils import Q
 from django.utils.functional import lazy
 from django.utils.text import capfirst
+from fluent_contents import appsettings
 from fluent_contents.forms.fields import PlaceholderFormField
 from fluent_contents.models import Placeholder, ContentItem
 
@@ -62,18 +64,26 @@ class PlaceholderRel(GenericRel):
     The internal :class:`~django.contrib.contenttypes.generic.GenericRel`
     that is used by the :class:`PlaceholderField` to support queries.
     """
-    def __init__(self, slot):
+    def __init__(self, field):
         limit_choices_to = Q(
             parent_type=lazy(lambda: ContentType.objects.get_for_model(Placeholder), ContentType)(),
-            slot=slot,
+            slot=field.slot,
         )
 
         # TODO: make sure reverse queries work properly
-        super(PlaceholderRel, self).__init__(
-            to=Placeholder,
-            related_name=None,  # NOTE: must be unique for app/model/slot.
-            limit_choices_to=limit_choices_to
-        )
+        if django.VERSION >= (1, 6, 0):
+            super(PlaceholderRel, self).__init__(
+                field=field,
+                to=Placeholder,
+                related_name=None,  # NOTE: must be unique for app/model/slot.
+                limit_choices_to=limit_choices_to
+            )
+        else:
+            super(PlaceholderRel, self).__init__(
+                to=Placeholder,
+                related_name=None,  # NOTE: must be unique for app/model/slot.
+                limit_choices_to=limit_choices_to
+            )
 
 
 class PlaceholderFieldDescriptor(object):
@@ -143,14 +153,16 @@ class PlaceholderField(PlaceholderRelation):
         Initialize the placeholder field.
         """
         super(PlaceholderField, self).__init__(**kwargs)
-
         self.slot = slot
-        self._plugins = plugins
+
+        # See if a plugin configuration is defined in the settings
+        self._slot_config = appsettings.FLUENT_CONTENTS_PLACEHOLDER_CONFIG.get(slot) or {}
+        self._plugins = plugins or self._slot_config.get('plugins') or None
 
         # Overwrite some hardcoded defaults from the base class.
         self.editable = True
         self.blank = True                     # TODO: support blank: False to enforce adding at least one plugin.
-        self.rel = PlaceholderRel(self.slot)  # This support queries
+        self.rel = PlaceholderRel(self)       # This support queries
 
 
     def formfield(self, **kwargs):
@@ -207,7 +219,10 @@ class PlaceholderField(PlaceholderRelation):
         if self._plugins is None:
             return extensions.plugin_pool.get_plugins()
         else:
-            return extensions.plugin_pool.get_plugins_by_name(*self._plugins)
+            try:
+                return extensions.plugin_pool.get_plugins_by_name(*self._plugins)
+            except extensions.PluginNotFound as e:
+                raise extensions.PluginNotFound(str(e) + " Update the plugin list of '{0}.{1}' field or FLUENT_CONTENTS_PLACEHOLDER_CONFIG['{2}'] setting.".format(self.model._meta.object_name, self.name, self.slot))
 
 
     def value_from_object(self, obj):

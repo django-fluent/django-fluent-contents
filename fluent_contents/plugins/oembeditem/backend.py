@@ -1,8 +1,21 @@
+"""
+Backend for fetching OEmbed data.
+
+This module can also be used by other external apps.
+"""
 import threading
 from micawber import Provider, ProviderRegistry, bootstrap_basic, bootstrap_embedly
 from micawber.providers import bootstrap_noembed   # Export was missing in 0.2.6 patch, my mistake.
 from django.core.exceptions import ImproperlyConfigured
 from . import appsettings
+
+
+__all__ = (
+    'get_oembed_providers',
+    'has_provider_for_url',
+    'get_oembed_data',
+)
+
 
 # Globally cached provider list,
 # so embed.ly list is fetched only once.
@@ -68,11 +81,10 @@ def has_provider_for_url(url):
     return registry.provider_for_url(url) is not None
 
 
-def get_oembed_data(url, max_width=None, max_height=None):
+def get_oembed_data(url, max_width=None, max_height=None, **params):
     """
     Fetch the OEmbed object, return the response as dictionary.
     """
-    params = {}
     if max_width:  params['maxwidth'] = max_width
     if max_height: params['maxheight'] = max_height
 

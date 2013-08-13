@@ -24,7 +24,8 @@ Hence, this plugin depends on a properly configured django.contrib.comments_ mod
 .. tip::
 
     For an advanced plug&play setup, you can use the django-fluent-comments_ application
-    which includes features such as Ajax-based posting.
+    which includes features such as Ajax-based posting. Make sure to include it's
+    JavaScript and CSS files somewhere in the page.
 
 
 Installation
@@ -62,6 +63,11 @@ To get a usable comments module, the least you need to do, is providing two temp
 
 * ``comments/base.html``
 * ``comments/posted.html``
+
+.. note::
+    As with other plugins of *django-fluent-contents*, the output of the plugin is cached.
+    Only when a comment is posted, the output will be refreshed. To change templates in a development/runserver
+    environment, set :ref:`FLUENT_CONTENTS_CACHE_OUTPUT` to ``False`` in the settings.
 
 
 The base.html template

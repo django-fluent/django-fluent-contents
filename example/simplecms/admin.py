@@ -2,13 +2,13 @@ from django.conf.urls.defaults import patterns, url
 from django.contrib import admin
 from django.http import HttpResponse
 from django.template.loader import get_template
-from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from mptt.admin import MPTTModelAdmin
 from fluent_contents.admin import PlaceholderEditorAdmin
 from fluent_contents.analyzer import get_template_placeholder_data
 from simplecms import appconfig
 from simplecms.models import Page
+import json
 
 
 class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
@@ -88,7 +88,7 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
             }
             status = 200
 
-        jsonstr = simplejson.dumps(json)
+        jsonstr = json.dumps(json)
         return HttpResponse(jsonstr, content_type='application/json', status=status)
 
 

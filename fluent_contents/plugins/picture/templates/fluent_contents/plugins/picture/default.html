@@ -1,0 +1,8 @@
+<figure class="picture {{ instance.align_class }}">
+{% spaceless %}
+  {% if instance.url %}<a href="{{ instance.url }}">{% endif %}
+  <img src="{{ instance.image.url }}" width="{{ instance.image.width }}" height="{{ instance.image.height }}" alt="" />
+  {% if instance.url %}</a>{% endif %}
+{% endspaceless %}
+  {% if instance.caption %}<figcaption>{{ instance.caption }}</figcaption>{% endif %}
+</figure>

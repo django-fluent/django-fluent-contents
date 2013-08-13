@@ -1,7 +1,7 @@
 /**
  * This file deals with the lowest data layer / data administration of the backend editor.
  *
- * It tracks the 'itemtypes' of the plugins.
+ * It tracks the 'ContentItem' metadata of the plugins.
  */
 var cp_data = {};
 
@@ -15,7 +15,7 @@ var cp_data = {};
   // Public data (also for debugging)
   cp_data.placeholders = null;  // [ { slot: 'main', title: 'Main', role: 'm', domnode: 'someid' }, { slot: 'sidebar', ...} ]
   cp_data.initial_placeholders = null;
-  cp_data.itemtypes = null;     // { 'TypeName': { type: "Cms...ItemType", name: "Text item", rel_name: "TypeName_set", auto_id: "id_%s" }, ... }
+  cp_data.contentitem_metadata = null;  // { 'ModelName': { type: "ModelName", name: "Text item", prefix: "modelname", rel_name: "TypeName_set", auto_id: "id_%s" }, ... }
 
 
   // Public initialisation functions
@@ -36,9 +36,53 @@ var cp_data = {};
     }
   };
 
-  cp_data.set_content_item_types = function(data) { cp_data.itemtypes = data; };
+  cp_data.set_contentitem_metadata = function(data) { cp_data.contentitem_metadata = data; };
   cp_data.get_placeholders = function() { return cp_data.placeholders; };
   cp_data.get_initial_placeholders = function() { return cp_data.initial_placeholders; };
+
+
+  /**
+   * Object to describe the metadata of a ContentItem in the formset.
+   */
+  function ContentItemInfo($fs_item)
+  {
+    // NOTE: assumes the ContentItem was already moved outside it's inline-group.
+    // The parsing only happens with the
+    var id = $fs_item.attr("id");
+    var pos = id.lastIndexOf('-');      // have to split at last '-' for generic inlines (inlinetype-id / app-model-ctfield-ctfkfield-id)
+
+    this.fs_item = $fs_item;
+    this.prefix = id.substring(0, pos);
+    this.index = parseInt(id.substring(pos + 1));
+
+    // Global metadata
+    this.type = null;
+    this.name = null;
+    this.rel_name = null;
+    this.auto_id = null;
+    this.item_template = null;
+
+    // Overwrite properties with global metadata about the ContentItem
+    var contentitem_metadata = cp_data._get_contentitem_metadata_by_prefix(this.prefix);
+    if( contentitem_metadata )
+      $.extend(this, contentitem_metadata);
+  }
+
+  function PlaceholderPane($pane, placeholder)
+  {
+    this.root = $pane;  // mainly for debugging
+    this.content = $pane.children(".cp-content");
+    this.empty_message = $pane.children('.cp-empty');
+    this.placeholder = placeholder;
+  }
+
+  function DomPlaceholder(placeholder, is_fallback)
+  {
+    this.slot = placeholder.slot;
+    this.role = placeholder.role;
+    this.items = [];
+    this.is_fallback = is_fallback;
+  }
 
 
   /**
@@ -54,9 +98,10 @@ var cp_data = {};
     var $empty_items = $all_items.filter(".empty-form");
     var $fs_items    = $all_items.filter(":not(.empty-form)");
 
+    // Group all formset items by the placeholder they belong to.
+    // This administration is used as quick lookup, to avoid unneeded DOM querying.
     if( cp_data.placeholders )
     {
-      // Split formset items by the placeholder they belong to.
       for(var i = 0; i < $fs_items.length; i++)
       {
         // Get formset DOM elements
@@ -71,21 +116,21 @@ var cp_data = {};
         var dom_placeholder = cp_data.get_or_create_dom_placeholder(placeholder, placeholder_id);
         dom_placeholder.items.push($fs_item);
 
+        // Reset placeholder ID field if the item already
+        // doesn't fit in any placeholder.
         if( dom_placeholder.is_fallback )
-        {
           $placeholder_input.val('');
-        }
       }
 
       if( cp_data.placeholders.length == 1 )
         $("body").addClass('cp-single-placeholder');
     }
 
-    // Add the empty items to the itemtypes dictionary.
-    for(i = 0; i < $empty_items.length; i++)
+    // Amend the contentitem metadata with the empty-form template
+    for(var model_name in cp_data.contentitem_metadata)
     {
-      var empty_item = cp_data.get_formset_item_data($empty_items[i]);   // {fs_item, index, itemtype: {..}}
-      empty_item.itemtype.item_template = empty_item.fs_item;
+      var item_meta = cp_data.contentitem_metadata[model_name];
+      item_meta.item_template = $("#" + item_meta.prefix + "-empty");
     }
   }
 
@@ -105,13 +150,9 @@ var cp_data = {};
     var dom_placeholder = cp_data.dom_placeholders[placeholder.slot];
     if( ! dom_placeholder )
     {
-      // create
-      dom_placeholder = cp_data.dom_placeholders[placeholder.slot] = {
-        slot: placeholder.slot,
-        items: [],
-        role: placeholder.role,
-        is_fallback: is_fallback
-      };
+      // Create the structure for the placeholder.
+      dom_placeholder = new DomPlaceholder(placeholder, is_fallback);
+      cp_data.dom_placeholders[placeholder.slot] = dom_placeholder;
     }
 
     return dom_placeholder;
@@ -231,29 +272,23 @@ var cp_data = {};
   }
 
 
-  cp_data.get_object_for_pane = function(pane, placeholder)
+  cp_data.get_object_for_pane = function($pane, placeholder)
   {
-    if( pane.length == 0 )
+    if( $pane.length == 0 )
     {
       if( window.console )
-        window.console.warn("Pane not found: " + pane.selector);
+        window.console.warn("Pane not found: " + $pane.selector);
       return null;
     }
 
-    return {
-      root: pane,  // mainly for debugging
-      content: pane.children(".cp-content"),
-      empty_message: pane.children('.cp-empty'),
-      placeholder: placeholder
-    };
+    return new PlaceholderPane($pane, placeholder);
   }
 
 
   cp_data.get_formset_dom_info = function(child_node)
   {
-    var current_item = cp_data.get_formset_item_data(child_node);
-    var itemtype     = current_item.itemtype;
-    var group_prefix = itemtype.auto_id.replace(/%s/, itemtype.prefix);
+    var current_item = cp_data.get_inline_formset_item_info(child_node);
+    var group_prefix = current_item.auto_id.replace(/%s/, current_item.prefix);
     var field_prefix = group_prefix + "-" + current_item.index;
 
     var placeholder_id = $("#" + field_prefix + "-placeholder").val();  // .val allows <select> for debugging.
@@ -281,50 +316,42 @@ var cp_data = {};
 
 
   /**
-   * Get the formset information, by passing a child node.
+   * Given a random child node, return the formset data that the node belongs to.
+   * The formset item itself may be moved outside of the original inline group.
    */
-  cp_data.get_formset_item_data = function(child_node)
+  cp_data.get_inline_formset_item_info = function(child_node)
   {
-    if( cp_data.itemtypes == null )
-      throw new Error("cp_data.setContentItemTypes() was never called. Does the ModelAdmin inherit from the correct base class?");
+    if( cp_data.contentitem_metadata == null )
+      throw new Error("cp_data.set_contentitem_metadata() was never called. Does the ModelAdmin inherit from the correct base class?");
     if( child_node.fs_item )
       return child_node;   // already parsed
 
-    var $fs_item = $(child_node).closest(".inline-related");
-    var id = $fs_item.attr("id");
-    var pos = id.lastIndexOf('-');      // have to split at last '-' for generic inlines (inlinetype-id / app-model-ctfield-ctfkfield-id)
-    var prefix = id.substring(0, pos);
-    var suffix = id.substring(pos + 1);
+    var fs_item = $(child_node).closest(".inline-related");
+    return new ContentItemInfo(fs_item);
+  }
 
-    // Get itemtype
-    var itemtype = null;
-    for(var TypeName in cp_data.itemtypes)
+
+  cp_data._get_contentitem_metadata_by_prefix = function(prefix)
+  {
+    for(var model_name in cp_data.contentitem_metadata)
     {
-      var candidate = cp_data.itemtypes[TypeName];
+      var candidate = cp_data.contentitem_metadata[model_name];
       if( candidate.prefix == prefix )
-      {
-        itemtype = candidate;
-        break;
-      }
+        return candidate;
     }
-
-    return {
-      fs_item: $fs_item,
-      itemtype: itemtype,
-      index: parseInt(suffix)
-    };
+    return null;
   }
 
 
   /**
    * Verify that a given item type exists.
    */
-  cp_data.get_formset_itemtype = function(typename)
+  cp_data.get_contentitem_metadata_by_type = function(model_name)
   {
-    if( cp_data.itemtypes == null )
-      throw new Error("cp_data.setContentItemTypes() was never called. Does the ModelAdmin inherit from the correct base class?");
+    if( cp_data.contentitem_metadata == null )
+      throw new Error("cp_data.set_contentitem_metadata() was never called. Does the ModelAdmin inherit from the correct base class?");
 
-    return cp_data.itemtypes[typename];
+    return cp_data.contentitem_metadata[model_name];
   }
 
 

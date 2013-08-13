@@ -11,6 +11,7 @@ html.cp-jsenabled .inline-contentitem-group {
 }
 
 
+
 /* ---- Clearfix ---- */
 
 .cp-clearfix:after {
@@ -175,7 +176,7 @@ form .form-row.no-labels p.help {
 #cp-tabnav li {
   float: left;
   display: inline;
-  list-style-position: inside;
+  list-style: none inside;
 
   margin: 3px 0 0 0;
   min-width: 100px;
@@ -271,4 +272,30 @@ fieldset.plugin-holder .cp-placeholderfield {
 
 .cp-controls {
   margin-top: 15px;
+}
+
+
+/* ---- Rich editor (quick fixes) ---- */
+
+.inline-TextItem .cp-wysiwyg-widget {
+  display: none;  /* avoid flashing a textarea which is to become a WYSIWYG editor */
+}
+
+body.yui-skin-sam .inline-TextItem .yui-editor-container {
+  border-color: #ccc;
+}
+
+body.yui-skin-sam .inline-TextItem .yui-editor-container .yui-toolbar-subcont {
+  border-color: #ccc;
+  padding-left: 0.5em;
+}
+
+body.yui-skin-sam .inline-TextItem .yui-toolbar-container {
+  background-color: #eee;
+}
+
+body.yui-skin-sam .inline-TextItem .yui-toolbar-container .yui-toolbar-group h3 {
+  font-weight: normal;
+  margin-top: 0.35em;
+  border: 0;
 }

@@ -3,14 +3,16 @@ This module provides functions to render placeholder content manually.
 Contents is cached in memcache whenever possible, only the remaining items are queried.
 The templatetags also use these functions to render the :class:`~fluent_contents.models.ContentItem` objects.
 """
+import os
+from django.conf import settings
 from django.core.cache import cache
 from django.template.context import RequestContext
-from django.template.loader import render_to_string
+from django.template.loader import render_to_string, select_template
 from django.utils.html import conditional_escape, escape
 from django.utils.safestring import mark_safe
 from fluent_contents import appsettings
 from fluent_contents.cache import get_rendering_cache_key
-from fluent_contents.extensions import PluginNotFound
+from fluent_contents.extensions import PluginNotFound, ContentPlugin
 import logging
 
 # This code is separate from the templatetags,
@@ -84,10 +86,15 @@ def _render_items(request, placeholder, items, template_name=None):
             try:
                 # Respect the cache output setting of the plugin
                 if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and contentitem.plugin.cache_output and contentitem.pk:
-                    cachekey = get_rendering_cache_key(placeholder_cache_name, contentitem)
-                    html = cache.get(cachekey)
+                    html = contentitem.plugin.get_cached_output(placeholder_cache_name, contentitem)
             except PluginNotFound:
                 pass
+
+            # For debugging, ignore cached values when the template is updated.
+            if html and settings.DEBUG:
+                cachekey = get_rendering_cache_key(placeholder_cache_name, contentitem)
+                if _is_template_updated(request, contentitem, cachekey):
+                    html = None
 
             if html:
                 output[contentitem.pk] = html
@@ -115,8 +122,7 @@ def _render_items(request, placeholder, items, template_name=None):
                 html = conditional_escape(plugin._render_contentitem(request, contentitem))
 
                 if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and plugin.cache_output and contentitem.pk:
-                    cachekey = get_rendering_cache_key(placeholder_cache_name, contentitem)
-                    cache.set(cachekey, html)
+                    contentitem.plugin.set_cached_output(placeholder_cache_name, contentitem, html)
 
                 if edit_mode:
                     html = _wrap_contentitem_output(html, contentitem)
@@ -130,9 +136,20 @@ def _render_items(request, placeholder, items, template_name=None):
         try:
             output_ordered.append(output[pk])
         except KeyError:
-            # NOTE: if a table is truncated/reset, the base class still exists and causes a query to happen every time.
-            item = [item for item in items if item.pk == pk][0]
-            logger.warning("Missing derived model for ContentItem #{id}: {cls}.".format(id=pk, cls=item.plugin.type_name))
+            # The get_real_instances() didn't return an item for the derived table. This happens when either:
+            # - that table is truncated/reset, while there is still an entry in the base ContentItem table.
+            #   A query at the derived table happens every time the page is being rendered.
+            # - the model was completely removed which means there is also a stale ContentType object.
+            item = next(item for item in items if item.pk == pk)
+            try:
+                class_name = item.plugin.type_name
+            except PluginNotFound:
+                # Derived table isn't there because the model has been removed.
+                # There is a stale ContentType object, no plugin associated or loaded.
+                class_name = 'content type is stale'
+
+            output_ordered.append("<!-- Missing derived model for ContentItem #{id}: {cls}. -->\n".format(id=pk, cls=class_name))
+            logger.warning("Missing derived model for ContentItem #{id}: {cls}.".format(id=pk, cls=class_name))
             pass
 
     # Combine all rendered items. Allow rendering the items with a template,
@@ -183,3 +200,38 @@ def _get_placeholder_name(placeholder):
         return "shared_content:{0}".format(sharedcontent.slug)
 
     return placeholder.slot
+
+
+def _is_template_updated(request, contentitem, cachekey):
+    if not settings.DEBUG:
+        return False
+    # For debugging only: tell whether the template is updated,
+    # so the cached values can be ignored.
+
+    plugin = contentitem.plugin
+    if plugin.get_render_template.__func__ is not ContentPlugin.get_render_template.__func__:
+        # oh oh, really need to fetch the real object.
+        # Won't be needed that often.
+        contentitem = contentitem.get_real_instance()  # This is only needed with DEBUG=True
+        template_names = plugin.get_render_template(request, contentitem)
+    else:
+        template_names = plugin.render_template
+
+    if not template_names:
+        return False
+    if isinstance(template_names, basestring):
+        template_names = [template_names]
+
+    # With TEMPLATE_DEBUG = True, each node tracks it's origin.
+    node0 = select_template(template_names).nodelist[0]
+    attr = 'source' if hasattr(node0, 'source') else 'origin'  # attribute depends on object type
+    try:
+        template_filename = getattr(node0, attr)[0].name
+    except (AttributeError, IndexError):
+        return False
+
+    cache_stat = cache.get(cachekey + ".debug-stat")
+    current_stat = os.path.getmtime(template_filename)
+    if cache_stat != current_stat:
+        cache.set(cachekey + ".debug-stat", current_stat)
+        return True

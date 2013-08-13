@@ -24,7 +24,7 @@ var fluent_contents = {
          */
         registerViewHandler: function(model_typename, view_handler) {
             cp_plugins.register_view_handler(model_typename, view_handler);
-        },
+        }
     },
 
 
@@ -77,6 +77,23 @@ var fluent_contents = {
        * @param animate  Whether to use animation, default false.
        */
       hide: function(animate) { cp_tabs.hide(animate); },
+    },
+
+
+    widgets: {
+      /**
+       * Enable the WYSIWYG editor for a root.
+       * @param root The inline formset item
+       * @param selector Optional CSS selector for the elements.
+       */
+      enable_wysiwyg: function(root, selector) { cp_widgets.enable_wysiwyg(root, selector); },
+
+      /**
+       * Disable the WYSIWYG editor for a root.
+       * @param root The inline formset item
+       * @param selector Optional CSS selector for the elements.
+       */
+      disable_wysiwyg: function(root, selector) { cp_widgets.disable_wysiwyg(root, selector); },
     }
 };
 

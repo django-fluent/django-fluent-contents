@@ -1,3 +1,18 @@
+Version 0.9
+-------------
+
+* Dropped Django 1.3 support, added Django 1.6 support.
+* Added ``FLUENT_CONTENTS_PLACEHOLDER_CONFIG`` variable to limit plugins in specific placeholder slots.
+* Added model fields for plugin developers, to have a consistent interface.
+  The model fields integrate with django-any-urlfield_, django-any-imagefield_ and django-wysiwyg_.
+* Added picture plugin.
+* Added development (``DEBUG=True``) feature, changes in plugin templates update the stored version in the output cache.
+* Added cache methods to plugins which can be overwritten.
+* Added ``cache_output_per_site`` option to plugins.
+* Fix admin appearance of plugins without fields.
+* Fix initial south migrations, added missing dependencies.
+
+
 Version 0.8.6
 -------------
 
@@ -70,6 +85,8 @@ The module design has been stable for quite some time,
 so it's time to show this module to the public.
 
 
+.. _django-any-urlfield: https://github.com/edoburu/django-any-urlfield
+.. _django-any-imagefield: https://github.com/edoburu/django-any-imagefield
 .. _django-polymorphic: https://github.com/chrisglass/django_polymorphic
 .. _django-tag-parser: https://github.com/edoburu/django-tag-parser
 .. _django-threadedcomments: https://github.com/HonzaKral/django-threadedcomments.git
