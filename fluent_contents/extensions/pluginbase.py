@@ -115,7 +115,7 @@ class ContentPlugin(object):
     cache_output = True
 
     #: .. versionadded:: 0.9
-    #: Cache the plugin output per :ref:`SITE_ID <site-id>`.
+    #: Cache the plugin output per :django:setting:`SITE_ID`.
     cache_output_per_site = False
 
     #: The category to display the plugin at.
