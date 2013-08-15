@@ -24,7 +24,7 @@ This is done using the following syntax:
 The CMS interface can scan for those tags using the :ref:`fluent_contents.analyzer` module.
 """
 from django.db.models import Manager
-from django.template import Library, Node, Variable, TemplateSyntaxError
+from django.template import Library, Variable, TemplateSyntaxError
 from django.utils.safestring import SafeUnicode
 from fluent_contents.models import Placeholder
 from fluent_contents import rendering
@@ -190,7 +190,10 @@ class PagePlaceholderNode(BaseNode):
             return "<!-- placeholder '{0}' does not yet exist -->".format(slot)
 
         template_name = self.template_expr.resolve(context) if self.template_expr else None
-        return rendering.render_placeholder(request, placeholder, parent, template_name=template_name)
+
+        output = rendering.render_placeholder(request, placeholder, parent, template_name=template_name)
+        rendering.register_frontend_media(request, output.media)   # Assume it doesn't hurt. TODO: should this be optional?
+        return output.html
 
 
 @register.tag
@@ -223,18 +226,78 @@ class RenderPlaceholderNode(BaseNode):
 
     def render_tag(self, context, *tag_args, **tag_kwargs):
         request = self.get_request(context)
-        (placeholder,) = tag_args
 
-        if placeholder is None:
-            return "<!-- placeholder object is None -->"
-        elif isinstance(placeholder, Placeholder):
-            pass
-        elif isinstance(placeholder, Manager):
-            try:
-                placeholder = placeholder.all()[0]
-            except IndexError:
-                return "<!-- No placeholders found for query -->".format(self.args[0])
+        try:
+            placeholder = _get_placeholder_arg(self.args[0], tag_args[0])
+        except RuntimeWarning as e:
+            return u"<!-- {0} -->".format(e)
+
+        output = rendering.render_placeholder(request, placeholder)
+        rendering.register_frontend_media(request, output.media)   # Assume it doesn't hurt. TODO: should this be optional?
+        return output.html
+
+
+def _get_placeholder_arg(arg_name, placeholder):
+    """
+    Validate and return the Placeholder object that the template variable points to.
+    """
+    if placeholder is None:
+        raise RuntimeWarning(u"placeholder object is None")
+    elif isinstance(placeholder, Placeholder):
+        return placeholder
+    elif isinstance(placeholder, Manager):
+        try:
+            return placeholder.all()[0]
+        except IndexError:
+            raise RuntimeWarning(u"No placeholders found for query '{0}.all.0'".format(arg_name))
+    else:
+        raise ValueError(u"The field '{0}' does not refer to a placeholder object!".format(arg_name))
+
+
+@register.tag
+def render_content_items_media(parser, token):
+    """
+    Render the JS/CSS includes for the media which was collected during the handling of the request.
+    This tag should be placed at the bottom of the page.
+
+    .. code-block:: html+django
+
+        {% render_content_items_media %}
+        {% render_content_items_media js %}
+        {% render_content_items_media css %}
+    """
+    return RenderContentItemsMedia.parse(parser, token)
+
+
+class RenderContentItemsMedia(BaseNode):
+    """
+    The template node of the ``render_plugin_media`` tag.
+    It renders the media object object.
+    """
+    compile_args = False
+    compile_kwargs = False
+    min_args = 0
+    max_args = 1
+
+    @classmethod
+    def validate_args(cls, tag_name, *args, **kwargs):
+        super(RenderContentItemsMedia, cls).validate_args(tag_name, *args, **kwargs)
+        if args:
+            if args[0] not in ('css', 'js'):
+                raise TemplateSyntaxError("'{0}' tag only supports `css` or `js` as first argument".format(tag_name))
+
+    def render_tag(self, context, *tag_args, **tag_kwargs):
+        request = self.get_request(context)
+
+        media = rendering.get_frontend_media(request)
+        if not media or not (media._js or media._css):
+            return u''
+
+        if not tag_args:
+            return media.render()
+        elif tag_args[0] == 'js':
+            return u'\n'.join(media.render_js())
+        elif tag_args[0] == 'css':
+            return u'\n'.join(media.render_css())
         else:
-            raise ValueError("The field '{0}' does not refer to a placeholder or slotname!".format(self.args[0]))
-
-        return rendering.render_placeholder(request, placeholder)
+            return ''

@@ -45,6 +45,12 @@ The ``PlaceholderData`` class
 .. autoclass:: fluent_contents.models.PlaceholderData
    :members:
 
+The ``ContentItemOutput`` class
+-------------------------------
+
+.. autoclass:: fluent_contents.models.ContentItemOutput
+   :members:
+
 The ``get_parent_lookup_kwargs`` function
 -----------------------------------------
 

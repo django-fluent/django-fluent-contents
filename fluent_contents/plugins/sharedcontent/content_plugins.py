@@ -18,3 +18,6 @@ class SharedContentPlugin(ContentPlugin):
         # Not using "template" parameter yet.
         shared_content = instance.shared_content
         return mark_safe(render_placeholder(request, shared_content.contents, parent_object=shared_content))
+
+    # NOTE: typically, get_frontend_media() should be overwritten,
+    # but render_placeholder() already tracks all media in the request.

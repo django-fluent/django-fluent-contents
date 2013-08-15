@@ -113,7 +113,7 @@ custom :func:`~fluent_contents.extensions.ContentPlugin.render` function:
         model = CallMeBackItem
         category = _("Contact page")
         render_template = "contentplugins/callmeback/callmeback.html"
-        cache_output = False
+        cache_output = False   # Important! See "Output caching" below.
 
         def render(self, request, instance, **kwargs):
             context = self.get_context(request, instance, **kwargs)
@@ -137,6 +137,30 @@ custom :func:`~fluent_contents.extensions.ContentPlugin.render` function:
     to disable the default output caching. The POST screen would return the cached output instead.
 
 
+Frontend media
+--------------
+
+Plugins can specify additional JS/CSS files which should be included.
+For example:
+
+.. code-block:: python
+
+    @plugin_pool.register
+    class MyPlugin(ContentPlugin):
+        # ...
+
+        class FrontendMedia:
+            css = {
+                'all': ('myplugin/all.css',)
+            }
+            js = (
+                'myplugin/main.js',
+            )
+
+Equally, there is a :attr:`~fluent_contents.extensions.ContentPlugin.frontend_media` property,
+and :attr:`~fluent_contents.extensions.ContentPlugin.get_frontend_media` method.
+
+
 Output caching
 --------------
 
@@ -144,16 +168,29 @@ By default, plugin output is cached and only refreshes when the administrator sa
 This greatly improves the performance of the web site, as very little database queries are needed,
 and most pages look the same for every visitor anyways.
 
-When the plugin output differs per user or request however, set
-the :attr:`~fluent_contents.extensions.ContentPlugin.cache_output` to ``False``.
-The attribute is ``True`` by default to let plugin authors make a conscious decision about caching,
-and to avoid unexpected results in production.
+* When the plugin output is dynamic set the :attr:`~fluent_contents.extensions.ContentPlugin.cache_output` to ``False``.
+* When the plugin output differs per :django:setting:`SITE_ID` only,
+  set :attr:`~fluent_contents.extensions.ContentPlugin.cache_output_per_site` to ``True``.
+* The caching can be disabled entirely project-wide using the :ref:`FLUENT_CONTENTS_CACHE_OUTPUT` setting.
+  This should be used temporary for development, or special circumstances only.
+
 Most plugins deliver exactly the same content for every request, hence the setting is tuned for speed by default.
+Further more, this lets plugin authors make a conscious decision about caching, and to avoid unexpected results in production.
 
-For special circumstances, the caching can be disabled entirely project-wide using the :ref:`FLUENT_CONTENTS_CACHE_OUTPUT` setting.
-
-In case a rendering needs to do a lot of processing
+When a plugin does a lot of processing at render time
 (e.g. requesting a web service, parsing text, sanitizing HTML, or do XSL transformations of content),
 consider storing the intermediate rendering results in the database using the :func:`~django.db.models.Model.save` method of the model.
 The :ref:`code plugin <code>` uses this for example to store the highlighted code syntax.
 The :func:`~fluent_contents.extensions.ContentPlugin.render` method can just read the value.
+
+
+Development tips
+~~~~~~~~~~~~~~~~
+
+In :django:setting:`DEBUG` mode, changes to the :attr:`~fluent_contents.extensions.ContentPlugin.render_template`
+are detected, so this doesn't affect the caching. Some changes however, will not be detected (e.g. include files).
+A quick way to clear memcache, is by using nc/ncat/netcat::
+
+    echo flush_all | nc localhost 11211
+
+When needed, include ``FLUENT_CONTENTS_CACHE_OUTPUT = False`` in the settings file.

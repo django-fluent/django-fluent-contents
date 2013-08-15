@@ -13,13 +13,16 @@ Secondly, there are a few possible fields to add to parent models:
 Finally, to exchange template data, a :class:`PlaceholderData` object is available
 which mirrors the relevant fields of the :class:`Placeholder` model.
 """
+from django.forms import Media
+from django.utils.html import conditional_escape
+from django.utils.safestring import mark_safe
 from fluent_contents.models.db import Placeholder, ContentItem
 from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_lookup_kwargs
 from fluent_contents.models.fields import PlaceholderField, PlaceholderRelation, ContentItemRelation
 
 __all__ = (
     'Placeholder', 'ContentItem',
-    'PlaceholderData',
+    'PlaceholderData', 'ContentItemOutput', 'ImmutableMedia',
     'PlaceholderManager', 'ContentItemManager', 'get_parent_lookup_kwargs',
     'PlaceholderField', 'PlaceholderRelation', 'ContentItemRelation',
 )
@@ -72,3 +75,72 @@ class PlaceholderData(object):
 
     def __repr__(self):
         return '<{0}: slot={1} role={2} title={3}>'.format(self.__class__.__name__, self.slot, self.role, self.title)
+
+
+class ContentItemOutput(object):
+    """
+    A wrapper with holds the rendered output of a plugin,
+    This object is returned by the :func:`~fluent_contents.rendering.render_placeholder`
+    and :func:`ContentPlugin.render() <fluent_contents.extensions.ContentPlugin.render>` method.
+
+    Instances can be treated like a string object,
+    but also allows reading the :attr:`html` and :attr:`media` attributes.
+    """
+    def __init__(self, html, media=None):
+        self.html = conditional_escape(html)  # enforce consistency
+        self.media = media or ImmutableMedia.empty_instance
+
+    # Pretend to be a string-like object.
+    # Both makes the caller easier to use, and keeps compatibility with 0.9 code.
+    def __unicode__(self):
+        return unicode(self.html)
+
+    def __len__(self):
+        return len(unicode(self.html))
+
+    def __repr__(self):
+        return "<PluginOutput '{0}'>".format(repr(self.html))
+
+    def __getattr__(self, item):
+        return getattr(self.html, item)
+
+    def __getitem__(self, item):
+        return unicode(self).__getitem__(item)
+
+    def __getstate__(self):
+        return (unicode(self.html), self.media._css, self.media._js)
+
+    def __setstate__(self, state):
+        # Handle pickling manually, otherwise invokes __getattr__ in a loop.
+        # (the first call goes to __setstate__, while self.html isn't set so __getattr__ is invoked again)
+        html_str, css, js = state
+        self.html = mark_safe(html_str)
+
+        if not css and not js:
+            self.media = ImmutableMedia.empty_instance
+        else:
+            self.media = ImmutableMedia()
+            self.media._css = css
+            self.media._js = js
+
+
+# Avoid continuous construction of Media objects.
+class ImmutableMedia(Media):
+    #: The empty object (a shared instance of this class)
+    empty_instance = None
+
+    def __init__(self, **kwargs):
+        self._css = {}
+        self._js = []
+
+        if kwargs:
+            Media.add_css(self, kwargs.get('css', None))
+            Media.add_js(self, kwargs.get('js', None))
+
+    def add_css(self, data):
+        raise RuntimeError("Immutable media object")
+
+    def add_js(self, data):
+        raise RuntimeError("Immutable media object")
+
+ImmutableMedia.empty_instance = ImmutableMedia()

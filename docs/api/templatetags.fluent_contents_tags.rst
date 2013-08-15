@@ -18,3 +18,9 @@ The ``RenderPlaceholderNode`` class
 .. autoclass:: fluent_contents.templatetags.fluent_contents_tags.RenderPlaceholderNode
    :members:
 
+The ``RenderContentItemsMedia`` class
+-------------------------------------
+
+.. autoclass:: fluent_contents.templatetags.fluent_contents_tags.RenderContentItemsMedia
+   :members:
+

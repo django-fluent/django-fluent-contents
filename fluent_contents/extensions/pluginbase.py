@@ -3,7 +3,6 @@ Internal module for the plugin system,
 the API is exposed via __init__.py
 """
 from django.conf import settings
-from django import forms
 from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
@@ -12,16 +11,19 @@ from django.contrib.auth import context_processors as auth_context_processors
 from django.contrib.messages import context_processors as messages_context_processors
 from django.core.cache import cache
 from django.db import DatabaseError
+from django.forms import Media, MediaDefiningClass
 from django.template.context import Context
 from django.template.loader import render_to_string
 from django.utils.html import linebreaks, escape
 from django.utils.translation import ugettext as _
 from fluent_contents.cache import get_rendering_cache_key
 from fluent_contents.forms import ContentItemForm
+from fluent_contents.models import ContentItemOutput, ImmutableMedia
 
 
 # Some standard request processors to use in the plugins,
 # Naturally, you want STATIC_URL to be available in plugins.
+
 
 def _add_debug(request):
     return {'debug': settings.DEBUG}
@@ -49,6 +51,42 @@ class PluginContext(Context):
         Context.__init__(self, dict, current_app=current_app)
         for processor in _STANDARD_REQUEST_CONTEXT_PROCESSORS:
             self.update(processor(request))
+
+
+def frontend_media_property(cls):
+    # Identical to the media_property, adapted to read the "FrontendMedia" class
+    # and optimized to avoid useless object creation.
+
+    def _media(self):
+        # Get the media property of the superclass, if it exists
+        sup_cls = super(cls, self)
+        try:
+            base = sup_cls.frontend_media
+        except AttributeError:
+            base = ImmutableMedia.empty_instance
+
+        # Get the media definition for this class
+        definition = getattr(cls, 'FrontendMedia', None)
+        if definition:
+            media = Media(definition)
+
+            # Not supporting extend=('js',) here, not documented in Django either.
+            if getattr(definition, 'extend', True) and base is not ImmutableMedia.empty_instance:
+                return base + media
+
+            return media
+        else:
+            return base
+    return property(_media)
+
+
+class PluginMediaDefiningClass(MediaDefiningClass):
+    "Metaclass for classes that can have media definitions"
+    def __new__(cls, name, bases, attrs):
+        new_class = super(PluginMediaDefiningClass, cls).__new__(cls, name, bases, attrs)
+        if 'frontend_media' not in attrs and 'FrontendMedia' in attrs:
+            new_class.frontend_media = frontend_media_property(new_class)
+        return new_class
 
 
 class ContentPlugin(object):
@@ -89,7 +127,7 @@ class ContentPlugin(object):
     This also avoids extra database queries to retrieve the model objects.
     In case the plugin needs to output content dynamically, include ``cache_output = False`` in the plugin definition.
     """
-    __metaclass__ = forms.MediaDefiningClass
+    __metaclass__ = PluginMediaDefiningClass
 
     # -- Settings to override:
 
@@ -208,7 +246,15 @@ class ContentPlugin(object):
     def _render_contentitem(self, request, instance):
         # Internal wrapper for render(), to allow updating the method signature easily.
         # It also happens to really simplify code navigation.
-        return self.render(request=request, instance=instance)
+        result = self.render(request=request, instance=instance)
+        if isinstance(result, ContentItemOutput):
+            # Return in new 1.0 format
+            return result
+        else:
+            # Old 0.9 syntax, correct it.
+            html = result
+            media = self.get_frontend_media(instance)
+            return ContentItemOutput(html, media)
 
 
     def get_output_cache_key(self, placeholder_name, instance):
@@ -258,7 +304,7 @@ class ContentPlugin(object):
         return cache.get(cachekey)
 
 
-    def set_cached_output(self, placeholder_name, instance, html):
+    def set_cached_output(self, placeholder_name, instance, output):
         """
         .. versionadded:: 0.9
            Store the cached output for a rendered item.
@@ -269,9 +315,12 @@ class ContentPlugin(object):
 
            When custom cache keys are used, also include those in :func:`get_output_cache_keys`
            so the cache will be cleared when needed.
+
+        .. versionchanged:: 1.0
+           The received data is no longer a HTML string, but :class:`~fluent_contents.models.ContentItemOutput` object.
         """
         cachekey = self.get_output_cache_key(placeholder_name, instance)
-        cache.set(cachekey, html)
+        cache.set(cachekey, output)
 
 
     def render(self, request, instance, **kwargs):
@@ -286,6 +335,13 @@ class ContentPlugin(object):
         and optionally override :func:`get_context`.
         It is recommended to wrap the output in a ``<div>`` tag,
         to prevent the item from being displayed right next to the previous plugin.
+
+        .. versionadded:: 1.0
+           The function may either return a string of HTML code,
+           or return a :class:`~fluent_contents.models.ContentItemOutput` object
+           which holds both the CSS/JS includes and HTML string.
+           For the sake of convenience and simplicity, most examples
+           only return a HTML string directly.
 
         To render raw HTML code, use :func:`~django.utils.safestring.mark_safe` on the returned HTML.
         """
@@ -330,3 +386,25 @@ class ContentPlugin(object):
         return {
             'instance': instance,
         }
+
+
+    @property
+    def frontend_media(self):
+        """
+        .. versionadded:: 1.0
+        The frontend media, typically declared using a ``class FrontendMedia`` definition.
+        """
+        # By adding this property, frontend_media_property() is further optimized.
+        return ImmutableMedia.empty_instance
+
+
+    def get_frontend_media(self, instance):
+        """
+        Return the frontend media for a specific instance.
+        By default, it returns ``self.frontend_media``, which derives
+        from the ``class FrontendMedia`` of the plugin.
+
+        This function is not used when the :func:`render` function returns
+        the media directly via the :class:`~fluent_contents.models.ContentItemOutput` class.
+        """
+        return self.frontend_media

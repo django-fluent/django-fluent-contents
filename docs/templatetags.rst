@@ -53,6 +53,27 @@ The metadata can be extracted with the :class:`~fluent_contents.templatetags.flu
 and :mod:`fluent_contents.analyzer` module.
 
 
+Frontend media
+--------------
+
+To render the CSS/JS includes of content items, use:
+
+.. code-block:: html+django
+
+    {% render_content_items_media %}
+
+This tag should be placed at the bottom of the page, after all plugins are rendered.
+
+Optionally, specify to render only the CSS or JavaScript content:
+
+.. code-block:: html+django
+
+    {% render_content_items_media css %}
+    {% render_content_items_media js %}
+
+This way, the contents can be minified too, using django-compressor_ for example.
+
+
 Note for existing projects
 --------------------------
 
@@ -63,3 +84,6 @@ Note for existing projects
 .. code-block:: html+django
 
     {% load placeholder_tags %}
+
+
+.. _django-compressor: https://github.com/jezdez/django_compressor
