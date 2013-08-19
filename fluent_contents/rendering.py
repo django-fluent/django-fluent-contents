@@ -121,6 +121,11 @@ def _render_items(request, placeholder, items, template_name=None):
                 # Respect the cache output setting of the plugin
                 if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and contentitem.plugin.cache_output and contentitem.pk:
                     output = contentitem.plugin.get_cached_output(placeholder_cache_name, contentitem)
+
+                    # Support transition to new output format.
+                    if not isinstance(output, ContentItemOutput):
+                        output = None
+                        logger.debug("Flushed cached output of {0}#{1} to store new format (key: {2}) ".format(contentitem.plugin.type_name, contentitem.pk, placeholder_cache_name))
             except PluginNotFound:
                 pass
 
