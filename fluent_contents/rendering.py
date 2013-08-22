@@ -55,7 +55,7 @@ def render_content_items(request, items, template_name=None):
     This is a variation of the :func:`render_placeholder` function.
     """
     if not items:
-        output = ContentItemOutput(u"<!-- no items to render -->")
+        output = ContentItemOutput(mark_safe(u"<!-- no items to render -->"))
     else:
         output = _render_items(request, None, items, template_name=template_name)
 
@@ -147,7 +147,7 @@ def _render_items(request, placeholder, items, template_name=None):
     # See if the queryset contained anything.
     # This test is moved here, to prevent earlier query execution.
     if not items:
-        return ContentItemOutput(u"<!-- no items in placeholder '{0}' -->".format(escape(_get_placeholder_name(placeholder))))
+        return ContentItemOutput(mark_safe(u"<!-- no items in placeholder '{0}' -->".format(escape(_get_placeholder_name(placeholder)))))
     elif remaining_items:
         # Render remaining items
         for contentitem in remaining_items:
@@ -193,7 +193,7 @@ def _render_items(request, placeholder, items, template_name=None):
                 # There is a stale ContentType object, no plugin associated or loaded.
                 class_name = 'content type is stale'
 
-            output_ordered.append("<!-- Missing derived model for ContentItem #{id}: {cls}. -->\n".format(id=pk, cls=class_name))
+            output_ordered.append(u"<!-- Missing derived model for ContentItem #{id}: {cls}. -->\n".format(id=pk, cls=class_name))
             logger.warning("Missing derived model for ContentItem #{id}: {cls}.".format(id=pk, cls=class_name))
             pass
 
