@@ -1,0 +1,15 @@
+.inline-PictureItem .form-row.url {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.inline-PictureItem .form-row.in_new_window {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.inline-PictureItem .form-row.in_new_window > div {
+  /* Same as form .aligned p */
+  margin-left: 7em;
+  padding-left: 30px;
+}

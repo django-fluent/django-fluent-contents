@@ -21,3 +21,10 @@ class PicturePlugin(ContentPlugin):
     radio_fields = {
         'align': ContentPlugin.HORIZONTAL
     }
+
+    class Media:
+        css = {
+            'screen': (
+                'fluent_contents/plugins/picture/picture_admin.css',
+            )
+        }

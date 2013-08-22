@@ -22,6 +22,7 @@ class PictureItem(ContentItem):
     caption = models.TextField(_("Caption"), blank=True)
     align = models.CharField(_("Align"), max_length=10, choices=ALIGN_CHOICES, blank=True)
     url = PluginUrlField(_("URL"), blank=True)
+    in_new_window = models.BooleanField(_("Open in a new window"), default=False, blank=True)
 
     class Meta:
         verbose_name = _("Picture")
