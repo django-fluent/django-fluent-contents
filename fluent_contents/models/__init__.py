@@ -14,8 +14,9 @@ Finally, to exchange template data, a :class:`PlaceholderData` object is availab
 which mirrors the relevant fields of the :class:`Placeholder` model.
 """
 from django.forms import Media
+from django.utils import six
 from django.utils.html import conditional_escape
-from django.utils.safestring import mark_safe
+from django.utils.safestring import mark_safe, SafeData
 from fluent_contents.models.db import Placeholder, ContentItem
 from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_lookup_kwargs
 from fluent_contents.models.fields import PlaceholderField, PlaceholderRelation, ContentItemRelation
@@ -77,7 +78,7 @@ class PlaceholderData(object):
         return '<{0}: slot={1} role={2} title={3}>'.format(self.__class__.__name__, self.slot, self.role, self.title)
 
 
-class ContentItemOutput(object):
+class ContentItemOutput(SafeData):
     """
     A wrapper with holds the rendered output of a plugin,
     This object is returned by the :func:`~fluent_contents.rendering.render_placeholder`
@@ -97,6 +98,13 @@ class ContentItemOutput(object):
 
     def __len__(self):
         return len(unicode(self.html))
+
+    if six.PY3:
+        def __str__(self):
+            return self.__unicode__()
+    else:
+        def __str__(self):
+            return self.__unicode__().encode('utf-8')
 
     def __repr__(self):
         return "<PluginOutput '{0}'>".format(repr(self.html))
