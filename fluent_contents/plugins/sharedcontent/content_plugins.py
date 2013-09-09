@@ -18,7 +18,7 @@ class SharedContentPlugin(ContentPlugin):
         # The render_placeholder() returns a ContentItemOutput object, which contains both the media and HTML code.
         # Hence, no mark_safe() or escaping is applied here.
         shared_content = instance.shared_content
-        return render_placeholder(request, shared_content.contents, parent_object=shared_content)
+        return render_placeholder(request, shared_content.contents, parent_object=shared_content, fallback_language=True)
 
     # NOTE: typically, get_frontend_media() should be overwritten,
     # but render_placeholder() already tracks all media in the request.

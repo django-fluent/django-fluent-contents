@@ -13,8 +13,9 @@ def get_rendering_cache_key(placeholder_name, contentitem):
     """
     if not contentitem.pk:
         return None
-    return "contentitem-@{0}-{1}-{2}".format(
+    return "contentitem.@{0}.{1}.{2}.{3}".format(
         placeholder_name,
         contentitem.plugin.type_name,  # always returns the upcasted name.
-        contentitem.pk
+        contentitem.pk,
+        contentitem.language_code
     )

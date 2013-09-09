@@ -4,7 +4,7 @@ The manager classes are accessed via ``Placeholder.objects``.
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from polymorphic import PolymorphicManager, PolymorphicQuerySet
-
+from fluent_contents import appsettings
 
 
 class PlaceholderManager(models.Manager):
@@ -36,23 +36,57 @@ class PlaceholderManager(models.Manager):
 
 
 class ContentItemQuerySet(PolymorphicQuerySet):
-    pass
+    """
+    QuerySet methods for ``ContentItem.objects.``.
+    """
+
+    def language(self, language_code=None):
+        """
+        Filter the content items by language.
+        """
+        # Since some code operates on a True/str switch, make sure that doesn't drip into this low level code.
+        if language_code:
+            if not isinstance(language_code, basestring) or language_code.lower() in ('1', '0', 'true', 'false'):
+                raise ValueError("ContentItemQuerySet.language() expected language_code to be an ISO code")
+
+        return self.filter(language_code=language_code or appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE)
+
+
+    def parent(self, parent_object, limit_parent_language=True):
+        """
+        Return all content items which are associated with a given parent object.
+        """
+        lookup = get_parent_lookup_kwargs(parent_object)
+
+        # Filter the items by default, giving the expected "objects for this parent" items
+        # when the parent already holds the language state.
+        if limit_parent_language:
+            language_code = get_parent_language_code(parent_object)
+            if language_code:
+                lookup['language_code'] = language_code
+
+        return self.filter(**lookup)
 
 
 class ContentItemManager(PolymorphicManager):
     """
     Extra methods for ``ContentItem.objects``.
     """
-    def __init__(self, *args, **kwargs):
-        super(ContentItemManager, self).__init__(queryset_class=ContentItemQuerySet, *args, **kwargs)
+    queryset_class = ContentItemQuerySet
 
 
-    def parent(self, parent_object):
+    def language(self, language_code=None):
+        """
+        Filter the content items by language.
+        """
+        return self.get_query_set().langauge(language_code)
+
+
+    def parent(self, parent_object, limit_parent_language=True):
         """
         Return all content items which are associated with a given parent object.
         """
-        lookup = get_parent_lookup_kwargs(parent_object)
-        return self.get_query_set().filter(**lookup)
+        return self.get_query_set().parent(parent_object, limit_parent_language)
 
 
     def create_for_placeholder(self, placeholder, sort_order=1, **kwargs):
@@ -68,9 +102,14 @@ class ContentItemManager(PolymorphicManager):
         )
 
 
+# This low-level function is used for both ContentItem and Placeholder objects.
+# Only the first has language_code support, the second one not.
 def get_parent_lookup_kwargs(parent_object):
     """
     Return lookup arguments for the generic ``parent_type`` / ``parent_id`` fields.
+
+    :param parent_object: The parent object.
+    :type parent_object: :class:`~django.db.models.Model`
     """
     if parent_object is None:
         return dict(
@@ -80,7 +119,31 @@ def get_parent_lookup_kwargs(parent_object):
     elif isinstance(parent_object, models.Model):
         return dict(
             parent_type=ContentType.objects.get_for_model(parent_object),
-            parent_id=parent_object.pk,
+            parent_id=parent_object.pk
         )
     else:
         raise ValueError("parent_object is not a model!")
+
+
+def get_parent_language_code(parent_object):
+    """
+    Return the parent object language code.
+
+    Tries to access ``get_current_language()`` and ``language_code`` attributes on the parent object.
+    """
+    if parent_object is None:
+        return None
+
+    try:
+        # django-fluent-pages uses this attribute
+        return parent_object.get_current_language()
+    except AttributeError:
+        pass
+
+    try:
+        # E.g. ContentItem.language_code
+        return parent_object.language_code
+    except AttributeError:
+        pass
+
+    return None

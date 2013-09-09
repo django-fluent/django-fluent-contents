@@ -18,13 +18,13 @@ from django.utils import six
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe, SafeData
 from fluent_contents.models.db import Placeholder, ContentItem
-from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_lookup_kwargs
+from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_lookup_kwargs, get_parent_language_code
 from fluent_contents.models.fields import PlaceholderField, PlaceholderRelation, ContentItemRelation
 
 __all__ = (
     'Placeholder', 'ContentItem',
     'PlaceholderData', 'ContentItemOutput', 'ImmutableMedia',
-    'PlaceholderManager', 'ContentItemManager', 'get_parent_lookup_kwargs',
+    'PlaceholderManager', 'ContentItemManager', 'get_parent_lookup_kwargs', 'get_parent_language_code',
     'PlaceholderField', 'PlaceholderRelation', 'ContentItemRelation',
 )
 

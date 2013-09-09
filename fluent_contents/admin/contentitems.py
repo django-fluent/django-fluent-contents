@@ -1,8 +1,8 @@
 from django.contrib.contenttypes.generic import BaseGenericInlineFormSet, GenericInlineModelAdmin
 from django.contrib.contenttypes.models import ContentType
-from fluent_contents import extensions
+from fluent_contents import extensions, appsettings
 from fluent_contents.forms import ContentItemForm
-from fluent_contents.models.db import Placeholder
+from fluent_contents.models import Placeholder, get_parent_language_code
 
 
 class BaseContentItemFormSet(BaseGenericInlineFormSet):
@@ -10,6 +10,14 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
     Correctly save placeholder fields.
     """
     def __init__(self, *args, **kwargs):
+        instance = kwargs['instance']
+        if instance:
+            self.current_language = get_parent_language_code(instance)
+            if self.current_language:
+                kwargs['queryset'] = kwargs['queryset'].filter(language_code=self.current_language)
+        else:
+            self.current_language = appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE
+
         super(BaseContentItemFormSet, self).__init__(*args, **kwargs)
         self._deleted_placeholders = ()  # internal property, set by PlaceholderEditorAdmin
 
@@ -24,7 +32,16 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
         # This allows it to insert the parent relation (ct_field / ct_fk_field) since they don't exist in the form.
         # It then calls form.cleaned_data to get all values, and use Field.save_form_data() to store them in the model instance.
         self._set_placeholder_id(form)
-        return super(BaseContentItemFormSet, self).save_new(form, commit=commit)
+
+        # As save_new() completely circumvents form.save(), have to insert the language code here.
+        instance = super(BaseContentItemFormSet, self).save_new(form, commit=False)
+        instance.language_code = self.current_language
+
+        if commit:
+            instance.save()
+            form.save_m2m()
+
+        return instance
 
 
     def save_existing(self, form, instance, commit=True):
