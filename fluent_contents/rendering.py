@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 
-def render_placeholder(request, placeholder, parent_object=None, template_name=None):
+def render_placeholder(request, placeholder, parent_object=None, template_name=None, limit_language=True, fallback_language=None):
     """
     Render a :class:`~fluent_contents.models.Placeholder` object.
     Returns a :class:`~fluent_contents.models.ContentItemOutput` object
@@ -37,10 +37,18 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
     :param parent_object: Optional, the parent object of the placeholder (already implied by the placeholder)
     :param template_name: Optional template name used to concatenate the placeholder output.
     :type template_name: str
+    :param limit_language: Whether the items should be limited to the language of the parent object. Default ``True``.
+    :type limit_language: bool
+    :param fallback_language: The fallback language to use if there are no items in the current language. Passing ``True`` uses the default :ref:`FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE`.
+    :type fallback_language: bool/str
     """
     # Filter the items both by placeholder and parent;
     # this mimics the behavior of CMS pages.
-    items = placeholder.get_content_items(parent_object)
+    items = placeholder.get_content_items(parent_object, limit_language=limit_language)
+    if fallback_language and not items:
+        language_code = appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE if fallback_language is True else fallback_language
+        items = placeholder.get_content_items(parent_object, limit_language=False).language(language_code)
+
     output = _render_items(request, placeholder, items, template_name=template_name)
 
     if is_edit_mode(request):
@@ -53,6 +61,9 @@ def render_content_items(request, items, template_name=None):
     """
     Render a list of :class:`~fluent_contents.models.ContentItem` objects as HTML string.
     This is a variation of the :func:`render_placeholder` function.
+
+    Note that the items are not filtered in any way by parent or language.
+    The items are rendered as-is.
     """
     if not items:
         output = ContentItemOutput(mark_safe(u"<!-- no items to render -->"))

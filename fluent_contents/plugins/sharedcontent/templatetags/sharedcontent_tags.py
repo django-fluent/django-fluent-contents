@@ -55,4 +55,4 @@ class SharedContentNode(BaseNode):
             return "<!-- shared content '{0}' does not yet exist -->".format(slot)
 
         template_name = tag_kwargs.get('template') or None
-        return rendering.render_placeholder(request, sharedcontent.contents, sharedcontent, template_name=template_name)
+        return rendering.render_placeholder(request, sharedcontent.contents, sharedcontent, template_name=template_name, fallback_language=True)

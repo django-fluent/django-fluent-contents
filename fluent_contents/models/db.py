@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from polymorphic import PolymorphicModel
 from polymorphic.base import PolymorphicModelBase
 from fluent_contents import appsettings
-from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_lookup_kwargs
+from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_lookup_kwargs, get_parent_language_code
 
 
 class Placeholder(models.Model):
@@ -78,7 +78,7 @@ class Placeholder(models.Model):
                 raise extensions.PluginNotFound(str(e) + " Update the plugin list of the FLUENT_CONTENTS_PLACEHOLDER_CONFIG['{0}'] setting.".format(self.slot))
 
 
-    def get_content_items(self, parent=None):
+    def get_content_items(self, parent=None, limit_language=False):
         """
         Return all models which are associated with this placeholder.
         Because a :class:`ContentItem` is polymorphic, the actual sub classes of the content item will be returned by the query.
@@ -86,7 +86,10 @@ class Placeholder(models.Model):
         item_qs = self.contentitems.all()   # django-polymorphic FTW!
 
         if parent:
-            item_qs = item_qs.filter(**get_parent_lookup_kwargs(parent))
+            if limit_language and isinstance(limit_language, basestring):
+                item_qs = item_qs.parent(parent).language(limit_language)
+            else:
+                item_qs = item_qs.parent(parent, limit_parent_language=limit_language)
 
         return item_qs
 
@@ -202,6 +205,7 @@ class ContentItem(PolymorphicModel):
     parent_type = models.ForeignKey(ContentType)
     parent_id = models.IntegerField(null=True)    # Need to allow Null, because Placeholder is created before parent is saved.
     parent = GenericForeignKey('parent_type', 'parent_id')
+    language_code = models.CharField(max_length=15, db_index=True, editable=False, default='')
 
     # Deleting a placeholder should not remove the items, only makes them orphaned.
     # Also, when updating the page, the PlaceholderEditorInline first adds/deletes placeholders before the items are updated.
@@ -253,7 +257,13 @@ class ContentItem(PolymorphicModel):
         except AttributeError:
             return None
 
+
     def save(self, *args, **kwargs):
+        # Fallback, make sure the object has a language.
+        # As this costs a query per object, the admin formset already sets the language_code whenever it can.
+        if not self.language_code:
+            self.language_code = get_parent_language_code(self.parent) or appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE
+
         is_new = not self.pk
         super(ContentItem, self).save(*args, **kwargs)
         if not is_new:

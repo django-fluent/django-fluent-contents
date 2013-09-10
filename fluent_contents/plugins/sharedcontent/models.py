@@ -1,13 +1,17 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from parler.models import TranslatableModel, TranslatedFields
 from fluent_contents.models import ContentItem, PlaceholderField
 
 
-class SharedContent(models.Model):
+class SharedContent(TranslatableModel):
     """
     The parent hosting object for shared content
     """
-    title = models.CharField(_("Title"), max_length=200)
+    translations = TranslatedFields(
+        title = models.CharField(_("Title"), max_length=200)
+    )
+
     slug = models.SlugField(_("Template code"), unique=True, help_text=_("This unique name can be used refer to this content in in templates."))
     contents = PlaceholderField("shared_content", verbose_name=_("Contents"))
 
