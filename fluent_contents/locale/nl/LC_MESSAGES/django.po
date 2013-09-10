@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-01 23:43+0200\n"
+"POT-Creation-Date: 2013-09-11 01:17+0200\n"
 "PO-Revision-Date: 2011-01-10 23:54+0100\n"
 "Last-Translator: Diederik van der Boor <vdboor@edoburu.nl>\n"
 "Language-Team: Dutch <NL@li.org>\n"
@@ -16,60 +16,67 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: extensions/pluginbase.py:224
+#: extensions/pluginbase.py:350
 #, python-format
 msgid "{No rendering defined for class '%s'}"
 msgstr ""
 
-#: extensions/pluginbase.py:244
+#: extensions/pluginbase.py:370
 msgid "Error:"
 msgstr "Fout:"
 
-#: models/db.py:37
+#: management/commands/prefix_content_item_types.py:25
+#, python-brace-format
+msgid "{count} item updated."
+msgid_plural "{count} items updated."
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/db.py:36
 msgid "Main content"
 msgstr "Hoofdinhoud"
 
-#: models/db.py:38
+#: models/db.py:37
 msgid "Sidebar content"
 msgstr "Zijbalk inhoud"
 
-#: models/db.py:39
+#: models/db.py:38
 msgid "Related content"
 msgstr "Gerelateerde inhoud"
 
-#: models/db.py:42
+#: models/db.py:41
 msgid "Slot"
 msgstr ""
 
-#: models/db.py:42
+#: models/db.py:41
 msgid "A short name to identify the placeholder in the template code."
 msgstr "Een korte naam om de placeholder in de template code te identificeren."
 
-#: models/db.py:43
+#: models/db.py:42
 msgid "Role"
 msgstr "Rol"
 
-#: models/db.py:43
+#: models/db.py:42
 msgid "This defines where the object is used."
 msgstr "Dit geeft aan waar het object gebruikt word."
 
-#: models/db.py:50
+#: models/db.py:49
 msgid "Admin title"
 msgstr "Admin titel"
 
-#: models/db.py:56
+#: models/db.py:55
 msgid "Placeholder"
 msgstr "Blokruimte"
 
-#: models/db.py:57
+#: models/db.py:56
 msgid "Placeholders"
 msgstr "Blokruimtes"
 
-#: models/db.py:241
+#: models/db.py:244
 msgid "Contentitem link"
 msgstr "Blokkoppeling"
 
-#: models/db.py:242
+#: models/db.py:245
 msgid "Contentitem links"
 msgstr "Blokkoppelingen"
 
@@ -79,7 +86,7 @@ msgstr "Combinaties"
 
 #: plugins/code/backend.py:20 plugins/iframe/content_plugins.py:14
 #: plugins/rawhtml/content_plugins.py:15
-#: plugins/sharedcontent/content_plugins.py:14
+#: plugins/sharedcontent/content_plugins.py:13
 msgid "Advanced"
 msgstr "Geavanceerd"
 
@@ -87,23 +94,23 @@ msgstr "Geavanceerd"
 msgid "Programming"
 msgstr "Programmeren"
 
-#: plugins/code/models.py:12 plugins/markup/models.py:39
+#: plugins/code/models.py:13 plugins/markup/models.py:39
 msgid "Language"
 msgstr "Taal"
 
-#: plugins/code/models.py:13
+#: plugins/code/models.py:14
 msgid "Code"
 msgstr "Code"
 
-#: plugins/code/models.py:14
+#: plugins/code/models.py:15
 msgid "Show line numbers"
 msgstr "Toon regelnummers"
 
-#: plugins/code/models.py:17
+#: plugins/code/models.py:18
 msgid "Code snippet"
 msgstr "Codefragment"
 
-#: plugins/code/models.py:18
+#: plugins/code/models.py:19
 msgid "Code snippets"
 msgstr "Codefragmenten"
 
@@ -174,7 +181,7 @@ msgid "GitHub Gist snippets"
 msgstr "GitHub Gist fragmenten"
 
 #: plugins/googledocsviewer/content_plugins.py:23
-#: plugins/oembeditem/content_plugins.py:16
+#: plugins/oembeditem/content_plugins.py:15
 #: plugins/picture/content_plugins.py:13
 #: plugins/twitterfeed/content_plugins.py:8
 msgid "Media"
@@ -239,15 +246,7 @@ msgstr "Opmaak code"
 msgid "%s items"
 msgstr "%s blokken"
 
-#: plugins/oembeditem/forms.py:14
-msgid "The URL is not valid for embedding content"
-msgstr "De URL is niet geldig voor ingesloten inhoud"
-
-#: plugins/oembeditem/models.py:16
-msgid "URL to embed"
-msgstr "Pagina URL"
-
-#: plugins/oembeditem/models.py:16
+#: plugins/oembeditem/fields.py:14
 msgid ""
 "Enter the URL of the online content to embed (e.g. a YouTube or Vimeo video, "
 "SlideShare presentation, etc..)"
@@ -255,15 +254,23 @@ msgstr ""
 "Vul de URL in van de online inhoud die ingesloten moet worden (bijv. een "
 "YouTube of Vimeo video, SlideShare presentatie, etc..)"
 
+#: plugins/oembeditem/fields.py:21
+msgid "The URL is not valid for embedding content"
+msgstr "De URL is niet geldig voor ingesloten inhoud"
+
 #: plugins/oembeditem/models.py:17
+msgid "URL to embed"
+msgstr "Pagina URL"
+
+#: plugins/oembeditem/models.py:18
 msgid "Max width"
 msgstr "Max. breedte"
 
-#: plugins/oembeditem/models.py:18
+#: plugins/oembeditem/models.py:19
 msgid "Max height"
 msgstr "Max. hoogte"
 
-#: plugins/oembeditem/models.py:41 plugins/oembeditem/models.py:42
+#: plugins/oembeditem/models.py:42 plugins/oembeditem/models.py:43
 msgid "Online media"
 msgstr "Online media"
 
@@ -303,11 +310,15 @@ msgstr "Uitlijning"
 msgid "URL"
 msgstr "URL"
 
-#: plugins/picture/models.py:27
+#: plugins/picture/models.py:25
+msgid "Open in a new window"
+msgstr "Openen in een nieuw venster"
+
+#: plugins/picture/models.py:28
 msgid "Picture"
 msgstr "Afbeelding"
 
-#: plugins/picture/models.py:28
+#: plugins/picture/models.py:29
 msgid "Pictures"
 msgstr "Afbeeldingen"
 
@@ -323,28 +334,32 @@ msgstr ""
 "Vul de HTML code in om weer te geven, zoals de embed code van een online "
 "widget."
 
-#: plugins/sharedcontent/models.py:10 plugins/twitterfeed/models.py:10
+#: plugins/sharedcontent/admin.py:28
+msgid "Publication settings"
+msgstr "Publicatievoorkeuren"
+
+#: plugins/sharedcontent/models.py:12 plugins/twitterfeed/models.py:10
 #: plugins/twitterfeed/models.py:31
 msgid "Title"
 msgstr "Titel"
 
-#: plugins/sharedcontent/models.py:11
+#: plugins/sharedcontent/models.py:15
 msgid "Template code"
 msgstr "Template naam"
 
-#: plugins/sharedcontent/models.py:11
+#: plugins/sharedcontent/models.py:15
 msgid "This unique name can be used refer to this content in in templates."
 msgstr ""
 "Deze unieke naam kan gebruikt worden om in de template naar deze inhoud te "
 "verwijzen."
 
-#: plugins/sharedcontent/models.py:12
+#: plugins/sharedcontent/models.py:16
 msgid "Contents"
 msgstr "Inhoud"
 
-#: plugins/sharedcontent/models.py:17 plugins/sharedcontent/models.py:18
-#: plugins/sharedcontent/models.py:28 plugins/sharedcontent/models.py:31
-#: plugins/sharedcontent/models.py:32
+#: plugins/sharedcontent/models.py:21 plugins/sharedcontent/models.py:22
+#: plugins/sharedcontent/models.py:32 plugins/sharedcontent/models.py:35
+#: plugins/sharedcontent/models.py:36
 msgid "Shared content"
 msgstr "Gedeelde inhoud"
 
@@ -405,7 +420,8 @@ msgstr "Twitter zoekresultaten"
 msgid "loading tweets..."
 msgstr "Tweets worden opgehaald..."
 
-#: templates/admin/fluent_contents/fieldset.html:15
+#: templates/admin/fluent_contents/contentitem/admin_form.html:12
+#: templates/admin/fluent_contents/contentitem/admin_form_without_labels.html:6
 msgid "There are no options to configure for this element."
 msgstr "Er zijn geen instellingen nodig voor dit element."
 
