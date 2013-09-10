@@ -1,6 +1,7 @@
 Version 1.0 (dev)
 -----------------
 
+* Added multilingual support, using django-parler_.
 * Added frontend media support.
 * Added "Open in new window" option for the "picture" plugin.
 * Content items are prefixed with "content:" during syncdb, a ``prefix_content_item_types`` management command can be run manually too.
@@ -98,6 +99,7 @@ so it's time to show this module to the public.
 
 .. _django-any-urlfield: https://github.com/edoburu/django-any-urlfield
 .. _django-any-imagefield: https://github.com/edoburu/django-any-imagefield
+.. _django-parler: https://github.com/edoburu/django-parler
 .. _django-polymorphic: https://github.com/chrisglass/django_polymorphic
 .. _django-tag-parser: https://github.com/edoburu/django-tag-parser
 .. _django-threadedcomments: https://github.com/HonzaKral/django-threadedcomments.git
