@@ -5,10 +5,11 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.models import signals
 from django.dispatch import receiver
 from django.utils.functional import curry
+from parler.admin import TranslatableAdmin
 from fluent_contents import extensions
 from fluent_contents.admin.contentitems import get_content_item_inlines, BaseContentItemFormSet
 from fluent_contents.admin.genericextensions import BaseInitialGenericInlineFormSet
-from fluent_contents.models import Placeholder
+from fluent_contents.models import Placeholder, ContentItem
 
 
 class PlaceholderInlineFormSet(BaseInitialGenericInlineFormSet):
@@ -137,7 +138,7 @@ class PlaceholderEditorBaseMixin(object):
 
 
 
-class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
+class PlaceholderEditorAdmin(TranslatableAdmin, PlaceholderEditorBaseMixin, ModelAdmin):
     """
     The base functionality for :class:`~django.contrib.admin.ModelAdmin` dialogs to display a placeholder editor with plugins.
     It loads the inlines using :func:`get_extra_inlines`.
@@ -192,6 +193,19 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
             request._deleted_placeholders = [obj._old_pk for obj in formset.deleted_objects]
 
         return saved_instances
+
+    def delete_model_translation(self, request, translation):
+        # Overwritten from django-parler
+        parent_object = translation.master
+        parent_object.set_current_language(translation.language_code)
+
+        super(PlaceholderEditorAdmin, self).delete_model_translation(request, translation)
+
+        # Also delete any associated plugins
+        # Placeholders are shared between languages, so these are not affected.
+        for item in ContentItem.objects.parent(parent_object, limit_parent_language=True):
+            item.delete()  # Delete per item, to trigger cache clearing
+
 
 
 @receiver(signals.post_delete, sender=Placeholder)

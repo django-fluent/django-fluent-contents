@@ -1,5 +1,4 @@
 from django.contrib import admin
-from parler.admin import TranslatableAdmin
 from fluent_contents import extensions
 from fluent_contents.admin.placeholdereditor import PlaceholderEditorInline, PlaceholderEditorAdmin
 from fluent_contents.models import PlaceholderData
@@ -13,7 +12,7 @@ class PlaceholderFieldInline(PlaceholderEditorInline):
     template = "admin/fluent_contents/placeholderfield/inline_init.html"
 
 
-class PlaceholderFieldAdmin(TranslatableAdmin, PlaceholderEditorAdmin):
+class PlaceholderFieldAdmin(PlaceholderEditorAdmin):
     """
     The base functionality for :class:`~django.contrib.admin.ModelAdmin` dialogs to display placeholder fields.
 
