@@ -40,6 +40,9 @@ var cp_tabs = {};
     $tabnav_root.find("a").mousedown( cp_tabs.onTabMouseDown ).click( cp_tabs.onTabClick );
 
     $placeholder_inline = $(".inline-placeholder-group");
+    if($placeholder_inline.length == 0)
+      console.error("Missing .inline-placeholder-group in the page!");
+
     placeholder_group_prefix = $placeholder_inline.attr('id').replace(/-group$/, '');
     placeholder_id_prefix = 'id_' + placeholder_group_prefix;   // HACK: assume id_%s as auto_id.
 
