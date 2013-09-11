@@ -3,11 +3,13 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import FieldError
 from django.db import models
+from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
+from parler.signals import post_translation_delete
 from polymorphic import PolymorphicModel
 from polymorphic.base import PolymorphicModelBase
 from fluent_contents import appsettings
-from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_lookup_kwargs, get_parent_language_code
+from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_language_code
 
 
 class Placeholder(models.Model):
@@ -298,3 +300,25 @@ class ContentItem(PolymorphicModel):
         keys = []  # ensure list return type.
         keys.extend(self.plugin.get_output_cache_keys(placeholder_name, self))
         return keys
+
+
+
+# Instead of overriding the admin classes (effectively inserting the TranslatableAdmin
+# in all your PlaceholderAdmin subclasses too), a signal is handled instead.
+# It's up to you to deside whether the use the TranslatableAdmin (or any other similar class)
+# in your admin for multilingual support. As long as the models provide a get_current_language()
+# or `language_code` attribute, the correct contents will be filtered and displayed.
+@receiver(post_translation_delete)
+def on_delete_model_translation(instance, **kwargs):
+    """
+    Make sure ContentItems are deleted when a translation in deleted.
+    """
+    translation = instance
+
+    parent_object = translation.master
+    parent_object.set_current_language(translation.language_code)
+
+    # Also delete any associated plugins
+    # Placeholders are shared between languages, so these are not affected.
+    for item in ContentItem.objects.parent(parent_object, limit_parent_language=True):
+        item.delete()  # Delete per item, to trigger cache clearing

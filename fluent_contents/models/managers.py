@@ -135,7 +135,7 @@ def get_parent_language_code(parent_object):
         return None
 
     try:
-        # django-fluent-pages uses this attribute
+        # django-parler uses this attribute
         return parent_object.get_current_language()
     except AttributeError:
         pass

@@ -1,10 +1,11 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
+from parler.admin import TranslatableAdmin
 from fluent_contents.admin import PlaceholderFieldAdmin
 from fluent_contents.plugins.sharedcontent.models import SharedContent
 
 
-class SharedContentAdmin(PlaceholderFieldAdmin):
+class SharedContentAdmin(TranslatableAdmin, PlaceholderFieldAdmin):
     """
     Admin screen for the shared content, displayed in the global Django admin.
     """
