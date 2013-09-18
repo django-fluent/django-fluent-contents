@@ -4,6 +4,8 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.forms.widgets import flatatt
 from django.utils.html import escape
+from fluent_contents.models import Placeholder, get_parent_language_code
+from fluent_contents.models.managers import get_parent_active_language_choices
 from fluent_contents.utils.compat import smart_unicode
 
 
@@ -44,10 +46,19 @@ class PlaceholderFieldWidget(Widget):
         """
         Render the placeholder field.
         """
+        other_instance_languages = None
+        if value:
+            parent = Placeholder.objects.get(pk=long(value)).parent
+            language_code = get_parent_language_code(parent)
+            if language_code:
+                # Parent is a multilingual object, provide information for the copy dialog.
+                other_instance_languages = get_parent_active_language_choices(parent, exclude_current=True)
+
         context = {
             'cp_plugin_list': list(self.plugins),
             'placeholder_id': '',
             'placeholder_slot': self.slot,
+            'other_instance_languages': other_instance_languages,
         }
         return mark_safe(render_to_string('admin/fluent_contents/placeholderfield/widget.html', context))
 

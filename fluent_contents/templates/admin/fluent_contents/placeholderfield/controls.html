@@ -10,18 +10,17 @@
             </select>
             <input data-placeholder-id="{{ placeholder_id }}" data-placeholder-slot="{{ placeholder_slot }}" class="button cp-plugin-add-button" type="button" value="{% trans "Add" %}" />
 
-            {% if original %}
-              {% with other_languages=inline_admin_form.formset.other_instance_languages %}{% if other_languages %}
-                <span class="cp-copy-language-controls">
-                  <select>
-                    {% for lang, lang_title in other_languages %}
-                      <option value="{{ lang }}">{{ lang_title }}</option>
-                    {% endfor %}
-                  </select>
-                  <input type="button" class="button cp-copy-button" value="{% trans 'Copy language' %}"
-                         data-placeholder-id="{{ placeholder_id }}" data-placeholder-slot="{{ placeholder_slot }}"
-                         data-api-url="{% url opts|admin_urlname:'get_placeholder_data' original.pk %}"/>
-                </span>
-              {% endif %}{% endwith %}
+            {% if other_instance_languages %}
+              <span class="cp-copy-language-controls">
+                <select>
+                  {% for lang, lang_title in other_instance_languages %}
+                    <option value="{{ lang }}">{{ lang_title }}</option>
+                  {% endfor %}
+                </select>
+                {# As the controls.html is used by both the inline-admin code, and widget fieldset, #}
+                {# the data-get-placeholder-data-url is not included here. There is no access to the 'opts' from the widget. #}
+                <input type="button" class="button cp-copy-button" value="{% trans 'Copy language' %}"
+                       data-placeholder-id="{{ placeholder_id }}" data-placeholder-slot="{{ placeholder_slot }}" />
+              </span>
             {% endif %}
           </div>

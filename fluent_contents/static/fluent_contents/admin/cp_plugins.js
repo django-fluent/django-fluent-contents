@@ -588,8 +588,8 @@ var cp_plugins = {};
   {
     var $button = $(event.target);
     var language_code = $button.siblings('select').val();
-    var url = $button.attr('data-api-url');
     var placeholder_slot = $button.attr('data-placeholder-slot');
+    var url = $('.inline-placeholder-group').attr('data-get-placeholder-data-url');
     $.ajax({
       url: url,
       dataType: 'json',

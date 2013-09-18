@@ -3,6 +3,7 @@ The manager classes are accessed via ``Placeholder.objects``.
 """
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
+from parler.utils import get_language_title
 from polymorphic import PolymorphicManager, PolymorphicQuerySet
 from fluent_contents import appsettings
 
@@ -147,3 +148,31 @@ def get_parent_language_code(parent_object):
         pass
 
     return None
+
+
+def get_parent_active_language_choices(parent_object, exclude_current=False):
+    """
+    Get the currently active languages of an parent object.
+
+    Note: if there is no content at the page, the language won't be returned.
+    """
+    assert parent_object is not None, "Missing parent_object!"
+
+    from .db import ContentItem
+    qs = ContentItem.objects \
+        .parent(parent_object, limit_parent_language=False) \
+        .values_list('language_code', flat=True).distinct()
+
+    languages = set(qs)
+
+    if exclude_current:
+        parent_lang = get_parent_language_code(parent_object)
+        try:
+            languages.remove(parent_lang)
+        except KeyError:
+            pass
+
+    # No multithreading issue here, object is instantiated for this user only.
+    choices = [(lang, unicode(get_language_title(lang))) for lang in set(qs)]
+    choices.sort(key=lambda tup: tup[1])
+    return choices

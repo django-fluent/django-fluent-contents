@@ -1,4 +1,4 @@
-{% load i18n placeholder_admin_tags %}{% comment %}
+{% load i18n admin_urls placeholder_admin_tags %}{% load url from future %}{% comment %}
   This is the admin template to render the PlaceholderFieldInline.
 
   It includes the placeholder inline fields, and initialisation code,
@@ -28,7 +28,9 @@
   cp_data.set_contentitem_metadata( contentitem_metadata );
 </script>
 
-<div id="{{ inline_admin_formset.formset.prefix }}-group" class="inline-group inline-placeholder-group" style="display: none;">
+<div id="{{ inline_admin_formset.formset.prefix }}-group"
+     class="inline-group inline-placeholder-group" style="display: none;"
+     data-get-placeholder-data-url="{% url opts|admin_urlname:'get_placeholder_data' original.pk %}">
   {{ inline_admin_formset.formset.management_form }}
   {{ inline_admin_formset.formset.non_form_errors }}
 

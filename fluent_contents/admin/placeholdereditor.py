@@ -10,11 +10,11 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.functional import curry
-from parler.utils import get_language_title
 from fluent_contents import extensions
 from fluent_contents.admin.contentitems import get_content_item_inlines, BaseContentItemFormSet
 from fluent_contents.admin.genericextensions import BaseInitialGenericInlineFormSet
 from fluent_contents.models import Placeholder, ContentItem, get_parent_language_code
+from fluent_contents.models.managers import get_parent_active_language_choices
 from fluent_contents.utils.ajax import JsonResponse
 
 
@@ -33,18 +33,7 @@ class PlaceholderInlineFormSet(BaseInitialGenericInlineFormSet):
 
     @property
     def other_instance_languages(self):
-        if self._instance_languages is None:
-            parent_lang = get_parent_language_code(self.instance)
-            qs = ContentItem.objects \
-                .parent(self.instance, limit_parent_language=False) \
-                .exclude(language_code=parent_lang) \
-                .values_list('language_code', flat=True).distinct()
-
-            # No multithreading issue here, object is instantiated for this user only.
-            self._instance_languages = [(lang, unicode(get_language_title(lang))) for lang in set(qs)]
-            self._instance_languages.sort(key=lambda tup: tup[1])
-
-        return self._instance_languages
+        return get_parent_active_language_choices(self.instance, exclude_current=True)
 
 
 

@@ -1,4 +1,4 @@
-{% load i18n placeholder_admin_tags %}{% comment %}
+{% load i18n admin_urls placeholder_admin_tags %}{% load url from future %}{% comment %}
   This is the admin template to render the PlaceholderEditorInline.
   It renders tab buttons for each inline, and registers them as "placeholder panes" for the editor.
 
@@ -35,7 +35,9 @@
   cp_data.set_contentitem_metadata( contentitem_metadata );
 </script>
 
-  <div id="{{ inline_admin_formset.formset.prefix }}-group" class="inline-group inline-placeholder-group">
+  <div id="{{ inline_admin_formset.formset.prefix }}-group"
+       class="inline-group inline-placeholder-group"
+       data-get-placeholder-data-url="{% url opts|admin_urlname:'get_placeholder_data' original.pk %}">
     {{ inline_admin_formset.formset.management_form }}
     {{ inline_admin_formset.formset.non_form_errors }}
 
@@ -62,7 +64,7 @@
         {% getfirstof inline_admin_form.original.id '' as placeholder_id %}{# used by pane.html / controls.html #}
         <div id="{{ inline_admin_formset.formset.prefix }}-{% if forloop.last %}empty{% else %}{{ forloop.counter0 }}{% endif %}" data-tab-region="{{ placeholder_slot|slugify }}" class="inline-placeholder cp-tab{% if forloop.last %} empty-form{% else %} cp-region-tab{% endif %}{% if forloop.first %} cp-tab-active{% endif %}">
 
-          {% include "admin/fluent_contents/placeholderfield/pane_tabbar.html" %}
+          {% include "admin/fluent_contents/placeholderfield/pane_tabbar.html" with other_instance_languages=inline_admin_form.formset.other_instance_languages %}
 
           {% if inline_admin_form.form.errors %}{# Should never happen, but when it does, this aids debugging #}
             <ul class="errorlist"><li>{{ inline_admin_form.form.errors.as_text|linebreaksbr }}</li></ul>
