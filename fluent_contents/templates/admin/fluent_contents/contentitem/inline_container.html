@@ -23,12 +23,14 @@
           </span>
         </h2>
 
-        {# render the form fields. Each Content Type can override it. Default is "admin/cp/cmspageitem/admin_form.html". #}
-        {% block formfields %}
-          {% with inline_admin_form.form as form %}
-            {% include inline_admin_formset.opts.cp_admin_form_template %}
-          {% endwith %}
-        {% endblock %}
+        <div class="cp-formset-item-fields">{# this div is used for the copy-language functionality #}
+          {# render the form fields. Each Content Type can override it. Default is "admin/cp/cmspageitem/admin_form.html". #}
+          {% block formfields %}
+            {% with inline_admin_form.form as form %}
+              {% include inline_admin_formset.opts.cp_admin_form_template %}
+            {% endwith %}
+          {% endblock %}
+        </div>
 
         {% if inline_admin_form.has_auto_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
       </div>

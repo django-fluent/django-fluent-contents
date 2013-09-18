@@ -51,6 +51,7 @@ var cp_plugins = {};
       // jQuery 1.7+
       $("#content-main")
         .on('click', ".cp-plugin-add-button", cp_plugins.onAddButtonClick )
+        .on('click', ".cp-copy-language-controls .cp-copy-button", cp_plugins.onCopyLanguageButtonClick )
         .on('click', ".cp-item-controls .cp-item-up", cp_plugins.onItemUpClick )
         .on('click', ".cp-item-controls .cp-item-down", cp_plugins.onItemDownClick )
         .on('click', ".cp-item-controls .cp-item-move", cp_plugins.onItemMoveClick )
@@ -58,6 +59,7 @@ var cp_plugins = {};
     }
     else {
       $(".cp-plugin-add-button").live( 'click', cp_plugins.onAddButtonClick );
+      $(".cp-copy-language-controls .cp-copy-button").live( 'click', cp_plugins.onCopyLanguageButtonClick );
       $(".cp-item-controls .cp-item-up").live( 'click', cp_plugins.onItemUpClick );
       $(".cp-item-controls .cp-item-down").live( 'click', cp_plugins.onItemDownClick );
       $(".cp-item-controls .cp-item-move").live( 'click', cp_plugins.onItemMoveClick );
@@ -304,8 +306,10 @@ var cp_plugins = {};
   /**
    * Add an item to a tab.
    */
-  cp_plugins.add_formset_item = function( placeholder_slot, model_name )
+  cp_plugins.add_formset_item = function( placeholder_slot, model_name, options )
   {
+    options = options || {};
+
     // The Django admin/media/js/inlines.js API is not public, or easy to use.
     // Recoded the inline model dynamics.
 
@@ -322,7 +326,9 @@ var cp_plugins = {};
     // Clone the item.
     var new_index = total.value;
     var item_id   = inline_meta.prefix + "-" + new_index;
-    var newhtml   = inline_meta.item_template.get_outerHtml().replace(/__prefix__/g, new_index);
+    var newhtml   = options.get_html
+                  ? options.get_html(inline_meta, new_index)   // hook
+                  : inline_meta.item_template.get_outerHtml().replace(/__prefix__/g, new_index);
     var $newitem  = $(newhtml).removeClass("empty-form").attr("id", item_id);
 
     // Add it
@@ -341,6 +347,7 @@ var cp_plugins = {};
     cp_plugins._set_pageitem_data($fs_item, placeholder, new_index);
     cp_plugins.enable_pageitem($fs_item);
     cp_plugins.update_sort_order(pane);  // Not required, but keep the form state consistent all the time.
+    if(options.on_post_add) options.on_post_add($fs_item);
   }
 
 
@@ -571,6 +578,71 @@ var cp_plugins = {};
     }
 
     $items.sort(function(a, b) { return a._sort_order - b._sort_order; });
+  }
+
+
+
+  // -------- Copy languages ------
+
+  cp_plugins.onCopyLanguageButtonClick = function(event)
+  {
+    var $button = $(event.target);
+    var language_code = $button.siblings('select').val();
+    var url = $button.attr('data-api-url');
+    var placeholder_slot = $button.attr('data-placeholder-slot');
+    $.ajax({
+      url: url,
+      dataType: 'json',
+      data: 'language=' + language_code,
+      success: function(data, textStatus, xhr)
+      {
+        // Ask to update the tabs!
+        if(data.success)
+          cp_plugins.load_formset_data(data, placeholder_slot);
+        else
+          alert("Internal CMS error: failed to fetch site data!");
+      },
+      error: function(xhr, textStatus, ex)
+      {
+        alert("Internal CMS error: failed to fetch site data!");    // can't yet rely on $.ajaxError
+      }
+    });
+  }
+
+
+  cp_plugins.load_formset_data = function(data, match_placeholder_slot)
+  {
+    for (var i = 0; i < data.formset_forms.length; i++) {
+      // Each item is stored as basic formdata
+      // and generated HTML.
+      var itemdata = data.formset_forms[i];
+      if(match_placeholder_slot && itemdata.placeholder_slot != match_placeholder_slot)
+        continue;
+
+      // Replace the server-side generated prefix,
+      // as this clearly won't be the same as what we'll generate client-side.
+      var re_old_prefix = new RegExp(itemdata.prefix + '-', 'g');
+
+      cp_plugins.add_formset_item(itemdata.placeholder_slot, itemdata.model, {
+        'get_html': function(inline_meta, new_index) {
+          // Use the server-side provided HTML, which has fields filled in
+          // with all template-styling handled. It's a literal copy of the edit page.
+          var new_prefix = inline_meta.prefix + "-" + new_index + "-";
+          var new_formfields = itemdata.html.replace(re_old_prefix, new_prefix);
+
+          // Take the original template, replace the contents of the 'cp-formset-item-fields' block.
+          var orig_html = inline_meta.item_template.get_outerHtml().replace(/__prefix__/g, new_index);
+          var $orig_html = $(orig_html);
+          $orig_html.find('.cp-formset-item-fields').empty().html(new_formfields);
+          return $orig_html;
+        },
+        'on_post_add': function($fs_item) {
+          // Trigger a change() event for radio fields.
+          // This fixes the django-any-urlfield display.
+          $fs_item.find('input[type=radio]:checked').change();
+        }
+      });
+    }
   }
 
 

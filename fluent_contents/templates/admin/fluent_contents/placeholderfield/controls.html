@@ -1,4 +1,4 @@
-{% load i18n placeholder_admin_tags %}
+{% load i18n admin_urls placeholder_admin_tags %}{% load url from future %}
           <div class="cp-controls">
             <select>{% for category_title, plugins in cp_plugin_list|group_plugins_into_categories|plugin_categories_to_list %}
               {% if category_title %}<optgroup label="{{ category_title }}">{% endif %}
@@ -9,4 +9,19 @@
               {% endfor %}
             </select>
             <input data-placeholder-id="{{ placeholder_id }}" data-placeholder-slot="{{ placeholder_slot }}" class="button cp-plugin-add-button" type="button" value="{% trans "Add" %}" />
+
+            {% if original %}
+              {% with other_languages=inline_admin_form.formset.other_instance_languages %}{% if other_languages %}
+                <span class="cp-copy-language-controls">
+                  <select>
+                    {% for lang, lang_title in other_languages %}
+                      <option value="{{ lang }}">{{ lang_title }}</option>
+                    {% endfor %}
+                  </select>
+                  <input type="button" class="button cp-copy-button" value="{% trans 'Copy language' %}"
+                         data-placeholder-id="{{ placeholder_id }}" data-placeholder-slot="{{ placeholder_slot }}"
+                         data-api-url="{% url opts|admin_urlname:'get_placeholder_data' original.pk %}"/>
+                </span>
+              {% endif %}{% endwith %}
+            {% endif %}
           </div>

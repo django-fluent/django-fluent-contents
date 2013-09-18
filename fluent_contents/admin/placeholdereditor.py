@@ -1,20 +1,28 @@
 from abc import abstractmethod
+from django.conf.urls import patterns, url
 from django.contrib.admin import ModelAdmin
+from django.contrib.admin.helpers import InlineAdminFormSet
 from django.contrib.contenttypes.generic import GenericInlineModelAdmin
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import signals
 from django.dispatch import receiver
+from django.template import RequestContext
+from django.template.loader import render_to_string
+from django.utils import translation
 from django.utils.functional import curry
+from parler.utils import get_language_title
 from fluent_contents import extensions
 from fluent_contents.admin.contentitems import get_content_item_inlines, BaseContentItemFormSet
 from fluent_contents.admin.genericextensions import BaseInitialGenericInlineFormSet
-from fluent_contents.models import Placeholder, ContentItem
+from fluent_contents.models import Placeholder, ContentItem, get_parent_language_code
+from fluent_contents.utils.ajax import JsonResponse
 
 
 class PlaceholderInlineFormSet(BaseInitialGenericInlineFormSet):
     # Most logic happens in the generic base class
 
     def __init__(self, *args, **kwargs):
+        self._instance_languages = None
         #kwargs['prefix'] = 'placeholder_fs'
         super(PlaceholderInlineFormSet, self).__init__(*args, **kwargs)
 
@@ -22,6 +30,22 @@ class PlaceholderInlineFormSet(BaseInitialGenericInlineFormSet):
     def get_default_prefix(cls):
         # Make output less verbose, easier to read, and less kB to transmit.
         return 'placeholder-fs'
+
+    @property
+    def other_instance_languages(self):
+        if self._instance_languages is None:
+            parent_lang = get_parent_language_code(self.instance)
+            qs = ContentItem.objects \
+                .parent(self.instance, limit_parent_language=False) \
+                .exclude(language_code=parent_lang) \
+                .values_list('language_code', flat=True).distinct()
+
+            # No multithreading issue here, object is instantiated for this user only.
+            self._instance_languages = [(lang, unicode(get_language_title(lang))) for lang in set(qs)]
+            self._instance_languages.sort(key=lambda tup: tup[1])
+
+        return self._instance_languages
+
 
 
 class PlaceholderEditorInline(GenericInlineModelAdmin):
@@ -176,6 +200,111 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
         It loads the :attr:`placeholder_inline` first, followed by the inlines for the :class:`~fluent_contents.models.ContentItem` classes.
         """
         return [self.placeholder_inline] + get_content_item_inlines(plugins=self.get_all_allowed_plugins())
+
+
+    def get_urls(self):
+        urls = super(PlaceholderEditorAdmin, self).get_urls()
+        info = self.model._meta.app_label, self.model._meta.module_name
+        return patterns('',
+            url(
+                r'^(?P<object_id>\d+)/api/get_placeholder_data/',
+                self.admin_site.admin_view(self.get_placeholder_data_view),
+                name='{0}_{1}_get_placeholder_data'.format(*info)
+            )
+        ) + urls
+
+
+    def get_placeholder_data_view(self, request, object_id):
+        """
+        Return the placeholder data as dictionary.
+        This is used in the client for the "copy" functionality.
+        """
+        language = 'en'  #request.POST['language']
+        with translation.override(language):  # Use generic solution here, don't assume django-parler is used now.
+            obj = self.get_object(request, object_id)
+
+        if obj is None:
+            json = {'success': False, 'error': 'Page not found'}
+            status = 404
+        elif not self.has_change_permission(request, obj):
+            json = {'success': False, 'error': 'No access to page'}
+            status = 403
+        else:
+            # Fetch the forms that would be displayed,
+            # return the data as serialized form data.
+            status = 200
+            json = {
+                'success': True,
+                'object_id': object_id,
+                'language_code': language,
+                'formset_forms': self._get_object_formset_data(request, obj),
+            }
+
+        return JsonResponse(json, status=status)
+
+
+    def _get_object_formset_data(self, request, obj):
+        inline_instances = self.get_inline_instances(request, obj)
+        placeholder_slots = dict(Placeholder.objects.parent(obj).values_list('id', 'slot'))
+        all_forms = []
+
+        for FormSet, inline in zip(self.get_formsets(request, obj), inline_instances):
+            # Only ContentItem inlines
+            if isinstance(inline, PlaceholderEditorInline) \
+            or not getattr(inline, 'is_fluent_editor_inline', False):
+                continue
+
+            formset_forms = self._get_contentitem_formset_html(request, obj, FormSet, inline, placeholder_slots)
+            if formset_forms:
+                all_forms.extend(formset_forms)
+
+        # Flatten list, sorted on insertion for the client.
+        all_forms.sort(key=lambda x: (x['placeholder_slot'], x['sort_order']))
+        return all_forms
+
+
+    def _get_contentitem_formset_html(self, request, obj, FormSet, inline, placeholder_slots):
+        # Passing serialized object fields to the client doesn't work,
+        # as some form fields (e.g. picture field or MultiValueField) have a different representation.
+        # The only way to pass a form copy to the client is by actually rendering it.
+        # Hence, emulating change_view code here:
+        formset = FormSet(instance=obj, prefix='', queryset=inline.queryset(request))
+        fieldsets = list(inline.get_fieldsets(request, obj))
+        readonly = list(inline.get_readonly_fields(request, obj))
+        prepopulated = dict(inline.get_prepopulated_fields(request, obj))
+        inline.extra = 0
+        inline_admin_formset = InlineAdminFormSet(inline, formset, fieldsets, prepopulated, readonly, model_admin=self)
+
+        form_data = []
+        for i, inline_admin_form in enumerate(inline_admin_formset):
+            if inline_admin_form.original is None:  # The extra forms
+                continue
+
+            # exactly what admin/fluent_contents/contentitem/inline_container.html does:
+            template_name = inline_admin_formset.opts.cp_admin_form_template
+            form_html = render_to_string(template_name, {
+                'inline_admin_form': inline_admin_form,
+                'inline_admin_formset': inline_admin_formset,
+                'original': obj,
+                'object_id': obj.pk,
+                'add': False,
+                'change': True,
+                'has_change_permission': True,
+            }, context_instance=RequestContext(request))
+
+            # Append to list with metadata included
+            contentitem = inline_admin_form.original
+            form_data.append({
+                'contentitem_id': contentitem.pk,
+                'sort_order': contentitem.sort_order,
+                'placeholder_id': contentitem.placeholder_id,
+                'placeholder_slot': placeholder_slots[contentitem.placeholder_id],
+                'html': form_html,
+                'plugin': inline.plugin.__class__.__name__,
+                'model': inline.model.__name__,
+                'prefix': formset.add_prefix(i),
+            })
+        return form_data
 
 
     def save_formset(self, request, form, formset, change):

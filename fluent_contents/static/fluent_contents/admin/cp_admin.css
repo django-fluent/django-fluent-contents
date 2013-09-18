@@ -274,6 +274,12 @@ fieldset.plugin-holder .cp-placeholderfield {
   margin-top: 15px;
 }
 
+.cp-copy-language-controls {
+  margin-left: 10px;
+  border-left: 1px solid #ccc;
+  padding-left: 10px;
+}
+
 
 /* ---- Rich editor (quick fixes) ---- */
 
