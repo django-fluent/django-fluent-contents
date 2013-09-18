@@ -265,18 +265,24 @@ var cp_plugins = {};
        && (!ignoreTestFunc || !ignoreTestFunc(name)) )
       {
         var value = values[name];
-        if( $input[0].type == 'radio' )
-        {
-          $input[0].checked = ($input[0].value == value);
-        }
-        else
-        {
-          if(value == null)
-            $input.removeAttr('value');
-          else
-            $input.val(value);
-        }
+        cp_plugins._set_input_value($input, value);
       }
+    }
+  }
+
+
+  cp_plugins._set_input_value = function($input, value)
+  {
+    if( $input[0].type == 'radio' )
+    {
+      $input[0].checked = ($input[0].value == value);
+    }
+    else
+    {
+      if(value == null)
+        $input.removeAttr('value');
+      else
+        $input.val(value);
     }
   }
 
@@ -340,14 +346,19 @@ var cp_plugins = {};
 
   cp_plugins._set_pageitem_data = function($fs_item, placeholder, new_sort_index)
   {
-    // Currently redetermining group_prefix, avoid letting fs_item to go out of sync with different call paths.
-    var current_item = cp_data.get_inline_formset_item_info($fs_item);
-    var group_prefix = current_item.auto_id.replace(/%s/, current_item.prefix);
-    var field_prefix = group_prefix + "-" + current_item.index;
-
+    var field_prefix = cp_plugins._get_field_prefix($fs_item);
     $("#" + field_prefix + "-placeholder").val(placeholder.id);
     $("#" + field_prefix + "-placeholder_slot").val(placeholder.slot);
     $("#" + field_prefix + "-sort_order").val(new_sort_index);
+  }
+
+
+  cp_plugins._get_field_prefix = function($fs_item)
+  {
+    // Currently redetermining group_prefix, avoid letting fs_item to go out of sync with different call paths.
+    var current_item = cp_data.get_inline_formset_item_info($fs_item);
+    var group_prefix = current_item.auto_id.replace(/%s/, current_item.prefix);
+    return group_prefix + "-" + current_item.index;
   }
 
 
