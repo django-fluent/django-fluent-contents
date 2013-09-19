@@ -1,6 +1,7 @@
 import django
 from django.contrib.contenttypes.generic import GenericRelation, GenericRel
 from django.contrib.contenttypes.models import ContentType
+from django.db import DEFAULT_DB_ALIAS
 from django.db.models.query_utils import Q
 from django.utils.functional import lazy
 from django.utils.text import capfirst
@@ -57,6 +58,10 @@ class ContentItemRelation(GenericRelation):
     def __init__(self, **kwargs):
         super(ContentItemRelation, self).__init__(to=ContentItem,
             object_id_field='parent_id', content_type_field='parent_type', **kwargs)
+
+    def bulk_related_objects(self, objs, using=DEFAULT_DB_ALIAS):
+        # Fix delete screen. Workaround for https://github.com/chrisglass/django_polymorphic/issues/34
+        return super(ContentItemRelation, self).bulk_related_objects(objs).non_polymorphic()
 
 
 class PlaceholderRel(GenericRel):
