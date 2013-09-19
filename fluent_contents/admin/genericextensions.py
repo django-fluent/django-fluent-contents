@@ -1,5 +1,7 @@
 from django.contrib.contenttypes.generic import BaseGenericInlineFormSet
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
+from django.forms.formsets import ManagementForm
 
 
 class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
@@ -15,6 +17,25 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
         # This instance is created each time in the change_view() function.
         self._initial = kwargs.pop('initial', [])
         super(BaseInitialGenericInlineFormSet, self).__init__(*args, **kwargs)
+
+
+    @property
+    def management_form(self):
+        try:
+            return super(BaseInitialGenericInlineFormSet, self).management_form
+        except ValidationError:
+            # Provide with better description of what is happening.
+            form = ManagementForm(self.data, auto_id=self.auto_id, prefix=self.prefix)
+            if not form.is_valid():
+                raise ValidationError(
+                    u'ManagementForm data is missing or has been tampered with.'
+                    u' form: {0}, model: {1}, errors: \n{2}'.format(
+                        self.__class__.__name__, self.model.__name__,
+                        form.errors.as_text()
+                ))
+            else:
+                raise
+
 
     def initial_form_count(self):
         if self.is_bound:
