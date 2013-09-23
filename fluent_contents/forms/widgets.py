@@ -47,7 +47,7 @@ class PlaceholderFieldWidget(Widget):
         Render the placeholder field.
         """
         other_instance_languages = None
-        if value:
+        if value and value != "-DUMMY-":
             parent = Placeholder.objects.get(pk=long(value)).parent
             language_code = get_parent_language_code(parent)
             if language_code:
