@@ -54,6 +54,9 @@ class ContentItemRelation(GenericRelation):
 
         class Page(models.Model):
             contentitem_set = ContentItemRelation()
+
+    Adding this relation also causes the admin delete page to list the
+    :class:`~fluent_contents.models.ContentItem` objects which will be deleted.
     """
     def __init__(self, **kwargs):
         super(ContentItemRelation, self).__init__(to=ContentItem,

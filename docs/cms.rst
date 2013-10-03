@@ -102,11 +102,14 @@ Optional model enhancements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The `Page` object of a CMS does not require any special fields.
+
 Optionally, the :class:`~fluent_contents.models.PlaceholderRelation`
 and :class:`~fluent_contents.models.ContentItemRelation` fields can be added
 to allow traversing from the parent model to
 the :class:`~fluent_contents.models.Placeholder`
 and :class:`~fluent_contents.models.ContentItem` classes.
+This also causes the admin to display any :class:`~fluent_contents.models.Placeholder`
+and :class:`~fluent_contents.models.ContentItem` objects that will be deleted on removing the page.
 
 .. code-block:: python
 
