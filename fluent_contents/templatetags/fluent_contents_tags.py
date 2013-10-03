@@ -232,7 +232,11 @@ class RenderPlaceholderNode(BaseNode):
         except RuntimeWarning as e:
             return u"<!-- {0} -->".format(e)
 
-        output = rendering.render_placeholder(request, placeholder)
+        # To support filtering the placeholders by parent language, the parent object needs to be known.
+        # Fortunately, the PlaceholderFieldDescriptor makes sure this doesn't require an additional query.
+        parent_object = placeholder.parent
+
+        output = rendering.render_placeholder(request, placeholder, parent_object)
         rendering.register_frontend_media(request, output.media)   # Assume it doesn't hurt. TODO: should this be optional?
         return output.html
 

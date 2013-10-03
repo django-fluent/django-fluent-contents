@@ -107,7 +107,7 @@ class PlaceholderFieldDescriptor(object):
         if instance is None:
             return self
         try:
-            return Placeholder.objects.get_by_slot(instance, self.slot)
+            placeholder = Placeholder.objects.get_by_slot(instance, self.slot)
         except Placeholder.DoesNotExist:
             raise Placeholder.DoesNotExist("Placeholder does not exist for parent {0} (type_id: {1}, parent_id: {2}), slot: '{3}'".format(
                 repr(instance),
@@ -115,6 +115,9 @@ class PlaceholderFieldDescriptor(object):
                 instance.pk,
                 self.slot
             ))
+        else:
+            placeholder.parent = instance  # fill the reverse cache
+            return placeholder
 
 
     def __set__(self, instance, value):

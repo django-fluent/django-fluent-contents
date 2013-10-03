@@ -91,7 +91,19 @@ class Placeholder(models.Model):
         item_qs = self.contentitems.all()   # django-polymorphic FTW!
 
         if parent:
+            # Filtering by parent should return the same results,
+            # unless the database is broken by having objects reference the wrong placeholders.
+            # Additionally, the `limit_parent_language` argument is supported.
             item_qs = item_qs.parent(parent, limit_parent_language=limit_parent_language)
+        else:
+            # For accurate rendering filtering by parent is needed.
+            # Otherwise, we risk returning stale objects which are indeed attached to this placeholder,
+            # but belong to a different parent. This can only happen when manually changing database contents.
+            # The admin won't display anything, as it always filters the parent. Hence, do the same for other queries.
+            item_qs = item_qs.filter(
+                parent_type_id=self.parent_type_id,
+                parent_id=self.parent_id
+            )
 
         return item_qs
 
