@@ -6,6 +6,7 @@ from django.db import models
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from parler.signals import post_translation_delete
+from parler.utils import get_language_title
 from polymorphic import PolymorphicModel
 from polymorphic.base import PolymorphicModelBase
 from fluent_contents import appsettings
@@ -245,9 +246,11 @@ class ContentItem(PolymorphicModel):
 
 
     def __unicode__(self):
-        return u"'{type} {id:d}' in '{placeholder}'".format(
+        # Note this representation is optimized for the admin delete page.
+        return u"'{type} {id:d}' in '{language} {placeholder}'".format(
             type=ContentType.objects.get_for_id(self.polymorphic_ctype_id).model_class()._meta.verbose_name,
             id=self.id or 0,
+            language=get_language_title(self.language_code),
             placeholder=self.placeholder
         )
 
