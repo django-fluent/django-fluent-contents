@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from parler.models import TranslatableModel, TranslatedFields
-from fluent_contents.models import ContentItem, PlaceholderField
+from fluent_contents.models import ContentItem, PlaceholderField, ContentItemRelation
 
 
 class SharedContent(TranslatableModel):
@@ -16,6 +16,10 @@ class SharedContent(TranslatableModel):
     contents = PlaceholderField("shared_content", verbose_name=_("Contents"))
 
     # NOTE: settings such as "template_name", and which plugins are allowed can be added later.
+
+    # Adding the reverse relation for ContentItem objects
+    # causes the admin to list these objects when moving the shared content
+    contentitem_set = ContentItemRelation()
 
     class Meta:
         verbose_name = _("Shared content")
