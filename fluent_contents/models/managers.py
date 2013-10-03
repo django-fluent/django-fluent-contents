@@ -3,9 +3,9 @@ The manager classes are accessed via ``Placeholder.objects``.
 """
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
+from django.utils.translation import get_language
 from parler.utils import get_language_title
 from polymorphic import PolymorphicManager, PolymorphicQuerySet
-from fluent_contents import appsettings
 
 
 class PlaceholderManager(models.Manager):
@@ -41,16 +41,26 @@ class ContentItemQuerySet(PolymorphicQuerySet):
     QuerySet methods for ``ContentItem.objects.``.
     """
 
-    def language(self, language_code=None):
+    def translated(self, *language_codes):
         """
-        Filter the content items by language.
-        """
-        # Since some code operates on a True/str switch, make sure that doesn't drip into this low level code.
-        if language_code:
-            if not isinstance(language_code, basestring) or language_code.lower() in ('1', '0', 'true', 'false'):
-                raise ValueError("ContentItemQuerySet.language() expected language_code to be an ISO code")
+        Only return translated objects which of the given languages.
 
-        return self.filter(language_code=language_code or appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE)
+        When no language codes are given, only the currently active language is returned.
+        """
+        # this API has the same semantics as django-parler's .translated() for familiarity.
+        # However, since this package doesn't filter in a related field, the ORM limitations don't apply.
+        if not language_codes:
+            language_codes = (get_language(),)
+        else:
+            # Since some code operates on a True/str switch, make sure that doesn't drip into this low level code.
+            for language_code in language_codes:
+                if not isinstance(language_code, basestring) or language_code.lower() in ('1', '0', 'true', 'false'):
+                    raise ValueError("ContentItemQuerySet.translated() expected language_code to be an ISO code")
+
+        if len(language_codes) == 1:
+            return self.filter(language_code=language_codes[0])
+        else:
+            return self.filter(language_code__in=language_codes)
 
 
     def parent(self, parent_object, limit_parent_language=True):
@@ -76,11 +86,11 @@ class ContentItemManager(PolymorphicManager):
     queryset_class = ContentItemQuerySet
 
 
-    def language(self, language_code=None):
+    def translated(self, *language_codes):
         """
         Filter the content items by language.
         """
-        return self.get_query_set().langauge(language_code)
+        return self.get_query_set().translated(language_codes)
 
 
     def parent(self, parent_object, limit_parent_language=True):

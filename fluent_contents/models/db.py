@@ -80,18 +80,18 @@ class Placeholder(models.Model):
                 raise extensions.PluginNotFound(str(e) + " Update the plugin list of the FLUENT_CONTENTS_PLACEHOLDER_CONFIG['{0}'] setting.".format(self.slot))
 
 
-    def get_content_items(self, parent=None, limit_language=False):
+    def get_content_items(self, parent=None, limit_parent_language=True):
         """
         Return all models which are associated with this placeholder.
         Because a :class:`ContentItem` is polymorphic, the actual sub classes of the content item will be returned by the query.
+
+        By passing the :attr:`parent` object, the items can additionally
+        be filtered by the parent language.
         """
         item_qs = self.contentitems.all()   # django-polymorphic FTW!
 
         if parent:
-            if limit_language and isinstance(limit_language, basestring):
-                item_qs = item_qs.parent(parent).language(limit_language)
-            else:
-                item_qs = item_qs.parent(parent, limit_parent_language=limit_language)
+            item_qs = item_qs.parent(parent, limit_parent_language=limit_parent_language)
 
         return item_qs
 
