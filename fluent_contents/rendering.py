@@ -47,7 +47,7 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
     items = placeholder.get_content_items(parent_object, limit_parent_language=limit_parent_language)
     if fallback_language and not items:
         language_code = appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE if fallback_language is True else fallback_language
-        items = placeholder.get_content_items(parent_object).translated(language_code)
+        items = placeholder.get_content_items(parent_object, limit_parent_language=False).translated(language_code)
 
     output = _render_items(request, placeholder, items, template_name=template_name)
 
