@@ -183,6 +183,6 @@ def get_parent_active_language_choices(parent_object, exclude_current=False):
             pass
 
     # No multithreading issue here, object is instantiated for this user only.
-    choices = [(lang, unicode(get_language_title(lang))) for lang in set(qs)]
+    choices = [(lang, unicode(get_language_title(lang))) for lang in languages]
     choices.sort(key=lambda tup: tup[1])
     return choices
