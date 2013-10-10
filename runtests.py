@@ -25,7 +25,7 @@ if not settings.configured:
     )
 
 def runtests():
-    argv = sys.argv[:1] + ['test', 'fluent_contents'] + sys.argv[1:]
+    argv = sys.argv[:1] + ['test', 'fluent_contents', '--traceback'] + sys.argv[1:]
     execute_from_command_line(argv)
 
 if __name__ == '__main__':
