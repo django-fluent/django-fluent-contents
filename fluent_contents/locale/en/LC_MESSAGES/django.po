@@ -1,0 +1,451 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-10-24 11:30+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: extensions/pluginbase.py:350
+#, python-format
+msgid "{No rendering defined for class '%s'}"
+msgstr ""
+
+#: extensions/pluginbase.py:370
+msgid "Error:"
+msgstr ""
+
+#: management/commands/prefix_content_item_types.py:25
+#, python-brace-format
+msgid "{count} item updated."
+msgid_plural "{count} items updated."
+msgstr[0] ""
+msgstr[1] ""
+
+#: models/db.py:39
+msgid "Main content"
+msgstr ""
+
+#: models/db.py:40
+msgid "Sidebar content"
+msgstr ""
+
+#: models/db.py:41
+msgid "Related content"
+msgstr ""
+
+#: models/db.py:44
+msgid "Slot"
+msgstr ""
+
+#: models/db.py:44
+msgid "A short name to identify the placeholder in the template code."
+msgstr ""
+
+#: models/db.py:45
+msgid "Role"
+msgstr ""
+
+#: models/db.py:45
+msgid "This defines where the object is used."
+msgstr ""
+
+#: models/db.py:52
+msgid "Admin title"
+msgstr ""
+
+#: models/db.py:58
+msgid "Placeholder"
+msgstr ""
+
+#: models/db.py:59
+msgid "Placeholders"
+msgstr ""
+
+#: models/db.py:261
+msgid "Contentitem link"
+msgstr ""
+
+#: models/db.py:262
+msgid "Contentitem links"
+msgstr ""
+
+#: plugins/code/backend.py:19
+msgid "Combinations"
+msgstr ""
+
+#: plugins/code/backend.py:20 plugins/iframe/content_plugins.py:14
+#: plugins/rawhtml/content_plugins.py:15
+#: plugins/sharedcontent/content_plugins.py:13
+msgid "Advanced"
+msgstr ""
+
+#: plugins/code/content_plugins.py:14 plugins/gist/content_plugins.py:14
+msgid "Programming"
+msgstr ""
+
+#: plugins/code/models.py:13 plugins/markup/models.py:39
+msgid "Language"
+msgstr ""
+
+#: plugins/code/models.py:14
+msgid "Code"
+msgstr ""
+
+#: plugins/code/models.py:15
+msgid "Show line numbers"
+msgstr ""
+
+#: plugins/code/models.py:18
+msgid "Code snippet"
+msgstr ""
+
+#: plugins/code/models.py:19
+msgid "Code snippets"
+msgstr ""
+
+#: plugins/commentsarea/content_plugins.py:26
+#: plugins/disquswidgets/content_plugins.py:10
+#: plugins/formdesignerlink/content_plugins.py:33
+msgid "Interactivity"
+msgstr ""
+
+#: plugins/commentsarea/models.py:13 plugins/disquswidgets/models.py:7
+msgid "Allow posting new comments"
+msgstr ""
+
+#: plugins/commentsarea/models.py:16
+msgid "Comments area"
+msgstr ""
+
+#: plugins/commentsarea/models.py:17
+msgid "Comments areas"
+msgstr ""
+
+#: plugins/disquswidgets/models.py:10
+msgid "Disqus comments area"
+msgstr ""
+
+#: plugins/disquswidgets/models.py:11
+msgid "Disqus comments areas"
+msgstr ""
+
+#: plugins/formdesignerlink/models.py:8
+msgid "Form"
+msgstr ""
+
+#: plugins/formdesignerlink/models.py:11
+msgid "Form link"
+msgstr ""
+
+#: plugins/formdesignerlink/models.py:12
+msgid "Form links"
+msgstr ""
+
+#: plugins/gist/models.py:9
+msgid "Gist number"
+msgstr ""
+
+#: plugins/gist/models.py:9
+msgid ""
+"Go to <a href=\"https://gist.github.com/\" target=\"_blank\">https://gist."
+"github.com/</a> and copy the number of the Gist snippet you want to display."
+msgstr ""
+
+#: plugins/gist/models.py:10
+msgid "Gist filename"
+msgstr ""
+
+#: plugins/gist/models.py:10
+msgid "Leave the filename empty to display all files in the Gist."
+msgstr ""
+
+#: plugins/gist/models.py:13
+msgid "GitHub Gist snippet"
+msgstr ""
+
+#: plugins/gist/models.py:14
+msgid "GitHub Gist snippets"
+msgstr ""
+
+#: plugins/googledocsviewer/content_plugins.py:23
+#: plugins/oembeditem/content_plugins.py:15
+#: plugins/picture/content_plugins.py:13
+#: plugins/twitterfeed/content_plugins.py:8
+msgid "Media"
+msgstr ""
+
+#: plugins/googledocsviewer/models.py:11
+msgid "File URL"
+msgstr ""
+
+#: plugins/googledocsviewer/models.py:11
+msgid "Specify the URL of an online document, for example a PDF or DOCX file."
+msgstr ""
+
+#: plugins/googledocsviewer/models.py:12 plugins/iframe/models.py:12
+msgid "Width"
+msgstr ""
+
+#: plugins/googledocsviewer/models.py:12 plugins/iframe/models.py:12
+msgid "Specify the size in pixels, or a percentage of the container area size."
+msgstr ""
+
+#: plugins/googledocsviewer/models.py:13 plugins/iframe/models.py:13
+msgid "Height"
+msgstr ""
+
+#: plugins/googledocsviewer/models.py:13 plugins/iframe/models.py:13
+msgid "Specify the size in pixels."
+msgstr ""
+
+#: plugins/googledocsviewer/models.py:16 plugins/googledocsviewer/models.py:17
+msgid "Embedded document"
+msgstr ""
+
+#: plugins/iframe/models.py:11
+msgid "Page URL"
+msgstr ""
+
+#: plugins/iframe/models.py:16
+msgid "Iframe"
+msgstr ""
+
+#: plugins/iframe/models.py:17
+msgid "Iframes"
+msgstr ""
+
+#: plugins/markup/content_plugins.py:24
+msgid "Markup"
+msgstr ""
+
+#: plugins/markup/models.py:36
+msgid "markup"
+msgstr ""
+
+#: plugins/markup/models.py:42 plugins/markup/models.py:43
+msgid "Markup code"
+msgstr ""
+
+#: plugins/markup/models.py:82
+#, python-format
+msgid "%s items"
+msgstr ""
+
+#: plugins/oembeditem/fields.py:14
+msgid ""
+"Enter the URL of the online content to embed (e.g. a YouTube or Vimeo video, "
+"SlideShare presentation, etc..)"
+msgstr ""
+
+#: plugins/oembeditem/fields.py:21
+msgid "The URL is not valid for embedding content"
+msgstr ""
+
+#: plugins/oembeditem/models.py:17
+msgid "URL to embed"
+msgstr ""
+
+#: plugins/oembeditem/models.py:18
+msgid "Max width"
+msgstr ""
+
+#: plugins/oembeditem/models.py:19
+msgid "Max height"
+msgstr ""
+
+#: plugins/oembeditem/models.py:42 plugins/oembeditem/models.py:43
+msgid "Online media"
+msgstr ""
+
+#: plugins/oembeditem/templates/admin/fluent_contents/plugins/oembeditem/admin_form.html:15
+msgid "Max size"
+msgstr ""
+
+#: plugins/oembeditem/templates/admin/fluent_contents/plugins/oembeditem/admin_form.html:16
+msgid "pixels"
+msgstr ""
+
+#: plugins/picture/models.py:16
+msgid "Left"
+msgstr ""
+
+#: plugins/picture/models.py:17
+msgid "Center"
+msgstr ""
+
+#: plugins/picture/models.py:18
+msgid "Right"
+msgstr ""
+
+#: plugins/picture/models.py:21
+msgid "Image"
+msgstr ""
+
+#: plugins/picture/models.py:22
+msgid "Caption"
+msgstr ""
+
+#: plugins/picture/models.py:23
+msgid "Align"
+msgstr ""
+
+#: plugins/picture/models.py:24
+msgid "URL"
+msgstr ""
+
+#: plugins/picture/models.py:25
+msgid "Open in a new window"
+msgstr ""
+
+#: plugins/picture/models.py:28
+msgid "Picture"
+msgstr ""
+
+#: plugins/picture/models.py:29
+msgid "Pictures"
+msgstr ""
+
+#: plugins/rawhtml/models.py:7 plugins/rawhtml/models.py:10
+#: plugins/rawhtml/models.py:11
+msgid "HTML code"
+msgstr ""
+
+#: plugins/rawhtml/models.py:7
+msgid ""
+"Enter the HTML code to display, like the embed code of an online widget."
+msgstr ""
+
+#: plugins/sharedcontent/admin.py:29
+msgid "Publication settings"
+msgstr ""
+
+#: plugins/sharedcontent/models.py:12 plugins/twitterfeed/models.py:10
+#: plugins/twitterfeed/models.py:31
+msgid "Title"
+msgstr ""
+
+#: plugins/sharedcontent/models.py:15
+msgid "Template code"
+msgstr ""
+
+#: plugins/sharedcontent/models.py:15
+msgid "This unique name can be used refer to this content in in templates."
+msgstr ""
+
+#: plugins/sharedcontent/models.py:16
+msgid "Contents"
+msgstr ""
+
+#: plugins/sharedcontent/models.py:25 plugins/sharedcontent/models.py:26
+#: plugins/sharedcontent/models.py:36 plugins/sharedcontent/models.py:39
+#: plugins/sharedcontent/models.py:40
+msgid "Shared content"
+msgstr ""
+
+#: plugins/text/models.py:14
+msgid "text"
+msgstr ""
+
+#: plugins/text/models.py:17 plugins/text/models.py:18
+msgid "Text"
+msgstr ""
+
+#: plugins/twitterfeed/models.py:10 plugins/twitterfeed/models.py:15
+#: plugins/twitterfeed/models.py:31 plugins/twitterfeed/models.py:36
+msgid "You may use Twitter markup here, such as a #hashtag or @username."
+msgstr ""
+
+#: plugins/twitterfeed/models.py:12
+msgid "Twitter user"
+msgstr ""
+
+#: plugins/twitterfeed/models.py:13 plugins/twitterfeed/models.py:34
+msgid "Number of results"
+msgstr ""
+
+#: plugins/twitterfeed/models.py:15 plugins/twitterfeed/models.py:36
+msgid "Footer text"
+msgstr ""
+
+#: plugins/twitterfeed/models.py:16 plugins/twitterfeed/models.py:37
+msgid "Include retweets"
+msgstr ""
+
+#: plugins/twitterfeed/models.py:17 plugins/twitterfeed/models.py:38
+msgid "Include replies"
+msgstr ""
+
+#: plugins/twitterfeed/models.py:23 plugins/twitterfeed/models.py:24
+msgid "Recent twitter entries"
+msgstr ""
+
+#: plugins/twitterfeed/models.py:33
+msgid "Search for"
+msgstr ""
+
+#: plugins/twitterfeed/models.py:33
+msgid ""
+"<a href=\"https://support.twitter.com/articles/71577\" target=\"_blank"
+"\">Twitter search syntax</a> is allowed."
+msgstr ""
+
+#: plugins/twitterfeed/models.py:44 plugins/twitterfeed/models.py:45
+msgid "Twitter search feed"
+msgstr ""
+
+#: plugins/twitterfeed/templates/plugins/twitterfeed/base.html:32
+msgid "loading tweets..."
+msgstr ""
+
+#: templates/admin/fluent_contents/contentitem/admin_form.html:12
+#: templates/admin/fluent_contents/contentitem/admin_form_without_labels.html:6
+msgid "There are no options to configure for this element."
+msgstr ""
+
+#: templates/admin/fluent_contents/placeholder/inline_tabs.html:53
+msgid "Loading layout data..."
+msgstr ""
+
+#: templates/admin/fluent_contents/placeholder/inline_tabs.html:54
+msgid "Orphaned content"
+msgstr ""
+
+#: templates/admin/fluent_contents/placeholder/inline_tabs.html:81
+msgid "There are no placeholders in this template."
+msgstr ""
+
+#: templates/admin/fluent_contents/placeholderfield/controls.html:11
+msgid "Add"
+msgstr ""
+
+#: templates/admin/fluent_contents/placeholderfield/controls.html:22
+msgid "Copy language"
+msgstr ""
+
+#: templates/admin/fluent_contents/placeholderfield/pane.html:3
+msgid "Placeholder empty"
+msgstr ""
+
+#: templates/admin/fluent_contents/placeholderfield/pane_tabbar.html:3
+msgid "This placeholder is empty"
+msgstr ""
+
+#: templates/admin/fluent_contents/placeholderfield/widget.html:10
+msgid "No items added to this field yet."
+msgstr ""
+
+#: utils/validators.py:13
+msgid "Value should be a number or percentage."
+msgstr ""
