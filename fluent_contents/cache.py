@@ -16,6 +16,6 @@ def get_rendering_cache_key(placeholder_name, contentitem):
     return "contentitem.@{0}.{1}.{2}.{3}".format(
         placeholder_name,
         contentitem.plugin.type_name,  # always returns the upcasted name.
-        contentitem.pk,
+        contentitem.pk,                # already unique per language_code
         contentitem.language_code
     )
