@@ -25,6 +25,10 @@
 
         <div class="cp-formset-item-fields">{# this div is used for the copy-language functionality #}
           {# render the form fields. Each Content Type can override it. Default is "admin/cp/cmspageitem/admin_form.html". #}
+          {% if inline_admin_form.form.non_field_errors %}
+            <div class="form-row">{{ inline_admin_form.form.non_field_errors }}</div>
+          {% endif %}
+
           {% block formfields %}
             {% with inline_admin_form.form as form %}
               {% include inline_admin_formset.opts.cp_admin_form_template %}
