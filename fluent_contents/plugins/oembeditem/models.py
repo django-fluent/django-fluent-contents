@@ -1,5 +1,7 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from micawber import ProviderException
 from fluent_contents.models.db import ContentItem
 from fluent_contents.plugins.oembeditem.fields import OEmbedUrlField
 from fluent_contents.plugins.oembeditem import backend
@@ -55,8 +57,16 @@ class OEmbedItem(ContentItem):
 
 
     def save(self, *args, **kwargs):
-        self.update_oembed_data()
+        self.update_oembed_data()  # if clean() did not run, still update the oembed
         super(OEmbedItem, self).save(*args, **kwargs)
+
+
+    def clean(self):
+        # Avoid getting server errors when the URL is not valid.
+        try:
+            self.update_oembed_data()
+        except ProviderException as e:
+            raise ValidationError(str(e))
 
 
     def update_oembed_data(self):

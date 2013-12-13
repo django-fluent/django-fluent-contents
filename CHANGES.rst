@@ -7,6 +7,8 @@ Version 1.0 (dev)
 * Content items are prefixed with "content:" during syncdb, a ``prefix_content_item_types`` management command can be run manually too.
 * **API Change:** Renamed template tag library ``placeholder_tags`` to ``fluent_contents_tags`` (the old name still works).
 * **API Change:** ``render_placeholder()`` and ``render_content_items()`` return a ``ContentItemOutput`` object, which can be treated like a string.
+* Fix showing non-field-errors for inlines.
+* Fix server error on using an invalid OEmbed URL.
 * Removed unneeded ``render_comment_list`` templatetag as it was upstreamed to django-threadedcomments_ 0.9.
 
 
