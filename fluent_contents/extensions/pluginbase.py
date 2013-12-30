@@ -408,3 +408,14 @@ class ContentPlugin(object):
         the media directly via the :class:`~fluent_contents.models.ContentItemOutput` class.
         """
         return self.frontend_media
+
+
+class HttpRedirectRequest(Exception):
+    """
+    Request for a redirect from within a view.
+    """
+    def __init__(self, url, status=302):
+        super(HttpRedirectRequest, self).__init__("A redirect request to '{0}' was raised.\nTo handle this exception, include the HttpRedirectRequestMiddleware in MIDDLEWARE_CLASSES.".format(url))
+        self.url = url
+        self.status = status
+
