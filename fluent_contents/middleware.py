@@ -1,10 +1,10 @@
 from django.http import HttpResponseRedirect
-from django.utils.decorators import method_decorator
 from fluent_contents.extensions import HttpRedirectRequest
 
 
 class HttpRedirectRequestMiddleware(object):
     """
+    .. versionadded:: 1.0
     Middleware that handles requests redirects
     """
     def process_exception(self, request, exception):
@@ -22,12 +22,15 @@ class HttpRedirectRequestMiddleware(object):
         """
         # The process_exception() is not called for TemplateResponse objects,
         # as these objects render outside the "try,call-view,except" block..
-        response.render = new_render(response)
+        response.render = _new_render(response)
         return response
 
 
 
-def new_render(response):
+def _new_render(response):
+    """
+    Decorator for the TemplateResponse.render() function
+    """
     orig_render = response.__class__.render
 
     # No arguments, is used as bound method.

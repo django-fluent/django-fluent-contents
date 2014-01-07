@@ -352,6 +352,8 @@ class ContentPlugin(object):
            For the sake of convenience and simplicity, most examples
            only return a HTML string directly.
 
+           When the user needs to be redirected, call :func:`redirect`.
+
         To render raw HTML code, use :func:`~django.utils.safestring.mark_safe` on the returned HTML.
         """
         render_template = self.get_render_template(request, instance, **kwargs)
@@ -377,6 +379,34 @@ class ContentPlugin(object):
         """
         return '<div style="color: red; border: 1px solid red; padding: 5px;">' \
                '<p><strong>%s</strong></p>%s</div>' % (_('Error:'), linebreaks(escape(str(error))))
+
+
+    def redirect(self, url, status=302):
+        """
+        .. versionadded:: 1.0
+        Request a redirect to be performed for the user.
+        Usage example:
+
+        .. code-block:: python
+
+            def get_context(self, request, instance, **kwargs):
+                context = super(IdSearchPlugin, self).get_context(request, instance, **kwargs)
+
+                if request.method == "POST":
+                    form = MyForm(request.POST)
+                    if form.is_valid():
+                        self.redirect("/foo/")
+                else:
+                    form = MyForm()
+
+                context['form'] = form
+                return context
+
+        Internally, this raises an exception that should be caught by
+        the :class:`~fluent_contents.middleware.HttpRedirectRequestMiddleware`
+        as the render functions have no way to return a :class:`~django.http.HttpResponseRedirect`.
+        """
+        raise HttpRedirectRequest(url, status=status)
 
 
     def get_render_template(self, request, instance, **kwargs):
@@ -421,6 +451,7 @@ class ContentPlugin(object):
 
 class HttpRedirectRequest(Exception):
     """
+    .. versionadded:: 1.0
     Request for a redirect from within a view.
     """
     def __init__(self, url, status=302):
