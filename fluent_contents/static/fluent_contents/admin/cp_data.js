@@ -58,6 +58,7 @@ var cp_data = {};
     // Global metadata
     this.type = null;
     this.name = null;
+    this.plugin = null;
     this.rel_name = null;
     this.auto_id = null;
     this.item_template = null;
@@ -171,7 +172,7 @@ var cp_data = {};
   cp_data.get_placeholder_for_role = function(role, preferredNr)
   {
     if( cp_data.placeholders == null )
-      throw new Error("cp_data.setPlaceholders() was never called");
+      throw new Error("cp_data.set_placeholders() was never called");
 
     var candidate = null;
     var itemNr = 0;
@@ -217,7 +218,7 @@ var cp_data = {};
   function _get_placeholder_by_property(prop, value)
   {
     if( cp_data.placeholders == null )
-      throw new Error("cp_data.setPlaceholders() was never called");
+      throw new Error("cp_data.set_placeholders() was never called");
 
     // Special case: if there is only a single placeholder,
     // skip the whole support for multiple placeholders per page.
@@ -333,10 +334,19 @@ var cp_data = {};
 
   cp_data._get_contentitem_metadata_by_prefix = function(prefix)
   {
+    return _get_contentitem_metadata_by_prop('prefix', prefix);
+  }
+
+
+  function _get_contentitem_metadata_by_prop(prop, value)
+  {
+    if( cp_data.contentitem_metadata == null )
+      throw new Error("cp_data.set_contentitem_metadata() was never called");
+
     for(var model_name in cp_data.contentitem_metadata)
     {
       var candidate = cp_data.contentitem_metadata[model_name];
-      if( candidate.prefix == prefix )
+      if( candidate[prop] == value )
         return candidate;
     }
     return null;
@@ -352,6 +362,15 @@ var cp_data = {};
       throw new Error("cp_data.set_contentitem_metadata() was never called. Does the ModelAdmin inherit from the correct base class?");
 
     return cp_data.contentitem_metadata[model_name];
+  }
+
+
+  /**
+   * Return the contentitem metadata for a plugin name.
+   */
+  cp_data.get_contentitem_metadata_by_plugin = function(plugin)
+  {
+    return _get_contentitem_metadata_by_prop('plugin', plugin);
   }
 
 

@@ -215,6 +215,15 @@ class ContentPlugin(object):
 
 
     @property
+    def name(self):
+        """
+        Return the classname of the plugin, this is mainly provided for templates.
+        This value can also be used in :func:`PluginPool.
+        """
+        return self.__class__.__name__
+
+
+    @property
     def type_name(self):
         """
         Return the classname of the model, this is mainly provided for templates.

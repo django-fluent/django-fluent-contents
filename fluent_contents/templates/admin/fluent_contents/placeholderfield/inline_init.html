@@ -19,6 +19,7 @@
   var contentitem_metadata = {% block js_contentitemtypes %}{ {% for fs in inline_admin_formsets|only_content_item_formsets %}'{{ fs.opts.type_name|escapejs }}': {
     type: '{{ fs.opts.type_name|escapejs }}',{# fs.opts = BaseContentItemInline #}
     name: '{{ fs.opts.name|escapejs }}',
+    plugin: '{{ fs.opts.plugin.name|escapejs }}',
     prefix: '{{ fs.formset.prefix|escapejs }}',{# fs.formset = targetobjectformFormSet #}
     rel_name: '{{ fs.formset.rel_name|escapejs }}',
     auto_id: '{{ fs.formset.auto_id|escapejs }}'

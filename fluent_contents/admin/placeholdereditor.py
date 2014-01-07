@@ -83,7 +83,8 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
 
     def get_all_allowed_plugins(self):
         """
-        Return all plugin categories which can be used by placeholder content.
+        Return *all* plugin categories which can be used by placeholder content.
+        This is the sum of all allowed plugins by the various slots on the page.
         It accesses the parent :class:`PlaceholderEditorBaseMixin` by default to request the information.
         This field is used in the template.
         """
@@ -94,6 +95,14 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
         """
         Pre-populate formset with the initial placeholders to display.
         """
+        def _placeholder_initial(p):
+            # p.as_dict() returns allowed_plugins too for the client-side API.
+            return {
+                'slot': p.slot,
+                'title': p.title,
+                'role': p.role,
+            }
+
         # Note this method is called twice, the second time in get_fieldsets() as `get_formset(request).form`
         initial = []
         if request.method == "GET":
@@ -101,7 +110,7 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
 
             # Grab the initial data from the parent PlaceholderEditorBaseMixin
             data = placeholder_admin.get_placeholder_data(request, obj)
-            initial = [d.as_dict() for d in data]
+            initial = [_placeholder_initial(d) for d in data]
 
             # Order initial properly,
 
@@ -144,7 +153,7 @@ class PlaceholderEditorBaseMixin(object):
     def get_all_allowed_plugins(self):
         """
         Return all plugin categories which can be used by placeholder content.
-        By default, all plugins are allowed.
+        By default, all plugins are allowed. Individual slot names may further limit the plugin set.
         """
         return extensions.plugin_pool.get_plugins()
 

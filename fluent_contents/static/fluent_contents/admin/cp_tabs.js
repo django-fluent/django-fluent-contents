@@ -18,7 +18,6 @@ var cp_tabs = {};
 
   var placeholder_group_prefix = null;
   var placeholder_id_prefix = null;
-  var plahceolder_name_prefix = null;
 
   // Allow debugging
   var stub = function() {};
@@ -79,7 +78,7 @@ var cp_tabs = {};
   /**
    * Rearrange all tabs due to the newly loaded layout.
    *
-   * layout = {placeholders: [{key, title}, ..]}
+   * layout = {placeholders: [{key, title, allowed_plugins}, ..]}
    */
   cp_tabs.load_layout = function(layout)
   {
@@ -203,11 +202,29 @@ var cp_tabs = {};
         'data-tab-region': placeholder.slot
       })
 
-    $tab.find(".cp-plugin-add-button")
+    var $add_button = $tab.find(".cp-plugin-add-button")
       .attr({
           'data-placeholder-id': placeholder.id,
           'data-placeholder-slot': placeholder.slot
       });
+
+    // Limit the plugin choices
+    if( placeholder.allowed_plugins )
+    {
+      var contentitem_names = cp_tabs._plugin_names_to_contentitem_names(placeholder.allowed_plugins);
+
+      var $select = $add_button.siblings('select');
+      var $options = $select.find('option');  // can be in an optgroup.
+      for (var i = 0; i < $options.length; i++) {
+        var option = $options[i];
+        if(jQuery.inArray(option.value, contentitem_names) == -1)
+        {
+          option.parentElement.removeChild(option);
+        }
+      }
+
+      $select.find('optgroup:not(:has(option))').remove();
+    }
 
     // Set value of placeholder form fields (id, slot, name, title) from the placeholder object.
     var $inputs = $tab.children('input[name*=__prefix__]');
@@ -225,6 +242,16 @@ var cp_tabs = {};
     // NOTE: temporary there will be placeholder input elements with the same ID, before the expired tabs are removed.
     cp_admin.renumber_formset_item($tab, placeholder_group_prefix, new_index);
     return $tab;
+  }
+
+
+  cp_tabs._plugin_names_to_contentitem_names = function(plugin_names)
+  {
+    var contentitem_types = [];
+    for (var i = 0; i < plugin_names.length; i++) {
+      contentitem_types.push(cp_data.get_contentitem_metadata_by_plugin(plugin_names[i]).type)
+    }
+    return contentitem_types
   }
 
 

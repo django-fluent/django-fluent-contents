@@ -60,18 +60,26 @@ class PlaceholderData(object):
 
     def as_dict(self):
         """
-        Return the contents as dictionary, for initial form data.
+        Return the contents as dictionary, for client-side export.
         The dictionary contains the fields:
 
         * ``slot``
         * ``title``
         * ``role``
+        * ``allowed_plugins``
         """
+        plugins = self.get_allowed_plugins()
         return {
             'slot': self.slot,
             'title': self.title,
-            'role': self.role
+            'role': self.role,
+            'allowed_plugins': [plugin.name for plugin in plugins],
         }
+
+
+    def get_allowed_plugins(self):
+        from fluent_contents import extensions
+        return extensions.plugin_pool.get_allowed_plugins(self.slot)
 
 
     def __repr__(self):

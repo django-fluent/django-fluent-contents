@@ -159,8 +159,8 @@ This happens entirely client-side. There is a public JavaScript API available to
 
       var layout = {
           'placeholders': [
-              {'title': "Main content", 'slot': "main", 'role': "m"},
-              {'title': "Sidebar", 'slot': "sidebar", 'role': "s"},
+              {'title': "Main content", 'slot': "main", 'role': "m", 'allowed_plugins': ["TextPlugin"]},
+              {'title': "Sidebar", 'slot': "sidebar", 'role': "s", 'allowed_plugins': ["TextPlugin", "PicturePlugin"]},
           ]
       }
 

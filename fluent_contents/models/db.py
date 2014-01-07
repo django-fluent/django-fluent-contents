@@ -68,17 +68,7 @@ class Placeholder(models.Model):
         Return the plugins which are supported in this placeholder.
         """
         from fluent_contents import extensions  # avoid circular import
-
-        # See if there is a limit imposed.
-        slot_config = self.get_slot_config()
-        plugins = slot_config.get('plugins')
-        if not plugins:
-            return extensions.plugin_pool.get_plugins()
-        else:
-            try:
-                return extensions.plugin_pool.get_plugins_by_name(*plugins)
-            except extensions.PluginNotFound as e:
-                raise extensions.PluginNotFound(str(e) + " Update the plugin list of the FLUENT_CONTENTS_PLACEHOLDER_CONFIG['{0}'] setting.".format(self.slot))
+        return extensions.plugin_pool.get_allowed_plugins(self.slot)
 
 
     def get_content_items(self, parent=None, limit_parent_language=True):
@@ -107,13 +97,6 @@ class Placeholder(models.Model):
             )
 
         return item_qs
-
-
-    def get_slot_config(self):
-        """
-        Return the site-wide configuration associated with this slot.
-        """
-        return appsettings.FLUENT_CONTENTS_PLACEHOLDER_CONFIG.get(self.slot) or {}
 
 
     def get_absolute_url(self):
