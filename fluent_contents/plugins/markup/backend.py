@@ -1,7 +1,7 @@
 """
 The rendering support of the markup plugin.
 
-This simply re-uses Django's template filters to do the formatting,
+This uses the backends from the actual text processing libraries.
 """
 from docutils.core import publish_string
 import textile, markdown
@@ -19,9 +19,11 @@ _languageNames = {
 
 # Copy, and allow adding more options.
 # Construct own dict now that django.contrib.markup.templatetags.markup is gone
-SUPPORTED_LANGUAGES = {'restructuredtext':lambda text: publish_string(text, writer_name='html'),
-                       'markdown':lambda text: markdown.markdown(text, ','.join(appsettings.FLUENT_MARKUP_MARKDOWN_EXTRAS)),
-                       'textile': lambda text: textile.textile(text)}
+SUPPORTED_LANGUAGES = {
+    'restructuredtext': lambda text: publish_string(text, writer_name='html'),
+    'markdown': lambda text: markdown.markdown(text, ','.join(appsettings.FLUENT_MARKUP_MARKDOWN_EXTRAS)),
+    'textile': lambda text: textile.textile(text)
+}
 
 if appsettings.FLUENT_MARKUP_USE_DJANGO_MARKUP:
     # With django-markup installed, it can be used instead of the default Django filters.
