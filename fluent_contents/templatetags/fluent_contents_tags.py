@@ -80,17 +80,18 @@ class PagePlaceholderNode(BaseNode):
     The template tag can also contain additional metadata,
     which can be returned by scanning for this node using the :ref:`fluent_contents.analyzer` module.
     """
-    allowed_kwargs = ('title', 'role', 'template',)
+    allowed_kwargs = ('title', 'role', 'template', 'fallback')
     min_args = 1
     max_args = 2
 
 
-    def __init__(self, tag_name, parent_expr, slot_expr, template_expr, meta_kwargs):
+    def __init__(self, tag_name, parent_expr, slot_expr, template_expr, fallback_expr, meta_kwargs):
         super(PagePlaceholderNode, self).__init__(tag_name, parent_expr, slot_expr, template=template_expr, **meta_kwargs)
 
         self.parent_expr = parent_expr
         self.slot_expr = slot_expr
         self.template_expr = template_expr
+        self.fallback_expr = fallback_expr
         self.meta_kwargs = meta_kwargs
 
 
@@ -118,12 +119,14 @@ class PagePlaceholderNode(BaseNode):
         cls.validate_args(tag_name, *args, **kwargs)
 
         template_expr = kwargs.pop('template', None)
+        fallback_expr = kwargs.pop('fallback', None)
         return cls(
             tag_name=tag_name,
             parent_expr=parent_expr,
             slot_expr=slot_expr,
             template_expr=template_expr,
-            meta_kwargs=kwargs
+            fallback_expr=fallback_expr,
+            meta_kwargs=kwargs  # The remaining non-functional args for CMS admin page.
         )
 
 
@@ -152,19 +155,37 @@ class PagePlaceholderNode(BaseNode):
             return None
 
 
+    def _extract_bool(self, templatevar):
+        # FilterExpression contains another 'var' that either contains a Variable or SafeUnicode object.
+        if hasattr(templatevar, 'var'):
+            templatevar = templatevar.var
+            if isinstance(templatevar, SafeUnicode):
+                # Literal in FilterExpression, can return.
+                return templatevar
+            else:
+                # Variable in FilterExpression, not going to work here.
+                return None
+
+        return self._is_true(templatevar)
+
+
+    def _is_true(self, value):
+        return value in (1, '1', 'true', 'True', True)
+
+
     def get_title(self):
         """
         Return the string literal that is used in the template.
         The title is used in the admin screens.
         """
-        if self.meta_kwargs.has_key('title'):
+        try:
             return self._extract_literal(self.meta_kwargs['title'])
+        except KeyError:
+            slot = self.get_slot()
+            if slot is not None:
+                return slot.replace('_', ' ').title()
 
-        slot = self.get_slot()
-        if slot is not None:
-            return slot.replace('_', ' ').title()
-
-        return None
+            return None
 
 
     def get_role(self):
@@ -172,10 +193,21 @@ class PagePlaceholderNode(BaseNode):
         Return the string literal that is used in the template.
         The role can be "main", "sidebar" or "related", or shorted to "m", "s", "r".
         """
-        if self.meta_kwargs.has_key('role'):
+        try:
             return self._extract_literal(self.meta_kwargs['role'])
-        else:
+        except KeyError:
             return None
+
+
+    def get_fallback_language(self):
+        """
+        Return whether to use the fallback language.
+        """
+        try:
+            # Note: currently not supporting strings yet.
+            return self._extract_bool(self.fallback_expr) or None
+        except KeyError:
+            return False
 
 
     def render(self, context):
@@ -184,6 +216,7 @@ class PagePlaceholderNode(BaseNode):
         # Get the placeholder
         parent = self.parent_expr.resolve(context)
         slot = self.slot_expr.resolve(context)
+        fallback_language = self._is_true(self.fallback_expr.resolve(context)) if self.fallback_expr else False
         try:
             placeholder = Placeholder.objects.get_by_slot(parent, slot)
         except Placeholder.DoesNotExist:
@@ -191,7 +224,7 @@ class PagePlaceholderNode(BaseNode):
 
         template_name = self.template_expr.resolve(context) if self.template_expr else None
 
-        output = rendering.render_placeholder(request, placeholder, parent, template_name=template_name)
+        output = rendering.render_placeholder(request, placeholder, parent, template_name=template_name, fallback_language=fallback_language)
         rendering.register_frontend_media(request, output.media)   # Assume it doesn't hurt. TODO: should this be optional?
         return output.html
 

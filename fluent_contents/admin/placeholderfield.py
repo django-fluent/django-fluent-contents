@@ -42,6 +42,7 @@ class PlaceholderFieldAdmin(PlaceholderEditorAdmin):
             data.append(PlaceholderData(
                 slot=field.slot,
                 title=field.verbose_name.capitalize(),
+                fallback_language=None,  # Information cant' be known by "render_placeholder" in the template.
             ))
 
         return data

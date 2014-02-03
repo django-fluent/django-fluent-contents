@@ -160,7 +160,7 @@ This happens entirely client-side. There is a public JavaScript API available to
       var layout = {
           'placeholders': [
               {'title': "Main content", 'slot': "main", 'role': "m", 'allowed_plugins': ["TextPlugin"]},
-              {'title': "Sidebar", 'slot': "sidebar", 'role': "s", 'allowed_plugins': ["TextPlugin", "PicturePlugin"]},
+              {'title': "Sidebar", 'slot': "sidebar", 'role': "s", 'fallback_language': true, 'allowed_plugins': ["TextPlugin", "PicturePlugin"]},
           ]
       }
 

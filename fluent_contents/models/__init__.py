@@ -41,7 +41,7 @@ class PlaceholderData(object):
     }
 
 
-    def __init__(self, slot, title=None, role=None):
+    def __init__(self, slot, title=None, role=None, fallback_language=None):
         """
         Create the placeholder data with a slot, and optional title and role.
         """
@@ -51,6 +51,7 @@ class PlaceholderData(object):
         self.slot = slot
         self.title = title or self.slot
         self.role = self.ROLE_ALIASES.get(role, role or Placeholder.MAIN)
+        self.fallback_language = fallback_language or None
 
         # Ensure upfront value checking
         allows_roles = dict(Placeholder.ROLES).keys()
@@ -66,6 +67,7 @@ class PlaceholderData(object):
         * ``slot``
         * ``title``
         * ``role``
+        * ``fallback_language``
         * ``allowed_plugins``
         """
         plugins = self.get_allowed_plugins()
@@ -73,6 +75,7 @@ class PlaceholderData(object):
             'slot': self.slot,
             'title': self.title,
             'role': self.role,
+            'fallback_language': self.fallback_language,
             'allowed_plugins': [plugin.name for plugin in plugins],
         }
 

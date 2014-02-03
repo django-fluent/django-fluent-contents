@@ -28,6 +28,7 @@ def get_template_placeholder_data(template):
             slot=pageplaceholdernode.get_slot(),
             title=pageplaceholdernode.get_title(),
             role=pageplaceholdernode.get_role(),
+            fallback_language=pageplaceholdernode.get_fallback_language(),
         )
 
         if data.slot not in names:
