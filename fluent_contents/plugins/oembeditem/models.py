@@ -77,7 +77,10 @@ class OEmbedItem(ContentItem):
             # Fetch new embed code
             response = backend.get_oembed_data(self.embed_url, self.embed_max_width, self.embed_max_height)
             self.store_response(response)
+
             self._old_embed_url = self.embed_url
+            self._old_embed_max_width = self.embed_max_width
+            self._old_embed_max_height = self.embed_max_height
 
 
     def store_response(self, response):
