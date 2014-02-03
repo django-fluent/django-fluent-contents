@@ -27,6 +27,9 @@ To define the placeholders for a :doc:`cms <cms>` page, use:
 
 If the currentpage variable is named ``page``, it can be left out.
 
+Using a custom template
+~~~~~~~~~~~~~~~~~~~~~~~
+
 To customize the placeholder contents, a template can be specified:
 
 .. code-block:: html+django
@@ -43,6 +46,9 @@ For example:
       {{ html }}
     {% endfor %}
 
+Admin Meta information
+~~~~~~~~~~~~~~~~~~~~~~
+
 Extra meta information can be provided for the admin interface:
 
 .. code-block:: html+django
@@ -51,6 +57,19 @@ Extra meta information can be provided for the admin interface:
 
 The metadata can be extracted with the :class:`~fluent_contents.templatetags.fluent_contents_tags.PagePlaceholderNode` class,
 and :mod:`fluent_contents.analyzer` module.
+
+Fallback languages
+~~~~~~~~~~~~~~~~~~
+
+.. versionadded:: 1.0
+   For multilingual sites, the contents of the active translation will be displayed only.
+   To render the fallback language for empty placeholders, use the ``fallback`` parameter:
+
+   .. code-block:: html+django
+
+       {% page_placeholder currentpage "slotname" fallback=1 %}
+
+
 
 
 Frontend media
