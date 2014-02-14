@@ -266,13 +266,22 @@ class ContentPlugin(object):
             return ContentItemOutput(html, media)
 
 
+    def get_output_cache_base_key(self, placeholder_name, instance):
+        """
+        .. versionadded:: 1.0
+           Return the default cache key, both :func:`get_output_cache_key` and :func:`get_output_cache_keys` rely on this.
+           By default, this function generates the cache key using :func:`~fluent_contents.cache.get_rendering_cache_key`.
+        """
+        return get_rendering_cache_key(placeholder_name, instance)
+
+
     def get_output_cache_key(self, placeholder_name, instance):
         """
         .. versionadded:: 0.9
            Return the default cache key which is used to store a rendered item.
-           By default, this function generates the cache key using :func:`~fluent_contents.cache.get_rendering_cache_key`.
+           By default, this function generates the cache key using :func:`get_output_cache_base_key`.
         """
-        cachekey = get_rendering_cache_key(placeholder_name, instance)
+        cachekey = self.get_output_cache_base_key(placeholder_name, instance)
         if self.cache_output_per_site:
             cachekey = "{0}-s{1}".format(cachekey, settings.SITE_ID)
         return cachekey
@@ -284,9 +293,11 @@ class ContentPlugin(object):
            Return the possible cache keys for a rendered item.
 
            This method should be overwritten when implementing a function :func:`set_cached_output` method
-           or implementing a :func:`get_output_cache_key` function which can return multiple results.
-           By default, this function generates the cache key using :func:`get_output_cache_key`.
+           or when implementing a :func:`get_output_cache_key` function.
+           By default, this function generates the cache key using :func:`get_output_cache_base_key`.
         """
+        base_key = self.get_output_cache_base_key(placeholder_name, instance)
+
         if self.cache_output_per_site:
             site_ids = list(Site.objects.values_list('pk', flat=True))
             if settings.SITE_ID not in site_ids:
@@ -296,7 +307,7 @@ class ContentPlugin(object):
             return ["{0}-s{1}".format(base_key, site_id) for site_id in site_ids]
         else:
             return [
-                self.get_output_cache_key(placeholder_name, instance)
+                base_key
             ]
 
 
