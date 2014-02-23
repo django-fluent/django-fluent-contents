@@ -6,7 +6,7 @@ class GistItem(ContentItem):
     """
     A reference to a gist item (gist.github.com) that is rendered as source code.
     """
-    gist_id = models.IntegerField(_("Gist number"), help_text=_('Go to <a href="https://gist.github.com/" target="_blank">https://gist.github.com/</a> and copy the number of the Gist snippet you want to display.'))
+    gist_id = models.CharField(_("Gist number"), max_length=128, help_text=_('Go to <a href="https://gist.github.com/" target="_blank">https://gist.github.com/</a> and copy the number of the Gist snippet you want to display.'))
     filename = models.CharField(_("Gist filename"), max_length=128, blank=True, help_text=_('Leave the filename empty to display all files in the Gist.'))
 
     class Meta:
