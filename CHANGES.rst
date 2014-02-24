@@ -11,6 +11,7 @@ Version 1.0 (dev)
 * **API Change:** both ``get_output_cache_key()`` and ``get_output_cache_keys()`` should use ``get_output_cache_base_key()`` now.
 * Fix showing non-field-errors for inlines.
 * Fix server error on using an invalid OEmbed URL.
+* Fix gist plugin, allow UUID's now.
 * Removed unneeded ``render_comment_list`` templatetag as it was upstreamed to django-threadedcomments_ 0.9.
 
 
