@@ -40,9 +40,10 @@ class ContentItemQuerySet(PolymorphicQuerySet):
     """
     QuerySet methods for ``ContentItem.objects.``.
     """
-
     def translated(self, *language_codes):
         """
+        .. versionadded:: 1.0
+
         Only return translated objects which of the given languages.
 
         When no language codes are given, only the currently active language is returned.
@@ -79,6 +80,16 @@ class ContentItemQuerySet(PolymorphicQuerySet):
         return self.filter(**lookup)
 
 
+    def clear_cache(self):
+        """
+        .. versionadded:: 1.0 Clear the cache of the selected entries.
+        """
+        for contentitem in self.all():
+            contentitem.clear_cache()
+
+    clear_cache.alters_data = True
+
+
 class ContentItemManager(PolymorphicManager):
     """
     Extra methods for ``ContentItem.objects``.
@@ -88,7 +99,11 @@ class ContentItemManager(PolymorphicManager):
 
     def translated(self, *language_codes):
         """
-        Filter the content items by language.
+        .. versionadded:: 1.0
+
+        Only return translated objects which of the given languages.
+
+        When no language codes are given, only the currently active language is returned.
         """
         return self.get_query_set().translated(language_codes)
 
@@ -138,6 +153,8 @@ def get_parent_lookup_kwargs(parent_object):
 
 def get_parent_language_code(parent_object):
     """
+    .. versionadded:: 1.0
+
     Return the parent object language code.
 
     Tries to access ``get_current_language()`` and ``language_code`` attributes on the parent object.
@@ -162,6 +179,8 @@ def get_parent_language_code(parent_object):
 
 def get_parent_active_language_choices(parent_object, exclude_current=False):
     """
+    .. versionadded:: 1.0
+
     Get the currently active languages of an parent object.
 
     Note: if there is no content at the page, the language won't be returned.
