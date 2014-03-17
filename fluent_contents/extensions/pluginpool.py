@@ -117,7 +117,7 @@ class PluginPool(object):
             try:
                 return self.get_plugins_by_name(*plugins)
             except PluginNotFound as e:
-                raise PluginNotFound(str(e) + " Update the plugin list of the FLUENT_CONTENTS_PLACEHOLDER_CONFIG['{0}'] setting.".format(self.slot))
+                raise PluginNotFound(str(e) + " Update the plugin list of the FLUENT_CONTENTS_PLACEHOLDER_CONFIG['{0}'] setting.".format(placeholder_slot))
 
 
     def get_plugins_by_name(self, *names):
