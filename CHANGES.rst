@@ -5,6 +5,7 @@ Version 1.0 (dev)
 * Added frontend media support.
 * Added "Open in new window" option for the "picture" plugin.
 * Added ``HttpRedirectRequest`` exception and ``HttpRedirectRequestMiddleware``.
+* Added multisite support to sharedcontent plugin.
 * Content items are prefixed with "content:" during syncdb, a ``prefix_content_item_types`` management command can be run manually too.
 * **API Change:** Renamed template tag library ``placeholder_tags`` to ``fluent_contents_tags`` (the old name still works).
 * **API Change:** ``render_placeholder()`` and ``render_content_items()`` return a ``ContentItemOutput`` object, which can be treated like a string.

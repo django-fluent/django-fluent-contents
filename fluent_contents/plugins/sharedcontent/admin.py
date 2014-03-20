@@ -1,8 +1,10 @@
+from django.conf import settings
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from parler.admin import TranslatableAdmin
+from fluent_contents import appsettings
 from fluent_contents.admin import PlaceholderFieldAdmin
-from fluent_contents.plugins.sharedcontent.models import SharedContent
+from .models import SharedContent
 
 
 class SharedContentAdmin(TranslatableAdmin, PlaceholderFieldAdmin):
@@ -31,5 +33,13 @@ class SharedContentAdmin(TranslatableAdmin, PlaceholderFieldAdmin):
             'classes': ('collapse',),
         })
     )
+
+    def queryset(self, request):
+        # sharedcontent is filtered only visually, not in the queryset
+        qs = super(SharedContentAdmin, self).queryset(request)
+        if appsettings.FLUENT_CONTENTS_FILTER_SITE_ID:
+            qs = qs.parent_site(settings.SITE_ID)
+        return qs
+
 
 admin.site.register(SharedContent, SharedContentAdmin)
