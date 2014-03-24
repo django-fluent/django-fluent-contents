@@ -13,6 +13,7 @@ Version 1.0 (dev)
 * Fix showing non-field-errors for inlines.
 * Fix server error on using an invalid OEmbed URL.
 * Fix gist plugin, allow UUID's now.
+* Fix missing ``alters_data`` annotations on model methods.
 * Removed unneeded ``render_comment_list`` templatetag as it was upstreamed to django-threadedcomments_ 0.9.
 
 

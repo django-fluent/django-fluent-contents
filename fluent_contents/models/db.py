@@ -118,6 +118,8 @@ class Placeholder(models.Model):
         ContentItem.objects.filter(placeholder=self).update(placeholder=None)
         super(Placeholder, self).delete(using)
 
+    delete.alters_data = True
+
 
 
 class ContentItemMetaClass(PolymorphicModelBase):
@@ -269,10 +271,15 @@ class ContentItem(PolymorphicModel):
         if not is_new:
             self.clear_cache()
 
+    save.alters_data = True
+
 
     def delete(self, *args, **kwargs):
         super(ContentItem, self).delete(*args, **kwargs)
         self.clear_cache()
+
+    # Must restore these options, or risk removing with a template print statement.
+    delete.alters_data = True
 
 
     def clear_cache(self):
@@ -281,6 +288,8 @@ class ContentItem(PolymorphicModel):
         """
         for cache_key in self.get_cache_keys():
             cache.delete(cache_key)
+
+    clear_cache.alters_data = True
 
 
     def get_cache_keys(self):
