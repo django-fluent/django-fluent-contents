@@ -6,9 +6,13 @@ from fluent_contents.models.db import ContentItem
 from fluent_contents.plugins.oembeditem.fields import OEmbedUrlField
 from fluent_contents.plugins.oembeditem import backend
 
-class OEmbedItem(ContentItem):
+
+class AbstractOEmbedItem(ContentItem):
     """
-    Embedded media via OEmbed
+    The base class for an OEmbedItem,
+    This allows to create custom models easily.
+
+    .. versionadded:: 1.0
     """
     TYPE_PHOTO = 'photo'
     TYPE_VIDEO = 'video'
@@ -41,6 +45,7 @@ class OEmbedItem(ContentItem):
 
 
     class Meta:
+        abstract = True
         verbose_name = _("Online media")
         verbose_name_plural = _("Online media")
 
@@ -50,7 +55,7 @@ class OEmbedItem(ContentItem):
 
 
     def __init__(self, *args, **kwargs):
-        super(OEmbedItem, self).__init__(*args, **kwargs)
+        super(AbstractOEmbedItem, self).__init__(*args, **kwargs)
         self._old_embed_url = self.embed_url
         self._old_embed_max_width = self.embed_max_width
         self._old_embed_max_height = self.embed_max_height
@@ -58,7 +63,7 @@ class OEmbedItem(ContentItem):
 
     def save(self, *args, **kwargs):
         self.update_oembed_data()  # if clean() did not run, still update the oembed
-        super(OEmbedItem, self).save(*args, **kwargs)
+        super(AbstractOEmbedItem, self).save(*args, **kwargs)
 
 
     def clean(self):
@@ -69,18 +74,44 @@ class OEmbedItem(ContentItem):
             raise ValidationError(str(e))
 
 
-    def update_oembed_data(self):
-        if not self.type \
-        or self._old_embed_url != self.embed_url \
-        or self._old_embed_max_width != self.embed_max_width \
-        or self._old_embed_max_height != self.embed_max_height:
+    def update_oembed_data(self, force=False, **backend_params):
+        """
+        Update the OEmbeddata if needed.
+
+        .. versionadded:: 1.0 Added force and backend_params parameters.
+        """
+        if force or self._input_changed():
             # Fetch new embed code
-            response = backend.get_oembed_data(self.embed_url, self.embed_max_width, self.embed_max_height)
+            params = self.get_oembed_params(self.embed_url)
+            params.update(backend_params)
+            response = backend.get_oembed_data(self.embed_url, **params)
+
+            # Save it
             self.store_response(response)
 
+            # Track field changes
             self._old_embed_url = self.embed_url
             self._old_embed_max_width = self.embed_max_width
             self._old_embed_max_height = self.embed_max_height
+
+
+    def get_oembed_params(self, embed_url):
+        """
+        .. versionadded:: 1.0
+
+           Allow to define the parameters that are passed to the backend to fetch the current URL.
+        """
+        return {
+            'max_width': self.embed_max_width,
+            'max_height': self.embed_max_height,
+        }
+
+
+    def _input_changed(self):
+        return not self.type \
+            or self._old_embed_url != self.embed_url \
+            or self._old_embed_max_width != self.embed_max_width \
+            or self._old_embed_max_height != self.embed_max_height
 
 
     def store_response(self, response):
@@ -95,3 +126,14 @@ class OEmbedItem(ContentItem):
         for key in KEYS:
             if response.has_key(key):
                 setattr(self, key, response[key])
+
+
+
+class OEmbedItem(AbstractOEmbedItem):
+    """
+    Embedded media via OEmbed
+    """
+
+    class Meta:
+        verbose_name = _("Online media")
+        verbose_name_plural = _("Online media")

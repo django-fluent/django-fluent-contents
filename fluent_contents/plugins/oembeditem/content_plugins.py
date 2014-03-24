@@ -16,6 +16,9 @@ class OEmbedPlugin(ContentPlugin):
     admin_form_template = "admin/fluent_contents/plugins/oembeditem/admin_form.html"
     render_template = "fluent_contents/plugins/oembed/default.html"
 
+    #: Custom render template
+    render_template_base = "fluent_contents/plugins/oembed/{type}.html"
+
     fieldsets = (
         (None, {
             'fields': (
@@ -39,6 +42,6 @@ class OEmbedPlugin(ContentPlugin):
         """
         safe_filename = re_safe.sub('', instance.type or 'default')
         return [
-            "fluent_contents/plugins/oembed/{type}.html".format(type=safe_filename),
+            self.render_template_base.format(type=safe_filename),
             self.render_template
         ]
