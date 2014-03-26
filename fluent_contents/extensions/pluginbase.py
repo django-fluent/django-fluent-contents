@@ -15,7 +15,7 @@ from django.forms import Media, MediaDefiningClass
 from django.template.context import Context
 from django.template.loader import render_to_string
 from django.utils.html import linebreaks, escape
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, get_language
 from fluent_contents.cache import get_rendering_cache_key
 from fluent_contents.forms import ContentItemForm
 from fluent_contents.models import ContentItemOutput, ImmutableMedia
@@ -156,6 +156,18 @@ class ContentPlugin(object):
     #: Cache the plugin output per :django:setting:`SITE_ID`.
     cache_output_per_site = False
 
+    #: .. versionadded:: 1.0
+    #: Cache the plugin output per language.
+    #: This can be useful for sites which either:
+    #:
+    #: * Display fallback content on pages, but still use `{% trans %}` inside templates.
+    #: * Dynamically switch the language per request, and *share* content between multiple languages.
+    cache_output_per_language = False
+
+    #: .. versionadded:: 1.0
+    #: Tell which languages the plugin will cache.
+    cache_supported_language_codes = [code for code, _ in settings.LANGUAGES]
+
     #: The category to display the plugin at.
     category = None
 
@@ -284,6 +296,14 @@ class ContentPlugin(object):
         cachekey = self.get_output_cache_base_key(placeholder_name, instance)
         if self.cache_output_per_site:
             cachekey = "{0}-s{1}".format(cachekey, settings.SITE_ID)
+
+        # Append language code
+        if self.cache_output_per_language:
+            user_language = get_language()
+            if user_language not in self.cache_supported_language_codes:
+                user_language = 'unsupported'
+            cachekey = "{0}.{1}".format(cachekey, user_language)
+
         return cachekey
 
 
@@ -297,6 +317,9 @@ class ContentPlugin(object):
            By default, this function generates the cache key using :func:`get_output_cache_base_key`.
         """
         base_key = self.get_output_cache_base_key(placeholder_name, instance)
+        cachekeys = [
+            base_key
+        ]
 
         if self.cache_output_per_site:
             site_ids = list(Site.objects.values_list('pk', flat=True))
@@ -304,11 +327,17 @@ class ContentPlugin(object):
                 site_ids.append(settings.SITE_ID)
 
             base_key = get_rendering_cache_key(placeholder_name, instance)
-            return ["{0}-s{1}".format(base_key, site_id) for site_id in site_ids]
-        else:
-            return [
-                base_key
-            ]
+            cachekeys = ["{0}-s{1}".format(base_key, site_id) for site_id in site_ids]
+
+        if self.cache_output_per_language:
+            # Append language code to all keys,
+            # have to invalidate a lot more items in memcache
+            total_list = []
+            for user_language in list(self.supported_language_codes) + ['unsupported']:
+                total_list.extend("{0}.{1}".format(base, user_language) for base in cachekeys)
+            cachekeys = total_list
+
+        return cachekeys
 
 
     def get_cached_output(self, placeholder_name, instance):
