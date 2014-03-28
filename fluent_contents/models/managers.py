@@ -87,7 +87,7 @@ class ContentItemQuerySet(PolymorphicQuerySet):
         This method is not available on the manager class, only the queryset
         (similar to the :func:`~django.db.models.query.QuerySet.delete` method).
         """
-        for contentitem in self.all():
+        for contentitem in self:
             contentitem.clear_cache()
 
     clear_cache.alters_data = True
