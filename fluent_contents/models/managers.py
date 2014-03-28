@@ -83,6 +83,9 @@ class ContentItemQuerySet(PolymorphicQuerySet):
     def clear_cache(self):
         """
         .. versionadded:: 1.0 Clear the cache of the selected entries.
+
+        This method is not available on the manager class, only the queryset
+        (similar to the :func:`~django.db.models.query.QuerySet.delete` method).
         """
         for contentitem in self.all():
             contentitem.clear_cache()
