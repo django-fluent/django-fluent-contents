@@ -337,7 +337,7 @@ class ContentPlugin(object):
             # Append language code to all keys,
             # have to invalidate a lot more items in memcache
             total_list = []
-            for user_language in list(self.supported_language_codes) + ['unsupported']:
+            for user_language in list(self.cache_supported_language_codes) + ['unsupported']:
                 total_list.extend("{0}.{1}".format(base, user_language) for base in cachekeys)
             cachekeys = total_list
 
