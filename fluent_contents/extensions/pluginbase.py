@@ -164,6 +164,10 @@ class ContentPlugin(object):
     #: * Dynamically switch the language per request, and *share* content between multiple languages.
     cache_output_per_language = False
 
+    #: .. versionadded: 1.0
+    #: Set a custom cache timeout value
+    cache_timeout = None
+
     #: .. versionadded:: 1.0
     #: Tell which languages the plugin will cache.
     cache_supported_language_codes = [code for code, _ in settings.LANGUAGES]
@@ -369,7 +373,11 @@ class ContentPlugin(object):
            The received data is no longer a HTML string, but :class:`~fluent_contents.models.ContentItemOutput` object.
         """
         cachekey = self.get_output_cache_key(placeholder_name, instance)
-        cache.set(cachekey, output)
+        if self.cache_timeout:
+            cache.set(cachekey, output, self.cache_timeout)
+        else:
+            # Don't want to mix into the default 0/None issue.
+            cache.set(cachekey, output)
 
 
     def render(self, request, instance, **kwargs):
