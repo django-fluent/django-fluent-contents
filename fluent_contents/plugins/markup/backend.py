@@ -53,9 +53,7 @@ def render_text(text, language=None):
             language, ', '.join(SUPPORTED_LANGUAGES.keys())
         ))
 
-    # Convert. The Django markup filters return the literal string on ImportErrors
+    # Convert.
     markup = filter(text)
-    if not isinstance(markup, SafeData):
-        raise ImproperlyConfigured("The '{0}' filter did not update the text. Perhaps the required package for the filter is not installed?".format(language))
 
     return markup
