@@ -11,4 +11,4 @@ class RawHtmlItem(ContentItem):
         verbose_name_plural = _('HTML code')
 
     def __unicode__(self):
-        return strip_tags(self.html)
+        return strip_tags(self.html).strip()
