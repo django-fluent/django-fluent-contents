@@ -1,4 +1,5 @@
 from django.template import Library, TemplateSyntaxError
+from django.contrib.sites.models import Site
 from fluent_contents import rendering
 from fluent_contents.plugins.sharedcontent.models import SharedContent
 from tag_parser import template_tag
@@ -50,7 +51,8 @@ class SharedContentNode(BaseNode):
 
         # Get the placeholder
         try:
-            sharedcontent = SharedContent.objects.get(slug=slot)
+            site = Site.objects.get_current()
+            sharedcontent = SharedContent.objects.parent_site(site).get(slug=slot)
         except SharedContent.DoesNotExist:
             return "<!-- shared content '{0}' does not yet exist -->".format(slot)
 
