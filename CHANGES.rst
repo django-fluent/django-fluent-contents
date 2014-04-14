@@ -5,10 +5,10 @@ Released on 1.0b1:
 ~~~~~~~~~~~~~~~~~~
 
 * Added multilingual support, using django-parler_.
+* Added multisite support to sharedcontent plugin.
 * Added frontend media support.
 * Added "Open in new window" option for the "picture" plugin.
 * Added ``HttpRedirectRequest`` exception and ``HttpRedirectRequestMiddleware``.
-* Added multisite support to sharedcontent plugin.
 * Added ``cache_output_per_language`` option to plugins.
 * Content items are prefixed with "content:" during syncdb, a ``prefix_content_item_types`` management command can be run manually too.
 * **API Change:** Renamed template tag library ``placeholder_tags`` to ``fluent_contents_tags`` (the old name still works).
