@@ -7,7 +7,7 @@ dependencies = {
     'restructuredtext': 'docutils',
     'markdown': 'markdown',
     'textile': 'textile',
-    'creole': '',
+    'creole': 'django_markup',
 }
 
 
