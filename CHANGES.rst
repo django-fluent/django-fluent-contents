@@ -1,6 +1,9 @@
 Version 1.0 (dev)
 -----------------
 
+Released on 1.0b1:
+~~~~~~~~~~~~~~~~~~
+
 * Added multilingual support, using django-parler_.
 * Added frontend media support.
 * Added "Open in new window" option for the "picture" plugin.
