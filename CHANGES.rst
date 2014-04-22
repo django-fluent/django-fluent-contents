@@ -1,6 +1,8 @@
 Version 1.0 (dev)
 -----------------
 
+* Fixed Django 1.6 compatibility.
+
 Released on 1.0b1:
 ~~~~~~~~~~~~~~~~~~
 
