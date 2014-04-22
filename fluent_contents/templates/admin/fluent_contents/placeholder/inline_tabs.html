@@ -72,7 +72,7 @@
           {% endif %}
 
           <!-- placeholder fields -->
-          {% if inline_admin_form.has_auto_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
+          {% if inline_admin_form.has_auto_field or inline_admin_form.needs_explicit_pk_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
           {% for fieldset in inline_admin_form %}{% for line in fieldset %}{% for adminfield in line %}{{ adminfield.field.as_hidden }}
           {% endfor %}{% endfor %}{% endfor %}
         </div>
