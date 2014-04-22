@@ -60,6 +60,7 @@ API documentation
    :maxdepth: 2
 
    api/index
+   changelog
 
 
 Roadmap
