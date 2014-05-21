@@ -75,6 +75,7 @@ var cp_data = {};
     this.content = $pane.children(".cp-content");
     this.empty_message = $pane.children('.cp-empty');
     this.placeholder = placeholder;
+    this.is_orphaned = $pane.attr('data-tab-region') == '__orphaned__';
   }
 
   function DomPlaceholder(placeholder, is_fallback)
