@@ -131,6 +131,7 @@ var cp_plugins = {};
    */
   cp_plugins.get_new_placeholder_pane = function(dom_placeholder, last_known_nr)
   {
+    var pane;
     var isExpiredTab = window.cp_tabs ? cp_tabs.is_expired_tab : function(node) { return false; };
 
     // Option 1. Find identical placeholder by slot name.
@@ -138,7 +139,7 @@ var cp_plugins = {};
     if( placeholder )
     {
       // Option 1. Find by slot name,
-      var pane = cp_data.get_placeholder_pane(placeholder);
+      pane = cp_data.get_placeholder_pane(placeholder);
       if( pane && ! isExpiredTab(pane.root) )
         return pane;
     }
@@ -155,12 +156,29 @@ var cp_plugins = {};
       }
     }
 
-    // Option 3. Open a "lost+found" tab.
+    // Option 3: If there is only one placeholder, that can be used.
+    // This is typically the case for the PlaceholderField() object at the page.
+    var single_placeholder = cp_data.get_single_placeholder();
+    if( single_placeholder )
+    {
+      pane = cp_data.get_placeholder_pane(single_placeholder);
+      if( pane && ! isExpiredTab(pane.root) )
+      {
+        console.log("Using single placeholder '" + single_placeholder.slot + "' as fallback for item from placeholder '" + dom_placeholder.slot + "'.");
+        return pane;
+      }
+    }
+
+    // Option 4. Open a "lost+found" tab.
     // NOTE: not really a clean solution, needs a better (public) API for this (cp_tabs is optional).
     if( window.cp_tabs )
     {
-      console.log("Using orphaned tab as fallback for item from placeholder '" + dom_placeholder.slot + "'.");
-      return cp_tabs.get_fallback_pane();
+      pane = cp_tabs.get_fallback_pane();
+      if( pane )
+      {
+        console.log("Using orphaned tab as fallback for item from placeholder '" + dom_placeholder.slot + "'.");
+        return pane;
+      }
     }
 
     throw new Error("No placeholder pane for placeholder: " + dom_placeholder.slot + " (role: " + dom_placeholder.role + ")");

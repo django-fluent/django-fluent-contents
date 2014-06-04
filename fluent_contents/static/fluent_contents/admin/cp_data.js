@@ -195,6 +195,22 @@ var cp_data = {};
 
 
   /**
+   * See if there is only one placeholder at the page.
+   */
+  cp_data.get_single_placeholder = function()
+  {
+    if( cp_data.placeholders == null )
+      throw new Error("cp_data.set_placeholders() was never called");
+
+    if( cp_data.placeholders.length == 1 ) {
+      return cp_data.placeholders[0];
+    }
+
+    return null;
+  }
+
+
+  /**
    * Find the placeholder corresponding with a given ID.
    */
   cp_data.get_placeholder_by_id = function(id)
