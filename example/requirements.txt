@@ -1,12 +1,18 @@
+# Install the mandatory dependencies of the library
+django-parler>=1.0
+django-polymorphic>=0.5.3
+django-tag-parser>=2.0b1
+django-template-analyzer>=1.3
+future>=0.12.2
+
 # The django-fluent-contents package has some optional dependencies,
 # which don't be installed by default by setup.py
 # Instead, this requirements file contains all required elements for the demo:
 
 # For simplecms
-Django>=1.3.0
+Django>=1.4.6
 django-mptt>=0.5.4
-django-fluent-contents>=0.8.5
-django-template-analyzer>=1.1.0
+#django-fluent-contents>=0.8.5
 
 # For code plugin
 Pygments>=1.4
@@ -30,7 +36,4 @@ django-wysiwyg>=0.5.1
 django-tinymce>=1.5.1
 
 # For twitter plugin
-twitter-text-py>=1.0.3
-
-# For placeholder tags
-django-tag-parser>=1.0.0
+#twitter-text-py>=1.0.3

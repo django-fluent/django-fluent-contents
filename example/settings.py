@@ -97,8 +97,8 @@ INSTALLED_APPS = (
     'fluent_contents.plugins.rawhtml',
     'fluent_contents.plugins.sharedcontent',
     'fluent_contents.plugins.text',
-    'fluent_contents.plugins.twitterfeed',
-
+    #'fluent_contents.plugins.twitterfeed',
+    'parler',
 
     # Example app
     'article',
@@ -114,6 +114,7 @@ INSTALLED_APPS = (
     #'disqus',
     #'form_designer',
     'tinymce',
+    'south',
 )
 
 SIMPLECMS_TEMPLATE_CHOICES = (

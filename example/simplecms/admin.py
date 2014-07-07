@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 from django.contrib import admin
 from django.http import HttpResponse
 from django.template.loader import get_template
