@@ -25,7 +25,7 @@ The CMS interface can scan for those tags using the :ref:`fluent_contents.analyz
 """
 from django.db.models import Manager
 from django.template import Library, Variable, TemplateSyntaxError
-from django.utils.safestring import SafeUnicode
+from django.utils.safestring import SafeData
 from fluent_contents.models import Placeholder
 from fluent_contents import rendering
 from tag_parser import parse_token_kwargs
@@ -139,10 +139,10 @@ class PagePlaceholderNode(BaseNode):
 
 
     def _extract_literal(self, templatevar):
-        # FilterExpression contains another 'var' that either contains a Variable or SafeUnicode object.
+        # FilterExpression contains another 'var' that either contains a Variable or SafeData object.
         if hasattr(templatevar, 'var'):
             templatevar = templatevar.var
-            if isinstance(templatevar, SafeUnicode):
+            if isinstance(templatevar, SafeData):
                 # Literal in FilterExpression, can return.
                 return templatevar
             else:
@@ -156,10 +156,10 @@ class PagePlaceholderNode(BaseNode):
 
 
     def _extract_bool(self, templatevar):
-        # FilterExpression contains another 'var' that either contains a Variable or SafeUnicode object.
+        # FilterExpression contains another 'var' that either contains a Variable or SafeData object.
         if hasattr(templatevar, 'var'):
             templatevar = templatevar.var
-            if isinstance(templatevar, SafeUnicode):
+            if isinstance(templatevar, SafeData):
                 # Literal in FilterExpression, can return.
                 return templatevar
             else:
