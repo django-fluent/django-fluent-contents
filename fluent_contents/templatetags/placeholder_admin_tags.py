@@ -23,7 +23,7 @@ def has_no_visible_fields(inline_admin_form):
     for name, options in inline_admin_form.fieldsets:
         for name_slot in options.get('fields', ()):
             # Lines can include (field, field)
-            if not hasattr(name_slot, "__iter__"):
+            if not isinstance(name_slot, (list, tuple)):
                 name_slot = [name_slot]
             for name in name_slot:
                 if not inline_admin_form.form.fields[name].widget.is_hidden:

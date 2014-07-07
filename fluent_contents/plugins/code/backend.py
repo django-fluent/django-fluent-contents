@@ -1,7 +1,6 @@
 """
 Using pygments to render the code.
 """
-from past.builtins import cmp
 from pygments import highlight, styles
 from pygments.lexers import get_all_lexers, get_lexer_by_name
 from pygments.formatters.html import HtmlFormatter
@@ -10,10 +9,10 @@ from django.utils.translation import ugettext as _
 from fluent_contents.plugins.code import appsettings
 
 STYLE_CHOICES = [(x,x) for x in get_all_styles()]
-STYLE_CHOICES.sort(lambda x,y: cmp(x[1].lower(), y[1].lower()))
+STYLE_CHOICES.sort(key=lambda x: x[1].lower())
 
 _languageChoices = [(x[1][0], x[0]) for x in get_all_lexers() if x[1]]   # x = ('Title', ('name1', 'name2', 'nameN'), ('*.ext1', '*.ext2'), ('mimetype1',))
-_languageChoices.sort(lambda x,y: cmp(x[1].lower(), y[1].lower()))
+_languageChoices.sort(key=lambda x: x[1].lower())
 
 LANGUAGE_CHOICES = tuple([t for t in _languageChoices if t[0] in appsettings.FLUENT_CODE_SHORTLIST])
 if not appsettings.FLUENT_CODE_SHORTLIST_ONLY:
