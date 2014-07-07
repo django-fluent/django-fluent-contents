@@ -69,9 +69,10 @@ Roadmap
 The following features are on the radar for future releases:
 
 * Frontend editing support
-* Gracefully handle errors when removing plugins (currently causes errors in django-polymorphic_ / `django.contrib.contenttypes`_)
 * Bridging other plugin systems, like Django CMS
 * Inline support (e.g. building a linklist plugin).
+
+Please contribute your improvements or work on these area's!
 
 Indices and tables
 ==================
