@@ -5,7 +5,7 @@ Version 1.0 (dev)
 -----------------
 
 * Fixed Django 1.6 compatibility.
-* Started Python 3 porting.
+* Added Python 3 support!
 
 Released on 1.0b1:
 ~~~~~~~~~~~~~~~~~~
