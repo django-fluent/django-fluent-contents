@@ -336,7 +336,7 @@ var cp_tabs = {};
     if( ! $tab || $tab.length == 0 )
     {
       // Get the first tab
-      $tab = $tabnav_root.children("li.cp-region > a:first");
+      $tab = $tabnav_root.children("li.cp-region").children("a:first");
       if( $tab.length == 0 )
       {
         // Only fallback tab visible?
