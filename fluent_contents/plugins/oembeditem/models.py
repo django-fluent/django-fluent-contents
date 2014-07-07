@@ -1,3 +1,5 @@
+from future.builtins import str
+from future.utils import python_2_unicode_compatible
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -7,6 +9,7 @@ from fluent_contents.plugins.oembeditem.fields import OEmbedUrlField
 from fluent_contents.plugins.oembeditem import backend
 
 
+@python_2_unicode_compatible
 class AbstractOEmbedItem(ContentItem):
     """
     The base class for an OEmbedItem,
@@ -50,7 +53,7 @@ class AbstractOEmbedItem(ContentItem):
         verbose_name_plural = _("Online media")
 
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title or self.embed_url
 
 
@@ -124,7 +127,7 @@ class AbstractOEmbedItem(ContentItem):
         )
 
         for key in KEYS:
-            if response.has_key(key):
+            if key in response:
                 setattr(self, key, response[key])
 
 

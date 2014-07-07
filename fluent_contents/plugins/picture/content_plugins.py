@@ -1,3 +1,4 @@
+
 from django.contrib.admin.widgets import AdminTextareaWidget
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import ContentPlugin, plugin_pool

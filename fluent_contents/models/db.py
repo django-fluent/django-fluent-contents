@@ -1,3 +1,4 @@
+from future.utils import with_metaclass, python_2_unicode_compatible, PY3
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
@@ -13,6 +14,7 @@ from fluent_contents import appsettings
 from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_language_code
 
 
+@python_2_unicode_compatible
 class Placeholder(models.Model):
     """
     The placeholder groups various :class:`ContentItem` models together in a single compartment.
@@ -59,7 +61,7 @@ class Placeholder(models.Model):
         verbose_name_plural = _("Placeholders")
         unique_together = ('parent_type', 'parent_id', 'slot')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title or self.slot
 
 
@@ -141,13 +143,20 @@ class ContentItemMetaClass(PolymorphicModelBase):
                 new_class._meta.db_table = "contentitem_%s_%s" % (app_label, model_name)
 
             # Enforce good manners. The name is often not visible, except for the delete page.
-            if not hasattr(new_class, '__unicode__') or new_class.__unicode__ == ContentItem.__unicode__:
-                raise FieldError("The {0} class should implement a __unicode__() function.".format(name))
+            if not hasattr(new_class, '__str__') or new_class.__str__ == ContentItem.__str__:
+                if PY3:
+                    raise FieldError("The {0} class should implement a __str__() function.".format(name))
+                else:
+                    # The first check is for python_2_unicode_compatible tricks, also check for __unicode__ only.
+                    if not hasattr(new_class, '__unicode__') or new_class.__unicode__ == ContentItem.__unicode__:
+                        raise FieldError("The {0} class should implement a __unicode__() or __str__() function.".format(name))
+
 
         return new_class
 
 
-class ContentItem(PolymorphicModel):
+@python_2_unicode_compatible
+class ContentItem(with_metaclass(ContentItemMetaClass, PolymorphicModel)):
     """
     A `ContentItem` represents a content part (also called pagelet in other systems) which is displayed in a :class:`Placeholder`.
     To use the `ContentItem`, derive it in your model class:
@@ -194,7 +203,6 @@ class ContentItem(PolymorphicModel):
     The rendering of a `ContentItem` class happens in the associate :class:`~fluent_contents.extensions.ContentPlugin` class.
     To render content items outside the template code, use the :mod:`fluent_contents.rendering` module to render the items.
     """
-    __metaclass__ = ContentItemMetaClass
     objects = ContentItemManager()
 
     # Note the validation settings defined here are not reflected automatically
@@ -230,7 +238,7 @@ class ContentItem(PolymorphicModel):
             return plugin_pool.get_plugin_by_model(self.__class__)
 
 
-    def __unicode__(self):
+    def __str__(self):
         # Note this representation is optimized for the admin delete page.
         return u"'{type} {id:d}' in '{language} {placeholder}'".format(
             type=ContentType.objects.get_for_id(self.polymorphic_ctype_id).model_class()._meta.verbose_name,

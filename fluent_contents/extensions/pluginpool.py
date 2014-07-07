@@ -2,6 +2,8 @@
 Internal module for the plugin system,
 the API is exposed via __init__.py
 """
+from future.builtins import str
+from future.utils import six
 from threading import Lock
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -30,7 +32,7 @@ def _import_apps_submodule(submodule):
     for app in settings.INSTALLED_APPS:
         try:
             import_module('.' + submodule, app)
-        except ImportError, e:
+        except ImportError as e:
             if submodule not in str(e):
                 raise   # import error is a level deeper.
             else:
@@ -101,7 +103,7 @@ class PluginPool(object):
         Return the list of all plugin instances which are loaded.
         """
         self._import_plugins()
-        return self.plugins.values()
+        return list(self.plugins.values())
 
 
     def get_allowed_plugins(self, placeholder_slot):
@@ -127,7 +129,7 @@ class PluginPool(object):
         self._import_plugins()
         plugin_instances = []
         for name in names:
-            if isinstance(name, basestring):
+            if isinstance(name, six.string_types):
                 try:
                     plugin_instances.append(self.plugins[name.lower()])
                 except KeyError:
@@ -208,7 +210,7 @@ class PluginPool(object):
         if self._name_for_ctype_id is None:
             plugin_ctypes = {}  # separate dict to build, thread safe
             self._import_plugins()
-            for name, plugin in self.plugins.iteritems():
+            for name, plugin in self.plugins.items():
                 plugin_ctypes[plugin.type_id] = name
 
             self._name_for_ctype_id = plugin_ctypes

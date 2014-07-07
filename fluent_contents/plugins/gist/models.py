@@ -1,7 +1,11 @@
+from future.builtins import str
+from future.utils import python_2_unicode_compatible
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents.models import ContentItem
 
+
+@python_2_unicode_compatible
 class GistItem(ContentItem):
     """
     A reference to a gist item (gist.github.com) that is rendered as source code.
@@ -13,5 +17,5 @@ class GistItem(ContentItem):
         verbose_name = _('GitHub Gist snippet')
         verbose_name_plural = _('GitHub Gist snippets')
 
-    def __unicode__(self):
-        return unicode(self.gist_id)
+    def __str__(self):
+        return str(self.gist_id)

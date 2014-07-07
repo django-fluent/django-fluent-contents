@@ -1,9 +1,11 @@
+from future.utils import python_2_unicode_compatible
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents.models import ContentItem
 from fluent_contents.utils import validate_html_size
 
 
+@python_2_unicode_compatible
 class GoogleDocsViewerItem(ContentItem):
     """
     A Google Docs viewer that is displayed at the page.
@@ -16,5 +18,5 @@ class GoogleDocsViewerItem(ContentItem):
         verbose_name = _("Embedded document")
         verbose_name_plural = _("Embedded document")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.url

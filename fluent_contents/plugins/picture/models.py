@@ -1,3 +1,5 @@
+from future.builtins import str
+from future.utils import python_2_unicode_compatible
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import PluginImageField, PluginUrlField
@@ -5,6 +7,7 @@ from fluent_contents.models.db import ContentItem
 from . import appsettings
 
 
+@python_2_unicode_compatible
 class PictureItem(ContentItem):
     """
     Display a picture
@@ -28,8 +31,8 @@ class PictureItem(ContentItem):
         verbose_name = _("Picture")
         verbose_name_plural = _("Pictures")
 
-    def __unicode__(self):
-        return self.caption or unicode(self.image)
+    def __str__(self):
+        return self.caption or str(self.image)
 
     @property
     def align_class(self):

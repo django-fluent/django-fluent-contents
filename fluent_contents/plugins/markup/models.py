@@ -1,3 +1,4 @@
+from future.utils import python_2_unicode_compatible
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import Truncator
@@ -23,12 +24,13 @@ class MarkupItemForm(ContentItemForm):
     def clean_text(self):
         try:
             backend.render_text(self.cleaned_data['text'], self.instance.language or self.default_language)
-        except Exception, e:
+        except Exception as e:
             raise ValidationError("There is an error in the markup: %s" % e)
         return self.cleaned_data['text']
 
 
 
+@python_2_unicode_compatible
 class MarkupItem(ContentItem):
     """
     A snippet of markup (restructuredtext, markdown, or textile) to display at a page.
@@ -42,7 +44,7 @@ class MarkupItem(ContentItem):
         verbose_name = _('Markup code')
         verbose_name_plural = _('Markup code')
 
-    def __unicode__(self):
+    def __str__(self):
         return Truncator(self.text).words(20)
 
     def __init__(self, *args, **kwargs):
@@ -99,7 +101,7 @@ def _create_markup_model(fixed_language):
 # Create proxy models for all supported languages. This allows reusage of the same database table.
 # It does not impact the frontend, as django-polymorphic requests the MarkupItem base class (which is then upcasted in __init__()).
 # the admin interface will query the database per language, as it has an inline per plugin type.
-for language in backend.SUPPORTED_LANGUAGES.keys():
+for language in list(backend.SUPPORTED_LANGUAGES.keys()):
     if language not in appsettings.FLUENT_MARKUP_LANGUAGES:
         continue
 

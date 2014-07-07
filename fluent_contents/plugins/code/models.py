@@ -1,3 +1,4 @@
+from future.utils import python_2_unicode_compatible
 from django.db import models
 from django.utils.text import Truncator
 from django.utils.translation import ugettext_lazy as _
@@ -5,6 +6,7 @@ from fluent_contents.models import ContentItem
 from fluent_contents.plugins.code import backend, appsettings
 
 
+@python_2_unicode_compatible
 class CodeItem(ContentItem):
     """
     A snippet of source code, formatted with syntax highlighting.
@@ -18,5 +20,5 @@ class CodeItem(ContentItem):
         verbose_name = _('Code snippet')
         verbose_name_plural = _('Code snippets')
 
-    def __unicode__(self):
+    def __str__(self):
         return Truncator(self.code).words(20)

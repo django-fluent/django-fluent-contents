@@ -1,6 +1,8 @@
 """
 The manager classes are accessed via ``Placeholder.objects``.
 """
+from future.builtins import str
+from future.utils import six
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import get_language
@@ -55,7 +57,7 @@ class ContentItemQuerySet(PolymorphicQuerySet):
         else:
             # Since some code operates on a True/str switch, make sure that doesn't drip into this low level code.
             for language_code in language_codes:
-                if not isinstance(language_code, basestring) or language_code.lower() in ('1', '0', 'true', 'false'):
+                if not isinstance(language_code, six.string_types) or language_code.lower() in ('1', '0', 'true', 'false'):
                     raise ValueError("ContentItemQuerySet.translated() expected language_code to be an ISO code")
 
         if len(language_codes) == 1:
@@ -205,6 +207,6 @@ def get_parent_active_language_choices(parent_object, exclude_current=False):
             pass
 
     # No multithreading issue here, object is instantiated for this user only.
-    choices = [(lang, unicode(get_language_title(lang))) for lang in languages]
+    choices = [(lang, str(get_language_title(lang))) for lang in languages]
     choices.sort(key=lambda tup: tup[1])
     return choices

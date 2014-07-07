@@ -1,3 +1,4 @@
+from future.utils import python_2_unicode_compatible
 from django.contrib import comments
 from django.db import models
 from django.dispatch import receiver
@@ -9,6 +10,7 @@ from fluent_contents.models import ContentItem
 CommentModel = comments.get_model()
 
 
+@python_2_unicode_compatible
 class CommentsAreaItem(ContentItem):
     allow_new = models.BooleanField(_("Allow posting new comments"), default=True)
 
@@ -16,7 +18,7 @@ class CommentsAreaItem(ContentItem):
         verbose_name = _('Comments area')
         verbose_name_plural = _('Comments areas')
 
-    def __unicode__(self):
+    def __str__(self):
         return u''
 
 

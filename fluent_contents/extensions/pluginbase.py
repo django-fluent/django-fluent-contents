@@ -2,6 +2,8 @@
 Internal module for the plugin system,
 the API is exposed via __init__.py
 """
+from future.builtins import str
+from future.utils import with_metaclass
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
@@ -89,7 +91,7 @@ class PluginMediaDefiningClass(MediaDefiningClass):
         return new_class
 
 
-class ContentPlugin(object):
+class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     """
     The base class for all content plugins.
 
@@ -127,7 +129,6 @@ class ContentPlugin(object):
     This also avoids extra database queries to retrieve the model objects.
     In case the plugin needs to output content dynamically, include ``cache_output = False`` in the plugin definition.
     """
-    __metaclass__ = PluginMediaDefiningClass
 
     # -- Settings to override:
 
@@ -219,7 +220,7 @@ class ContentPlugin(object):
 
 
     def __repr__(self):
-        return '<{0} for {1} model>'.format(self.__class__.__name__, unicode(self.model.__name__).encode('ascii'))
+        return '<{0} for {1} model>'.format(self.__class__.__name__, str(self.model.__name__).encode('ascii'))
 
 
     @property
@@ -406,7 +407,7 @@ class ContentPlugin(object):
         """
         render_template = self.get_render_template(request, instance, **kwargs)
         if not render_template:
-            return unicode(_(u"{No rendering defined for class '%s'}" % self.__class__.__name__))
+            return str(_(u"{No rendering defined for class '%s'}" % self.__class__.__name__))
 
         context = self.get_context(request, instance, **kwargs)
         return self.render_to_string(request, render_template, context)

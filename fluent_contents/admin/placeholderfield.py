@@ -37,7 +37,7 @@ class PlaceholderFieldAdmin(PlaceholderEditorAdmin):
             return []
 
         data = []
-        for name, field in self.model._meta_placeholder_fields.iteritems():
+        for name, field in self.model._meta_placeholder_fields.items():
             assert isinstance(field, PlaceholderField)
             data.append(PlaceholderData(
                 slot=field.slot,
@@ -58,7 +58,7 @@ class PlaceholderFieldAdmin(PlaceholderEditorAdmin):
             return []
 
         plugins = []
-        for name, field in self.model._meta_placeholder_fields.iteritems():
+        for name, field in self.model._meta_placeholder_fields.items():
             assert isinstance(field, PlaceholderField)
             if field.plugins is None:
                 # no limitations, so all is allowed

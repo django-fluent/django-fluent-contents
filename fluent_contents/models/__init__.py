@@ -13,8 +13,9 @@ Secondly, there are a few possible fields to add to parent models:
 Finally, to exchange template data, a :class:`PlaceholderData` object is available
 which mirrors the relevant fields of the :class:`Placeholder` model.
 """
+from future.builtins import str
+from future.utils import python_2_unicode_compatible
 from django.forms import Media
-from django.utils import six
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe, SafeData
 from fluent_contents.models.db import Placeholder, ContentItem
@@ -54,9 +55,9 @@ class PlaceholderData(object):
         self.fallback_language = fallback_language or None
 
         # Ensure upfront value checking
-        allows_roles = dict(Placeholder.ROLES).keys()
+        allows_roles = list(dict(Placeholder.ROLES).keys())
         if self.role not in allows_roles:
-            raise ValueError("Invalid role '{0}' for placeholder '{1}': allowed are: {2}.".format(self.role, self.title or self.slot, ', '.join(self.ROLE_ALIASES.keys())))
+            raise ValueError("Invalid role '{0}' for placeholder '{1}': allowed are: {2}.".format(self.role, self.title or self.slot, ', '.join(list(self.ROLE_ALIASES.keys()))))
 
 
     def as_dict(self):
@@ -89,6 +90,7 @@ class PlaceholderData(object):
         return '<{0}: slot={1} role={2} title={3}>'.format(self.__class__.__name__, self.slot, self.role, self.title)
 
 
+@python_2_unicode_compatible
 class ContentItemOutput(SafeData):
     """
     A wrapper with holds the rendered output of a plugin,
@@ -104,18 +106,11 @@ class ContentItemOutput(SafeData):
 
     # Pretend to be a string-like object.
     # Both makes the caller easier to use, and keeps compatibility with 0.9 code.
-    def __unicode__(self):
-        return unicode(self.html)
+    def __str__(self):
+        return str(self.html)
 
     def __len__(self):
-        return len(unicode(self.html))
-
-    if six.PY3:
-        def __str__(self):
-            return self.__unicode__()
-    else:
-        def __str__(self):
-            return self.__unicode__().encode('utf-8')
+        return len(str(self.html))
 
     def __repr__(self):
         return "<PluginOutput '{0}'>".format(repr(self.html))
@@ -124,10 +119,10 @@ class ContentItemOutput(SafeData):
         return getattr(self.html, item)
 
     def __getitem__(self, item):
-        return unicode(self).__getitem__(item)
+        return str(self).__getitem__(item)
 
     def __getstate__(self):
-        return (unicode(self.html), self.media._css, self.media._js)
+        return (str(self.html), self.media._css, self.media._js)
 
     def __setstate__(self, state):
         # Handle pickling manually, otherwise invokes __getattr__ in a loop.

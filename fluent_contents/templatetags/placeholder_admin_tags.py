@@ -1,3 +1,4 @@
+from future.builtins import str
 from django.template import Library, Node
 from django.template.base import TemplateSyntaxError
 from fluent_contents.admin.contentitems import BaseContentItemInline
@@ -43,8 +44,8 @@ def group_plugins_into_categories(plugins):
     categories = {}
 
     for plugin in plugins:
-        title = unicode(plugin.category or u"")  # enforce resolving ugettext_lazy proxies.
-        if not categories.has_key(title):
+        title = str(plugin.category or u"")  # enforce resolving ugettext_lazy proxies.
+        if title not in categories:
             categories[title] = []
         categories[title].append(plugin)
 
@@ -55,7 +56,7 @@ def group_plugins_into_categories(plugins):
 def plugin_categories_to_list(plugin_categories):
     if not plugin_categories:
         return []
-    categories_list = plugin_categories.items()
+    categories_list = list(plugin_categories.items())
     categories_list.sort(key=lambda item: item[0])  # sort category names
     return categories_list
 
@@ -67,7 +68,7 @@ def plugin_categories_to_choices(categories):
     Each tuple is a ("TypeName", "Title") value.
     """
     choices = []
-    for category, items in categories.iteritems():
+    for category, items in categories.items():
         if items:
             plugin_tuples = tuple((plugin.type_name, plugin.verbose_name) for plugin in items)
             if category:

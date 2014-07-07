@@ -1,3 +1,5 @@
+from __future__ import print_function
+from future.builtins import str
 from functools import wraps
 from django.conf import settings, UserSettingsHolder
 from django.contrib.auth.models import User
@@ -27,7 +29,7 @@ class AppTestCase(TestCase):
             run_syncdb = False
             for appname in cls.install_apps:
                 if appname not in settings.INSTALLED_APPS:
-                    print 'Adding {0} to INSTALLED_APPS'.format(appname)
+                    print('Adding {0} to INSTALLED_APPS'.format(appname))
                     settings.INSTALLED_APPS += (appname,)
                     run_syncdb = True
 
@@ -37,7 +39,7 @@ class AppTestCase(TestCase):
                     app_directories.app_template_dirs += (
                         os.path.join(os.path.dirname(testapp.__file__), 'templates'),
                     )
-                    print appname, os.path.join(os.path.dirname(testapp.__file__), 'templates')
+                    print(appname, os.path.join(os.path.dirname(testapp.__file__), 'templates'))
 
             if run_syncdb:
                 call_command('syncdb', verbosity=0)  # may run south's overlaid version
@@ -54,7 +56,7 @@ class AppTestCase(TestCase):
         """
         if msg_prefix:
             msg_prefix += ": "
-        self.assertEquals(self.client.get(url).status_code, 200, unicode(msg_prefix) + u"Page at {0} should be found.".format(url))
+        self.assertEquals(self.client.get(url).status_code, 200, str(msg_prefix) + u"Page at {0} should be found.".format(url))
 
 
     def assert404(self, url, msg_prefix=''):
@@ -63,7 +65,7 @@ class AppTestCase(TestCase):
         """
         if msg_prefix:
             msg_prefix += ": "
-        self.assertEquals(self.client.get(url).status_code, 404, unicode(msg_prefix) + u"Page at {0} should return 404.".format(url))
+        self.assertEquals(self.client.get(url).status_code, 404, str(msg_prefix) + u"Page at {0} should return 404.".format(url))
 
 
 try:

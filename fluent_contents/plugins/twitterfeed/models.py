@@ -1,8 +1,10 @@
+from future.utils import python_2_unicode_compatible
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents.models.db import ContentItem
 
 
+@python_2_unicode_compatible
 class TwitterRecentEntriesItem(ContentItem):
     """
     Content item to display recent entries of a twitter user.
@@ -16,7 +18,7 @@ class TwitterRecentEntriesItem(ContentItem):
     include_retweets = models.BooleanField(_("Include retweets"))
     include_replies = models.BooleanField(_("Include replies"))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title or self.twitter_user
 
     class Meta:
@@ -24,6 +26,7 @@ class TwitterRecentEntriesItem(ContentItem):
         verbose_name_plural = _('Recent twitter entries')
 
 
+@python_2_unicode_compatible
 class TwitterSearchItem(ContentItem):
     """
     Content item to display recent entries of a twitter user.
@@ -37,7 +40,7 @@ class TwitterSearchItem(ContentItem):
     include_retweets = models.BooleanField(_("Include retweets"))
     include_replies = models.BooleanField(_("Include replies"))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title or self.query
 
     class Meta:

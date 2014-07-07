@@ -1,3 +1,4 @@
+from future.utils import python_2_unicode_compatible
 from django.utils.html import strip_tags
 from django.utils.text import Truncator
 from django.utils.translation import ugettext_lazy as _
@@ -7,6 +8,7 @@ from fluent_contents.plugins.text import appsettings
 from django_wysiwyg.utils import clean_html, sanitize_html
 
 
+@python_2_unicode_compatible
 class TextItem(ContentItem):
     """
     A snippet of HTML text to display on a page.
@@ -17,7 +19,7 @@ class TextItem(ContentItem):
         verbose_name = _('Text')
         verbose_name_plural = _('Text')
 
-    def __unicode__(self):
+    def __str__(self):
         return Truncator(strip_tags(self.text)).words(20)
 
     def save(self, *args, **kwargs):

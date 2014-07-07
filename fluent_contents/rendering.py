@@ -3,6 +3,8 @@ This module provides functions to render placeholder content manually.
 Contents is cached in memcache whenever possible, only the remaining items are queried.
 The templatetags also use these functions to render the :class:`~fluent_contents.models.ContentItem` objects.
 """
+from future.builtins import str
+from future.utils import six
 import os
 from django.conf import settings
 from django.core.cache import cache
@@ -215,7 +217,7 @@ def _render_items(request, placeholder, items, template_name=None):
         merged_output = mark_safe(''.join(output_ordered))
     else:
         context = {
-            'contentitems': zip(items, output_ordered),
+            'contentitems': list(zip(items, output_ordered)),
             'edit_mode': edit_mode,
         }
         merged_output = render_to_string(template_name, context, context_instance=RequestContext(request))
@@ -284,7 +286,7 @@ def _is_template_updated(request, contentitem, cachekey):
 
     if not template_names:
         return False
-    if isinstance(template_names, basestring):
+    if isinstance(template_names, six.string_types):
         template_names = [template_names]
 
     # With TEMPLATE_DEBUG = True, each node tracks it's origin.

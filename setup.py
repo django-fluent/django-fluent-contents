@@ -40,6 +40,7 @@ setup(
         'django-polymorphic>=0.5.3',        # Need 0.5.3 at least for several upstream fixes (for the multilingual API urls)
         'django-tag-parser>=1.0.3',
         'django-template-analyzer>=1.2',
+        'future>=0.12.2',
     ],
     requires=[
         'Django (>=1.4)',

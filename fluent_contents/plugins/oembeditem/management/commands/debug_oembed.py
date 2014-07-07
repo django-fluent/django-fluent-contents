@@ -23,5 +23,5 @@ class Command(BaseCommand):
             else:
                 self.stdout.write("* OEmbed data for '{0}':\n".format(url))
 
-                for key in sorted(data.iterkeys()):
+                for key in sorted(data.keys()):
                     self.stdout.write('  - {0}: {1}\n'.format(key, pformat(data[key])))

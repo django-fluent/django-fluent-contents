@@ -1,3 +1,5 @@
+from future.builtins import str
+from future.utils import python_2_unicode_compatible
 from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -10,6 +12,7 @@ def _get_current_site():
     return Site.objects.get_current()
 
 
+@python_2_unicode_compatible
 class SharedContent(TranslatableModel):
     """
     The parent hosting object for shared content
@@ -37,10 +40,11 @@ class SharedContent(TranslatableModel):
             ('parent_site', 'slug'),
         )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
 
+@python_2_unicode_compatible
 class SharedContentItem(ContentItem):
     """
     The contentitem to include in a page.
@@ -51,5 +55,5 @@ class SharedContentItem(ContentItem):
         verbose_name = _('Shared content')
         verbose_name_plural = _('Shared content')
 
-    def __unicode__(self):
-        return unicode(self.shared_content)
+    def __str__(self):
+        return str(self.shared_content)

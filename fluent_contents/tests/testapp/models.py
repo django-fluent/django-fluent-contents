@@ -1,3 +1,4 @@
+from future.utils import python_2_unicode_compatible
 from django.db import models
 from fluent_contents.models import ContentItem, PlaceholderField, PlaceholderRelation, ContentItemRelation
 
@@ -13,6 +14,7 @@ class TestPage(models.Model):
         verbose_name_plural = "Test pages"
 
 
+@python_2_unicode_compatible
 class PlaceholderFieldTestPage(models.Model):
     """
     A model with PlaceholderField, for testing,
@@ -27,10 +29,11 @@ class PlaceholderFieldTestPage(models.Model):
         verbose_name = "Test page"
         verbose_name_plural = "Test pages"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
 
+@python_2_unicode_compatible
 class RawHtmlTestItem(ContentItem):
     """
     The most basic "raw HTML" content item, for testing.
@@ -41,5 +44,5 @@ class RawHtmlTestItem(ContentItem):
         verbose_name = 'Test HTML code'
         verbose_name_plural = 'Test HTML codes'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.html

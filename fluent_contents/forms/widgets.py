@@ -1,3 +1,4 @@
+from future.builtins import int
 from django.contrib.admin.widgets import AdminTextareaWidget
 from django.forms.widgets import Widget
 from django.template.loader import render_to_string
@@ -48,7 +49,7 @@ class PlaceholderFieldWidget(Widget):
         """
         other_instance_languages = None
         if value and value != "-DUMMY-":
-            parent = Placeholder.objects.get(pk=long(value)).parent
+            parent = Placeholder.objects.get(pk=int(value)).parent
             language_code = get_parent_language_code(parent)
             if language_code:
                 # Parent is a multilingual object, provide information for the copy dialog.
