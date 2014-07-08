@@ -217,7 +217,7 @@ var cp_tabs = {};
       var $options = $select.find('option');  // can be in an optgroup.
       for (var i = 0; i < $options.length; i++) {
         var option = $options[i];
-        if(jQuery.inArray(option.value, contentitem_names) == -1)
+        if($.inArray(option.value, contentitem_names) == -1)
         {
           option.parentElement.removeChild(option);
         }
