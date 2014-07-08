@@ -13,7 +13,7 @@ class ContentItemForm(forms.ModelForm):
     use this class as base to ensure all fields are properly set up.
     """
     placeholder = forms.ModelChoiceField(widget=forms.HiddenInput(), required=False, queryset=Placeholder.objects.all())
-    sort_order = forms.IntegerField(widget=forms.HiddenInput(), initial=1)
+    sort_order = forms.IntegerField(widget=forms.HiddenInput(), required=False, initial=1)
 
     # The placeholder_slot is an extra field that does not exist in the model.
     # When a page is created, the placeholder_id cannot be filled in yet.
@@ -24,3 +24,6 @@ class ContentItemForm(forms.ModelForm):
     def save(self, commit=True):
         self.instance.clear_cache()   # Make sure the cache is cleared. No matter what instance.save() does.
         return super(ContentItemForm, self).save(commit)
+
+    def clean_sort_order(self):
+        return self.cleaned_data.get('sort_order') or 1
