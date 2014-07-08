@@ -400,6 +400,7 @@ var cp_plugins = {};
   cp_plugins.onItemMoveClick = function(event)
   {
     event.preventDefault();
+    event.stopPropagation();
     cp_plugins._show_move_popup(event.target);
   }
 
@@ -483,9 +484,10 @@ var cp_plugins = {};
     var $child_node = $(child_node);
     var pos = $child_node.offset();
     var $popup = $("#cp-move-popup");
+    var oldJquery = !$.fn.on;  // assume that 1.7 has the bug fixed.
     $popup.offset({
-      left: parseInt(pos.left) - $popup.width() + 18 + $window.scrollLeft(),
-      top: parseInt(pos.top) + $child_node.height() + 2 + $window.scrollTop()
+      left: parseInt(pos.left) - $popup.width() + 18 + (oldJquery ? $window.scrollLeft() : 0),
+      top: parseInt(pos.top) + $child_node.height() + 2 + (oldJquery ? $window.scrollTop() : 0)
     });
 
     // Configure clicks
