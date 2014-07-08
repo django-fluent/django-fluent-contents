@@ -4,8 +4,14 @@ Changelog
 Version 1.0 (dev)
 -----------------
 
-* Fixed Django 1.6 compatibility.
+Released on 1.0b2:
+~~~~~~~~~~~~~~~~~~
+
 * Added Python 3 support!
+* Fixed Django 1.6 compatibility.
+* Fixed disappearing contentitems issue for PlaceholderField on add-page
+* Fixed no tabs selected on page reload.
+
 
 Released on 1.0b1:
 ~~~~~~~~~~~~~~~~~~
