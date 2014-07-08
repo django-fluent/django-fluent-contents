@@ -107,7 +107,13 @@ var cp_tabs = {};
     var reused_ids = {};
 
     for( var i = 0; i < dbplaceholders.length; i++ )
-      dbplaceholderids[dbplaceholders[i].slot] = dbplaceholders[i].id;
+    {
+      // NOTE: the ID can actually be empty for the add page,
+      // which causes the non-existing object to be marked for deletion.
+      // This is not an issue however, Django will just ignore that formset item.
+      var dbplaceholder = dbplaceholders[i];
+      dbplaceholderids[dbplaceholder.slot] = dbplaceholder.id;
+    }
 
     for( i = 0; i < newplaceholders.length; i++ )
     {
@@ -125,16 +131,16 @@ var cp_tabs = {};
     // Find out which placeholders should be deleted
     var id_index = 0;
     $tabs_root.children('.cp-placeholder-delete').remove();  // removes old DELETE fields
-    for( var i = 0; i < dbplaceholders.length; i++ )
+    for( i = 0; i < dbplaceholders.length; i++ )
     {
-      var id = dbplaceholders[i].id;
-      if( !reused_ids[id] )
+      dbplaceholder = dbplaceholders[i];
+      if( dbplaceholder.delete || !reused_ids[dbplaceholder.id] )
       {
         // Recreate the DELETE field for the placeholders that should be removed now.
         var name = placeholder_group_prefix + '-' + id_index++;
         $tabs_root.prepend(
           '<input type="checkbox" class="cp-placeholder-delete" name="' + name + '-DELETE" checked="checked" />' +
-            '<input type="hidden" class="cp-placeholder-delete" name="' + name + '-id" value="' + id + '" />'
+            '<input type="hidden" class="cp-placeholder-delete" name="' + name + '-id" value="' + dbplaceholder.id + '" />'
         );
       }
     }

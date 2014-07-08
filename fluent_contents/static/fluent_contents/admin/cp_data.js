@@ -109,13 +109,23 @@ var cp_data = {};
         // Get formset DOM elements
         var $fs_item           = $fs_items.eq(i);
         var $placeholder_input = $fs_item.find("input[name$=-placeholder], select[name$=-placeholder]");  // allow <select> for debugging.
+        var $placeholder_slot_input = $fs_item.find('input[name$=-placeholder_slot]');
 
         // placeholder_slot may be __main__, placeholder.slot will be the real one.
         var placeholder_id = $placeholder_input.val();
+        var placeholder_slot = $placeholder_slot_input.val();
 
         // Append item to administration
-        var placeholder = cp_data.get_placeholder_by_id(placeholder_id);   // can be null if item became orphaned.
-        var dom_placeholder = cp_data.get_or_create_dom_placeholder(placeholder, placeholder_id);
+        var placeholder;
+        if(placeholder_id)  // can be empty for add page with form errors
+        {
+          placeholder = cp_data.get_placeholder_by_id(placeholder_id);   // can be null if item became orphaned.
+        }
+        else if(placeholder_slot)
+        {
+          placeholder = cp_data.get_placeholder_by_slot(placeholder_slot)
+        }
+        var dom_placeholder = cp_data.get_or_create_dom_placeholder(placeholder, placeholder_id, placeholder_slot);
         dom_placeholder.items.push($fs_item);
 
         // Reset placeholder ID field if the item already
@@ -137,16 +147,16 @@ var cp_data = {};
   }
 
 
-  cp_data.get_or_create_dom_placeholder = function(placeholder, fallback_id)
+  cp_data.get_or_create_dom_placeholder = function(placeholder, fallback_id, fallback_slot)
   {
     // If the ID references to a placeholder which was removed from the template,
     // make sure the item is indexed somehow.
     var is_fallback = false;
     if( ! placeholder )
     {
-      var slot = (!fallback_id ? "__orphaned__" : "__orphaned__@" + fallback_id);  // distinguish clearly, easier debugging.
+      var slot = fallback_slot || (!fallback_id ? "__orphaned__" : "__orphaned__@" + fallback_id);  // distinguish clearly, easier debugging.
       placeholder = {'slot': slot, 'role': null};
-      is_fallback = true;
+      is_fallback = !fallback_slot;  // slot == __orphaned__
     }
 
     var dom_placeholder = cp_data.dom_placeholders[placeholder.slot];

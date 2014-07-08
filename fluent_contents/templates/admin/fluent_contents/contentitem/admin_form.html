@@ -14,8 +14,8 @@ to allow plugins to easily extend this file.
           {% endif %}
         {% endblock %}
         {% block fieldsets %}
-        {% for fieldset in inline_admin_form %}
-          {% include "admin/fluent_contents/fieldset.html" %}{# a admin/includes/fieldset.html that supports hidden fields #}
-        {% endfor %}
+          {% for fieldset in inline_admin_form %}
+            {% include "admin/fluent_contents/fieldset.html" %}{# a admin/includes/fieldset.html that supports hidden fields #}
+          {% endfor %}
         {% endblock %}
         {% block after_fieldsets %}{% endblock %}

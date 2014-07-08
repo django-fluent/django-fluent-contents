@@ -8,24 +8,24 @@
           {% endif %}
         {% endblock %}
         {% block fieldsets %}
-        {% for fieldset in inline_admin_form %}
-          {% for line in fieldset %}
-            {% for adminfield in line %}
+          {% for fieldset in inline_admin_form %}
+            {% for line in fieldset %}
+              {% for adminfield in line %}
 
-              {% if adminfield.field.is_hidden %}
-                {{ adminfield.field }}
-              {% else %}
-                <div class="form-row no-labels{% if adminfield.errors %} errors{% endif %}">
-                  {% if adminfield.errors %}{{ adminfield.errors|linebreaksbr }}{% endif %}
+                {% if adminfield.field.is_hidden %}
                   {{ adminfield.field }}
-                  {% if adminfield.field.help_text %}
-                      <p class="help">{{ adminfield.field.help_text|safe }}</p>
-                  {% endif %}
-                </div>
-              {% endif %}
+                {% else %}
+                  <div class="form-row no-labels{% if adminfield.errors %} errors{% endif %}">
+                    {% if adminfield.errors %}{{ adminfield.errors|linebreaksbr }}{% endif %}
+                    {{ adminfield.field }}
+                    {% if adminfield.field.help_text %}
+                        <p class="help">{{ adminfield.field.help_text|safe }}</p>
+                    {% endif %}
+                  </div>
+                {% endif %}
 
+              {% endfor %}
             {% endfor %}
           {% endfor %}
-        {% endfor %}
         {% endblock %}
         {% block after_fieldsets %}{% endblock %}
