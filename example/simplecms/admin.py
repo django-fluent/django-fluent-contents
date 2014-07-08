@@ -76,19 +76,19 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
         # Check if template is allowed, avoid parsing random templates
         templates = dict(appconfig.SIMPLECMS_TEMPLATE_CHOICES)
         if not templates.has_key(template_name):
-            json = {'success': False, 'error': 'Template not found'}
+            jsondata = {'success': False, 'error': 'Template not found'}
             status = 404
         else:
             # Extract placeholders from the template, and pass to the client.
             template = get_template(template_name)
             placeholders = get_template_placeholder_data(template)
 
-            json = {
+            jsondata = {
                 'placeholders': [p.as_dict() for p in placeholders],
             }
             status = 200
 
-        jsonstr = json.dumps(json)
+        jsonstr = json.dumps(jsondata)
         return HttpResponse(jsonstr, content_type='application/json', status=status)
 
 
