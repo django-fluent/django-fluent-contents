@@ -4,6 +4,12 @@ Changelog
 Version 1.0 (dev)
 -----------------
 
+Released on 1.0c1:
+~~~~~~~~~~~~~~~~~~
+
+* Fix saving content item sorting.
+
+
 Released on 1.0b2:
 ~~~~~~~~~~~~~~~~~~
 
