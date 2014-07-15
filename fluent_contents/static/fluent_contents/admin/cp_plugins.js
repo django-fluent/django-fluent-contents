@@ -107,6 +107,9 @@ var cp_plugins = {};
     // Depending on the current layout, it placeholder pane can be found, or needs to be migrated.
     for(var placeholder_slot in cp_data.dom_placeholders)
     {
+      if(! cp_data.dom_placeholders.hasOwnProperty(placeholder_slot))
+        continue;
+
       var dom_placeholder = cp_data.dom_placeholders[placeholder_slot];
       var last_role_occurance =  ++roles_seen[dom_placeholder.role];
       if( dom_placeholder.items.length == 0)

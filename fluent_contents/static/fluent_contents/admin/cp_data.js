@@ -372,6 +372,9 @@ var cp_data = {};
 
     for(var model_name in cp_data.contentitem_metadata)
     {
+      if(! cp_data.contentitem_metadata.hasOwnProperty(model_name))
+        continue;
+
       var candidate = cp_data.contentitem_metadata[model_name];
       if( candidate[prop] == value )
         return candidate;
