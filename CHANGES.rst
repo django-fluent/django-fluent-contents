@@ -4,6 +4,13 @@ Changelog
 Version 1.0 (dev)
 -----------------
 
+Released on 1.0c2:
+~~~~~~~~~~~~~~~~~~
+
+* Fix JavaScript errors with ``for i in`` when ``Array.prototype`` is extended.
+  (e.g. when using django-taggit-autosuggest_).
+
+
 Released on 1.0c1:
 ~~~~~~~~~~~~~~~~~~
 
@@ -132,6 +139,7 @@ so it's time to show this module to the public.
 .. _django-parler: https://github.com/edoburu/django-parler
 .. _django-polymorphic: https://github.com/chrisglass/django_polymorphic
 .. _django-tag-parser: https://github.com/edoburu/django-tag-parser
+.. _django-taggit-autosuggest: https://bitbucket.org/fabian/django-taggit-autosuggest
 .. _django-threadedcomments: https://github.com/HonzaKral/django-threadedcomments.git
 .. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg
 .. _micawber: https://github.com/coleifer/micawber
