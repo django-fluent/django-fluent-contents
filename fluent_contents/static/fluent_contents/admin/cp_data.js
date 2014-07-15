@@ -403,7 +403,7 @@ var cp_data = {};
 
   cp_data.cleanup_empty_placeholders = function()
   {
-    for(var i in cp_data.dom_placeholders)
+    for(var i = 0; i < cp_data.dom_placeholders.length; i++)
       if(cp_data.dom_placeholders[i].items.length == 0)
         delete cp_data.dom_placeholders[i];
   }

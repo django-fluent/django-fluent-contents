@@ -98,7 +98,7 @@ var cp_plugins = {};
     // Count number of seen tabs per role.
     var roles_seen = {};
     var placeholders = cp_data.get_placeholders();
-    for(var i in placeholders)
+    for(var i = 0; i < placeholders.length; i++)
       roles_seen[placeholders[i].role] = 0;
 
     // Move all items to the tabs.
@@ -204,7 +204,7 @@ var cp_plugins = {};
 
     // Move all items to that tab.
     // Restore item values upon restoring fields.
-    for(var i in dom_placeholder.items)
+    for(var i = 0; i < dom_placeholder.items.length; i++)
     {
       var $fs_item = dom_placeholder.items[i];
       dom_placeholder.items[i] = cp_plugins._move_item_to( $fs_item, function _move_to_pane($fs_item)
@@ -592,7 +592,7 @@ var cp_plugins = {};
   cp_plugins._sort_items = function($items)
   {
     // The sort_order field is likely top-level, but the fieldset html can place it anywhere.
-    for( var i in $items)
+    for( var i = 0; i < $items.length; i++ )
     {
       var $fs_item = $items[i];
       $fs_item._sort_order = parseInt($fs_item.find("input[id$=-sort_order]:first").val());
