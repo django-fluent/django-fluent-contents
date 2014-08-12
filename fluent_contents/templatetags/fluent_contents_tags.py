@@ -23,10 +23,13 @@ This is done using the following syntax:
 
 The CMS interface can scan for those tags using the :ref:`fluent_contents.analyzer` module.
 """
+from future.utils import six
+from django.conf import settings
 from django.db.models import Manager
+from django.forms import Media
 from django.template import Library, Variable, TemplateSyntaxError
 from django.utils.safestring import SafeData
-from fluent_contents.models import Placeholder
+from fluent_contents.models import Placeholder, ImmutableMedia
 from fluent_contents import rendering
 from tag_parser import parse_token_kwargs
 from tag_parser.basetags import BaseNode
@@ -300,8 +303,10 @@ def render_content_items_media(parser, token):
     .. code-block:: html+django
 
         {% render_content_items_media %}
-        {% render_content_items_media js %}
         {% render_content_items_media css %}
+        {% render_content_items_media js %}
+        {% render_content_items_media js local %}
+        {% render_content_items_media js external %}
     """
     return RenderContentItemsMedia.parse(parser, token)
 
@@ -314,7 +319,7 @@ class RenderContentItemsMedia(BaseNode):
     compile_args = False
     compile_kwargs = False
     min_args = 0
-    max_args = 1
+    max_args = 2
 
     @classmethod
     def validate_args(cls, tag_name, *args, **kwargs):
@@ -322,19 +327,77 @@ class RenderContentItemsMedia(BaseNode):
         if args:
             if args[0] not in ('css', 'js'):
                 raise TemplateSyntaxError("'{0}' tag only supports `css` or `js` as first argument".format(tag_name))
+            if len(args) > 1 and args[1] not in ('local', 'external'):
+                raise TemplateSyntaxError("'{0}' tag only supports `local` or `external` as second argument".format(tag_name))
 
-    def render_tag(self, context, *tag_args, **tag_kwargs):
+    def render_tag(self, context, media_type=None, domain=None):
         request = self.get_request(context)
 
         media = rendering.get_frontend_media(request)
         if not media or not (media._js or media._css):
             return u''
 
-        if not tag_args:
+        if not media_type:
             return media.render()
-        elif tag_args[0] == 'js':
+        elif media_type == 'js':
+            if domain:
+                media = _split_js(media, domain)
             return u'\n'.join(media.render_js())
-        elif tag_args[0] == 'css':
+        elif media_type == 'css':
+            if domain:
+                media = _split_css(media, domain)
             return u'\n'.join(media.render_css())
         else:
             return ''
+
+
+if settings.STATIC_URL is None:
+    _LOCAL_PREFIX = settings.MEDIA_URL  # backwards compatibility
+else:
+    _LOCAL_PREFIX = settings.STATIC_URL
+
+
+def _is_local(url):
+    # URL can be http:// if that's what's also in STATIC_URL.
+    # Otherwise, the domain is external.
+    return not url.startswith(('http://', 'https://')) or url.startswith(_LOCAL_PREFIX)
+
+
+def _split_js(media, domain):
+    """
+    Extract the local or external URLs from a Media object.
+    """
+    # Read internal property without creating new Media instance.
+    if not media._js:
+        return ImmutableMedia.empty_instance
+
+    needs_local = domain == 'local'
+    new_js = []
+    for url in media._js:
+        if needs_local == _is_local(url):
+            new_js.append(url)
+
+    if not new_js:
+        return ImmutableMedia.empty_instance
+    else:
+        return Media(js=new_js)
+
+
+def _split_css(media, domain):
+    """
+    Extract the local or external URLs from a Media object.
+    """
+    # Read internal property without creating new Media instance.
+    if not media._css:
+        return ImmutableMedia.empty_instance
+
+    needs_local = domain == 'local'
+    new_css = {}
+    for medium, url in six.iteritems(media._css):
+        if needs_local == _is_local(url):
+            new_css.setdefault(medium, []).append(url)
+
+    if not new_css:
+        return ImmutableMedia.empty_instance
+    else:
+        return Media(css=new_css)

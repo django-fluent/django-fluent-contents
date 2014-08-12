@@ -89,8 +89,30 @@ Optionally, specify to render only the CSS or JavaScript content:
 
     {% render_content_items_media css %}
     {% render_content_items_media js %}
+    {% render_content_items_media js internal %}
+    {% render_content_items_media js external %}
 
-This way, the contents can be minified too, using django-compressor_ for example.
+By adding the ``local`` or ``external`` flag, the media files will be split into:
+
+* externally hosted files which should *not* be compressed (e.g. a plugin that includes the Google Maps API).
+* locally hosted files which can be compressed.
+
+This way, the contents can be minified too, using django-compressor_ for example:
+
+.. code-block:: html+django
+
+    {% load compress fluent_contents_tags %}
+
+    {% render_content_items_media css external %}
+    {% compress css %}
+        {% render_content_items_media css internal %}
+    {% endcompress %}
+
+    {% render_content_items_media js external %}
+    {% compress js %}
+        {% render_content_items_media js local %}
+        {% block extra_scripts %}{% endblock %}
+    {% endcompress %}
 
 
 Note for existing projects
