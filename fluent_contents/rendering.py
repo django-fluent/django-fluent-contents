@@ -13,11 +13,10 @@ from django.template.context import RequestContext
 from django.template.loader import render_to_string, select_template
 from django.utils.html import conditional_escape, escape
 from django.utils.safestring import mark_safe
-from django.utils.translation import get_language
 from fluent_contents import appsettings
 from fluent_contents.cache import get_rendering_cache_key
 from fluent_contents.extensions import PluginNotFound, ContentPlugin
-from fluent_contents.models import ContentItemOutput
+from fluent_contents.models import ContentItemOutput, ImmutableMedia
 import logging
 
 # This code is separate from the templatetags,
@@ -107,7 +106,7 @@ def get_frontend_media(request):
     """
     Return the media that was registered in the request object.
     """
-    return getattr(request, '_fluent_contents_frontend_media', None) or Media()
+    return getattr(request, '_fluent_contents_frontend_media', None) or ImmutableMedia.empty_instance
 
 
 def _render_items(request, placeholder, items, template_name=None):
