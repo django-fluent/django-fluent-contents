@@ -360,7 +360,7 @@ else:
 def _is_local(url):
     # URL can be http:// if that's what's also in STATIC_URL.
     # Otherwise, the domain is external.
-    return not url.startswith(('http://', 'https://')) or url.startswith(_LOCAL_PREFIX)
+    return not url.startswith(('//', 'http://', 'https://')) or url.startswith(_LOCAL_PREFIX)
 
 
 def _split_js(media, domain):
