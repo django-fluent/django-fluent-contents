@@ -7,10 +7,9 @@ class HttpRedirectRequestMiddleware(object):
     .. versionadded:: 1.0
     Middleware that handles requests redirects
 
-    Redirects by plugins are requested by :func:`fluent_contents.extensions.ContentPlugin.redirect`.
+    Redirects by plugins are requested by :func:`ContentPlugin.redirect() <fluent_contents.extensions.ContentPlugin.redirect>`.
     However, plugins can't return a :class:`~django.http.HttpResponseRedirect` response themselves,
     as they are part of the template rendering process.
-
     Therefore, a :class:`~fluent_contents.extensions.HttpRedirectRequest` exception is raised instead.
     This middleware handles the exception, and returns the proper redirect response.
     """
@@ -25,7 +24,8 @@ class HttpRedirectRequestMiddleware(object):
 
     def process_template_response(self, request, response):
         """
-        Patch a TemplateResponse object to handle ``HttpRedirectRequest`` exceptions too.
+        Patch a :class:`~django.template.response.TemplateResponse` object
+        to handle the :class:`~fluent_contents.extensions.HttpRedirectRequest` exception too.
         """
         # The process_exception() is not called for TemplateResponse objects,
         # as these objects render outside the "try,call-view,except" block..

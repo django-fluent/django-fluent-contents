@@ -43,6 +43,7 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
     :type limit_parent_language: bool
     :param fallback_language: The fallback language to use if there are no items in the current language. Passing ``True`` uses the default :ref:`FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE`.
     :type fallback_language: bool/str
+    :rtype: :class:`~fluent_contents.models.ContentItemOutput`
     """
     # Get the items
     items = placeholder.get_content_items(parent_object, limit_parent_language=limit_parent_language)
@@ -65,6 +66,14 @@ def render_content_items(request, items, template_name=None):
 
     Note that the items are not filtered in any way by parent or language.
     The items are rendered as-is.
+
+    :param request: The current request object.
+    :type request: :class:`~django.http.HttpRequest`
+    :param items: The list or queryset of objects to render. Passing a queryset is preferred.
+    :type items: list or queryset of :class:`~fluent_contents.models.ContentItem`.
+    :param template_name: Optional template name used to concatenate the placeholder output.
+    :type template_name: str
+    :rtype: :class:`~fluent_contents.models.ContentItemOutput`
     """
     if not items:
         output = ContentItemOutput(mark_safe(u"<!-- no items to render -->"))
