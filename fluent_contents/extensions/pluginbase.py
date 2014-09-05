@@ -504,7 +504,11 @@ class HttpRedirectRequest(Exception):
     Request for a redirect from within a view.
     """
     def __init__(self, url, status=302):
-        super(HttpRedirectRequest, self).__init__("A redirect request to '{0}' was raised.\nTo handle this exception, include the HttpRedirectRequestMiddleware in MIDDLEWARE_CLASSES.".format(url))
+        super(HttpRedirectRequest, self).__init__(
+            "A redirect to '{0}' was requested by a plugin.\n"
+            "Please add 'fluent_contents.middleware.HttpRedirectRequestMiddleware' "
+            "to MIDDLEWARE_CLASSES to handle redirects by plugins.".format(url)
+        )
         self.url = url
         self.status = status
 
