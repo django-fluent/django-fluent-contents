@@ -97,8 +97,8 @@ wraps the rendering context in a :func:`~fluent_contents.extensions.PluginContex
 which is similar to the :class:`~django.template.RequestContext` that Django provides.
 
 
-Complex workflows
------------------
+Form processing
+---------------
 
 An entire form with GET/POST can be handled with a plugin.
 This happens again by overwriting :func:`~fluent_contents.extensions.ContentPlugin.render` method.
@@ -123,8 +123,7 @@ custom :func:`~fluent_contents.extensions.ContentPlugin.render` function:
                 form = CallMeBackForm(request.POST, request.FILES)
                 if form.is_valid():
                     instance = form.save()
-                    context['completed'] = True
-                    # TODO: request to redirect the page, currently it just leaves the page in the post state.
+                    return self.redirect(reverse('thank-you-page'))
             else:
                 form = CallMeBackForm()
 
@@ -135,6 +134,10 @@ custom :func:`~fluent_contents.extensions.ContentPlugin.render` function:
 
     The :attr:`~fluent_contents.extensions.ContentPlugin.cache_output` attribute is ``False``
     to disable the default output caching. The POST screen would return the cached output instead.
+
+To allow plugins to perform directs,
+add :class:`fluent_contents.middleware.HttpRedirectRequestMiddleware`
+to :django:setting:`MIDDLEWARE_CLASSES`.
 
 
 Frontend media

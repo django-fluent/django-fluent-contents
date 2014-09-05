@@ -11,6 +11,7 @@ API documentation
    cache
    extensions
    forms
+   middleware
    models
    rendering
    templatetags.fluent_contents_tags

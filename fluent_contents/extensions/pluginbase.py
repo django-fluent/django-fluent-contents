@@ -451,9 +451,8 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
                 context['form'] = form
                 return context
 
-        Internally, this raises an exception that should be caught by
-        the :class:`~fluent_contents.middleware.HttpRedirectRequestMiddleware`
-        as the render functions have no way to return a :class:`~django.http.HttpResponseRedirect`.
+        To handle cache_output_per_languages, :class:`fluent_contents.middleware.HttpRedirectRequestMiddleware`
+        should be added to the :django:setting:`MIDDLEWARE_CLASSES`.
         """
         raise HttpRedirectRequest(url, status=status)
 
