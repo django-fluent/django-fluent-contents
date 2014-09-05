@@ -174,6 +174,8 @@ and most pages look the same for every visitor anyways.
 * When the plugin output is dynamic set the :attr:`~fluent_contents.extensions.ContentPlugin.cache_output` to ``False``.
 * When the plugin output differs per :django:setting:`SITE_ID` only,
   set :attr:`~fluent_contents.extensions.ContentPlugin.cache_output_per_site` to ``True``.
+* When the plugin oputput differs per language,
+  set :attr:`~fluent_contents.extensions.ContentPlugin.cache_output_per_language` to ``True``.
 * The caching can be disabled entirely project-wide using the :ref:`FLUENT_CONTENTS_CACHE_OUTPUT` setting.
   This should be used temporary for development, or special circumstances only.
 
