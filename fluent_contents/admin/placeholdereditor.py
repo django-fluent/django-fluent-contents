@@ -140,13 +140,15 @@ class PlaceholderEditorBaseMixin(object):
     This class is implemented by the :class:`PlaceholderEditorAdmin` and :class:`~fluent_contents.admin.PlaceholderFieldAdmin` classes.
     """
     @abstractmethod
-    def get_placeholder_data(self, request, obj):
+    def get_placeholder_data(self, request, obj=None):
         """
         Return the placeholders that the editor should initially display.
         The function should return a list of :class:`~fluent_contents.models.PlaceholderData` classes.
         These classes can either be instantiated manually, or read from a template
         using the :ref:`fluent_contents.analyzer` module for example.
         """
+        # This information will be read by the PlaceholderEditorInline,
+        # but it could also be reused by other derived classes off course.
         raise NotImplementedError("The '{0}' subclass should implement get_placeholder_data().".format(self.__class__.__name__))
 
 
@@ -154,6 +156,8 @@ class PlaceholderEditorBaseMixin(object):
         """
         Return all plugin categories which can be used by placeholder content.
         By default, all plugins are allowed. Individual slot names may further limit the plugin set.
+
+        :rtype: list of :class:`~fluent_contents.extensions.ContentPlugin`
         """
         return extensions.plugin_pool.get_plugins()
 

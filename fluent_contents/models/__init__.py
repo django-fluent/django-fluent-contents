@@ -29,6 +29,8 @@ __all__ = (
     'PlaceholderField', 'PlaceholderRelation', 'ContentItemRelation',
 )
 
+_ALLOWED_ROLES = list(dict(Placeholder.ROLES).keys())
+
 
 class PlaceholderData(object):
     """
@@ -55,8 +57,7 @@ class PlaceholderData(object):
         self.fallback_language = fallback_language or None
 
         # Ensure upfront value checking
-        allows_roles = list(dict(Placeholder.ROLES).keys())
-        if self.role not in allows_roles:
+        if self.role not in _ALLOWED_ROLES:
             raise ValueError("Invalid role '{0}' for placeholder '{1}': allowed are: {2}.".format(self.role, self.title or self.slot, ', '.join(list(self.ROLE_ALIASES.keys()))))
 
 

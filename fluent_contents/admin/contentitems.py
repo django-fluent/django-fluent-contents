@@ -1,5 +1,4 @@
 from django.contrib.contenttypes.generic import BaseGenericInlineFormSet, GenericInlineModelAdmin
-from django.contrib.contenttypes.models import ContentType
 from fluent_contents import extensions, appsettings
 from fluent_contents.forms import ContentItemForm
 from fluent_contents.models import Placeholder, get_parent_language_code
@@ -57,12 +56,7 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
             form_placeholder = form.cleaned_data['placeholder']   # could already be updated, or still point to previous placeholder.
 
             if not form_placeholder or form_placeholder.slot != form_slot:
-                desired_placeholder = Placeholder.objects.get(
-                    slot=form_slot,
-                    parent_type=ContentType.objects.get_for_model(self.instance),
-                    parent_id=self.instance.id
-                )
-
+                desired_placeholder = Placeholder.objects.parent(self.instance).get(slot=form_slot)
                 form.cleaned_data['placeholder'] = desired_placeholder
                 form.instance.placeholder = desired_placeholder
 

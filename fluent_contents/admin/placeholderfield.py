@@ -28,7 +28,7 @@ class PlaceholderFieldAdmin(PlaceholderEditorAdmin):
     placeholder_inline = PlaceholderFieldInline
 
 
-    def get_placeholder_data(self, request, obj):
+    def get_placeholder_data(self, request, obj=None):
         """
         Return the data of the placeholder fields.
         """
