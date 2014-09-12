@@ -12,6 +12,7 @@ class SharedContentAdmin(TranslatableAdmin, PlaceholderFieldAdmin):
     Admin screen for the shared content, displayed in the global Django admin.
     """
     list_display = ('title', 'slug')
+    ordering = ('slug',)
 
     def get_prepopulated_fields(self, request, obj=None):
         # Needed instead of prepopulated_fields=.. for django-parler==0.9

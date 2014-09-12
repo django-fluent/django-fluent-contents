@@ -43,6 +43,7 @@ class SharedContent(TranslatableModel):
         unique_together = (
             ('parent_site', 'slug'),
         )
+        ordering = ('slug',)
 
     def __str__(self):
         return self.title
