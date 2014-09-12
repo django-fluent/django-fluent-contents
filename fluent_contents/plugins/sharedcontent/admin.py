@@ -5,6 +5,7 @@ from parler.admin import TranslatableAdmin
 from fluent_contents import appsettings
 from fluent_contents.admin import PlaceholderFieldAdmin
 from .models import SharedContent
+from . import appsettings as sharedcontent_appsettings
 
 
 class SharedContentAdmin(TranslatableAdmin, PlaceholderFieldAdmin):
@@ -30,10 +31,13 @@ class SharedContentAdmin(TranslatableAdmin, PlaceholderFieldAdmin):
             'fields': ('title', 'contents')
         }),
         (_("Publication settings"), {
-            'fields': ('slug', 'is_cross_site'),
+            'fields': ('slug',),
             'classes': ('collapse',),
         })
     )
+
+    if sharedcontent_appsettings.FLUENT_SHARED_CONTENT_ENABLE_CROSS_SITE:
+        declared_fieldsets[1][1]['fields'] += ('is_cross_site',)
 
     def queryset(self, request):
         # sharedcontent is filtered only visually, not in the queryset
