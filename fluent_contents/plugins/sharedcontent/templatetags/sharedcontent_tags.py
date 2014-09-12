@@ -49,12 +49,16 @@ class SharedContentNode(BaseNode):
         request = self.get_request(context)
         (slot,) = tag_args
 
-        # Get the placeholder
-        try:
-            site = Site.objects.get_current()
-            sharedcontent = SharedContent.objects.parent_site(site).get(slug=slot)
-        except SharedContent.DoesNotExist:
-            return "<!-- shared content '{0}' does not yet exist -->".format(slot)
+        if isinstance(slot, SharedContent):
+            # Allow passing a sharedcontent, just like 'render_placeholder' does.
+            sharedcontent = slot
+        else:
+            # Get the placeholder
+            try:
+                site = Site.objects.get_current()
+                sharedcontent = SharedContent.objects.parent_site(site).get(slug=slot)
+            except SharedContent.DoesNotExist:
+                return "<!-- shared content '{0}' does not yet exist -->".format(slot)
 
         template_name = tag_kwargs.get('template') or None
         return rendering.render_placeholder(request, sharedcontent.contents, sharedcontent, template_name=template_name, fallback_language=True)
