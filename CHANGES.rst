@@ -5,6 +5,7 @@ Version 1.0 (dev)
 -----------------
 
 * Allow passing ``SharedContent`` object to ``sharedcontent`` template tag.
+* Allow sharing a ``SharedContent`` object across multiple websites.
 
 Released on 1.0c2:
 ~~~~~~~~~~~~~~~~~~

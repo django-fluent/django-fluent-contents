@@ -29,7 +29,7 @@ class SharedContentAdmin(TranslatableAdmin, PlaceholderFieldAdmin):
             'fields': ('title', 'contents')
         }),
         (_("Publication settings"), {
-            'fields': ('slug',),
+            'fields': ('slug', 'is_cross_site'),
             'classes': ('collapse',),
         })
     )

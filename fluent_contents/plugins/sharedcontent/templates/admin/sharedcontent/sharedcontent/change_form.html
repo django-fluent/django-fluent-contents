@@ -1,0 +1,8 @@
+{% extends "admin/change_form.html" %}{% load i18n %}
+
+{% block breadcrumbs %}
+  {% if original and original.is_cross_site %}
+    <p class="errornote">{% trans "This object can be displayed on multiple sites. Please verify that links in the content work across all sites." %}</p>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from parler.managers import TranslatableManager, TranslatableQuerySet
 
 
@@ -8,9 +9,9 @@ class SharedContentQuerySet(TranslatableQuerySet):
 
     def parent_site(self, site):
         """
-        Filter to the given site.
+        Filter to the given site, only give content relevant for that site.
         """
-        return self.filter(parent_site=site)
+        return self.filter(Q(parent_site=site) | Q(is_cross_site=True))
 
 
 class SharedContentManager(TranslatableManager):
@@ -21,6 +22,6 @@ class SharedContentManager(TranslatableManager):
 
     def parent_site(self, site):
         """
-        Filter to the given site.
+        Filter to the given site, only give content relevant for that site.
         """
         return self.get_query_set().parent_site(site)
