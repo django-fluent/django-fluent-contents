@@ -6,6 +6,7 @@ Version 1.0 (dev)
 
 * Allow passing ``SharedContent`` object to ``sharedcontent`` template tag.
 * Allow sharing a ``SharedContent`` object across multiple websites.
+* Improve default value of ``ContentPlugin.cache_timeout`` for Django 1.6 support.
 
 Released on 1.0c2:
 ~~~~~~~~~~~~~~~~~~

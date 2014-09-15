@@ -22,6 +22,14 @@ from fluent_contents.cache import get_rendering_cache_key
 from fluent_contents.forms import ContentItemForm
 from fluent_contents.models import ContentItemOutput, ImmutableMedia
 
+try:
+    # Django 1.6 started using a sentinel value to indicate the default.
+    # The values 0 and None became allowed values which mean set+forget and indefinitely.
+    from django.core.cache.backends.base import DEFAULT_TIMEOUT
+except ImportError:
+    # Provide the value for older Django versions in a compatible way.
+    DEFAULT_TIMEOUT = object()
+
 
 # Some standard request processors to use in the plugins,
 # Naturally, you want STATIC_URL to be available in plugins.
@@ -167,7 +175,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
 
     #: .. versionadded: 1.0
     #: Set a custom cache timeout value
-    cache_timeout = None
+    cache_timeout = DEFAULT_TIMEOUT
 
     #: .. versionadded:: 1.0
     #: Tell which languages the plugin will cache.
@@ -374,7 +382,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
            The received data is no longer a HTML string, but :class:`~fluent_contents.models.ContentItemOutput` object.
         """
         cachekey = self.get_output_cache_key(placeholder_name, instance)
-        if self.cache_timeout:
+        if self.cache_timeout is not DEFAULT_TIMEOUT:
             cache.set(cachekey, output, self.cache_timeout)
         else:
             # Don't want to mix into the default 0/None issue.
