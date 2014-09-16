@@ -273,7 +273,7 @@ class RenderPlaceholderNode(BaseNode):
         parent_object = placeholder.parent
 
         output = rendering.render_placeholder(request, placeholder, parent_object)
-        rendering.register_frontend_media(request, output.media)   # Assume it doesn't hurt. TODO: should this be optional?
+        rendering.register_frontend_media(request, output.media)   # Need to track frontend media here, as the template tag can't return it.
         return output.html
 
 

@@ -61,4 +61,6 @@ class SharedContentNode(BaseNode):
                 return "<!-- shared content '{0}' does not yet exist -->".format(slot)
 
         template_name = tag_kwargs.get('template') or None
-        return rendering.render_placeholder(request, sharedcontent.contents, sharedcontent, template_name=template_name, fallback_language=True)
+        output = rendering.render_placeholder(request, sharedcontent.contents, sharedcontent, template_name=template_name, fallback_language=True)
+        rendering.register_frontend_media(request, output.media)  # Need to track frontend media here, as the template tag can't return it.
+        return output.html
