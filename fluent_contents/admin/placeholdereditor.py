@@ -15,7 +15,7 @@ from fluent_contents.admin.contentitems import get_content_item_inlines, BaseCon
 from fluent_contents.admin.genericextensions import BaseInitialGenericInlineFormSet
 from fluent_contents.models import Placeholder, ContentItem, get_parent_language_code
 from fluent_contents.models.managers import get_parent_active_language_choices
-from fluent_contents.utils.ajax import JsonResponse
+from fluent_utils.ajax import JsonResponse
 
 
 class PlaceholderInlineFormSet(BaseInitialGenericInlineFormSet):

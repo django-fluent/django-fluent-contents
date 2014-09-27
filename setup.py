@@ -36,8 +36,9 @@ setup(
     license='Apache License, Version 2.0',
 
     install_requires=[
-        'django-parler>=1.0',               # In practice only visible for sharedcontent, but integrated globally for admin support.
-        'django-polymorphic>=0.5.3',        # Need 0.5.3 at least for several upstream fixes (for the multilingual API urls)
+        'django-fluent-utils>=1.0',        # DRY utility code
+        'django-parler>=1.0',              # In practice only visible for sharedcontent, but integrated globally for admin support.
+        'django-polymorphic>=0.5.3',       # Need 0.5.3 at least for several upstream fixes (for the multilingual API urls)
         'django-tag-parser>=2.0b1',
         'django-template-analyzer>=1.3',
         'future>=0.12.2',
