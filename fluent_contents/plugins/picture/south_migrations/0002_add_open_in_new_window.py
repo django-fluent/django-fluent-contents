@@ -13,23 +13,9 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.BooleanField')(default=False),
                       keep_default=False)
 
-
-        # Changing field 'PictureItem.url'
-        db.alter_column(u'contentitem_picture_pictureitem', 'url', self.gf('any_urlfield.models.fields.AnyUrlField')(max_length=300))
-
-        # Changing field 'PictureItem.image'
-        db.alter_column(u'contentitem_picture_pictureitem', 'image', self.gf('any_imagefield.models.fields.AnyImageField')(max_length=100))
-
     def backwards(self, orm):
         # Deleting field 'PictureItem.in_new_window'
         db.delete_column(u'contentitem_picture_pictureitem', 'in_new_window')
-
-
-        # Changing field 'PictureItem.url'
-        db.alter_column(u'contentitem_picture_pictureitem', 'url', self.gf('django.db.models.fields.URLField')(max_length=200))
-
-        # Changing field 'PictureItem.image'
-        db.alter_column(u'contentitem_picture_pictureitem', 'image', self.gf('django.db.models.fields.files.ImageField')(max_length=100))
 
     models = {
         u'contenttypes.contenttype': {
@@ -62,9 +48,9 @@ class Migration(SchemaMigration):
             'align': ('django.db.models.fields.CharField', [], {'max_length': '10', 'blank': 'True'}),
             'caption': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             u'contentitem_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['fluent_contents.ContentItem']", 'unique': 'True', 'primary_key': 'True'}),
-            'image': ('any_imagefield.models.fields.AnyImageField', [], {'max_length': '100'}),
+            'image': ('django.db.models.fields.files.ImageField', [], {'max_length': '100'}),
             'in_new_window': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'url': ('any_urlfield.models.fields.AnyUrlField', [], {'max_length': '300', 'blank': 'True'})
+            'url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})
         }
     }
 
