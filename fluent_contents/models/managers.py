@@ -1,8 +1,9 @@
 """
 The manager classes are accessed via ``Placeholder.objects``.
 """
+import six
+
 from future.builtins import str
-from future.utils import six
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import get_language
