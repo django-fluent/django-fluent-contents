@@ -2,8 +2,9 @@
 Internal module for the plugin system,
 the API is exposed via __init__.py
 """
+import six
+
 from future.builtins import str
-from future.utils import six
 from threading import Lock
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType

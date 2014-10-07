@@ -3,9 +3,9 @@ This module provides functions to render placeholder content manually.
 Contents is cached in memcache whenever possible, only the remaining items are queried.
 The templatetags also use these functions to render the :class:`~fluent_contents.models.ContentItem` objects.
 """
+import logging, os, six
+
 from future.builtins import str
-from future.utils import six
-import os
 from django.conf import settings
 from django.core.cache import cache
 from django.forms import Media
@@ -17,7 +17,6 @@ from fluent_contents import appsettings
 from fluent_contents.cache import get_rendering_cache_key
 from fluent_contents.extensions import PluginNotFound, ContentPlugin
 from fluent_contents.models import ContentItemOutput, ImmutableMedia
-import logging
 
 # This code is separate from the templatetags,
 # so it can be called outside the templates as well.

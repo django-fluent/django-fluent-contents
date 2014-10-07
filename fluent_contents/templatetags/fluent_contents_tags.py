@@ -23,7 +23,8 @@ This is done using the following syntax:
 
 The CMS interface can scan for those tags using the :ref:`fluent_contents.analyzer` module.
 """
-from future.utils import six
+import six
+
 from django.conf import settings
 from django.db.models import Manager
 from django.forms import Media
