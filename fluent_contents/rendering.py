@@ -51,7 +51,7 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
         language_code = appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE if fallback_language is True else fallback_language
         items = placeholder.get_content_items(parent_object, limit_parent_language=False).translated(language_code)
 
-    output = _render_items(request, placeholder, items, template_name=template_name)
+    output = _render_items(request, placeholder, items, parent_object=parent_object, template_name=template_name)
 
     if is_edit_mode(request):
         output.html = _wrap_placeholder_output(output.html, placeholder)
@@ -78,7 +78,7 @@ def render_content_items(request, items, template_name=None):
     if not items:
         output = ContentItemOutput(mark_safe(u"<!-- no items to render -->"))
     else:
-        output = _render_items(request, None, items, template_name=template_name)
+        output = _render_items(request, None, items, parent_object=None, template_name=template_name)
 
     if is_edit_mode(request):
         output.html = _wrap_anonymous_output(output.html)
@@ -118,7 +118,7 @@ def get_frontend_media(request):
     return getattr(request, '_fluent_contents_frontend_media', None) or ImmutableMedia.empty_instance
 
 
-def _render_items(request, placeholder, items, template_name=None):
+def _render_items(request, placeholder, items, parent_object=None, template_name=None):
     edit_mode = is_edit_mode(request)
     item_output = {}
     output_ordering = []
@@ -226,6 +226,7 @@ def _render_items(request, placeholder, items, template_name=None):
     else:
         context = {
             'contentitems': list(zip(items, output_ordered)),
+            'parent_object': parent_object,  # Can be None
             'edit_mode': edit_mode,
         }
         merged_output = render_to_string(template_name, context, context_instance=RequestContext(request))

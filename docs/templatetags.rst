@@ -46,6 +46,19 @@ For example:
       {{ html }}
     {% endfor %}
 
+The following variables are available:
+
+* ``contentitems`` - a list with:
+
+ * the :class:`~fluent_contents.models.ContentItem` model.
+   You can access ``contentitem.plugin.name`` to read the actual plugin name.
+   The model itself is generally not downcasted to the actual model.
+ * the rendered HTML code
+
+* ``parent_object`` - the parent object, this may be ``None`` if :func:`~fluent_contents.rendering.render_items`
+  was used instead of :func:`~fluent_contents.rendering.render_placeholder`.
+
+
 Admin Meta information
 ~~~~~~~~~~~~~~~~~~~~~~
 
