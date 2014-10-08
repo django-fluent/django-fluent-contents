@@ -34,7 +34,7 @@ class SharedContentNode(BaseNode):
     """
     min_args = 1
     max_args = 1
-    allowed_kwargs = ('template',)
+    allowed_kwargs = ('language', 'template',)
 
 
     @classmethod
@@ -60,7 +60,16 @@ class SharedContentNode(BaseNode):
             except SharedContent.DoesNotExist:
                 return "<!-- shared content '{0}' does not yet exist -->".format(slot)
 
+        language_code = tag_kwargs.get('language') or None
         template_name = tag_kwargs.get('template') or None
+
+        if language_code:
+            sharedcontent.set_current_language(language_code)
+
+        return self.render_shared_content(request, sharedcontent, template_name)
+
+    def render_shared_content(self, request, sharedcontent, template_name):
+        # All parsing done, perform the actual rendering
         output = rendering.render_placeholder(request, sharedcontent.contents, sharedcontent, template_name=template_name, fallback_language=True)
         rendering.register_frontend_media(request, output.media)  # Need to track frontend media here, as the template tag can't return it.
         return output.html

@@ -21,6 +21,7 @@ import logging
 
 # This code is separate from the templatetags,
 # so it can be called outside the templates as well.
+from parler.utils.context import smart_override
 
 logger = logging.getLogger(__name__)
 
@@ -177,9 +178,12 @@ def _render_items(request, placeholder, items, parent_object=None, template_name
             except PluginNotFound as e:
                 output = ContentItemOutput(mark_safe(u'<!-- error: {0} -->\n'.format(str(e))))
             else:
-                # Plugin output is likely HTML, but it should be placed in mark_safe() to raise awareness about escaping.
-                # This is just like Django's Input.render() and unlike Node.render().
-                output = plugin._render_contentitem(request, contentitem)
+                # Always try to render the template in the ContentItem language.
+                # This makes sure that {% trans %} tags function properly if the language happens to be different.
+                with smart_override(contentitem.language_code):
+                    # Plugin output is likely HTML, but it should be placed in mark_safe() to raise awareness about escaping.
+                    # This is just like Django's Input.render() and unlike Node.render().
+                    output = plugin._render_contentitem(request, contentitem)
 
                 if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and plugin.cache_output and contentitem.pk:
                     contentitem.plugin.set_cached_output(placeholder_cache_name, contentitem, output)

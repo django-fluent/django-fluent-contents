@@ -4,8 +4,9 @@ Changelog
 Version 1.0 (dev)
 -----------------
 
-* Allow passing ``SharedContent`` object to ``sharedcontent`` template tag.
-* Allow sharing a ``SharedContent`` object across multiple websites.
+* Added option to share ``SharedContent`` objects across multiple websites.
+* Added optional ``language`` parameter to ``{% sharedcontent %}`` template tag.
+* Allow passing ``SharedContent`` object to ``{% sharedcontent %}`` template tag.
 * Improve default value of ``ContentPlugin.cache_timeout`` for Django 1.6 support.
 * Fix frontend media support for ``{% sharedcontent %}`` tag.
 
