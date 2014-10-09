@@ -41,6 +41,7 @@ setup(
         'django-tag-parser>=2.0b1',
         'django-template-analyzer>=1.3',
         'future>=0.12.2',
+        'six>=1.5.2',
     ],
     requires=[
         'Django (>=1.4)',
