@@ -145,11 +145,11 @@ class ContentItemMetaClass(PolymorphicModelBase):
             # Enforce good manners. The name is often not visible, except for the delete page.
             if not hasattr(new_class, '__str__') or new_class.__str__ == ContentItem.__str__:
                 if PY3:
-                    raise FieldError("The {0} class should implement a __str__() function.".format(name))
+                    raise TypeError("The {0} class should implement a __str__() function.".format(name))
                 else:
                     # The first check is for python_2_unicode_compatible tricks, also check for __unicode__ only.
                     if not hasattr(new_class, '__unicode__') or new_class.__unicode__ == ContentItem.__unicode__:
-                        raise FieldError("The {0} class should implement a __unicode__() or __str__() function.".format(name))
+                        raise TypeError("The {0} class should implement a __unicode__() or __str__() function.".format(name))
 
 
         return new_class
