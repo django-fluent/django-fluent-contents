@@ -20,8 +20,9 @@ if not settings.configured:
             'fluent_contents.tests.testapp',
         ),
         ROOT_URLCONF = 'fluent_contents.tests.testapp.urls',
+        TEST_RUNNER='django.test.simple.DjangoTestSuiteRunner',   # for Django 1.6, see https://docs.djangoproject.com/en/dev/releases/1.6/#new-test-runner
+        SITE_ID = 3,
         FLUENT_CONTENTS_CACHE_OUTPUT = True,
-        SITE_ID = 3
     )
 
 def runtests():
