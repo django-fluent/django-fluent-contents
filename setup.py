@@ -61,6 +61,7 @@ setup(
         'oembeditem': ['micawber>=0.2.6'],
         'text': ['django-wysiwyg>=0.5.1'],
         'twitterfeed': ['twitter-text-py>=1.0.3'],
+        'picture': ['django-any-urlfield>=2.1.0', 'django-any-imagefield']
     },
     dependency_links = [
         'git+https://github.com/philomat/django-form-designer.git#egg=django-form-designer-dev',
