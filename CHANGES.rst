@@ -10,6 +10,8 @@ Version 1.0 (dev)
 * Allow passing ``SharedContent`` object to ``{% sharedcontent %}`` template tag.
 * Improve default value of ``ContentPlugin.cache_timeout`` for Django 1.6 support.
 * Fix frontend media support for ``{% sharedcontent %}`` tag.
+** BACKWARDS INCOMPATIBLE:** South 1.0 is required to run the migrations (or set ``SOUTH_MIGRATION_MODULES`` for all plugins).
+
 
 Released on 1.0c2:
 ~~~~~~~~~~~~~~~~~~
