@@ -6,12 +6,11 @@ import six
 
 from future.builtins import str
 from threading import Lock
-from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.utils.importlib import import_module
 from fluent_contents import appsettings
 from fluent_contents.forms import ContentItemForm
 from fluent_contents.models import ContentItem
+from fluent_utils.load import import_apps_submodule
 from .pluginbase import ContentPlugin
 
 
@@ -24,20 +23,6 @@ __all__ = ('PluginContext', 'ContentPlugin', 'plugin_pool')
 
 # Some standard request processors to use in the plugins,
 # Naturally, you want STATIC_URL to be available in plugins.
-
-
-def _import_apps_submodule(submodule):
-    """
-    Look for a submodule is a series of packages, e.g. ".content_plugins" in all INSTALLED_APPS.
-    """
-    for app in settings.INSTALLED_APPS:
-        try:
-            import_module('.' + submodule, app)
-        except ImportError as e:
-            if submodule not in str(e):
-                raise   # import error is a level deeper.
-            else:
-                pass
 
 
 class PluginAlreadyRegistered(Exception):
@@ -200,7 +185,7 @@ class PluginPool(object):
             return  # previous threaded released + completed
 
         try:
-            _import_apps_submodule("content_plugins")
+            import_apps_submodule("content_plugins")
             self.detected = True
         finally:
             self.scanLock.release()

@@ -11,6 +11,12 @@ import sys
 if 'sdist' in sys.argv or 'develop' in sys.argv:
     try:
         os.chdir('fluent_contents')
+
+        from django.core.management.commands.compilemessages import Command
+        command = Command()
+        command.execute(stdout=sys.stderr, verbosity=1)
+    except:
+        # < Django 1.7
         from django.core.management.commands.compilemessages import compile_messages
         compile_messages(sys.stderr)
     finally:
@@ -36,10 +42,11 @@ setup(
     license='Apache License, Version 2.0',
 
     install_requires=[
-        'django-parler>=1.0',               # In practice only visible for sharedcontent, but integrated globally for admin support.
-        'django-polymorphic>=0.5.3',        # Need 0.5.3 at least for several upstream fixes (for the multilingual API urls)
+        'django-fluent-utils>=1.0',        # DRY utility code
+        'django-parler>=1.1',              # Needed for Django 1.7 compatibility
+        'django-polymorphic>=0.6',         # Needed for Django 1.7 compatibility
         'django-tag-parser>=2.0b1',
-        'django-template-analyzer>=1.3',
+        'django-template-analyzer>=1.4',   # Needed for Django 1.7 compatibility
         'future>=0.12.2',
         'six>=1.5.2',
     ],

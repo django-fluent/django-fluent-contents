@@ -1,4 +1,4 @@
-# Django settings for example project.
+import django
 from os.path import join, dirname, realpath
 
 # Add parent path,
@@ -94,6 +94,7 @@ INSTALLED_APPS = (
     'fluent_contents.plugins.iframe',
     'fluent_contents.plugins.markup',
     'fluent_contents.plugins.oembeditem',
+    'fluent_contents.plugins.picture',
     'fluent_contents.plugins.rawhtml',
     'fluent_contents.plugins.sharedcontent',
     'fluent_contents.plugins.text',
@@ -114,8 +115,15 @@ INSTALLED_APPS = (
     #'disqus',
     #'form_designer',
     'tinymce',
-    'south',
 )
+
+if django.VERSION < (1,7):
+    INSTALLED_APPS += (
+        # For DB upgrades
+        'south',
+    )
+else:
+    TEST_RUNNER = 'django.test.runner.DiscoverRunner'  # silence system checks
 
 SIMPLECMS_TEMPLATE_CHOICES = (
     ("theme1/pages/standard.html", "Standard"),

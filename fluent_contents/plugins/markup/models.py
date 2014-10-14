@@ -1,3 +1,4 @@
+import django
 from future.utils import python_2_unicode_compatible
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -62,8 +63,12 @@ class MarkupLanguageManager(PolymorphicManager):
         super(MarkupLanguageManager, self).__init__()
         self.fixed_language = fixed_language
 
-    def get_query_set(self):
-        return super(MarkupLanguageManager, self).get_query_set().filter(language=self.fixed_language)
+    def get_queryset(self):
+        return super(MarkupLanguageManager, self).get_queryset().filter(language=self.fixed_language)
+
+    if django.VERSION < (1,6):
+        def get_query_set(self):
+            return super(MarkupLanguageManager, self).get_query_set().filter(language=self.fixed_language)
 
 
 

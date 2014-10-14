@@ -1,77 +1,64 @@
 # -*- coding: utf-8 -*-
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
 
 
-class Migration(SchemaMigration):
-    depends_on = (
-        ("fluent_contents", "0001_initial"),
-    )
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'SharedContent'
-        db.create_table('sharedcontent_sharedcontent', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=200)),
-            ('slug', self.gf('django.db.models.fields.SlugField')(unique=True, max_length=50)),
-        ))
-        db.send_create_signal('sharedcontent', ['SharedContent'])
+    dependencies = [
+        ('sites', '0001_initial'),
+        ('fluent_contents', '0001_initial'),
+    ]
 
-        # Adding model 'SharedContentItem'
-        db.create_table('contentitem_sharedcontent_sharedcontentitem', (
-            ('contentitem_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['fluent_contents.ContentItem'], unique=True, primary_key=True)),
-            ('shared_content', self.gf('django.db.models.fields.related.ForeignKey')(related_name='shared_content_items', to=orm['sharedcontent.SharedContent'])),
-        ))
-        db.send_create_signal('sharedcontent', ['SharedContentItem'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'SharedContent'
-        db.delete_table('sharedcontent_sharedcontent')
-
-        # Deleting model 'SharedContentItem'
-        db.delete_table('contentitem_sharedcontent_sharedcontentitem')
-
-
-    models = {
-        'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        'fluent_contents.contentitem': {
-            'Meta': {'ordering': "('placeholder', 'sort_order')", 'object_name': 'ContentItem'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'parent_id': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
-            'parent_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
-            'placeholder': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'contentitems'", 'null': 'True', 'on_delete': 'models.SET_NULL', 'to': "orm['fluent_contents.Placeholder']"}),
-            'polymorphic_ctype': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'polymorphic_fluent_contents.contentitem_set'", 'null': 'True', 'to': "orm['contenttypes.ContentType']"}),
-            'sort_order': ('django.db.models.fields.IntegerField', [], {'default': '1', 'db_index': 'True'})
-        },
-        'fluent_contents.placeholder': {
-            'Meta': {'unique_together': "(('parent_type', 'parent_id', 'slot'),)", 'object_name': 'Placeholder'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'parent_id': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
-            'parent_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']", 'null': 'True', 'blank': 'True'}),
-            'role': ('django.db.models.fields.CharField', [], {'default': "'m'", 'max_length': '1'}),
-            'slot': ('django.db.models.fields.SlugField', [], {'max_length': '50'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'})
-        },
-        'sharedcontent.sharedcontent': {
-            'Meta': {'object_name': 'SharedContent'},
-            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '200'})
-        },
-        'sharedcontent.sharedcontentitem': {
-            'Meta': {'ordering': "('placeholder', 'sort_order')", 'object_name': 'SharedContentItem', 'db_table': "'contentitem_sharedcontent_sharedcontentitem'", '_ormbases': ['fluent_contents.ContentItem']},
-            'contentitem_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['fluent_contents.ContentItem']", 'unique': 'True', 'primary_key': 'True'}),
-            'shared_content': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'shared_content_items'", 'to': "orm['sharedcontent.SharedContent']"})
-        }
-    }
-
-    complete_apps = ['sharedcontent']
+    operations = [
+        migrations.CreateModel(
+            name='SharedContent',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('slug', models.SlugField(help_text='This unique name can be used refer to this content in in templates.', verbose_name='Template code')),
+                ('is_cross_site', models.BooleanField(default=False, help_text='This allows contents can be shared between multiple sites in this project.<br>\nMake sure that any URLs in the content work with all sites where the content is displayed.', verbose_name='Share between all sites')),
+                ('parent_site', models.ForeignKey(default=1, editable=False, to='sites.Site')),
+            ],
+            options={
+                'ordering': ('slug',),
+                'verbose_name': 'Shared content',
+                'verbose_name_plural': 'Shared content',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='SharedContentItem',
+            fields=[
+                ('contentitem_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem')),
+                ('shared_content', models.ForeignKey(related_name=b'shared_content_items', verbose_name='Shared content', to='sharedcontent.SharedContent')),
+            ],
+            options={
+                'verbose_name': 'Shared content',
+                'verbose_name_plural': 'Shared content',
+            },
+            bases=('fluent_contents.contentitem',),
+        ),
+        migrations.CreateModel(
+            name='SharedContentTranslation',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('language_code', models.CharField(db_index=True, max_length=15, verbose_name='Language', choices=[(b'af', b'Afrikaans'), (b'ar', b'Arabic'), (b'ast', b'Asturian'), (b'az', b'Azerbaijani'), (b'bg', b'Bulgarian'), (b'be', b'Belarusian'), (b'bn', b'Bengali'), (b'br', b'Breton'), (b'bs', b'Bosnian'), (b'ca', b'Catalan'), (b'cs', b'Czech'), (b'cy', b'Welsh'), (b'da', b'Danish'), (b'de', b'German'), (b'el', b'Greek'), (b'en', b'English'), (b'en-au', b'Australian English'), (b'en-gb', b'British English'), (b'eo', b'Esperanto'), (b'es', b'Spanish'), (b'es-ar', b'Argentinian Spanish'), (b'es-mx', b'Mexican Spanish'), (b'es-ni', b'Nicaraguan Spanish'), (b'es-ve', b'Venezuelan Spanish'), (b'et', b'Estonian'), (b'eu', b'Basque'), (b'fa', b'Persian'), (b'fi', b'Finnish'), (b'fr', b'French'), (b'fy', b'Frisian'), (b'ga', b'Irish'), (b'gl', b'Galician'), (b'he', b'Hebrew'), (b'hi', b'Hindi'), (b'hr', b'Croatian'), (b'hu', b'Hungarian'), (b'ia', b'Interlingua'), (b'id', b'Indonesian'), (b'io', b'Ido'), (b'is', b'Icelandic'), (b'it', b'Italian'), (b'ja', b'Japanese'), (b'ka', b'Georgian'), (b'kk', b'Kazakh'), (b'km', b'Khmer'), (b'kn', b'Kannada'), (b'ko', b'Korean'), (b'lb', b'Luxembourgish'), (b'lt', b'Lithuanian'), (b'lv', b'Latvian'), (b'mk', b'Macedonian'), (b'ml', b'Malayalam'), (b'mn', b'Mongolian'), (b'mr', b'Marathi'), (b'my', b'Burmese'), (b'nb', b'Norwegian Bokmal'), (b'ne', b'Nepali'), (b'nl', b'Dutch'), (b'nn', b'Norwegian Nynorsk'), (b'os', b'Ossetic'), (b'pa', b'Punjabi'), (b'pl', b'Polish'), (b'pt', b'Portuguese'), (b'pt-br', b'Brazilian Portuguese'), (b'ro', b'Romanian'), (b'ru', b'Russian'), (b'sk', b'Slovak'), (b'sl', b'Slovenian'), (b'sq', b'Albanian'), (b'sr', b'Serbian'), (b'sr-latn', b'Serbian Latin'), (b'sv', b'Swedish'), (b'sw', b'Swahili'), (b'ta', b'Tamil'), (b'te', b'Telugu'), (b'th', b'Thai'), (b'tr', b'Turkish'), (b'tt', b'Tatar'), (b'udm', b'Udmurt'), (b'uk', b'Ukrainian'), (b'ur', b'Urdu'), (b'vi', b'Vietnamese'), (b'zh-cn', b'Simplified Chinese'), (b'zh-hans', b'Simplified Chinese'), (b'zh-hant', b'Traditional Chinese'), (b'zh-tw', b'Traditional Chinese')])),
+                ('title', models.CharField(max_length=200, verbose_name='Title')),
+                ('master', models.ForeignKey(related_name=b'translations', editable=False, to='sharedcontent.SharedContent', null=True)),
+            ],
+            options={
+                'db_table': 'sharedcontent_sharedcontent_translation',
+                'verbose_name': 'Shared content Translation',
+            },
+            bases=(models.Model,),
+        ),
+        migrations.AlterUniqueTogether(
+            name='sharedcontenttranslation',
+            unique_together=set([('language_code', 'master')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='sharedcontent',
+            unique_together=set([('parent_site', 'slug')]),
+        ),
+    ]

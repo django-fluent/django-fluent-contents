@@ -7,7 +7,7 @@ from django.forms.widgets import flatatt
 from django.utils.html import escape
 from fluent_contents.models import Placeholder, get_parent_language_code
 from fluent_contents.models.managers import get_parent_active_language_choices
-from fluent_contents.utils.compat import smart_unicode
+from fluent_utils.django_compat import smart_text
 
 
 class PlaceholderFieldWidget(Widget):
@@ -87,7 +87,7 @@ class WysiwygWidget(AdminTextareaWidget):
         super(WysiwygWidget, self).__init__(attrs)
 
     def render(self, name, value, attrs=None):
-        value = smart_unicode(value or u'')
+        value = smart_text(value or u'')
         final_attrs = self.build_attrs(attrs, name=name)
 
         if 'class' in final_attrs:

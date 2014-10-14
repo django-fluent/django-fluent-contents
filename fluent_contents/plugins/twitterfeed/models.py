@@ -15,8 +15,8 @@ class TwitterRecentEntriesItem(ContentItem):
     amount = models.PositiveSmallIntegerField(_('Number of results'), default=5)
 
     footer_text = models.CharField(_('Footer text'), max_length=200, blank=True, help_text=_('You may use Twitter markup here, such as a #hashtag or @username.'))
-    include_retweets = models.BooleanField(_("Include retweets"))
-    include_replies = models.BooleanField(_("Include replies"))
+    include_retweets = models.BooleanField(_("Include retweets"), default=False)
+    include_replies = models.BooleanField(_("Include replies"), default=False)
 
     def __str__(self):
         return self.title or self.twitter_user
@@ -37,8 +37,8 @@ class TwitterSearchItem(ContentItem):
     amount = models.PositiveSmallIntegerField(_('Number of results'), default=5)
 
     footer_text = models.CharField(_('Footer text'), max_length=200, blank=True, help_text=_('You may use Twitter markup here, such as a #hashtag or @username.'))
-    include_retweets = models.BooleanField(_("Include retweets"))
-    include_replies = models.BooleanField(_("Include replies"))
+    include_retweets = models.BooleanField(_("Include retweets"), default=False)
+    include_replies = models.BooleanField(_("Include replies"), default=False)
 
     def __str__(self):
         return self.title or self.query

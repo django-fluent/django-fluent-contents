@@ -1,3 +1,4 @@
+from django.conf import settings
 from future.builtins import str
 from future.utils import python_2_unicode_compatible
 from django.contrib.sites.models import Site
@@ -21,7 +22,7 @@ class SharedContent(TranslatableModel):
         title = models.CharField(_("Title"), max_length=200)
     )
 
-    parent_site = models.ForeignKey(Site, editable=False, default=_get_current_site)
+    parent_site = models.ForeignKey(Site, editable=False, default=int(settings.SITE_ID))
     slug = models.SlugField(_("Template code"), help_text=_("This unique name can be used refer to this content in in templates."))
     is_cross_site = models.BooleanField(_("Share between all sites"), blank=True, default=False,
         help_text=_("This allows contents can be shared between multiple sites in this project.<br>\n"

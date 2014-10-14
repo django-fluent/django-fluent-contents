@@ -1,17 +1,18 @@
-from django.conf import settings
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 from parler.admin import TranslatableAdmin
 from fluent_contents import appsettings
 from fluent_contents.admin import PlaceholderFieldAdmin
+from fluent_utils.dry.admin import MultiSiteAdminMixin
 from .models import SharedContent
 from . import appsettings as sharedcontent_appsettings
 
 
-class SharedContentAdmin(TranslatableAdmin, PlaceholderFieldAdmin):
+class SharedContentAdmin(MultiSiteAdminMixin, TranslatableAdmin, PlaceholderFieldAdmin):
     """
     Admin screen for the shared content, displayed in the global Django admin.
     """
+    filter_site = appsettings.FLUENT_CONTENTS_FILTER_SITE_ID
     list_display = ('title', 'slug')
     ordering = ('slug',)
 
@@ -38,13 +39,6 @@ class SharedContentAdmin(TranslatableAdmin, PlaceholderFieldAdmin):
 
     if sharedcontent_appsettings.FLUENT_SHARED_CONTENT_ENABLE_CROSS_SITE:
         declared_fieldsets[1][1]['fields'] += ('is_cross_site',)
-
-    def queryset(self, request):
-        # sharedcontent is filtered only visually, not in the queryset
-        qs = super(SharedContentAdmin, self).queryset(request)
-        if appsettings.FLUENT_CONTENTS_FILTER_SITE_ID:
-            qs = qs.parent_site(settings.SITE_ID)
-        return qs
 
 
 admin.site.register(SharedContent, SharedContentAdmin)
