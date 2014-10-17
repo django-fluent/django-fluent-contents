@@ -170,4 +170,16 @@ class ImmutableMedia(Media):
     def add_js(self, data):
         raise RuntimeError("Immutable media object")
 
+    def __add__(self, other):
+        # Performance improvement
+        if other is ImmutableMedia.empty_instance:
+            return other
+
+        # Fast copy
+        combined = Media()
+        combined._css = other._css.copy()
+        combined._js = other._js[:]
+        return combined
+
+
 ImmutableMedia.empty_instance = ImmutableMedia()
