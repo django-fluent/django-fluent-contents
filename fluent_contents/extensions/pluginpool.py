@@ -32,6 +32,13 @@ class PluginAlreadyRegistered(Exception):
     pass
 
 
+class ModelAlreadyRegistered(Exception):
+    """
+    The model is already registered with another plugin.
+    """
+    pass
+
+
 class PluginNotFound(Exception):
     """
     Raised when the plugin could not be found in the rendering process.
@@ -71,6 +78,18 @@ class PluginPool(object):
         if name in self.plugins:
             raise PluginAlreadyRegistered("{0}: a plugin with this name is already registered".format(name))
         name = name.lower()
+
+        # Avoid registering 2 plugins to the exact same model. If you want to reuse code, use proxy models.
+        if plugin.model in self._name_for_model:
+            # Having 2 plugins for one model breaks ContentItem.plugin and the frontend code
+            # that depends on using inline-model names instead of plugins. Good luck fixing that.
+            # Better leave the model==plugin dependency for now.
+            existing_plugin = self.plugins[self._name_for_model[plugin.model]]
+            raise ModelAlreadyRegistered("Can't register the model {0} to {2}, it's already registered to {1}!".format(
+                plugin.model.__name__,
+                existing_plugin.name,
+                plugin.__name__
+            ))
 
         # Make a single static instance, similar to ModelAdmin.
         plugin_instance = plugin()
