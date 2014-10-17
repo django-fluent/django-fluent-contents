@@ -138,6 +138,18 @@ class ContentItemOutput(SafeData):
             self.media._css = css
             self.media._js = js
 
+    def _insert_media(self, media):
+        """
+        Insert more media files to the output. (internal-private for now).
+        """
+        # Upgrade the performance-optimization of ImmediateMedia to an editable object.
+        if self.media is ImmutableMedia.empty_instance:
+            self.media = Media() + media
+        else:
+            # Needs to be merged as new copy, can't risk merging the 'media' object
+            self.media = media + self.media
+
+
 
 # Avoid continuous construction of Media objects.
 class ImmutableMedia(Media):

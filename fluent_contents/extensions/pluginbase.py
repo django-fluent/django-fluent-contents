@@ -281,14 +281,20 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         # Internal wrapper for render(), to allow updating the method signature easily.
         # It also happens to really simplify code navigation.
         result = self.render(request=request, instance=instance)
+        media = self.get_frontend_media(instance)
+
         if isinstance(result, ContentItemOutput):
             # Return in new 1.0 format
+
+            # Also include the statically declared FrontendMedia, inserted before any extra added files.
+            # These could be included already in the ContentItemOutput object, but duplicates are removed.
+            if media is not ImmutableMedia.empty_instance:
+                result._insert_media(media)
+
             return result
         else:
             # Old 0.9 syntax, correct it.
-            html = result
-            media = self.get_frontend_media(instance)
-            return ContentItemOutput(html, media)
+            return ContentItemOutput(result, media)
 
 
     def get_output_cache_base_key(self, placeholder_name, instance):
@@ -498,9 +504,6 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         Return the frontend media for a specific instance.
         By default, it returns ``self.frontend_media``, which derives
         from the ``class FrontendMedia`` of the plugin.
-
-        This function is not used when the :func:`render` function returns
-        the media directly via the :class:`~fluent_contents.models.ContentItemOutput` class.
         """
         return self.frontend_media
 
