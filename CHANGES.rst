@@ -8,6 +8,7 @@ Version 1.0 (dev)
 * Added option to share ``SharedContent`` objects across multiple websites.
 * Added optional ``language`` parameter to ``{% sharedcontent %}`` template tag.
 * Allow passing ``SharedContent`` object to ``{% sharedcontent %}`` template tag.
+* Added ``SharedContent.objects.published()`` API for consistency between all apps.
 * Improve default value of ``ContentPlugin.cache_timeout`` for Django 1.6 support.
 * Fix frontend media support for ``{% sharedcontent %}`` tag.
 ** BACKWARDS INCOMPATIBLE:** South 1.0 is required to run the migrations (or set ``SOUTH_MIGRATION_MODULES`` for all plugins).
