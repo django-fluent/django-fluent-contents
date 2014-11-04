@@ -9,9 +9,12 @@ Version 1.0 (dev)
 * Added optional ``language`` parameter to ``{% sharedcontent %}`` template tag.
 * Allow passing ``SharedContent`` object to ``{% sharedcontent %}`` template tag.
 * Added ``SharedContent.objects.published()`` API for consistency between all apps.
+* Fixed rendering content items in a different language then the object data is saved as.
+  This can be overwritten by using ``render_ignore_item_language = True`` in the plugin.
 * Improve default value of ``ContentPlugin.cache_timeout`` for Django 1.6 support.
 * Fix frontend media support for ``{% sharedcontent %}`` tag.
-** BACKWARDS INCOMPATIBLE:** South 1.0 is required to run the migrations (or set ``SOUTH_MIGRATION_MODULES`` for all plugins).
+* **BACKWARDS INCOMPATIBLE:** South 1.0 is required to run the migrations (or set ``SOUTH_MIGRATION_MODULES`` for all plugins).
+* **BACKWARDS INCOMPATIBLE:** Content is rendered in the language that is is being saved as, unless ``render_ignore_item_language`` is set.
 
 
 Released on 1.0c2:

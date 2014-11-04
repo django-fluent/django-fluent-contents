@@ -28,7 +28,8 @@ class SharedContentPlugin(ContentPlugin):
     model = SharedContentItem
     form = SharedContentItemForm
     category = _('Advanced')
-    cache_output = False  # Individual items are cached, complete block not yet.
+    cache_output = False                # Individual items are cached, complete block not yet.
+    render_ignore_item_language = True  # Only switch for individual items, not this entire block.
 
     def render(self, request, instance, **kwargs):
         # Not using "template" parameter yet of render_placeholder().

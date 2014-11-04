@@ -4,7 +4,6 @@ Contents is cached in memcache whenever possible, only the remaining items are q
 The templatetags also use these functions to render the :class:`~fluent_contents.models.ContentItem` objects.
 """
 import logging, os, six
-
 from future.builtins import str
 from django.conf import settings
 from django.core.cache import cache
@@ -13,6 +12,7 @@ from django.template.context import RequestContext
 from django.template.loader import render_to_string, select_template
 from django.utils.html import conditional_escape, escape
 from django.utils.safestring import mark_safe
+from django.utils.translation import get_language
 from fluent_contents import appsettings
 from fluent_contents.cache import get_rendering_cache_key
 from fluent_contents.extensions import PluginNotFound, ContentPlugin
@@ -177,9 +177,21 @@ def _render_items(request, placeholder, items, parent_object=None, template_name
             except PluginNotFound as e:
                 output = ContentItemOutput(mark_safe(u'<!-- error: {0} -->\n'.format(str(e))))
             else:
-                # Always try to render the template in the ContentItem language.
-                # This makes sure that {% trans %} tags function properly if the language happens to be different.
-                with smart_override(contentitem.language_code):
+                if plugin.render_ignore_item_language \
+                or (plugin.cache_output and plugin.cache_output_per_language):
+                    # Render the template in the current language.
+                    # The cache also stores the output under the current language code.
+                    #
+                    # It would make sense to apply this for fallback content too,
+                    # but that would be ambiguous however because the parent_object could also be a fallback,
+                    # and that case can't be detected here. Hence, better be explicit when desiring multi-lingual content.
+                    render_language = get_language()  # Avoid switching the content,
+                else:
+                    # Render the template in the ContentItem language.
+                    # This makes sure that {% trans %} tag output matches the language of the model field data.
+                    render_language = contentitem.language_code
+
+                with smart_override(render_language):
                     # Plugin output is likely HTML, but it should be placed in mark_safe() to raise awareness about escaping.
                     # This is just like Django's Input.render() and unlike Node.render().
                     output = plugin._render_contentitem(request, contentitem)

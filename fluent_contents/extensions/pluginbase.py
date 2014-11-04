@@ -171,6 +171,11 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     #:
     #: * Display fallback content on pages, but still use `{% trans %}` inside templates.
     #: * Dynamically switch the language per request, and *share* content between multiple languages.
+    #:
+    #: .. note::
+    #:    This option doesn't have to be used for translated CMS pages,
+    #:    as each page has it's own :class:`~fluent_contents.models.ContentItem` objects.
+    #:    It's only needed for rendering the *same* item in different languages.
     cache_output_per_language = False
 
     #: .. versionadded: 1.0
@@ -183,6 +188,14 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
 
     #: The category to display the plugin at.
     category = None
+
+    #: ..versionadded:: 1.0
+    #: By default, the plugin is rendered in the :attr:`language_code` it's written in.
+    #: It can be disabled explicitly in case the content should be rendered language agnostic.
+    #: For fallback content or plugins that cache output per language, this flag will be ignored.
+    #:
+    #: See also: :attr:`cache_output_per_language`
+    render_ignore_item_language = False
 
     #: Alternative template for the view.
     ADMIN_TEMPLATE_WITHOUT_LABELS = "admin/fluent_contents/contentitem/admin_form_without_labels.html"
@@ -318,6 +331,9 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
 
         # Append language code
         if self.cache_output_per_language:
+            # NOTE: Not using self.language_code, but using the current language instead.
+            #       That is what the {% trans %} tags are rendered as after all.
+            #       The render_placeholder() code can switch the language if needed.
             user_language = get_language()
             if user_language not in self.cache_supported_language_codes:
                 user_language = 'unsupported'
