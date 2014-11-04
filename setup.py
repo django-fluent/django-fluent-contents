@@ -63,7 +63,7 @@ setup(
         'twitterfeed': ['twitter-text-py>=1.0.3'],
     },
     dependency_links = [
-        'git+https://github.com/philomat/django-form-designer.git#egg=django-form-designer-dev',
+        'git+https://github.com/philomat/django-form-designer.git#egg=django-form-designer',
     ],
 
     description='A widget engine to display various content on Django pages',
