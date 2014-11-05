@@ -2,11 +2,10 @@ from __future__ import print_function
 from future.builtins import str
 from functools import wraps
 from django.conf import settings, UserSettingsHolder
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.contrib.sites.models import Site
 from django.db.models import loading
-from django.template.loaders import app_directories
 from django.test import TestCase
 from django.utils.importlib import import_module
 import os
@@ -24,6 +23,10 @@ class AppTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        # Avoid early import, triggers AppCache
+        from django.template.loaders import app_directories
+        User = get_user_model()
+
         if cls.install_apps:
             # When running this app via `./manage.py test fluent_pages`, auto install the test app + models.
             run_syncdb = False

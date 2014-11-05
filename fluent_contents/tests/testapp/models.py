@@ -10,6 +10,7 @@ class TestPage(models.Model):
     contents = models.TextField("Contents")
 
     class Meta:
+        app_label = 'testapp'
         verbose_name = "Test page"
         verbose_name_plural = "Test pages"
 
@@ -26,6 +27,7 @@ class PlaceholderFieldTestPage(models.Model):
     contentitem_set = ContentItemRelation()
 
     class Meta:
+        app_label = 'testapp'
         verbose_name = "Test page"
         verbose_name_plural = "Test pages"
 
@@ -41,6 +43,7 @@ class RawHtmlTestItem(ContentItem):
     html = models.TextField("HTML code")
 
     class Meta:
+        app_label = 'testapp'
         verbose_name = 'Test HTML code'
         verbose_name_plural = 'Test HTML codes'
 
