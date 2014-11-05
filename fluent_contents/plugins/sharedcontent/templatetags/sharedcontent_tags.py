@@ -34,7 +34,7 @@ class SharedContentNode(BaseNode):
     """
     min_args = 1
     max_args = 1
-    allowed_kwargs = ('language', 'template',)
+    allowed_kwargs = ('template',)
 
 
     @classmethod
@@ -60,12 +60,7 @@ class SharedContentNode(BaseNode):
             except SharedContent.DoesNotExist:
                 return "<!-- shared content '{0}' does not yet exist -->".format(slot)
 
-        language_code = tag_kwargs.get('language') or None
         template_name = tag_kwargs.get('template') or None
-
-        if language_code:
-            sharedcontent.set_current_language(language_code)
-
         return self.render_shared_content(request, sharedcontent, template_name)
 
     def render_shared_content(self, request, sharedcontent, template_name):

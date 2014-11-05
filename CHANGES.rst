@@ -6,7 +6,6 @@ Version 1.0 (dev)
 
 * Added preliminary Django 1.7 support, migrations are not available yet.
 * Added option to share ``SharedContent`` objects across multiple websites.
-* Added optional ``language`` parameter to ``{% sharedcontent %}`` template tag.
 * Allow passing ``SharedContent`` object to ``{% sharedcontent %}`` template tag.
 * Added ``SharedContent.objects.published()`` API for consistency between all apps.
 * Fixed rendering content items in a different language then the object data is saved as.
