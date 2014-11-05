@@ -20,8 +20,11 @@ class PlaceholderManager(models.Manager):
         """
         Return all placeholders which are associated with a given parent object.
         """
+        # NOTE: by using .all(), the correct get_queryset() or get_query_set() method is called.
+        # Just calling self.get_queryset() will break the RelatedManager.get_query_set() override in Django 1.5
+        # This avoids all issues with Django 1.5/1.6/1.7 compatibility.
         lookup = get_parent_lookup_kwargs(parent_object)
-        return self.get_query_set().filter(**lookup)
+        return self.all().filter(**lookup)
 
 
     def get_by_slot(self, parent_object, slot):
@@ -111,14 +114,17 @@ class ContentItemManager(PolymorphicManager):
 
         When no language codes are given, only the currently active language is returned.
         """
-        return self.get_query_set().translated(language_codes)
+        # NOTE: by using .all(), the correct get_queryset() or get_query_set() method is called.
+        # Just calling self.get_queryset() will break the RelatedManager.get_query_set() override in Django 1.5
+        # This avoids all issues with Django 1.5/1.6/1.7 compatibility.
+        return self.all().translated(language_codes)
 
 
     def parent(self, parent_object, limit_parent_language=True):
         """
         Return all content items which are associated with a given parent object.
         """
-        return self.get_query_set().parent(parent_object, limit_parent_language)
+        return self.all().parent(parent_object, limit_parent_language)
 
 
     def create_for_placeholder(self, placeholder, sort_order=1, **kwargs):

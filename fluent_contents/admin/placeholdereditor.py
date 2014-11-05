@@ -206,7 +206,7 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
 
     def get_urls(self):
         urls = super(PlaceholderEditorAdmin, self).get_urls()
-        info = self.model._meta.app_label, self.model._meta.module_name
+        info = _get_url_format(self.model._meta)
         return patterns('',
             url(
                 r'^(?P<object_id>\d+)/api/get_placeholder_data/',
@@ -330,3 +330,10 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
 def _get_pk_on_placeholder_delete(instance, **kwargs):
     # Make sure the old PK can still be tracked
     instance._old_pk = instance.pk
+
+
+def _get_url_format(opts):
+    try:
+        return opts.app_label, opts.model_name  # Django 1.7 format
+    except AttributeError:
+        return opts.app_label, opts.module_name

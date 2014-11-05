@@ -89,7 +89,7 @@ class AdminTest(AppTestCase):
 
     def _post_add(self, modeladmin, formdata):
         opts = modeladmin.opts
-        url = reverse('admin:{0}_{1}_add'.format(opts.app_label, opts.module_name))
+        url = reverse('admin:{0}_{1}_add'.format(*_get_url_format(opts)))
 
         # Build request
         formdata['csrfmiddlewaretoken'] = 'foo'
@@ -110,7 +110,7 @@ class AdminTest(AppTestCase):
         Return the formdata that the management forms need.
         """
         opts = modeladmin.opts
-        url = reverse('admin:{0}_{1}_add'.format(opts.app_label, opts.module_name))
+        url = reverse('admin:{0}_{1}_add'.format(*_get_url_format(opts)))
         request = self.factory.get(url)
         request.user = self.admin_user
 
@@ -141,3 +141,10 @@ class AdminTest(AppTestCase):
             return u"== Context ==\n{0}\n\n== Response ==\n{1}".format(pformat(response.context_data), response.render().content)
         else:
             return response.content
+
+
+def _get_url_format(opts):
+    try:
+        return opts.app_label, opts.model_name  # Django 1.7 format
+    except AttributeError:
+        return opts.app_label, opts.module_name
