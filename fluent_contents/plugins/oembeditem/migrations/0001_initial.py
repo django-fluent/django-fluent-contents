@@ -35,6 +35,7 @@ class Migration(migrations.Migration):
                 ('html', models.TextField(null=True, editable=False, blank=True)),
             ],
             options={
+                'db_table': 'contentitem_oembeditem_oembeditem',
                 'verbose_name': 'Online media',
                 'verbose_name_plural': 'Online media',
             },

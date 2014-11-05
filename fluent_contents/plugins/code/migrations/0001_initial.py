@@ -20,6 +20,7 @@ class Migration(migrations.Migration):
                 ('linenumbers', models.BooleanField(default=False, verbose_name='Show line numbers')),
             ],
             options={
+                'db_table': 'contentitem_code_codeitem',
                 'verbose_name': 'Code snippet',
                 'verbose_name_plural': 'Code snippets',
             },

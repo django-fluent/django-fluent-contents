@@ -18,6 +18,7 @@ class Migration(migrations.Migration):
                 ('html', models.TextField(help_text='Enter the HTML code to display, like the embed code of an online widget.', verbose_name='HTML code')),
             ],
             options={
+                'db_table': 'contentitem_rawhtml_rawhtmlitem',
                 'verbose_name': 'HTML code',
                 'verbose_name_plural': 'HTML code',
             },

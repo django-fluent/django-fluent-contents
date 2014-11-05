@@ -24,6 +24,7 @@ class Migration(migrations.Migration):
                 ('in_new_window', models.BooleanField(default=False, verbose_name='Open in a new window')),
             ],
             options={
+                'db_table': 'contentitem_picture_pictureitem',
                 'verbose_name': 'Picture',
                 'verbose_name_plural': 'Pictures',
             },

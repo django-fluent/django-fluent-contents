@@ -21,6 +21,7 @@ class Migration(migrations.Migration):
                 ('height', models.CharField(default=b'600', help_text='Specify the size in pixels.', max_length=10, verbose_name='Height', validators=[fluent_contents.utils.validators.validate_html_size])),
             ],
             options={
+                'db_table': 'contentitem_iframe_iframeitem',
                 'verbose_name': 'Iframe',
                 'verbose_name_plural': 'Iframes',
             },

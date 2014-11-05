@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import fluent_contents.extensions.model_fields
 
 
 class Migration(migrations.Migration):
@@ -13,15 +12,15 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='TextItem',
+            name='DisqusCommentsAreaItem',
             fields=[
                 ('contentitem_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem')),
-                ('text', fluent_contents.extensions.model_fields.PluginHtmlField(verbose_name='text', blank=True)),
+                ('allow_new', models.BooleanField(default=True, verbose_name='Allow posting new comments')),
             ],
             options={
-                'db_table': 'contentitem_text_textitem',
-                'verbose_name': 'Text',
-                'verbose_name_plural': 'Text',
+                'db_table': 'contentitem_disquswidgets_disquscommentsareaitem',
+                'verbose_name': 'Disqus comments area',
+                'verbose_name_plural': 'Disqus comments areas',
             },
             bases=('fluent_contents.contentitem',),
         ),

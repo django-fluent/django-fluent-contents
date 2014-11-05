@@ -19,6 +19,7 @@ class Migration(migrations.Migration):
                 ('filename', models.CharField(help_text='Leave the filename empty to display all files in the Gist.', max_length=128, verbose_name='Gist filename', blank=True)),
             ],
             options={
+                'db_table': 'contentitem_gist_gistitem',
                 'verbose_name': 'GitHub Gist snippet',
                 'verbose_name_plural': 'GitHub Gist snippets',
             },

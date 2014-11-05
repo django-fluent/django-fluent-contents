@@ -34,6 +34,7 @@ class Migration(migrations.Migration):
                 ('shared_content', models.ForeignKey(related_name=b'shared_content_items', verbose_name='Shared content', to='sharedcontent.SharedContent')),
             ],
             options={
+                'db_table': 'contentitem_sharedcontent_shsaredcontentitem',
                 'verbose_name': 'Shared content',
                 'verbose_name_plural': 'Shared content',
             },
