@@ -4,16 +4,24 @@ Changelog
 Version 1.0 (dev)
 -----------------
 
-* Added preliminary Django 1.7 support, migrations are not available yet.
+Released on 1.0c3:
+~~~~~~~~~~~~~~~~~~
+
+* Added Django 1.7 support.
 * Added option to share ``SharedContent`` objects across multiple websites.
 * Allow passing ``SharedContent`` object to ``{% sharedcontent %}`` template tag.
 * Added ``SharedContent.objects.published()`` API for consistency between all apps.
 * Fixed rendering content items in a different language then the object data is saved as.
   This can be overwritten by using ``render_ignore_item_language = True`` in the plugin.
+* Fixed support for: future >= 0.13.
 * Improve default value of ``ContentPlugin.cache_timeout`` for Django 1.6 support.
 * Fix frontend media support for ``{% sharedcontent %}`` tag.
 * **BACKWARDS INCOMPATIBLE:** South 1.0 is required to run the migrations (or set ``SOUTH_MIGRATION_MODULES`` for all plugins).
 * **BACKWARDS INCOMPATIBLE:** Content is rendered in the language that is is being saved as, unless ``render_ignore_item_language`` is set.
+
+.. note::
+   Currently, Django 1.7 doesn't properly detect the generated ``db_table`` value properly for ContentItem objects.
+   This needs to be added manually in the migration files.
 
 
 Released on 1.0c2:
