@@ -10,7 +10,7 @@ env:
 matrix:
   exclude:
   - python: "2.6"
-    env: DJANGO=django==1.7
+    env: PACKAGES="django==1.7.1"
 install:
   - pip install -q $PACKAGES
   - pip install -q -e .
