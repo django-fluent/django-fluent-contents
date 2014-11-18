@@ -298,8 +298,7 @@ class ContentItem(with_metaclass(ContentItemMetaClass, PolymorphicModel)):
         """
         Delete the cache keys associated with this model.
         """
-        for cache_key in self.get_cache_keys():
-            cache.delete(cache_key)
+        cache.delete_many(self.get_cache_keys())
 
     clear_cache.alters_data = True
 
