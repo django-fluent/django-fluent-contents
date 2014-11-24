@@ -2,6 +2,7 @@
 Internal module for the plugin system,
 the API is exposed via __init__.py
 """
+from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
 from future.builtins import str
 from future.utils import with_metaclass
 from django.conf import settings
@@ -294,19 +295,24 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         # Internal wrapper for render(), to allow updating the method signature easily.
         # It also happens to really simplify code navigation.
         result = self.render(request=request, instance=instance)
-        media = self.get_frontend_media(instance)
 
         if isinstance(result, ContentItemOutput):
             # Return in new 1.0 format
 
             # Also include the statically declared FrontendMedia, inserted before any extra added files.
             # These could be included already in the ContentItemOutput object, but duplicates are removed.
+            media = self.get_frontend_media(instance)
             if media is not ImmutableMedia.empty_instance:
                 result._insert_media(media)
 
             return result
+        elif isinstance(result, (HttpResponseRedirect, HttpResponsePermanentRedirect)):
+            # Can't return a HTTP response from a plugin that is rendered as a string in a template.
+            # However, this response can be translated into our custom exception-based redirect mechanism.
+            return self.redirect(result.url, result.status_code)
         else:
-            # Old 0.9 syntax, correct it.
+            # Old 0.9 syntax, wrap it.
+            media = self.get_frontend_media(instance)
             return ContentItemOutput(result, media)
 
 
@@ -431,7 +437,8 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
            For the sake of convenience and simplicity, most examples
            only return a HTML string directly.
 
-           When the user needs to be redirected, call :func:`redirect`.
+           When the user needs to be redirected, simply return a :class:`~django.http.HttpResponseRedirect`
+           or call the :func:`redirect` method.
 
         To render raw HTML code, use :func:`~django.utils.safestring.mark_safe` on the returned HTML.
         """
@@ -481,7 +488,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
                 context['form'] = form
                 return context
 
-        To handle cache_output_per_languages, :class:`fluent_contents.middleware.HttpRedirectRequestMiddleware`
+        To handle redirects, :class:`fluent_contents.middleware.HttpRedirectRequestMiddleware`
         should be added to the :django:setting:`MIDDLEWARE_CLASSES`.
         """
         raise HttpRedirectRequest(url, status=status)
