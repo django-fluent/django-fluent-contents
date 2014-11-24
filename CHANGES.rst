@@ -4,6 +4,9 @@ Changelog
 Version 1.0 (dev)
 -----------------
 
+* Fix handling ``CheckboxSelectMultiple`` in admin form widgets.
+
+
 Released on 1.0c3:
 ~~~~~~~~~~~~~~~~~~
 

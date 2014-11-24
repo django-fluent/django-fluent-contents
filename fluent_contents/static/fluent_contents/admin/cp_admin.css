@@ -136,6 +136,11 @@ form .form-row.no-labels p.help {
   margin-left: 0;
 }
 
+/* ---- CheckboxSelectMultiple fixes ---- */
+
+.aligned .form-row ul li {
+    list-style-type: none;
+}
 
 /* ---- Inline header fixes ---- */
 

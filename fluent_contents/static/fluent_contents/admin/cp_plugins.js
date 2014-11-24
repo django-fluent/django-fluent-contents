@@ -263,13 +263,13 @@ var cp_plugins = {};
     for(var i = 0; i < $inputs.length; i++)
     {
       var $input = $inputs.eq(i)
-        , name = $input.attr("name");
+        , id = $input.attr("id") || $input.attr("name");  // multiple input checkbox has one name, but different IDs
 
       if( $input[0].type == 'radio' && !$input[0].checked )
         continue;
 
       if( !ignoreTestFunc || !ignoreTestFunc(name) )
-        values[name] = $input.val();
+        values[id] = $input.val();
     }
 
     return values;
@@ -282,12 +282,12 @@ var cp_plugins = {};
     for(var i = 0; i < $inputs.length; i++)
     {
       var $input = $inputs.eq(i)
-        , name = $input.attr("name");
+        , id = $input.attr("id") || $input.attr("name");
 
-      if( values.hasOwnProperty(name)
-       && (!ignoreTestFunc || !ignoreTestFunc(name)) )
+      if( values.hasOwnProperty(id)
+       && (!ignoreTestFunc || !ignoreTestFunc(id)) )
       {
-        var value = values[name];
+        var value = values[id];
         cp_plugins._set_input_value($input, value);
       }
     }
@@ -296,7 +296,8 @@ var cp_plugins = {};
 
   cp_plugins._set_input_value = function($input, value)
   {
-    if( $input[0].type == 'radio' )
+    var input_type = $input[0].type;
+    if( input_type == 'radio' || input_type == 'checkbox' )
     {
       $input[0].checked = ($input[0].value == value);
     }
