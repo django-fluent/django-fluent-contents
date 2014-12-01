@@ -164,7 +164,7 @@ class TemplateTagTests(AppTestCase):
         ctx = self.assertNumQueries(2)
         with ctx:
             self._render("""{% load fluent_contents_tags %}{% page_placeholder 'field_slot1' fallback=True %}""", {'page': page3})
-            pprint(ctx.captured_queries)
+            #pprint(ctx.captured_queries)
 
 
 
