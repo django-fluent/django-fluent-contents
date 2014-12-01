@@ -46,10 +46,10 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
     :rtype: :class:`~fluent_contents.models.ContentItemOutput`
     """
     # Get the items
-    items = placeholder.get_content_items(parent_object, limit_parent_language=limit_parent_language)
-    if fallback_language and not items:
+    items = placeholder.get_content_items(parent_object, limit_parent_language=limit_parent_language).non_polymorphic()
+    if fallback_language and not items:  # NOTES: performs query, so hence the .non_polymorphic() above
         language_code = appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE if fallback_language is True else fallback_language
-        items = placeholder.get_content_items(parent_object, limit_parent_language=False).translated(language_code)
+        items = placeholder.get_content_items(parent_object, limit_parent_language=False).translated(language_code).non_polymorphic()
 
     output = _render_items(request, placeholder, items, parent_object=parent_object, template_name=template_name)
 
@@ -130,7 +130,9 @@ def _render_items(request, placeholder, items, parent_object=None, template_name
         remaining_items = items
         output_ordering = [item.pk or id(item) for item in items]
     else:
-        items = items.non_polymorphic()
+        # Unless it was done before, disable polymorphic effects.
+        if not items.polymorphic_disabled:
+            items = items.non_polymorphic()
 
         # First try to fetch all items non-polymorphic from memcache
         # If these are found, there is no need to query the derived data from the database.
