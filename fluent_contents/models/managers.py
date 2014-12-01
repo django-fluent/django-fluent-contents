@@ -39,7 +39,9 @@ class PlaceholderManager(models.Manager):
         Create a placeholder with the given parameters
         """
         parent_attrs = get_parent_lookup_kwargs(parent_object)
-        return self.create(slot=slot, **parent_attrs)
+        obj = self.create(slot=slot, **parent_attrs)
+        obj.parent = parent_object  # fill the reverse cache
+        return obj
 
 
 class ContentItemQuerySet(PolymorphicQuerySet):
@@ -131,13 +133,21 @@ class ContentItemManager(PolymorphicManager):
         """
         Create a Content Item with the given parameters
         """
-        return self.create(
+        obj = self.create(
             placeholder=placeholder,
             parent_type_id=placeholder.parent_type_id,
             parent_id=placeholder.parent_id,
             sort_order=sort_order,
             **kwargs
         )
+
+        # Fill the reverse caches
+        obj.placeholder = placeholder
+        parent = getattr(placeholder, '_parent_cache', None)  # by GenericForeignKey (_meta.virtual_fields[0].cache_attr)
+        if parent is not None:
+            obj.parent = parent
+
+        return obj
 
 
 # This low-level function is used for both ContentItem and Placeholder objects.
