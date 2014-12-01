@@ -64,7 +64,7 @@ class AdminTest(AppTestCase):
             'rawhtmltestitem-0-html': u'<b>foo</b>',
         })
         response = self._post_add(modeladmin, formdata)
-        self.assertEquals(response.status_code, 302, "No redirect, received:\n\n{0}".format(self._render_response(response)))
+        self.assertEqual(response.status_code, 302, "No redirect, received:\n\n{0}".format(self._render_response(response)))
 
         # Check that the page exists.
         page = PlaceholderFieldTestPage.objects.get(title='TEST1')
