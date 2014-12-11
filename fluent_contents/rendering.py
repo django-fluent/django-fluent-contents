@@ -146,9 +146,9 @@ def _render_items(request, placeholder, items, parent_object=None, template_name
                     output = contentitem.plugin.get_cached_output(placeholder_cache_name, contentitem)
 
                     # Support transition to new output format.
-                    if not isinstance(output, ContentItemOutput):
+                    if output is not None and not isinstance(output, ContentItemOutput):
                         output = None
-                        logger.debug("Flushed cached output of {0}#{1} to store new format (key: {2}) ".format(contentitem.plugin.type_name, contentitem.pk, placeholder_cache_name))
+                        logger.debug("Flushed cached output of {0}#{1} to store new ContentItemOutput format (key: {2})".format(contentitem.plugin.type_name, contentitem.pk, placeholder_cache_name))
             except PluginNotFound:
                 pass
 
