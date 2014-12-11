@@ -31,15 +31,23 @@ class PlaceholderManager(models.Manager):
         """
         Return a placeholder by key.
         """
-        return self.parent(parent_object).get(slot=slot)
+        placeholder = self.parent(parent_object).get(slot=slot)
+        placeholder.parent = parent_object  # fill the reverse cache
+        return placeholder
 
 
-    def create_for_object(self, parent_object, slot):
+    def create_for_object(self, parent_object, slot, role='m', title=None):
         """
         Create a placeholder with the given parameters
         """
+        from .db import Placeholder
         parent_attrs = get_parent_lookup_kwargs(parent_object)
-        obj = self.create(slot=slot, **parent_attrs)
+        obj = self.create(
+            slot=slot,
+            role=role or Placeholder.MAIN,
+            title=title or slot.title().replace('_', ' '),
+            **parent_attrs
+        )
         obj.parent = parent_object  # fill the reverse cache
         return obj
 
@@ -129,15 +137,29 @@ class ContentItemManager(PolymorphicManager):
         return self.all().parent(parent_object, limit_parent_language)
 
 
-    def create_for_placeholder(self, placeholder, sort_order=1, **kwargs):
+    def create_for_placeholder(self, placeholder, sort_order=1, language_code=None, **kwargs):
         """
         Create a Content Item with the given parameters
+
+        If the language_code is not provided, the language code of the parent will be used.
+        This may perform an additional database query, unless
+        the :class:`~fluent_contents.models.managers.PlaceholderManager` methods were used to construct the object,
+        such as :func:`~fluent_contents.models.managers.PlaceholderManager.create_for_object`
+        or :func:`~fluent_contents.models.managers.PlaceholderManager.get_by_slot`
         """
+        if language_code is None:
+            # Could also use get_language() or appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE
+            # thus avoid the risk of performing an extra query here to the parent.
+            # However, this identical behavior to BaseContentItemFormSet,
+            # and the parent can be set already via Placeholder.objects.create_for_object()
+            language_code = get_parent_language_code(placeholder.parent)
+
         obj = self.create(
             placeholder=placeholder,
             parent_type_id=placeholder.parent_type_id,
             parent_id=placeholder.parent_id,
             sort_order=sort_order,
+            language_code=language_code,
             **kwargs
         )
 
