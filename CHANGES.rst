@@ -6,6 +6,7 @@ Version 1.0 (dev)
 
 * Fix handling ``CheckboxSelectMultiple`` in admin form widgets.
 * Fix missing API parameters for ``ContentItem.objects.create_for_placeholder()`` and ``Placeholder.objects.create_for_parent()``.
+* Fix static default ``SITE_ID`` value for ``SharedContent``, for compatibility with django-multisite_.
 
 
 Released on 1.0c3:
@@ -162,6 +163,7 @@ so it's time to show this module to the public.
 .. _django-any-imagefield: https://github.com/edoburu/django-any-imagefield
 .. _django-parler: https://github.com/edoburu/django-parler
 .. _django-polymorphic: https://github.com/chrisglass/django_polymorphic
+.. _django-multisite: https://github.com/ecometrica/django-multisite
 .. _django-tag-parser: https://github.com/edoburu/django-tag-parser
 .. _django-taggit-autosuggest: https://bitbucket.org/fabian/django-taggit-autosuggest
 .. _django-threadedcomments: https://github.com/HonzaKral/django-threadedcomments.git
