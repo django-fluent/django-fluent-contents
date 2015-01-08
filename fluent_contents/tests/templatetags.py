@@ -3,11 +3,12 @@ from django.core.cache import cache
 from django.template import Template, Context, VariableDoesNotExist, TemplateSyntaxError
 from django.test import RequestFactory
 from template_analyzer import get_node_instances
+from fluent_contents import appsettings
 from fluent_contents.cache import get_placeholder_cache_key
 from fluent_contents.models import Placeholder
 from fluent_contents.templatetags.fluent_contents_tags import PagePlaceholderNode
 from fluent_contents.tests.testapp.models import TestPage, RawHtmlTestItem, PlaceholderFieldTestPage
-from fluent_contents.tests.utils import AppTestCase
+from fluent_contents.tests.utils import AppTestCase, override_settings
 from fluent_contents.analyzer import get_template_placeholder_data
 
 
@@ -104,21 +105,38 @@ class TemplateTagTests(AppTestCase):
         item1 = RawHtmlTestItem.objects.create_for_placeholder(placeholder1, html='<b>Item1!</b>', sort_order=1)
         item2 = RawHtmlTestItem.objects.create_for_placeholder(placeholder1, html='<b>Item2!</b>', sort_order=2)
 
+        # Make sure the unittests won't succeed because of cached output.
+        appsettings.FLUENT_CONTENTS_CACHE_OUTPUT = False
+        cache.clear()
+
         # Test standard behavior, with an object reference
-        html = self._render("""{% load fluent_contents_tags %}{% render_placeholder placeholder1 %}""", {'placeholder1': placeholder1})
-        self.assertEqual(html, u'<b>Item1!</b><b>Item2!</b>')
+        # - fetch ContentItem
+        # - fetch RawHtmlTestItem
+        with self.assertNumQueries(2) as ctx:
+            html = self._render("""{% load fluent_contents_tags %}{% render_placeholder placeholder1 %}""", {'placeholder1': placeholder1})
+            self.assertEqual(html, u'<b>Item1!</b><b>Item2!</b>')
 
         # Test passing Placeholder via PlaceholderField (actually tests the PlaceholderFieldDescriptor)
-        html = self._render("""{% load fluent_contents_tags %}{% render_placeholder page2.contents %}""", {'page2': page2})
-        self.assertEqual(html, u'<b>Item1!</b><b>Item2!</b>')
+        # - fetch Placeholder
+        # - fetch ContentItem
+        # - fetch RawHtmlTestItem
+        with self.assertNumQueries(3) as ctx:
+            html = self._render("""{% load fluent_contents_tags %}{% render_placeholder page2.contents %}""", {'page2': page2})
+            self.assertEqual(html, u'<b>Item1!</b><b>Item2!</b>')
 
         # Test passing a related object manager.
-        html = self._render("""{% load fluent_contents_tags %}{% render_placeholder page2.placeholder_set %}""", {'page2': page2})
-        self.assertEqual(html, u'<b>Item1!</b><b>Item2!</b>')
+        # - fetch Placeholder
+        # - fetch parent (in RenderPlaceholderNode.render_tag)
+        # - fetch ContentItem
+        # - fetch RawHtmlTestItem
+        with self.assertNumQueries(4) as ctx:
+            html = self._render("""{% load fluent_contents_tags %}{% render_placeholder page2.placeholder_set %}""", {'page2': page2})
+            self.assertEqual(html, u'<b>Item1!</b><b>Item2!</b>')
 
         # Test if None values fail silently
-        html = self._render("""{% load fluent_contents_tags %}{% render_placeholder none_object %}""", {'none_object': None})
-        self.assertEqual(html, u'<!-- placeholder object is None -->')
+        with self.assertNumQueries(0) as ctx:
+            html = self._render("""{% load fluent_contents_tags %}{% render_placeholder none_object %}""", {'none_object': None})
+            self.assertEqual(html, u'<!-- placeholder object is None -->')
 
         # Test if invalid objects are reported.
         # This requires `TEMPLATE_DEBUG = False` in Django 1.3
@@ -135,6 +153,8 @@ class TemplateTagTests(AppTestCase):
         placeholder1 = Placeholder.objects.create_for_object(page3, 'field_slot1')
         item1 = RawHtmlTestItem.objects.create_for_placeholder(placeholder1, html='<b>Item1!</b>', sort_order=1)
         item2 = RawHtmlTestItem.objects.create_for_placeholder(placeholder1, html='<b>Item2!</b>', sort_order=2)
+
+        appsettings.FLUENT_CONTENTS_CACHE_OUTPUT = True
 
         # First time:
         # - fetch ContentItem
