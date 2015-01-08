@@ -3,8 +3,10 @@ from future.utils import python_2_unicode_compatible
 from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from parler.models import TranslatableModel, TranslatedFields
+from fluent_contents.models.mixins import CachedModelMixin
 from fluent_contents.models import ContentItem, PlaceholderField, ContentItemRelation
+from fluent_contents.plugins.sharedcontent.cache import get_shared_content_cache_key_ptr
+from parler.models import TranslatableModel, TranslatedFields
 from .managers import SharedContentManager
 
 
@@ -13,7 +15,7 @@ def _get_current_site():
 
 
 @python_2_unicode_compatible
-class SharedContent(TranslatableModel):
+class SharedContent(CachedModelMixin, TranslatableModel):
     """
     The parent hosting object for shared content
     """
@@ -47,6 +49,24 @@ class SharedContent(TranslatableModel):
 
     def __str__(self):
         return self.title
+
+    def __init__(self, *args, **kwargs):
+        super(SharedContent, self).__init__(*args, **kwargs)
+        self._was_cross_site = self.is_cross_site
+        self._old_slug = self.slug
+
+    def get_cache_keys(self):
+        # When the shared content is saved, make sure all rendering output PTRs are cleared.
+        # The 'slug' could have changed. Whether the Placeholder output is cleared,
+        # depends on whether those objects are altered too.
+        if self.is_cross_site or self._was_cross_site:
+            sites = Site.objects.all().values_list('pk', flat=True)
+        else:
+            sites = [self.parent_site_id]
+
+        return [
+            get_shared_content_cache_key_ptr(site_id, self._old_slug) for site_id in sites
+        ]
 
 
 @python_2_unicode_compatible

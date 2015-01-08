@@ -101,9 +101,10 @@ class ContentItemOutput(SafeData):
     Instances can be treated like a string object,
     but also allows reading the :attr:`html` and :attr:`media` attributes.
     """
-    def __init__(self, html, media=None):
+    def __init__(self, html, media=None, cacheable=True):
         self.html = conditional_escape(html)  # enforce consistency
         self.media = media or ImmutableMedia.empty_instance
+        self.cacheable = cacheable  # Mainly used internally for the _render_items()
 
     # Pretend to be a string-like object.
     # Both makes the caller easier to use, and keeps compatibility with 0.9 code.
@@ -130,6 +131,7 @@ class ContentItemOutput(SafeData):
         # (the first call goes to __setstate__, while self.html isn't set so __getattr__ is invoked again)
         html_str, css, js = state
         self.html = mark_safe(html_str)
+        self.cacheable = True  # Implied by retrieving from cache.
 
         if not css and not js:
             self.media = ImmutableMedia.empty_instance

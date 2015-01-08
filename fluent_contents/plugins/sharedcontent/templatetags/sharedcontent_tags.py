@@ -1,6 +1,9 @@
+from django.core.cache import cache
 from django.template import Library, TemplateSyntaxError
 from django.contrib.sites.models import Site
+from fluent_contents import appsettings
 from fluent_contents import rendering
+from fluent_contents.plugins.sharedcontent.cache import get_shared_content_cache_key_ptr, get_shared_content_cache_key
 from fluent_contents.plugins.sharedcontent.models import SharedContent
 from tag_parser import template_tag
 from tag_parser.basetags import BaseNode
@@ -48,23 +51,51 @@ class SharedContentNode(BaseNode):
     def render_tag(self, context, *tag_args, **tag_kwargs):
         request = self.get_request(context)
         (slot,) = tag_args
+        template_name = tag_kwargs.get('template') or None
 
+        # Caching will not happen when rendering via a template,
+        # because there is no way to tell whether that can be expired/invalidated.
+        try_cache = appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and not template_name
+
+        output = None
         if isinstance(slot, SharedContent):
             # Allow passing a sharedcontent, just like 'render_placeholder' does.
             sharedcontent = slot
-        else:
-            # Get the placeholder
-            try:
-                site = Site.objects.get_current()
-                sharedcontent = SharedContent.objects.parent_site(site).get(slug=slot)
-            except SharedContent.DoesNotExist:
-                return "<!-- shared content '{0}' does not yet exist -->".format(slot)
 
-        template_name = tag_kwargs.get('template') or None
-        return self.render_shared_content(request, sharedcontent, template_name)
+            # See if there is cached output, avoid fetching the Placeholder via sharedcontents.contents.
+            if try_cache:
+                cache_key = get_shared_content_cache_key(sharedcontent)
+                output = cache.get(cache_key)
+        else:
+            site = Site.objects.get_current()
+            if try_cache:
+                # See if there is output cached, try to avoid fetching the SharedContent + Placeholder model.
+                # Have to perform 2 cache calls for this, because the placeholder output key is based on object IDs
+                cache_key_ptr = get_shared_content_cache_key_ptr(int(site.pk), slot)
+                cache_key = cache.get(cache_key_ptr)
+                if cache_key is not None:
+                    output = cache.get(cache_key)
+
+            if output is None:
+                # Get the placeholder
+                try:
+                    sharedcontent = SharedContent.objects.parent_site(site).get(slug=slot)
+                except SharedContent.DoesNotExist:
+                    return "<!-- shared content '{0}' does not yet exist -->".format(slot)
+
+                # Now that we've fetched the object, the object key be generated.
+                # No real need to check for output again, render_placeholder() does that already.
+                if try_cache and not cache_key:
+                    cache.set(cache_key_ptr, get_shared_content_cache_key(sharedcontent))
+
+        if output is None:
+            # Have to fetch + render it.
+            output = self.render_shared_content(request, sharedcontent, template_name)
+
+        rendering.register_frontend_media(request, output.media)  # Need to track frontend media here, as the template tag can't return it.
+        return output.html
 
     def render_shared_content(self, request, sharedcontent, template_name):
         # All parsing done, perform the actual rendering
-        output = rendering.render_placeholder(request, sharedcontent.contents, sharedcontent, template_name=template_name, fallback_language=True)
-        rendering.register_frontend_media(request, output.media)  # Need to track frontend media here, as the template tag can't return it.
-        return output.html
+        placeholder = sharedcontent.contents  # Another DB query
+        return rendering.render_placeholder(request, placeholder, sharedcontent, template_name=template_name, fallback_language=True)

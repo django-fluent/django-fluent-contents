@@ -34,6 +34,8 @@ from fluent_contents.models import Placeholder, ImmutableMedia
 from fluent_contents import rendering
 from tag_parser import parse_token_kwargs
 from tag_parser.basetags import BaseNode
+from fluent_contents import appsettings
+from fluent_contents.rendering import get_cached_placeholder_output
 
 register = Library()
 
@@ -216,19 +218,34 @@ class PagePlaceholderNode(BaseNode):
 
     def render(self, context):
         request = self.get_request(context)
+        output = None
 
-        # Get the placeholder
+        # Process arguments
         parent = self.parent_expr.resolve(context)
         slot = self.slot_expr.resolve(context)
         fallback_language = self._is_true(self.fallback_expr.resolve(context)) if self.fallback_expr else False
-        try:
-            placeholder = Placeholder.objects.get_by_slot(parent, slot)
-        except Placeholder.DoesNotExist:
-            return "<!-- placeholder '{0}' does not yet exist -->".format(slot)
-
         template_name = self.template_expr.resolve(context) if self.template_expr else None
 
-        output = rendering.render_placeholder(request, placeholder, parent, template_name=template_name, fallback_language=fallback_language)
+        if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and not template_name:
+            # See if the entire placeholder output is cached,
+            # if so, no database queries have to be performed.
+            # This will be omitted when an template is used,
+            # because there is no way to expire that or tell whether that template is cacheable.
+            output = get_cached_placeholder_output(parent, slot)
+
+        if output is None:
+            # Get the placeholder
+            try:
+                placeholder = Placeholder.objects.get_by_slot(parent, slot)
+            except Placeholder.DoesNotExist:
+                return "<!-- placeholder '{0}' does not yet exist -->".format(slot)
+
+            output = rendering.render_placeholder(request, placeholder, parent,
+                template_name=template_name,
+                limit_parent_language=True,
+                fallback_language=fallback_language
+            )
+
         rendering.register_frontend_media(request, output.media)   # Assume it doesn't hurt. TODO: should this be optional?
         return output.html
 
@@ -271,6 +288,7 @@ class RenderPlaceholderNode(BaseNode):
 
         # To support filtering the placeholders by parent language, the parent object needs to be known.
         # Fortunately, the PlaceholderFieldDescriptor makes sure this doesn't require an additional query.
+        # If you fetched the object via the PlaceholderRelation(), you're out of luck unfortunately.
         parent_object = placeholder.parent
 
         output = rendering.render_placeholder(request, placeholder, parent_object)

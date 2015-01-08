@@ -2,16 +2,18 @@ from future.utils import with_metaclass, python_2_unicode_compatible, PY3
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.core.exceptions import FieldError
 from django.db import models
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
+from fluent_contents import appsettings
+from fluent_contents.cache import get_placeholder_cache_key
+from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_language_code
+from fluent_contents.models.mixins import CachedModelMixin
 from parler.signals import post_translation_delete
 from parler.utils import get_language_title
 from polymorphic import PolymorphicModel
 from polymorphic.base import PolymorphicModelBase
-from fluent_contents import appsettings
-from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_language_code
+
 
 
 @python_2_unicode_compatible
@@ -160,7 +162,7 @@ class ContentItemMetaClass(PolymorphicModelBase):
 
 
 @python_2_unicode_compatible
-class ContentItem(with_metaclass(ContentItemMetaClass, PolymorphicModel)):
+class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, PolymorphicModel)):
     """
     A `ContentItem` represents a content part (also called pagelet in other systems) which is displayed in a :class:`Placeholder`.
     To use the `ContentItem`, derive it in your model class:
@@ -278,29 +280,9 @@ class ContentItem(with_metaclass(ContentItemMetaClass, PolymorphicModel)):
         if not self.language_code:
             self.language_code = get_parent_language_code(self.parent) or appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE
 
-        is_new = not self.pk
         super(ContentItem, self).save(*args, **kwargs)
-        if not is_new:
-            self.clear_cache()
 
     save.alters_data = True
-
-
-    def delete(self, *args, **kwargs):
-        super(ContentItem, self).delete(*args, **kwargs)
-        self.clear_cache()
-
-    # Must restore these options, or risk removing with a template print statement.
-    delete.alters_data = True
-
-
-    def clear_cache(self):
-        """
-        Delete the cache keys associated with this model.
-        """
-        cache.delete_many(self.get_cache_keys())
-
-    clear_cache.alters_data = True
 
 
     def get_cache_keys(self):
@@ -313,17 +295,21 @@ class ContentItem(with_metaclass(ContentItemMetaClass, PolymorphicModel)):
             return []
 
         # As plugins can change the output caching,
-        # they should also return which keys content is stored at.
-        placeholder_name = self.placeholder.slot
-        keys = []  # ensure list return type.
-        keys.extend(self.plugin.get_output_cache_keys(placeholder_name, self))
+        # they should also return those keys where content is stored at.
+        placeholder = self.placeholder
+        keys = [
+            # Always make sure the base placeholder is cleared,
+            # regardless whether get_output_cache_keys() is overwritten.
+            get_placeholder_cache_key(placeholder, self.language_code),
+        ]
+        keys.extend(self.plugin.get_output_cache_keys(placeholder.slot, self))  # ensure list return type.
         return keys
 
 
 
 # Instead of overriding the admin classes (effectively inserting the TranslatableAdmin
 # in all your PlaceholderAdmin subclasses too), a signal is handled instead.
-# It's up to you to deside whether the use the TranslatableAdmin (or any other similar class)
+# It's up to you to decide whether the use the TranslatableAdmin (or any other similar class)
 # in your admin for multilingual support. As long as the models provide a get_current_language()
 # or `language_code` attribute, the correct contents will be filtered and displayed.
 @receiver(post_translation_delete)

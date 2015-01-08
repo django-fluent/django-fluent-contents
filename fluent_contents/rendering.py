@@ -4,6 +4,7 @@ Contents is cached in memcache whenever possible, only the remaining items are q
 The templatetags also use these functions to render the :class:`~fluent_contents.models.ContentItem` objects.
 """
 import logging, os, six
+from django.contrib.contenttypes.models import ContentType
 from future.builtins import str
 from django.conf import settings
 from django.core.cache import cache
@@ -13,17 +14,30 @@ from django.template.loader import render_to_string, select_template
 from django.utils.html import conditional_escape, escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
+from parler.utils.context import smart_override
 from fluent_contents import appsettings
-from fluent_contents.cache import get_rendering_cache_key
+from fluent_contents.cache import get_rendering_cache_key, get_placeholder_cache_key_for_parent
 from fluent_contents.extensions import PluginNotFound, ContentPlugin
-from fluent_contents.models import ContentItemOutput, ImmutableMedia
+from fluent_contents.models import ContentItemOutput, ImmutableMedia, get_parent_language_code
 
 # This code is separate from the templatetags,
 # so it can be called outside the templates as well.
-from parler.utils.context import smart_override
+
 
 logger = logging.getLogger(__name__)
 
+
+def get_cached_placeholder_output(parent_object, placeholder_name):
+    """
+    Return cached output for a placeholder, if available.
+    This avoids fetching the Placeholder object.
+    """
+    if not appsettings.FLUENT_CONTENTS_CACHE_OUTPUT:
+        return None
+
+    language_code = get_parent_language_code(parent_object)
+    cache_key = get_placeholder_cache_key_for_parent(parent_object, placeholder_name, language_code)
+    return cache.get(cache_key)
 
 
 def render_placeholder(request, placeholder, parent_object=None, template_name=None, limit_parent_language=True, fallback_language=None):
@@ -31,6 +45,9 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
     Render a :class:`~fluent_contents.models.Placeholder` object.
     Returns a :class:`~fluent_contents.models.ContentItemOutput` object
     which contains the HTML output and :class:`~django.forms.Media` object.
+
+    This function also caches the complete output of the placeholder
+    when all individual items are cacheable.
 
     :param request: The current request object.
     :type request: :class:`~django.http.HttpRequest`
@@ -45,13 +62,36 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
     :type fallback_language: bool/str
     :rtype: :class:`~fluent_contents.models.ContentItemOutput`
     """
-    # Get the items
-    items = placeholder.get_content_items(parent_object, limit_parent_language=limit_parent_language).non_polymorphic()
-    if fallback_language and not items:  # NOTES: performs query, so hence the .non_polymorphic() above
-        language_code = appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE if fallback_language is True else fallback_language
-        items = placeholder.get_content_items(parent_object, limit_parent_language=False).translated(language_code).non_polymorphic()
+    # Caching will not happen when rendering via a template,
+    # because there is no way to tell whether that can be expired/invalidated.
+    try_cache = appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and not template_name
+    cache_key = None
+    output = None
 
-    output = _render_items(request, placeholder, items, parent_object=parent_object, template_name=template_name)
+    if parent_object is None:
+        # If not provided, have to fetch it. Hope you filled the GFK cache.
+        parent_object = placeholder.parent
+
+    language_code = get_parent_language_code(parent_object)
+    if try_cache:
+        cache_key = get_placeholder_cache_key_for_parent(parent_object, placeholder.slot, language_code)
+        output = cache.get(cache_key)
+
+    if output is None:
+        # No full-placeholder cache. Get the items
+        items = placeholder.get_content_items(parent_object, limit_parent_language=limit_parent_language).non_polymorphic()
+        if fallback_language \
+        and not items:  # NOTES: performs query, so hence the .non_polymorphic() above
+            # There are no items, but there is a fallback option.
+            try_cache = False  # This is not supported yet, content can be rendered in a different gettext language domain.
+            language_code = appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE if fallback_language is True else fallback_language
+            items = placeholder.get_content_items(parent_object, limit_parent_language=False).translated(language_code).non_polymorphic()
+
+        output = _render_items(request, placeholder, items, parent_object=parent_object, template_name=template_name)
+
+        # Store the full-placeholder contents in the cache.
+        if try_cache and output.cacheable and cache_key is not None:
+            cache.set(cache_key, output)
 
     if is_edit_mode(request):
         output.html = _wrap_placeholder_output(output.html, placeholder)
@@ -122,6 +162,7 @@ def _render_items(request, placeholder, items, parent_object=None, template_name
     edit_mode = is_edit_mode(request)
     item_output = {}
     output_ordering = []
+    all_cacheable = True
     placeholder_cache_name = '@global@' if placeholder is None else placeholder.slot
 
     if not hasattr(items, "non_polymorphic"):
@@ -198,8 +239,13 @@ def _render_items(request, placeholder, items, parent_object=None, template_name
                     # This is just like Django's Input.render() and unlike Node.render().
                     output = plugin._render_contentitem(request, contentitem)
 
-                if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and plugin.cache_output and contentitem.pk:
+                if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT \
+                and plugin.cache_output \
+                and output.cacheable \
+                and contentitem.pk:
                     contentitem.plugin.set_cached_output(placeholder_cache_name, contentitem, output)
+                else:
+                    all_cacheable = False
 
                 if edit_mode:
                     output.html = _wrap_contentitem_output(output.html, contentitem)
@@ -248,7 +294,11 @@ def _render_items(request, placeholder, items, parent_object=None, template_name
         }
         merged_output = render_to_string(template_name, context, context_instance=RequestContext(request))
 
-    return ContentItemOutput(merged_output, merged_media)
+        # Template name is ambiguous, can't reliable expire.
+        # Not can be determined whether the template is consistent or not cacheable.
+        all_cacheable = False
+
+    return ContentItemOutput(merged_output, merged_media, cacheable=all_cacheable)
 
 
 def _wrap_placeholder_output(html, placeholder):

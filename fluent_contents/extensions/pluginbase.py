@@ -19,7 +19,7 @@ from django.template.context import Context
 from django.template.loader import render_to_string
 from django.utils.html import linebreaks, escape
 from django.utils.translation import ugettext as _, get_language
-from fluent_contents.cache import get_rendering_cache_key
+from fluent_contents.cache import get_rendering_cache_key, get_placeholder_cache_key
 from fluent_contents.forms import ContentItemForm
 from fluent_contents.models import ContentItemOutput, ImmutableMedia
 
@@ -312,8 +312,9 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
             return self.redirect(result.url, result.status_code)
         else:
             # Old 0.9 syntax, wrap it.
+            # The 'cacheable' is implied in the rendering already, but this is just for completeness.
             media = self.get_frontend_media(instance)
-            return ContentItemOutput(result, media)
+            return ContentItemOutput(result, media, cacheable=self.cache_output)
 
 
     def get_output_cache_base_key(self, placeholder_name, instance):
@@ -359,7 +360,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         """
         base_key = self.get_output_cache_base_key(placeholder_name, instance)
         cachekeys = [
-            base_key
+            base_key,
         ]
 
         if self.cache_output_per_site:
@@ -373,8 +374,16 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         if self.cache_output_per_language:
             # Append language code to all keys,
             # have to invalidate a lot more items in memcache
+            # Also added "None" suffix, since get_parent_language_code() may return that.
             total_list = []
-            for user_language in list(self.cache_supported_language_codes) + ['unsupported']:
+            cache_languages = list(self.cache_supported_language_codes) + ['unsupported', 'None']
+
+            # All variants of the Placeholder (for full page caching)
+            placeholder = instance.placeholder
+            total_list.extend(get_placeholder_cache_key(placeholder, lc) for lc in cache_languages)
+
+            # All variants of the ContentItem in different languages
+            for user_language in cache_languages:
                 total_list.extend("{0}.{1}".format(base, user_language) for base in cachekeys)
             cachekeys = total_list
 
