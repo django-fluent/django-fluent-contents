@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.db.models import Q
 from parler.managers import TranslatableManager, TranslatableQuerySet
-from . import appsettings
+from fluent_contents import appsettings
+from fluent_contents.plugins.sharedcontent import appsettings as sharedcontent_appsettings
 
 
 class SharedContentQuerySet(TranslatableQuerySet):
@@ -26,7 +27,7 @@ class SharedContentQuerySet(TranslatableQuerySet):
         # Avoid auto filter if site is already set.
         self._parent_site = site
 
-        if appsettings.FLUENT_SHARED_CONTENT_ENABLE_CROSS_SITE:
+        if sharedcontent_appsettings.FLUENT_SHARED_CONTENT_ENABLE_CROSS_SITE:
             # Allow content to be shared between all sites:
             return self.filter(Q(parent_site=site) | Q(is_cross_site=True))
         else:
