@@ -126,10 +126,10 @@ class TemplateTagTests(AppTestCase):
 
         # Test passing a related object manager.
         # - fetch Placeholder
-        # - fetch parent (in RenderPlaceholderNode.render_tag)
+        # - parent is taken from RelatedManager
         # - fetch ContentItem
         # - fetch RawHtmlTestItem
-        with self.assertNumQueries(4) as ctx:
+        with self.assertNumQueries(3) as ctx:
             html = self._render("""{% load fluent_contents_tags %}{% render_placeholder page2.placeholder_set %}""", {'page2': page2})
             self.assertEqual(html, u'<b>Item1!</b><b>Item2!</b>')
 
