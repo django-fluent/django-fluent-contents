@@ -12,7 +12,7 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
         instance = kwargs['instance']
         if instance:
             self.current_language = get_parent_language_code(instance)
-            if self.current_language:
+            if self.current_language and 'queryset' in kwargs:
                 kwargs['queryset'] = kwargs['queryset'].filter(language_code=self.current_language)
         else:
             self.current_language = appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE
