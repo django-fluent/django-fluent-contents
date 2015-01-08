@@ -29,13 +29,13 @@ from django.conf import settings
 from django.db.models import Manager
 from django.forms import Media
 from django.template import Library, Variable, TemplateSyntaxError
-from django.utils.safestring import SafeData
 from fluent_contents.models import Placeholder, ImmutableMedia
 from fluent_contents import rendering
 from tag_parser import parse_token_kwargs
 from tag_parser.basetags import BaseNode
 from fluent_contents import appsettings
 from fluent_contents.rendering import get_cached_placeholder_output
+from fluent_contents.utils.templatetags import is_true, extract_literal, extract_literal_bool
 
 register = Library()
 
@@ -75,6 +75,11 @@ def page_placeholder(parser, token):
           {% if not forloop.first %}<div class="splitter"></div>{% endif %}
           {{ html }}
         {% endfor %}
+
+    .. note::
+       When a template is used, the system assumes that the output can change per request.
+       Hence, the output of individual items will be cached, but the final merged output is no longer cached.
+       Add ``cachable=True`` to enable output caching for templates too.
     """
     return PagePlaceholderNode.parse(parser, token)
 
@@ -86,19 +91,25 @@ class PagePlaceholderNode(BaseNode):
     The template tag can also contain additional metadata,
     which can be returned by scanning for this node using the :ref:`fluent_contents.analyzer` module.
     """
-    allowed_kwargs = ('title', 'role', 'template', 'fallback')
+    allowed_kwargs = ('title', 'role', 'template', 'cachable', 'fallback')
+    allowed_meta_kwargs = ('title', 'role')
     min_args = 1
     max_args = 2
 
 
-    def __init__(self, tag_name, parent_expr, slot_expr, template_expr, fallback_expr, meta_kwargs):
-        super(PagePlaceholderNode, self).__init__(tag_name, parent_expr, slot_expr, template=template_expr, **meta_kwargs)
-
-        self.parent_expr = parent_expr
+    def __init__(self, tag_name, parent_expr, slot_expr, **kwargs):
+        super(PagePlaceholderNode, self).__init__(tag_name, parent_expr, slot_expr, **kwargs)
         self.slot_expr = slot_expr
-        self.template_expr = template_expr
-        self.fallback_expr = fallback_expr
-        self.meta_kwargs = meta_kwargs
+
+        # Move some arguments outside the regular "kwargs"
+        # because they don't need to be parsed as variables.
+        # Those are the remaining non-functional args for CMS admin page.
+        self.meta_kwargs = {}
+        for arg in self.allowed_meta_kwargs:
+            try:
+                self.meta_kwargs[arg] = kwargs.pop(arg)
+            except KeyError:
+                pass
 
 
     @classmethod
@@ -112,6 +123,7 @@ class PagePlaceholderNode(BaseNode):
         """
         tag_name, args, kwargs = parse_token_kwargs(parser, token, allowed_kwargs=cls.allowed_kwargs, compile_args=True, compile_kwargs=True)
 
+        # Play with the arguments
         if len(args) == 2:
             parent_expr = args[0]
             slot_expr = args[1]
@@ -123,16 +135,11 @@ class PagePlaceholderNode(BaseNode):
             raise TemplateSyntaxError("""{0} tag allows two arguments: 'parent object' 'slot name' and optionally: title=".." role="..".""".format(tag_name))
 
         cls.validate_args(tag_name, *args, **kwargs)
-
-        template_expr = kwargs.pop('template', None)
-        fallback_expr = kwargs.pop('fallback', None)
         return cls(
             tag_name=tag_name,
             parent_expr=parent_expr,
             slot_expr=slot_expr,
-            template_expr=template_expr,
-            fallback_expr=fallback_expr,
-            meta_kwargs=kwargs  # The remaining non-functional args for CMS admin page.
+            **kwargs
         )
 
 
@@ -141,42 +148,7 @@ class PagePlaceholderNode(BaseNode):
         Return the string literal that is used for the placeholder slot in the template.
         When the variable is not a string literal, ``None`` is returned.
         """
-        return self._extract_literal(self.slot_expr)
-
-
-    def _extract_literal(self, templatevar):
-        # FilterExpression contains another 'var' that either contains a Variable or SafeData object.
-        if hasattr(templatevar, 'var'):
-            templatevar = templatevar.var
-            if isinstance(templatevar, SafeData):
-                # Literal in FilterExpression, can return.
-                return templatevar
-            else:
-                # Variable in FilterExpression, not going to work here.
-                return None
-
-        if templatevar[0] in ('"', "'") and templatevar[-1] in ('"', "'"):
-            return templatevar[1:-1]
-        else:
-            return None
-
-
-    def _extract_bool(self, templatevar):
-        # FilterExpression contains another 'var' that either contains a Variable or SafeData object.
-        if hasattr(templatevar, 'var'):
-            templatevar = templatevar.var
-            if isinstance(templatevar, SafeData):
-                # Literal in FilterExpression, can return.
-                return templatevar
-            else:
-                # Variable in FilterExpression, not going to work here.
-                return None
-
-        return self._is_true(templatevar)
-
-
-    def _is_true(self, value):
-        return value in (1, '1', 'true', 'True', True)
+        return extract_literal(self.slot_expr)
 
 
     def get_title(self):
@@ -185,7 +157,7 @@ class PagePlaceholderNode(BaseNode):
         The title is used in the admin screens.
         """
         try:
-            return self._extract_literal(self.meta_kwargs['title'])
+            return extract_literal(self.meta_kwargs['title'])
         except KeyError:
             slot = self.get_slot()
             if slot is not None:
@@ -200,7 +172,7 @@ class PagePlaceholderNode(BaseNode):
         The role can be "main", "sidebar" or "related", or shorted to "m", "s", "r".
         """
         try:
-            return self._extract_literal(self.meta_kwargs['role'])
+            return extract_literal(self.meta_kwargs['role'])
         except KeyError:
             return None
 
@@ -211,22 +183,30 @@ class PagePlaceholderNode(BaseNode):
         """
         try:
             # Note: currently not supporting strings yet.
-            return self._extract_bool(self.fallback_expr) or None
+            return extract_literal_bool(self.kwargs['fallback']) or None
         except KeyError:
             return False
 
 
-    def render(self, context):
+    def render_tag(self, context, *tag_args, **tag_kwargs):
         request = self.get_request(context)
         output = None
 
         # Process arguments
-        parent = self.parent_expr.resolve(context)
-        slot = self.slot_expr.resolve(context)
-        fallback_language = self._is_true(self.fallback_expr.resolve(context)) if self.fallback_expr else False
-        template_name = self.template_expr.resolve(context) if self.template_expr else None
+        parent, slot = tag_args
+        template_name = tag_kwargs.get('template', None)
+        cachable = is_true(tag_kwargs.get('cachable', False))
+        fallback_language = is_true(tag_kwargs.get('fallback', False))
 
-        if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and not template_name:
+        if template_name and cachable and not extract_literal(self.kwargs['template']):
+            # If the template name originates from a variable, it can change any time.
+            # It's not possible to create a reliable output cache for for that,
+            # as it would have to include any possible template name in the key.
+            raise TemplateSyntaxError("{0} tag does not allow 'cachable' for variable template names!".format(self.tag_name))
+
+        if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT \
+        and appsettings.FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT \
+        and (not template_name or cachable):
             # See if the entire placeholder output is cached,
             # if so, no database queries have to be performed.
             # This will be omitted when an template is used,
@@ -242,12 +222,14 @@ class PagePlaceholderNode(BaseNode):
 
             output = rendering.render_placeholder(request, placeholder, parent,
                 template_name=template_name,
+                template_cachable=cachable,
                 limit_parent_language=True,
                 fallback_language=fallback_language
             )
 
         rendering.register_frontend_media(request, output.media)   # Assume it doesn't hurt. TODO: should this be optional?
         return output.html
+
 
 
 @register.tag
@@ -269,6 +251,7 @@ class RenderPlaceholderNode(BaseNode):
     """
     min_args = 1
     max_args = 1
+    allowed_kwargs = ('template', 'cachable', 'fallback')
 
     @classmethod
     def validate_args(cls, tag_name, *args, **kwargs):
@@ -281,17 +264,29 @@ class RenderPlaceholderNode(BaseNode):
     def render_tag(self, context, *tag_args, **tag_kwargs):
         request = self.get_request(context)
 
+        # Parse arguments
         try:
             placeholder = _get_placeholder_arg(self.args[0], tag_args[0])
         except RuntimeWarning as e:
             return u"<!-- {0} -->".format(e)
 
-        # To support filtering the placeholders by parent language, the parent object needs to be known.
-        # Fortunately, the PlaceholderFieldDescriptor makes sure this doesn't require an additional query.
-        # If you fetched the object via the PlaceholderRelation(), you're out of luck unfortunately.
-        parent_object = placeholder.parent
+        template_name = tag_kwargs.get('template', None)
+        cachable = is_true(tag_kwargs.get('cachable', False))
+        fallback_language = is_true(tag_kwargs.get('fallback', False))
 
-        output = rendering.render_placeholder(request, placeholder, parent_object)
+        if template_name and cachable and not extract_literal(self.kwargs['template']):
+            # If the template name originates from a variable, it can change any time.
+            # See PagePlaceholderNode.render_tag() why this is not allowed.
+            raise TemplateSyntaxError("{0} tag does not allow 'cachable' for variable template names!".format(self.tag_name))
+
+        # Fetching placeholder.parent should not cause queries if fetched via PlaceholderFieldDescriptor.
+        # See render_placeholder() for more details
+        output = rendering.render_placeholder(request, placeholder, placeholder.parent,
+            template_name=template_name,
+            template_cachable=cachable,
+            limit_parent_language=True,
+            fallback_language=fallback_language
+        )
         rendering.register_frontend_media(request, output.media)   # Need to track frontend media here, as the template tag can't return it.
         return output.html
 

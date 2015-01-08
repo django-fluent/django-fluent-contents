@@ -35,6 +35,7 @@ if not settings.configured:
         TEST_RUNNER='django.test.simple.DjangoTestSuiteRunner',   # for Django 1.6, see https://docs.djangoproject.com/en/dev/releases/1.6/#new-test-runner
         SITE_ID = 3,
         FLUENT_CONTENTS_CACHE_OUTPUT = True,
+        FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT = True,
     )
 
 def runtests():

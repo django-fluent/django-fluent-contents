@@ -4,8 +4,15 @@ Overview of all settings which can be customized.
 from django.conf import settings
 from parler import appsettings as parler_appsettings
 
-
+# By default, output is cached.
+# Even for development, so the caching behavior are as realistically as possible.
+# (though it will check whether the template file mtime changed in DEBUG mode)
 FLUENT_CONTENTS_CACHE_OUTPUT = getattr(settings, 'FLUENT_CONTENTS_CACHE_OUTPUT', True)
+
+# Cache the full output of placeholders.
+# Not enabled in development by default, because that would annoy every ContentItem template change.
+# Hence, this will not automatically toggle on in production, so configuration stays explicit.
+FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT = getattr(settings, 'FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT', False)
 
 FLUENT_CONTENTS_PLACEHOLDER_CONFIG = getattr(settings, 'FLUENT_CONTENTS_PLACEHOLDER_CONFIG', {})
 

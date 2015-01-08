@@ -148,13 +148,15 @@ class TemplateTagTests(AppTestCase):
         self.assertRaises(TemplateSyntaxError, lambda: Template("""{% load fluent_contents_tags %}{% render_placeholder arg1 arg2 %}"""))
 
 
-    def test_num_queries(self):
+    def test_num_item_queries(self):
         page3 = PlaceholderFieldTestPage.objects.create()
         placeholder1 = Placeholder.objects.create_for_object(page3, 'field_slot1')
         item1 = RawHtmlTestItem.objects.create_for_placeholder(placeholder1, html='<b>Item1!</b>', sort_order=1)
         item2 = RawHtmlTestItem.objects.create_for_placeholder(placeholder1, html='<b>Item2!</b>', sort_order=2)
 
         appsettings.FLUENT_CONTENTS_CACHE_OUTPUT = True
+        appsettings.FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT = False  # No full caching
+        cache.clear()
 
         # First time:
         # - fetch ContentItem
@@ -163,16 +165,11 @@ class TemplateTagTests(AppTestCase):
             self._render("""{% load fluent_contents_tags %}{% render_placeholder placeholder1 %}""", {'placeholder1': placeholder1})
             #pprint(ctx.captured_queries)
 
-        placeholder_output_key = get_placeholder_cache_key(placeholder1, language_code=None)
-        cache.delete(placeholder_output_key)
-
         # Second time
         # - fetch ContentItem
         with self.assertNumQueries(1) as ctx:
             self._render("""{% load fluent_contents_tags %}{% render_placeholder placeholder1 %}""", {'placeholder1': placeholder1})
             #pprint(ctx.captured_queries)
-
-        cache.delete(placeholder_output_key)
 
         # Using page_placeholder
         # - fetch Placeholder
@@ -181,13 +178,44 @@ class TemplateTagTests(AppTestCase):
             self._render("""{% load fluent_contents_tags %}{% page_placeholder 'field_slot1' %}""", {'page': page3})
             #pprint(ctx.captured_queries)
 
-        cache.delete(placeholder_output_key)
-
         # Using page_placeholder, use fallback
         # - fetch Placeholder
         # - fetch ContentItem
         # - fetch ContentItem fallback
         with self.assertNumQueries(2) as ctx:
+            self._render("""{% load fluent_contents_tags %}{% page_placeholder 'field_slot1' fallback=True %}""", {'page': page3})
+            #pprint(ctx.captured_queries)
+
+
+    def test_num_placeholder_queries(self):
+        page3 = PlaceholderFieldTestPage.objects.create()
+        placeholder1 = Placeholder.objects.create_for_object(page3, 'field_slot1')
+        item1 = RawHtmlTestItem.objects.create_for_placeholder(placeholder1, html='<b>Item1!</b>', sort_order=1)
+        item2 = RawHtmlTestItem.objects.create_for_placeholder(placeholder1, html='<b>Item2!</b>', sort_order=2)
+
+        appsettings.FLUENT_CONTENTS_CACHE_OUTPUT = True
+        appsettings.FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT = True
+        cache.clear()
+
+        # First time:
+        # - fetch ContentItem
+        # - fetch RawHtmlTestItem
+        with self.assertNumQueries(2) as ctx:
+            self._render("""{% load fluent_contents_tags %}{% render_placeholder placeholder1 %}""", {'placeholder1': placeholder1})
+            #pprint(ctx.captured_queries)
+
+        # Second time
+        with self.assertNumQueries(0) as ctx:
+            self._render("""{% load fluent_contents_tags %}{% render_placeholder placeholder1 %}""", {'placeholder1': placeholder1})
+            #pprint(ctx.captured_queries)
+
+        # Using page_placeholder
+        with self.assertNumQueries(0) as ctx:
+            self._render("""{% load fluent_contents_tags %}{% page_placeholder 'field_slot1' %}""", {'page': page3})
+            #pprint(ctx.captured_queries)
+
+        # Using page_placeholder, use fallback
+        with self.assertNumQueries(0) as ctx:
             self._render("""{% load fluent_contents_tags %}{% page_placeholder 'field_slot1' fallback=True %}""", {'page': page3})
             #pprint(ctx.captured_queries)
 

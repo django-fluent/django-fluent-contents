@@ -35,6 +35,22 @@ Most pages look the same for every visitor anyways.
 In case this conflicts with your caching setup,
 disable this feature side-wide by setting this flag to ``False``.
 
+.. _FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT:
+
+FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This setting can be used to enable the output of entire placeholders.
+This should be enabled for production.
+
+This setting is not practical in development,
+because that would no longer cause changes in the code or templates to appear.
+Hence, the default value is ``False``.
+
+Without this setting, only individual content plugins are cached.
+The surrounding objects (e.g. the Placeholder, SharedContent and list of ContentItem models)
+will still be queried from the database.
+
 
 .. _FLUENT_CONTENTS_PLACEHOLDER_CONFIG:
 

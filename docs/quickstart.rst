@@ -200,6 +200,16 @@ Congrats! At this point you should have a working installation.
 Now you can just login to your admin site and see what changed.
 
 
+Production notes
+----------------
+
+When deploying the project to production, enable the following setting::
+
+    FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT = True
+
+This improves the performance of the :ref:`template tags<templatetags>`.
+
+
 .. _docutils: http://docutils.sourceforge.net/
 .. _django.contrib.comments: https://docs.djangoproject.com/en/dev/ref/contrib/comments/
 .. _django-disqus: https://github.com/arthurk/django-disqus

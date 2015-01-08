@@ -7,6 +7,7 @@ from fluent_contents.plugins.sharedcontent.cache import get_shared_content_cache
 from fluent_contents.plugins.sharedcontent.models import SharedContent
 from tag_parser import template_tag
 from tag_parser.basetags import BaseNode
+from fluent_contents.utils.templatetags import is_true, extract_literal
 
 register = Library()
 
@@ -34,10 +35,15 @@ class SharedContentNode(BaseNode):
           {% if not forloop.first %}<div class="splitter"></div>{% endif %}
           {{ html }}
         {% endfor %}
+
+    .. note::
+       When a template is used, the system assumes that the output can change per request.
+       Hence, the output of individual items will be cached, but the final merged output is no longer cached.
+       Add ``cachable=1`` to enable output caching for templates too.
     """
     min_args = 1
     max_args = 1
-    allowed_kwargs = ('template',)
+    allowed_kwargs = ('template', 'cachable')
 
 
     @classmethod
@@ -50,14 +56,24 @@ class SharedContentNode(BaseNode):
 
     def render_tag(self, context, *tag_args, **tag_kwargs):
         request = self.get_request(context)
+        output = None
+
+        # Process arguments
         (slot,) = tag_args
         template_name = tag_kwargs.get('template') or None
+        cachable = is_true(tag_kwargs.get('cachable', False))
+
+        if template_name and cachable and not extract_literal(self.kwargs['template']):
+            # If the template name originates from a variable, it can change any time.
+            # See PagePlaceholderNode.render_tag() why this is not allowed.
+            raise TemplateSyntaxError("{0} tag does not allow 'cachable' for variable template names!".format(self.tag_name))
 
         # Caching will not happen when rendering via a template,
         # because there is no way to tell whether that can be expired/invalidated.
-        try_cache = appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and not template_name
+        try_cache = appsettings.FLUENT_CONTENTS_CACHE_OUTPUT \
+                and appsettings.FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT \
+                and (not template_name or cachable)
 
-        output = None
         if isinstance(slot, SharedContent):
             # Allow passing a sharedcontent, just like 'render_placeholder' does.
             sharedcontent = slot
@@ -90,12 +106,16 @@ class SharedContentNode(BaseNode):
 
         if output is None:
             # Have to fetch + render it.
-            output = self.render_shared_content(request, sharedcontent, template_name)
+            output = self.render_shared_content(request, sharedcontent, template_name, template_cachable=cachable)
 
         rendering.register_frontend_media(request, output.media)  # Need to track frontend media here, as the template tag can't return it.
         return output.html
 
-    def render_shared_content(self, request, sharedcontent, template_name):
+    def render_shared_content(self, request, sharedcontent, template_name=None, template_cachable=False):
         # All parsing done, perform the actual rendering
         placeholder = sharedcontent.contents  # Another DB query
-        return rendering.render_placeholder(request, placeholder, sharedcontent, template_name=template_name, fallback_language=True)
+        return rendering.render_placeholder(request, placeholder, sharedcontent,
+            template_name=template_name,
+            template_cachable=template_cachable,
+            fallback_language=True
+        )
