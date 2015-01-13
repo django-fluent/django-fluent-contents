@@ -1,6 +1,7 @@
 from django.core.cache import cache
 from django.template import Library, TemplateSyntaxError
 from django.contrib.sites.models import Site
+from django.utils.translation import get_language
 from fluent_contents import appsettings
 from fluent_contents import rendering
 from fluent_contents.plugins.sharedcontent.cache import get_shared_content_cache_key_ptr, get_shared_content_cache_key
@@ -87,7 +88,7 @@ class SharedContentNode(BaseNode):
             if try_cache:
                 # See if there is output cached, try to avoid fetching the SharedContent + Placeholder model.
                 # Have to perform 2 cache calls for this, because the placeholder output key is based on object IDs
-                cache_key_ptr = get_shared_content_cache_key_ptr(int(site.pk), slot)
+                cache_key_ptr = get_shared_content_cache_key_ptr(int(site.pk), slot, language_code=get_language())
                 cache_key = cache.get(cache_key_ptr)
                 if cache_key is not None:
                     output = cache.get(cache_key)

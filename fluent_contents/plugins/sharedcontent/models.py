@@ -1,3 +1,4 @@
+from django.conf import settings
 from future.builtins import str
 from future.utils import python_2_unicode_compatible
 from django.contrib.sites.models import Site
@@ -60,13 +61,15 @@ class SharedContent(CachedModelMixin, TranslatableModel):
         # The 'slug' could have changed. Whether the Placeholder output is cleared,
         # depends on whether those objects are altered too.
         if self.is_cross_site or self._was_cross_site:
-            sites = Site.objects.all().values_list('pk', flat=True)
+            sites = list(Site.objects.all().values_list('pk', flat=True))
         else:
             sites = [self.parent_site_id]
 
-        return [
-            get_shared_content_cache_key_ptr(site_id, self._old_slug) for site_id in sites
-        ]
+        keys = []
+        for site_id in sites:
+            for language_code, _ in settings.LANGUAGES:
+                keys.append(get_shared_content_cache_key_ptr(site_id, self._old_slug, language_code))
+        return keys
 
 
 @python_2_unicode_compatible
