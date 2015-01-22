@@ -98,6 +98,10 @@ var cp_plugins = {};
     // Count number of seen tabs per role.
     var roles_seen = {};
     var placeholders = cp_data.get_placeholders();
+    if(placeholders == null) {
+      console.error("Placeholders are not defined. Is the proper PlaceholderFieldAdmin/PlaceholderEditorAdmin class used?")
+      return;
+    }
     for(var i = 0; i < placeholders.length; i++)
       roles_seen[placeholders[i].role] = 0;
 
