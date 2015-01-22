@@ -40,7 +40,7 @@ def get_cached_placeholder_output(parent_object, placeholder_name):
     return cache.get(cache_key)
 
 
-def render_placeholder(request, placeholder, parent_object=None, template_name=None, template_cachable=False, limit_parent_language=True, fallback_language=None):
+def render_placeholder(request, placeholder, parent_object=None, template_name=None, cachable=None, limit_parent_language=True, fallback_language=None):
     """
     Render a :class:`~fluent_contents.models.Placeholder` object.
     Returns a :class:`~fluent_contents.models.ContentItemOutput` object
@@ -56,19 +56,24 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
     :param parent_object: Optional, the parent object of the placeholder (already implied by the placeholder)
     :param template_name: Optional template name used to concatenate the placeholder output.
     :type template_name: str | None
-    :param template_cachable: Whether the provided template is cachable, otherwise the full output will not be cached.
-    :type template_cachable: bool
+    :param cachable: Whether the output is cachable, otherwise the full output will not be cached.
+                     Default: False when using a template, True otherwise.
+    :type cachable: bool | None
     :param limit_parent_language: Whether the items should be limited to the parent language.
     :type limit_parent_language: bool
     :param fallback_language: The fallback language to use if there are no items in the current language. Passing ``True`` uses the default :ref:`FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE`.
     :type fallback_language: bool/str
     :rtype: :class:`~fluent_contents.models.ContentItemOutput`
     """
+    if cachable is None:
+        # default: True unless there is a template.
+        cachable = not bool(template_name)
+
     # Caching will not happen when rendering via a template,
     # because there is no way to tell whether that can be expired/invalidated.
     try_cache = appsettings.FLUENT_CONTENTS_CACHE_OUTPUT \
             and appsettings.FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT \
-            and (not template_name or template_cachable)
+            and cachable
     cache_key = None
     output = None
 
@@ -92,7 +97,7 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
             language_code = appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE if fallback_language is True else fallback_language
             items = placeholder.get_content_items(parent_object, limit_parent_language=False).translated(language_code).non_polymorphic()
 
-        output = _render_items(request, placeholder, items, parent_object=parent_object, template_name=template_name, template_cachable=template_cachable)
+        output = _render_items(request, placeholder, items, parent_object=parent_object, template_name=template_name, cachable=cachable)
 
         # Store the full-placeholder contents in the cache.
         if try_cache and output.cacheable and cache_key is not None:
@@ -104,7 +109,7 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
     return output
 
 
-def render_content_items(request, items, template_name=None, template_cachable=False):
+def render_content_items(request, items, template_name=None, cachable=None):
     """
     Render a list of :class:`~fluent_contents.models.ContentItem` objects as HTML string.
     This is a variation of the :func:`render_placeholder` function.
@@ -118,12 +123,16 @@ def render_content_items(request, items, template_name=None, template_cachable=F
     :type items: list or queryset of :class:`~fluent_contents.models.ContentItem`.
     :param template_name: Optional template name used to concatenate the placeholder output.
     :type template_name: str
+    :param cachable: Whether the output is cachable, otherwise the full output will not be cached.
+                     Default: False when using a template, True otherwise.
+    :type cachable: bool | None
+
     :rtype: :class:`~fluent_contents.models.ContentItemOutput`
     """
     if not items:
         output = ContentItemOutput(mark_safe(u"<!-- no items to render -->"))
     else:
-        output = _render_items(request, None, items, parent_object=None, template_name=template_name, template_cachable=template_cachable)
+        output = _render_items(request, None, items, parent_object=None, template_name=template_name, cachable=cachable)
 
     if is_edit_mode(request):
         output.html = _wrap_anonymous_output(output.html)
@@ -163,7 +172,7 @@ def get_frontend_media(request):
     return getattr(request, '_fluent_contents_frontend_media', None) or ImmutableMedia.empty_instance
 
 
-def _render_items(request, placeholder, items, parent_object=None, template_name=None, template_cachable=False):
+def _render_items(request, placeholder, items, parent_object=None, template_name=None, cachable=False):
     edit_mode = is_edit_mode(request)
     item_output = {}
     output_ordering = []
@@ -299,10 +308,12 @@ def _render_items(request, placeholder, items, parent_object=None, template_name
         }
         merged_output = render_to_string(template_name, context, context_instance=RequestContext(request))
 
+        # By default, cachable is False for templates.
         # Template name is ambiguous, can't reliable expire.
         # Nor can be determined whether the template is consistent or not cacheable.
-        if not template_cachable:
-            all_cacheable = False
+
+    if not cachable:
+        all_cacheable = False
 
     return ContentItemOutput(merged_output, merged_media, cacheable=all_cacheable)
 

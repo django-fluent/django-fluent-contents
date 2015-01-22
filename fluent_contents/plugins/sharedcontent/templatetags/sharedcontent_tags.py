@@ -107,16 +107,16 @@ class SharedContentNode(BaseNode):
 
         if output is None:
             # Have to fetch + render it.
-            output = self.render_shared_content(request, sharedcontent, template_name, template_cachable=cachable)
+            output = self.render_shared_content(request, sharedcontent, template_name, cachable=cachable)
 
         rendering.register_frontend_media(request, output.media)  # Need to track frontend media here, as the template tag can't return it.
         return output.html
 
-    def render_shared_content(self, request, sharedcontent, template_name=None, template_cachable=False):
+    def render_shared_content(self, request, sharedcontent, template_name=None, cachable=False):
         # All parsing done, perform the actual rendering
         placeholder = sharedcontent.contents  # Another DB query
         return rendering.render_placeholder(request, placeholder, sharedcontent,
             template_name=template_name,
-            template_cachable=template_cachable,
+            cachable=cachable,
             fallback_language=True
         )

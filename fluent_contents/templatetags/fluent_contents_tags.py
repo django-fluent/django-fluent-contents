@@ -195,7 +195,7 @@ class PagePlaceholderNode(BaseNode):
         # Process arguments
         parent, slot = tag_args
         template_name = tag_kwargs.get('template', None)
-        cachable = is_true(tag_kwargs.get('cachable', False))
+        cachable = is_true(tag_kwargs.get('cachable', not bool(template_name)))  # default: True unless there is a template.
         fallback_language = is_true(tag_kwargs.get('fallback', False))
 
         if template_name and cachable and not extract_literal(self.kwargs['template']):
@@ -206,7 +206,7 @@ class PagePlaceholderNode(BaseNode):
 
         if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT \
         and appsettings.FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT \
-        and (not template_name or cachable):
+        and cachable:
             # See if the entire placeholder output is cached,
             # if so, no database queries have to be performed.
             # This will be omitted when an template is used,
@@ -222,7 +222,7 @@ class PagePlaceholderNode(BaseNode):
 
             output = rendering.render_placeholder(request, placeholder, parent,
                 template_name=template_name,
-                template_cachable=cachable,
+                cachable=cachable,
                 limit_parent_language=True,
                 fallback_language=fallback_language
             )
@@ -271,7 +271,7 @@ class RenderPlaceholderNode(BaseNode):
             return u"<!-- {0} -->".format(e)
 
         template_name = tag_kwargs.get('template', None)
-        cachable = is_true(tag_kwargs.get('cachable', False))
+        cachable = is_true(tag_kwargs.get('cachable', not bool(template_name)))  # default: True unless there is a template.
         fallback_language = is_true(tag_kwargs.get('fallback', False))
 
         if template_name and cachable and not extract_literal(self.kwargs['template']):
@@ -283,7 +283,7 @@ class RenderPlaceholderNode(BaseNode):
         # See render_placeholder() for more details
         output = rendering.render_placeholder(request, placeholder, placeholder.parent,
             template_name=template_name,
-            template_cachable=cachable,
+            cachable=cachable,
             limit_parent_language=True,
             fallback_language=fallback_language
         )
