@@ -7,6 +7,7 @@ from django.db import models
 class Migration(SchemaMigration):
     depends_on = (
         ("fluent_contents", "0001_initial"),
+        ("form_designer", "0001_initial"),
     )
 
     def forwards(self, orm):
