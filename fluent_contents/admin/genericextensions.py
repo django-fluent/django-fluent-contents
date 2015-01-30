@@ -51,23 +51,46 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
 
     def _construct_form(self, i, **kwargs):
         if self._initial and not kwargs.get('instance', None):
-            instance = None
-            try:
-                # Editing existing object. Make sure the ID is passed.
-                instance = self.get_queryset()[i]
-            except IndexError:
-                try:
-                    # Adding new object, pass initial values
-                    # TODO: initial should be connected to proper instance ordering.
-                    # currently this works, because the client handles all details for layout switching.
-                    values = self._initial[i]
-                    values[self.ct_field.name] = ContentType.objects.get_for_model(self.instance)
-                    values[self.ct_fk_field.name] = self.instance.pk
-                    instance = self.model(**values)
-                except IndexError:
-                    pass
+            instance = self.__get_form_instance(i)
             if instance:
                 kwargs['instance'] = instance
 
         form = super(BaseInitialGenericInlineFormSet, self)._construct_form(i, **kwargs)
         return form
+
+    def __initial_minus_queryset(self):
+        """
+        Gives all elements from self._initial having a slot value that is not already
+        in self.get_queryset()
+        """
+        queryset = self.get_queryset()
+
+        def initial_not_in_queryset(initial):
+            for x in queryset:
+                if x.slot == initial['slot']:
+                    return False
+
+            return True
+
+        return filter(initial_not_in_queryset, self._initial)
+
+    def __get_form_instance(self, i):
+        instance = None
+        try:
+            # Editing existing object. Make sure the ID is passed.
+            instance = self.get_queryset()[i]
+        except IndexError:
+            try:
+                # Adding new object, pass initial values
+                # TODO: initial should be connected to proper instance ordering.
+                # currently this works, because the client handles all details for layout switching.
+                queryset_count = self.get_queryset().count()
+                values = self.__initial_minus_queryset()[i - queryset_count]
+
+                values[self.ct_field.name] = ContentType.objects.get_for_model(self.instance)
+                values[self.ct_fk_field.name] = self.instance.pk
+                instance = self.model(**values)
+            except IndexError:
+                pass
+
+        return instance
