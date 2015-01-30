@@ -72,7 +72,7 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
 
             return True
 
-        return filter(initial_not_in_queryset, self._initial)
+        return list(filter(initial_not_in_queryset, self._initial))
 
     def __get_form_instance(self, i):
         instance = None
