@@ -7,14 +7,14 @@ from fluent_contents import rendering
 from fluent_contents.plugins.sharedcontent.cache import get_shared_content_cache_key_ptr, get_shared_content_cache_key
 from fluent_contents.plugins.sharedcontent.models import SharedContent
 from tag_parser import template_tag
-from tag_parser.basetags import BaseNode
+from tag_parser.basetags import BaseAssignmentOrOutputNode
 from fluent_contents.utils.templatetags import is_true, extract_literal
 
 register = Library()
 
 
 @template_tag(register, 'sharedcontent')
-class SharedContentNode(BaseNode):
+def sharedcontent(parser, token):
     """
     Render a shared content block. Usage:
 
@@ -42,6 +42,11 @@ class SharedContentNode(BaseNode):
        Hence, the output of individual items will be cached, but the final merged output is no longer cached.
        Add ``cachable=1`` to enable output caching for templates too.
     """
+    return SharedContentNode.parse(parser, token)
+
+
+class SharedContentNode(BaseAssignmentOrOutputNode):
+
     min_args = 1
     max_args = 1
     allowed_kwargs = ('template', 'cachable')
@@ -55,7 +60,7 @@ class SharedContentNode(BaseNode):
         super(SharedContentNode, cls).validate_args(tag_name, *args)
 
 
-    def render_tag(self, context, *tag_args, **tag_kwargs):
+    def get_value(self, context, *tag_args, **tag_kwargs):
         request = self.get_request(context)
         output = None
 

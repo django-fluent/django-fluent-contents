@@ -31,8 +31,8 @@ from django.forms import Media
 from django.template import Library, Variable, TemplateSyntaxError
 from fluent_contents.models import Placeholder, ImmutableMedia
 from fluent_contents import rendering
-from tag_parser import parse_token_kwargs
-from tag_parser.basetags import BaseNode
+from tag_parser import parse_token_kwargs, parse_as_var
+from tag_parser.basetags import BaseNode, BaseAssignmentOrOutputNode
 from fluent_contents import appsettings
 from fluent_contents.rendering import get_cached_placeholder_output
 from fluent_contents.utils.templatetags import is_true, extract_literal, extract_literal_bool
@@ -84,7 +84,7 @@ def page_placeholder(parser, token):
     return PagePlaceholderNode.parse(parser, token)
 
 
-class PagePlaceholderNode(BaseNode):
+class PagePlaceholderNode(BaseAssignmentOrOutputNode):
     """
     The template node of the ``page_placeholder`` tag.
     It renders a placeholder of a provided parent object.
@@ -97,8 +97,8 @@ class PagePlaceholderNode(BaseNode):
     max_args = 2
 
 
-    def __init__(self, tag_name, parent_expr, slot_expr, **kwargs):
-        super(PagePlaceholderNode, self).__init__(tag_name, parent_expr, slot_expr, **kwargs)
+    def __init__(self, tag_name, as_var, parent_expr, slot_expr, **kwargs):
+        super(PagePlaceholderNode, self).__init__(tag_name, as_var, parent_expr, slot_expr, **kwargs)
         self.slot_expr = slot_expr
 
         # Move some arguments outside the regular "kwargs"
@@ -121,7 +121,8 @@ class PagePlaceholderNode(BaseNode):
 
             {% page_placeholder parentobj slotname title="test" role="m" %}
         """
-        tag_name, args, kwargs = parse_token_kwargs(parser, token, allowed_kwargs=cls.allowed_kwargs, compile_args=True, compile_kwargs=True)
+        bits, as_var = parse_as_var(parser, token)
+        tag_name, args, kwargs = parse_token_kwargs(parser, bits, allowed_kwargs=cls.allowed_kwargs, compile_args=True, compile_kwargs=True)
 
         # Play with the arguments
         if len(args) == 2:
@@ -137,6 +138,7 @@ class PagePlaceholderNode(BaseNode):
         cls.validate_args(tag_name, *args, **kwargs)
         return cls(
             tag_name=tag_name,
+            as_var=as_var,
             parent_expr=parent_expr,
             slot_expr=slot_expr,
             **kwargs
@@ -188,7 +190,7 @@ class PagePlaceholderNode(BaseNode):
             return False
 
 
-    def render_tag(self, context, *tag_args, **tag_kwargs):
+    def get_value(self, context, *tag_args, **tag_kwargs):
         request = self.get_request(context)
         output = None
 
@@ -244,7 +246,7 @@ def render_placeholder(parser, token):
     return RenderPlaceholderNode.parse(parser, token)
 
 
-class RenderPlaceholderNode(BaseNode):
+class RenderPlaceholderNode(BaseAssignmentOrOutputNode):
     """
     The template node of the ``render_placeholder`` tag.
     It renders the provided placeholder object.
@@ -261,7 +263,7 @@ class RenderPlaceholderNode(BaseNode):
         super(RenderPlaceholderNode, cls).validate_args(tag_name, *args, **kwargs)
 
 
-    def render_tag(self, context, *tag_args, **tag_kwargs):
+    def get_value(self, context, *tag_args, **tag_kwargs):
         request = self.get_request(context)
 
         # Parse arguments
