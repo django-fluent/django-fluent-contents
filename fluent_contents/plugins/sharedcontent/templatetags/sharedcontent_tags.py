@@ -62,7 +62,7 @@ class SharedContentNode(BaseNode):
         # Process arguments
         (slot,) = tag_args
         template_name = tag_kwargs.get('template') or None
-        cachable = is_true(tag_kwargs.get('cachable', False))
+        cachable = is_true(tag_kwargs.get('cachable', not bool(template_name)))  # default: True unless there is a template.
 
         if template_name and cachable and not extract_literal(self.kwargs['template']):
             # If the template name originates from a variable, it can change any time.
@@ -73,7 +73,7 @@ class SharedContentNode(BaseNode):
         # because there is no way to tell whether that can be expired/invalidated.
         try_cache = appsettings.FLUENT_CONTENTS_CACHE_OUTPUT \
                 and appsettings.FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT \
-                and (not template_name or cachable)
+                and cachable
 
         if isinstance(slot, SharedContent):
             # Allow passing a sharedcontent, just like 'render_placeholder' does.
@@ -112,7 +112,7 @@ class SharedContentNode(BaseNode):
         rendering.register_frontend_media(request, output.media)  # Need to track frontend media here, as the template tag can't return it.
         return output.html
 
-    def render_shared_content(self, request, sharedcontent, template_name=None, cachable=False):
+    def render_shared_content(self, request, sharedcontent, template_name=None, cachable=None):
         # All parsing done, perform the actual rendering
         placeholder = sharedcontent.contents  # Another DB query
         return rendering.render_placeholder(request, placeholder, sharedcontent,
