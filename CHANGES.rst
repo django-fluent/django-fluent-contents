@@ -5,6 +5,7 @@ Version 1.0 (dev)
 -----------------
 
 * Added caching support for the complete ``{% render_placeholder %}``, ``{% page_placeholder %}`` and ``{% sharedcontent %}`` tags.`, ``{% page_placeholder %}`` and ``{% sharedcontent %}`` tags.
+* Added ``ContentItem.copy_to_placeholder()`` and ``ContentItem.objects.copy_to_placeholder()`` API functions
 * Fix handling ``CheckboxSelectMultiple`` in admin form widgets.
 * Fix missing API parameters for ``ContentItem.objects.create_for_placeholder()`` and ``Placeholder.objects.create_for_parent()``.
 * Fix static default ``SITE_ID`` value for ``SharedContent``, for compatibility with django-multisite_.

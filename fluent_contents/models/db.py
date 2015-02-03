@@ -1,3 +1,4 @@
+from copy import deepcopy
 from future.utils import with_metaclass, python_2_unicode_compatible, PY3
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -272,6 +273,38 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
             return parent.get_absolute_url()
         except AttributeError:
             return None
+
+
+    def copy_to_placeholder(self, placeholder, sort_order=None, in_place=False):
+        """
+        Copy this content item to a new placeholder.
+
+        Note: if you have M2M relations on the model,
+        override this method to transfer those values.
+        """
+        if in_place:
+            copy = self
+        else:
+            copy = deepcopy(self)  # Avoid changing 'self'
+
+        # Reset Django cache
+        copy.pk = None  # reset contentitem_ptr_id
+        copy.id = None  # reset this base class.
+        copy._state.adding = True
+
+        # Transfer parent
+        copy.placeholder = placeholder
+        copy.parent_type = placeholder.parent_type
+        copy.parent_id = placeholder.parent_id
+        setattr(copy, '_parent_cache', getattr(placeholder, '_parent_cache', None))  # by GenericForeignKey (_meta.virtual_fields[0].cache_attr)
+
+        if sort_order is not None:
+            copy.sort_order = sort_order
+
+        copy.save()
+        return copy
+
+    copy_to_placeholder.alters_data = True
 
 
     def save(self, *args, **kwargs):
