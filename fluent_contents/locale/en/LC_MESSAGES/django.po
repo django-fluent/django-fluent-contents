@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-24 11:30+0200\n"
+"POT-Creation-Date: 2015-02-05 11:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,12 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: extensions/pluginbase.py:350
+#: extensions/pluginbase.py:456
 #, python-format
 msgid "{No rendering defined for class '%s'}"
 msgstr ""
 
-#: extensions/pluginbase.py:370
+#: extensions/pluginbase.py:476
 msgid "Error:"
 msgstr ""
 
@@ -33,43 +33,43 @@ msgid_plural "{count} items updated."
 msgstr[0] ""
 msgstr[1] ""
 
-#: models/db.py:39
+#: models/db.py:44
 msgid "Main content"
 msgstr ""
 
-#: models/db.py:40
+#: models/db.py:45
 msgid "Sidebar content"
 msgstr ""
 
-#: models/db.py:41
+#: models/db.py:46
 msgid "Related content"
 msgstr ""
 
-#: models/db.py:44
+#: models/db.py:49
 msgid "Slot"
 msgstr ""
 
-#: models/db.py:44
+#: models/db.py:49
 msgid "A short name to identify the placeholder in the template code."
 msgstr ""
 
-#: models/db.py:45
+#: models/db.py:50
 msgid "Role"
 msgstr ""
 
-#: models/db.py:45
+#: models/db.py:50
 msgid "This defines where the object is used."
 msgstr ""
 
-#: models/db.py:52
+#: models/db.py:57
 msgid "Admin title"
 msgstr ""
 
-#: models/db.py:58
+#: models/db.py:63
 msgid "Placeholder"
 msgstr ""
 
-#: models/db.py:59
+#: models/db.py:64
 msgid "Placeholders"
 msgstr ""
 
@@ -87,7 +87,7 @@ msgstr ""
 
 #: plugins/code/backend.py:20 plugins/iframe/content_plugins.py:14
 #: plugins/rawhtml/content_plugins.py:15
-#: plugins/sharedcontent/content_plugins.py:13
+#: plugins/sharedcontent/content_plugins.py:30
 msgid "Advanced"
 msgstr ""
 
@@ -95,23 +95,23 @@ msgstr ""
 msgid "Programming"
 msgstr ""
 
-#: plugins/code/models.py:13 plugins/markup/models.py:39
+#: plugins/code/models.py:15 plugins/markup/models.py:42
 msgid "Language"
 msgstr ""
 
-#: plugins/code/models.py:14
+#: plugins/code/models.py:16
 msgid "Code"
 msgstr ""
 
-#: plugins/code/models.py:15
+#: plugins/code/models.py:17
 msgid "Show line numbers"
 msgstr ""
 
-#: plugins/code/models.py:18
+#: plugins/code/models.py:20
 msgid "Code snippet"
 msgstr ""
 
-#: plugins/code/models.py:19
+#: plugins/code/models.py:21
 msgid "Code snippets"
 msgstr ""
 
@@ -121,124 +121,124 @@ msgstr ""
 msgid "Interactivity"
 msgstr ""
 
-#: plugins/commentsarea/models.py:13 plugins/disquswidgets/models.py:7
+#: plugins/commentsarea/models.py:15 plugins/disquswidgets/models.py:9
 msgid "Allow posting new comments"
 msgstr ""
 
-#: plugins/commentsarea/models.py:16
+#: plugins/commentsarea/models.py:18
 msgid "Comments area"
 msgstr ""
 
-#: plugins/commentsarea/models.py:17
+#: plugins/commentsarea/models.py:19
 msgid "Comments areas"
 msgstr ""
 
-#: plugins/disquswidgets/models.py:10
+#: plugins/disquswidgets/models.py:12
 msgid "Disqus comments area"
 msgstr ""
 
-#: plugins/disquswidgets/models.py:11
+#: plugins/disquswidgets/models.py:13
 msgid "Disqus comments areas"
 msgstr ""
 
-#: plugins/formdesignerlink/models.py:8
+#: plugins/formdesignerlink/models.py:10
 msgid "Form"
 msgstr ""
 
-#: plugins/formdesignerlink/models.py:11
+#: plugins/formdesignerlink/models.py:13
 msgid "Form link"
 msgstr ""
 
-#: plugins/formdesignerlink/models.py:12
+#: plugins/formdesignerlink/models.py:14
 msgid "Form links"
 msgstr ""
 
-#: plugins/gist/models.py:9
+#: plugins/gist/models.py:13
 msgid "Gist number"
 msgstr ""
 
-#: plugins/gist/models.py:9
+#: plugins/gist/models.py:13
 msgid ""
 "Go to <a href=\"https://gist.github.com/\" target=\"_blank\">https://gist."
 "github.com/</a> and copy the number of the Gist snippet you want to display."
 msgstr ""
 
-#: plugins/gist/models.py:10
+#: plugins/gist/models.py:14
 msgid "Gist filename"
 msgstr ""
 
-#: plugins/gist/models.py:10
+#: plugins/gist/models.py:14
 msgid "Leave the filename empty to display all files in the Gist."
 msgstr ""
 
-#: plugins/gist/models.py:13
+#: plugins/gist/models.py:17
 msgid "GitHub Gist snippet"
 msgstr ""
 
-#: plugins/gist/models.py:14
+#: plugins/gist/models.py:18
 msgid "GitHub Gist snippets"
 msgstr ""
 
 #: plugins/googledocsviewer/content_plugins.py:23
 #: plugins/oembeditem/content_plugins.py:15
-#: plugins/picture/content_plugins.py:13
+#: plugins/picture/content_plugins.py:14
 #: plugins/twitterfeed/content_plugins.py:8
 msgid "Media"
 msgstr ""
 
-#: plugins/googledocsviewer/models.py:11
+#: plugins/googledocsviewer/models.py:13
 msgid "File URL"
 msgstr ""
 
-#: plugins/googledocsviewer/models.py:11
+#: plugins/googledocsviewer/models.py:13
 msgid "Specify the URL of an online document, for example a PDF or DOCX file."
 msgstr ""
 
-#: plugins/googledocsviewer/models.py:12 plugins/iframe/models.py:12
+#: plugins/googledocsviewer/models.py:14 plugins/iframe/models.py:14
 msgid "Width"
 msgstr ""
 
-#: plugins/googledocsviewer/models.py:12 plugins/iframe/models.py:12
+#: plugins/googledocsviewer/models.py:14 plugins/iframe/models.py:14
 msgid "Specify the size in pixels, or a percentage of the container area size."
 msgstr ""
 
-#: plugins/googledocsviewer/models.py:13 plugins/iframe/models.py:13
+#: plugins/googledocsviewer/models.py:15 plugins/iframe/models.py:15
 msgid "Height"
 msgstr ""
 
-#: plugins/googledocsviewer/models.py:13 plugins/iframe/models.py:13
+#: plugins/googledocsviewer/models.py:15 plugins/iframe/models.py:15
 msgid "Specify the size in pixels."
 msgstr ""
 
-#: plugins/googledocsviewer/models.py:16 plugins/googledocsviewer/models.py:17
+#: plugins/googledocsviewer/models.py:18 plugins/googledocsviewer/models.py:19
 msgid "Embedded document"
 msgstr ""
 
-#: plugins/iframe/models.py:11
+#: plugins/iframe/models.py:13
 msgid "Page URL"
 msgstr ""
 
-#: plugins/iframe/models.py:16
+#: plugins/iframe/models.py:18
 msgid "Iframe"
 msgstr ""
 
-#: plugins/iframe/models.py:17
+#: plugins/iframe/models.py:19
 msgid "Iframes"
 msgstr ""
 
-#: plugins/markup/content_plugins.py:24
+#: plugins/markup/content_plugins.py:25
 msgid "Markup"
 msgstr ""
 
-#: plugins/markup/models.py:36
+#: plugins/markup/models.py:39
 msgid "markup"
 msgstr ""
 
-#: plugins/markup/models.py:42 plugins/markup/models.py:43
+#: plugins/markup/models.py:45 plugins/markup/models.py:46
 msgid "Markup code"
 msgstr ""
 
-#: plugins/markup/models.py:82
+#: plugins/markup/models.py:89
 #, python-format
 msgid "%s items"
 msgstr ""
@@ -253,19 +253,20 @@ msgstr ""
 msgid "The URL is not valid for embedding content"
 msgstr ""
 
-#: plugins/oembeditem/models.py:17
+#: plugins/oembeditem/models.py:26
 msgid "URL to embed"
 msgstr ""
 
-#: plugins/oembeditem/models.py:18
+#: plugins/oembeditem/models.py:27
 msgid "Max width"
 msgstr ""
 
-#: plugins/oembeditem/models.py:19
+#: plugins/oembeditem/models.py:28
 msgid "Max height"
 msgstr ""
 
-#: plugins/oembeditem/models.py:42 plugins/oembeditem/models.py:43
+#: plugins/oembeditem/models.py:52 plugins/oembeditem/models.py:53
+#: plugins/oembeditem/models.py:141 plugins/oembeditem/models.py:142
 msgid "Online media"
 msgstr ""
 
@@ -277,131 +278,149 @@ msgstr ""
 msgid "pixels"
 msgstr ""
 
-#: plugins/picture/models.py:16
+#: plugins/picture/models.py:19
 msgid "Left"
 msgstr ""
 
-#: plugins/picture/models.py:17
+#: plugins/picture/models.py:20
 msgid "Center"
 msgstr ""
 
-#: plugins/picture/models.py:18
+#: plugins/picture/models.py:21
 msgid "Right"
 msgstr ""
 
-#: plugins/picture/models.py:21
+#: plugins/picture/models.py:24
 msgid "Image"
 msgstr ""
 
-#: plugins/picture/models.py:22
+#: plugins/picture/models.py:25
 msgid "Caption"
 msgstr ""
 
-#: plugins/picture/models.py:23
+#: plugins/picture/models.py:26
 msgid "Align"
 msgstr ""
 
-#: plugins/picture/models.py:24
+#: plugins/picture/models.py:27
 msgid "URL"
 msgstr ""
 
-#: plugins/picture/models.py:25
+#: plugins/picture/models.py:28
 msgid "Open in a new window"
 msgstr ""
 
-#: plugins/picture/models.py:28
+#: plugins/picture/models.py:31
 msgid "Picture"
 msgstr ""
 
-#: plugins/picture/models.py:29
+#: plugins/picture/models.py:32
 msgid "Pictures"
 msgstr ""
 
-#: plugins/rawhtml/models.py:7 plugins/rawhtml/models.py:10
-#: plugins/rawhtml/models.py:11
+#: plugins/rawhtml/models.py:10 plugins/rawhtml/models.py:13
+#: plugins/rawhtml/models.py:14
 msgid "HTML code"
 msgstr ""
 
-#: plugins/rawhtml/models.py:7
+#: plugins/rawhtml/models.py:10
 msgid ""
 "Enter the HTML code to display, like the embed code of an online widget."
 msgstr ""
 
-#: plugins/sharedcontent/admin.py:29
+#: plugins/sharedcontent/admin.py:34
 msgid "Publication settings"
 msgstr ""
 
-#: plugins/sharedcontent/models.py:12 plugins/twitterfeed/models.py:10
-#: plugins/twitterfeed/models.py:31
+#: plugins/sharedcontent/models.py:24 plugins/twitterfeed/models.py:12
+#: plugins/twitterfeed/models.py:34
 msgid "Title"
 msgstr ""
 
-#: plugins/sharedcontent/models.py:15
+#: plugins/sharedcontent/models.py:28
 msgid "Template code"
 msgstr ""
 
-#: plugins/sharedcontent/models.py:15
+#: plugins/sharedcontent/models.py:28
 msgid "This unique name can be used refer to this content in in templates."
 msgstr ""
 
-#: plugins/sharedcontent/models.py:16
+#: plugins/sharedcontent/models.py:29
+msgid "Share between all sites"
+msgstr ""
+
+#: plugins/sharedcontent/models.py:30
+msgid ""
+"This allows contents can be shared between multiple sites in this project."
+"<br>\n"
+"Make sure that any URLs in the content work with all sites where the content "
+"is displayed."
+msgstr ""
+
+#: plugins/sharedcontent/models.py:33
 msgid "Contents"
 msgstr ""
 
-#: plugins/sharedcontent/models.py:25 plugins/sharedcontent/models.py:26
-#: plugins/sharedcontent/models.py:36 plugins/sharedcontent/models.py:39
-#: plugins/sharedcontent/models.py:40
+#: plugins/sharedcontent/models.py:44 plugins/sharedcontent/models.py:45
+#: plugins/sharedcontent/models.py:80 plugins/sharedcontent/models.py:83
+#: plugins/sharedcontent/models.py:84
 msgid "Shared content"
 msgstr ""
 
-#: plugins/text/models.py:14
+#: plugins/sharedcontent/templates/admin/sharedcontent/sharedcontent/change_form.html:5
+msgid ""
+"This object can be displayed on multiple sites. Please verify that links in "
+"the content work across all sites."
+msgstr ""
+
+#: plugins/text/models.py:16
 msgid "text"
 msgstr ""
 
-#: plugins/text/models.py:17 plugins/text/models.py:18
+#: plugins/text/models.py:19 plugins/text/models.py:20
 msgid "Text"
 msgstr ""
 
-#: plugins/twitterfeed/models.py:10 plugins/twitterfeed/models.py:15
-#: plugins/twitterfeed/models.py:31 plugins/twitterfeed/models.py:36
+#: plugins/twitterfeed/models.py:12 plugins/twitterfeed/models.py:17
+#: plugins/twitterfeed/models.py:34 plugins/twitterfeed/models.py:39
 msgid "You may use Twitter markup here, such as a #hashtag or @username."
 msgstr ""
 
-#: plugins/twitterfeed/models.py:12
+#: plugins/twitterfeed/models.py:14
 msgid "Twitter user"
 msgstr ""
 
-#: plugins/twitterfeed/models.py:13 plugins/twitterfeed/models.py:34
+#: plugins/twitterfeed/models.py:15 plugins/twitterfeed/models.py:37
 msgid "Number of results"
 msgstr ""
 
-#: plugins/twitterfeed/models.py:15 plugins/twitterfeed/models.py:36
+#: plugins/twitterfeed/models.py:17 plugins/twitterfeed/models.py:39
 msgid "Footer text"
 msgstr ""
 
-#: plugins/twitterfeed/models.py:16 plugins/twitterfeed/models.py:37
+#: plugins/twitterfeed/models.py:18 plugins/twitterfeed/models.py:40
 msgid "Include retweets"
 msgstr ""
 
-#: plugins/twitterfeed/models.py:17 plugins/twitterfeed/models.py:38
+#: plugins/twitterfeed/models.py:19 plugins/twitterfeed/models.py:41
 msgid "Include replies"
 msgstr ""
 
-#: plugins/twitterfeed/models.py:23 plugins/twitterfeed/models.py:24
+#: plugins/twitterfeed/models.py:25 plugins/twitterfeed/models.py:26
 msgid "Recent twitter entries"
 msgstr ""
 
-#: plugins/twitterfeed/models.py:33
+#: plugins/twitterfeed/models.py:36
 msgid "Search for"
 msgstr ""
 
-#: plugins/twitterfeed/models.py:33
+#: plugins/twitterfeed/models.py:36
 msgid ""
 "<a href=\"https://support.twitter.com/articles/71577\" target=\"_blank"
 "\">Twitter search syntax</a> is allowed."
 msgstr ""
 
-#: plugins/twitterfeed/models.py:44 plugins/twitterfeed/models.py:45
+#: plugins/twitterfeed/models.py:47 plugins/twitterfeed/models.py:48
 msgid "Twitter search feed"
 msgstr ""
 
@@ -414,15 +433,15 @@ msgstr ""
 msgid "There are no options to configure for this element."
 msgstr ""
 
-#: templates/admin/fluent_contents/placeholder/inline_tabs.html:53
+#: templates/admin/fluent_contents/placeholder/inline_tabs.html:57
 msgid "Loading layout data..."
 msgstr ""
 
-#: templates/admin/fluent_contents/placeholder/inline_tabs.html:54
+#: templates/admin/fluent_contents/placeholder/inline_tabs.html:58
 msgid "Orphaned content"
 msgstr ""
 
-#: templates/admin/fluent_contents/placeholder/inline_tabs.html:81
+#: templates/admin/fluent_contents/placeholder/inline_tabs.html:93
 msgid "There are no placeholders in this template."
 msgstr ""
 

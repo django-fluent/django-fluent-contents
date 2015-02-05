@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-11 01:17+0200\n"
+"POT-Creation-Date: 2015-02-05 11:29+0100\n"
 "PO-Revision-Date: 2011-01-10 23:54+0100\n"
 "Last-Translator: Diederik van der Boor <vdboor@edoburu.nl>\n"
 "Language-Team: Dutch <NL@li.org>\n"
@@ -16,12 +16,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: extensions/pluginbase.py:350
+#: extensions/pluginbase.py:456
 #, python-format
 msgid "{No rendering defined for class '%s'}"
 msgstr ""
 
-#: extensions/pluginbase.py:370
+#: extensions/pluginbase.py:476
 msgid "Error:"
 msgstr "Fout:"
 
@@ -29,54 +29,54 @@ msgstr "Fout:"
 #, python-brace-format
 msgid "{count} item updated."
 msgid_plural "{count} items updated."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{count} item bijgewerkt."
+msgstr[1] "{count} item bijgewerkt."
 
-#: models/db.py:36
+#: models/db.py:44
 msgid "Main content"
 msgstr "Hoofdinhoud"
 
-#: models/db.py:37
+#: models/db.py:45
 msgid "Sidebar content"
 msgstr "Zijbalk inhoud"
 
-#: models/db.py:38
+#: models/db.py:46
 msgid "Related content"
 msgstr "Gerelateerde inhoud"
 
-#: models/db.py:41
+#: models/db.py:49
 msgid "Slot"
 msgstr ""
 
-#: models/db.py:41
+#: models/db.py:49
 msgid "A short name to identify the placeholder in the template code."
 msgstr "Een korte naam om de placeholder in de template code te identificeren."
 
-#: models/db.py:42
+#: models/db.py:50
 msgid "Role"
 msgstr "Rol"
 
-#: models/db.py:42
+#: models/db.py:50
 msgid "This defines where the object is used."
 msgstr "Dit geeft aan waar het object gebruikt word."
 
-#: models/db.py:49
+#: models/db.py:57
 msgid "Admin title"
 msgstr "Admin titel"
 
-#: models/db.py:55
+#: models/db.py:63
 msgid "Placeholder"
 msgstr "Blokruimte"
 
-#: models/db.py:56
+#: models/db.py:64
 msgid "Placeholders"
 msgstr "Blokruimtes"
 
-#: models/db.py:244
+#: models/db.py:261
 msgid "Contentitem link"
 msgstr "Blokkoppeling"
 
-#: models/db.py:245
+#: models/db.py:262
 msgid "Contentitem links"
 msgstr "Blokkoppelingen"
 
@@ -86,7 +86,7 @@ msgstr "Combinaties"
 
 #: plugins/code/backend.py:20 plugins/iframe/content_plugins.py:14
 #: plugins/rawhtml/content_plugins.py:15
-#: plugins/sharedcontent/content_plugins.py:13
+#: plugins/sharedcontent/content_plugins.py:30
 msgid "Advanced"
 msgstr "Geavanceerd"
 
@@ -94,23 +94,23 @@ msgstr "Geavanceerd"
 msgid "Programming"
 msgstr "Programmeren"
 
-#: plugins/code/models.py:13 plugins/markup/models.py:39
+#: plugins/code/models.py:15 plugins/markup/models.py:42
 msgid "Language"
 msgstr "Taal"
 
-#: plugins/code/models.py:14
+#: plugins/code/models.py:16
 msgid "Code"
 msgstr "Code"
 
-#: plugins/code/models.py:15
+#: plugins/code/models.py:17
 msgid "Show line numbers"
 msgstr "Toon regelnummers"
 
-#: plugins/code/models.py:18
+#: plugins/code/models.py:20
 msgid "Code snippet"
 msgstr "Codefragment"
 
-#: plugins/code/models.py:19
+#: plugins/code/models.py:21
 msgid "Code snippets"
 msgstr "Codefragmenten"
 
@@ -120,43 +120,43 @@ msgstr "Codefragmenten"
 msgid "Interactivity"
 msgstr "Interactief"
 
-#: plugins/commentsarea/models.py:13 plugins/disquswidgets/models.py:7
+#: plugins/commentsarea/models.py:15 plugins/disquswidgets/models.py:9
 msgid "Allow posting new comments"
 msgstr "Sta toe om nieuwe reacties te plaatsen"
 
-#: plugins/commentsarea/models.py:16
+#: plugins/commentsarea/models.py:18
 msgid "Comments area"
 msgstr "Reactieveld"
 
-#: plugins/commentsarea/models.py:17
+#: plugins/commentsarea/models.py:19
 msgid "Comments areas"
 msgstr "Reactievelden"
 
-#: plugins/disquswidgets/models.py:10
+#: plugins/disquswidgets/models.py:12
 msgid "Disqus comments area"
 msgstr "Disqus reactieveld"
 
-#: plugins/disquswidgets/models.py:11
+#: plugins/disquswidgets/models.py:13
 msgid "Disqus comments areas"
 msgstr "Disqus reactieveld"
 
-#: plugins/formdesignerlink/models.py:8
+#: plugins/formdesignerlink/models.py:10
 msgid "Form"
 msgstr "Formulier"
 
-#: plugins/formdesignerlink/models.py:11
+#: plugins/formdesignerlink/models.py:13
 msgid "Form link"
 msgstr "Formulierlink"
 
-#: plugins/formdesignerlink/models.py:12
+#: plugins/formdesignerlink/models.py:14
 msgid "Form links"
 msgstr "Formulierlinks"
 
-#: plugins/gist/models.py:9
+#: plugins/gist/models.py:13
 msgid "Gist number"
 msgstr "Gist nummer"
 
-#: plugins/gist/models.py:9
+#: plugins/gist/models.py:13
 msgid ""
 "Go to <a href=\"https://gist.github.com/\" target=\"_blank\">https://gist."
 "github.com/</a> and copy the number of the Gist snippet you want to display."
@@ -164,84 +164,84 @@ msgstr ""
 "Ga naar <a href=\"https://gist.github.com/\" target=\"_blank\">https://gist."
 "github.com/</a> en kopieër het nummer van de Gist die je wilt weergeven."
 
-#: plugins/gist/models.py:10
+#: plugins/gist/models.py:14
 msgid "Gist filename"
 msgstr "Gist bestandsnaam"
 
-#: plugins/gist/models.py:10
+#: plugins/gist/models.py:14
 msgid "Leave the filename empty to display all files in the Gist."
 msgstr "Laat de bestandsnaam leeg om alle bestanden van de Gist weer te geven."
 
-#: plugins/gist/models.py:13
+#: plugins/gist/models.py:17
 msgid "GitHub Gist snippet"
 msgstr "GitHub Gist fragment"
 
-#: plugins/gist/models.py:14
+#: plugins/gist/models.py:18
 msgid "GitHub Gist snippets"
 msgstr "GitHub Gist fragmenten"
 
 #: plugins/googledocsviewer/content_plugins.py:23
 #: plugins/oembeditem/content_plugins.py:15
-#: plugins/picture/content_plugins.py:13
+#: plugins/picture/content_plugins.py:14
 #: plugins/twitterfeed/content_plugins.py:8
 msgid "Media"
 msgstr ""
 
-#: plugins/googledocsviewer/models.py:11
+#: plugins/googledocsviewer/models.py:13
 msgid "File URL"
 msgstr "Bestands URL"
 
-#: plugins/googledocsviewer/models.py:11
+#: plugins/googledocsviewer/models.py:13
 msgid "Specify the URL of an online document, for example a PDF or DOCX file."
 msgstr ""
 "Geef de URL van een online document op, bijvoorbeeld een PDF of DOCX bestand."
 
-#: plugins/googledocsviewer/models.py:12 plugins/iframe/models.py:12
+#: plugins/googledocsviewer/models.py:14 plugins/iframe/models.py:14
 msgid "Width"
 msgstr "Breedte"
 
-#: plugins/googledocsviewer/models.py:12 plugins/iframe/models.py:12
+#: plugins/googledocsviewer/models.py:14 plugins/iframe/models.py:14
 msgid "Specify the size in pixels, or a percentage of the container area size."
 msgstr ""
 "Geef de grootte in pixels op, of een percentage van het container gebied."
 
-#: plugins/googledocsviewer/models.py:13 plugins/iframe/models.py:13
+#: plugins/googledocsviewer/models.py:15 plugins/iframe/models.py:15
 msgid "Height"
 msgstr "Hoogte"
 
-#: plugins/googledocsviewer/models.py:13 plugins/iframe/models.py:13
+#: plugins/googledocsviewer/models.py:15 plugins/iframe/models.py:15
 msgid "Specify the size in pixels."
 msgstr "Geef de grootte in pixels op."
 
-#: plugins/googledocsviewer/models.py:16 plugins/googledocsviewer/models.py:17
+#: plugins/googledocsviewer/models.py:18 plugins/googledocsviewer/models.py:19
 msgid "Embedded document"
 msgstr "Ingesloten document"
 
-#: plugins/iframe/models.py:11
+#: plugins/iframe/models.py:13
 msgid "Page URL"
 msgstr "Pagina URL"
 
-#: plugins/iframe/models.py:16
+#: plugins/iframe/models.py:18
 msgid "Iframe"
 msgstr "Iframe"
 
-#: plugins/iframe/models.py:17
+#: plugins/iframe/models.py:19
 msgid "Iframes"
 msgstr "Iframes"
 
-#: plugins/markup/content_plugins.py:24
+#: plugins/markup/content_plugins.py:25
 msgid "Markup"
 msgstr "Opmaak"
 
-#: plugins/markup/models.py:36
+#: plugins/markup/models.py:39
 msgid "markup"
 msgstr "opmaak"
 
-#: plugins/markup/models.py:42 plugins/markup/models.py:43
+#: plugins/markup/models.py:45 plugins/markup/models.py:46
 msgid "Markup code"
 msgstr "Opmaak code"
 
-#: plugins/markup/models.py:82
+#: plugins/markup/models.py:89
 #, python-format
 msgid "%s items"
 msgstr "%s blokken"
@@ -258,19 +258,20 @@ msgstr ""
 msgid "The URL is not valid for embedding content"
 msgstr "De URL is niet geldig voor ingesloten inhoud"
 
-#: plugins/oembeditem/models.py:17
+#: plugins/oembeditem/models.py:26
 msgid "URL to embed"
 msgstr "Pagina URL"
 
-#: plugins/oembeditem/models.py:18
+#: plugins/oembeditem/models.py:27
 msgid "Max width"
 msgstr "Max. breedte"
 
-#: plugins/oembeditem/models.py:19
+#: plugins/oembeditem/models.py:28
 msgid "Max height"
 msgstr "Max. hoogte"
 
-#: plugins/oembeditem/models.py:42 plugins/oembeditem/models.py:43
+#: plugins/oembeditem/models.py:52 plugins/oembeditem/models.py:53
+#: plugins/oembeditem/models.py:141 plugins/oembeditem/models.py:142
 msgid "Online media"
 msgstr "Online media"
 
@@ -282,129 +283,153 @@ msgstr "Maximale grootte"
 msgid "pixels"
 msgstr "pixels"
 
-#: plugins/picture/models.py:16
+#: plugins/picture/models.py:19
 msgid "Left"
 msgstr "Links"
 
-#: plugins/picture/models.py:17
+#: plugins/picture/models.py:20
 msgid "Center"
 msgstr "Midden"
 
-#: plugins/picture/models.py:18
+#: plugins/picture/models.py:21
 msgid "Right"
 msgstr "Rechts"
 
-#: plugins/picture/models.py:21
+#: plugins/picture/models.py:24
 msgid "Image"
 msgstr "Afbeelding"
 
-#: plugins/picture/models.py:22
+#: plugins/picture/models.py:25
 msgid "Caption"
 msgstr "Onderschrift"
 
-#: plugins/picture/models.py:23
+#: plugins/picture/models.py:26
 msgid "Align"
 msgstr "Uitlijning"
 
-#: plugins/picture/models.py:24
+#: plugins/picture/models.py:27
 msgid "URL"
 msgstr "URL"
 
-#: plugins/picture/models.py:25
+#: plugins/picture/models.py:28
 msgid "Open in a new window"
 msgstr "Openen in een nieuw venster"
 
-#: plugins/picture/models.py:28
+#: plugins/picture/models.py:31
 msgid "Picture"
 msgstr "Afbeelding"
 
-#: plugins/picture/models.py:29
+#: plugins/picture/models.py:32
 msgid "Pictures"
 msgstr "Afbeeldingen"
 
-#: plugins/rawhtml/models.py:7 plugins/rawhtml/models.py:10
-#: plugins/rawhtml/models.py:11
+#: plugins/rawhtml/models.py:10 plugins/rawhtml/models.py:13
+#: plugins/rawhtml/models.py:14
 msgid "HTML code"
 msgstr "HTML code"
 
-#: plugins/rawhtml/models.py:7
+#: plugins/rawhtml/models.py:10
 msgid ""
 "Enter the HTML code to display, like the embed code of an online widget."
 msgstr ""
 "Vul de HTML code in om weer te geven, zoals de embed code van een online "
 "widget."
 
-#: plugins/sharedcontent/admin.py:28
+#: plugins/sharedcontent/admin.py:34
 msgid "Publication settings"
 msgstr "Publicatievoorkeuren"
 
-#: plugins/sharedcontent/models.py:12 plugins/twitterfeed/models.py:10
-#: plugins/twitterfeed/models.py:31
+#: plugins/sharedcontent/models.py:24 plugins/twitterfeed/models.py:12
+#: plugins/twitterfeed/models.py:34
 msgid "Title"
 msgstr "Titel"
 
-#: plugins/sharedcontent/models.py:15
+#: plugins/sharedcontent/models.py:28
 msgid "Template code"
 msgstr "Template naam"
 
-#: plugins/sharedcontent/models.py:15
+#: plugins/sharedcontent/models.py:28
 msgid "This unique name can be used refer to this content in in templates."
 msgstr ""
 "Deze unieke naam kan gebruikt worden om in de template naar deze inhoud te "
 "verwijzen."
 
-#: plugins/sharedcontent/models.py:16
+#: plugins/sharedcontent/models.py:29
+msgid "Share between all sites"
+msgstr "Deel tussen alle websites"
+
+#: plugins/sharedcontent/models.py:30
+msgid ""
+"This allows contents can be shared between multiple sites in this project."
+"<br>\n"
+"Make sure that any URLs in the content work with all sites where the content "
+"is displayed."
+msgstr ""
+"Dit maakt het mogelijk om de inhoud te delen tussen meerdere websites van "
+"dit project.<br>\n"
+"Zorg ervoor dat de URL's in de inhoud ook werken op alle websites waar de "
+"inhoud weergegeven wordt."
+
+#: plugins/sharedcontent/models.py:33
 msgid "Contents"
 msgstr "Inhoud"
 
-#: plugins/sharedcontent/models.py:21 plugins/sharedcontent/models.py:22
-#: plugins/sharedcontent/models.py:32 plugins/sharedcontent/models.py:35
-#: plugins/sharedcontent/models.py:36
+#: plugins/sharedcontent/models.py:44 plugins/sharedcontent/models.py:45
+#: plugins/sharedcontent/models.py:80 plugins/sharedcontent/models.py:83
+#: plugins/sharedcontent/models.py:84
 msgid "Shared content"
 msgstr "Gedeelde inhoud"
 
-#: plugins/text/models.py:14
+#: plugins/sharedcontent/templates/admin/sharedcontent/sharedcontent/change_form.html:5
+msgid ""
+"This object can be displayed on multiple sites. Please verify that links in "
+"the content work across all sites."
+msgstr ""
+"Dit object kan weergegeven worden op meerdere websites. Controleer a.u.b. of "
+"de links in de tekst werken op alle websites."
+
+#: plugins/text/models.py:16
 msgid "text"
 msgstr "tekst"
 
-#: plugins/text/models.py:17 plugins/text/models.py:18
+#: plugins/text/models.py:19 plugins/text/models.py:20
 msgid "Text"
 msgstr "Tekst"
 
-#: plugins/twitterfeed/models.py:10 plugins/twitterfeed/models.py:15
-#: plugins/twitterfeed/models.py:31 plugins/twitterfeed/models.py:36
+#: plugins/twitterfeed/models.py:12 plugins/twitterfeed/models.py:17
+#: plugins/twitterfeed/models.py:34 plugins/twitterfeed/models.py:39
 msgid "You may use Twitter markup here, such as a #hashtag or @username."
 msgstr "Je mag Twitter opmaak gebruiken, zoals #hashtag of @gebruikersnaam."
 
-#: plugins/twitterfeed/models.py:12
+#: plugins/twitterfeed/models.py:14
 msgid "Twitter user"
 msgstr "Twitter gebruiker"
 
-#: plugins/twitterfeed/models.py:13 plugins/twitterfeed/models.py:34
+#: plugins/twitterfeed/models.py:15 plugins/twitterfeed/models.py:37
 msgid "Number of results"
 msgstr "Aantal resultaten"
 
-#: plugins/twitterfeed/models.py:15 plugins/twitterfeed/models.py:36
+#: plugins/twitterfeed/models.py:17 plugins/twitterfeed/models.py:39
 msgid "Footer text"
 msgstr "Onderschrift"
 
-#: plugins/twitterfeed/models.py:16 plugins/twitterfeed/models.py:37
+#: plugins/twitterfeed/models.py:18 plugins/twitterfeed/models.py:40
 msgid "Include retweets"
 msgstr "Toon retweets"
 
-#: plugins/twitterfeed/models.py:17 plugins/twitterfeed/models.py:38
+#: plugins/twitterfeed/models.py:19 plugins/twitterfeed/models.py:41
 msgid "Include replies"
 msgstr "Toon reacties"
 
-#: plugins/twitterfeed/models.py:23 plugins/twitterfeed/models.py:24
+#: plugins/twitterfeed/models.py:25 plugins/twitterfeed/models.py:26
 msgid "Recent twitter entries"
 msgstr "Recente twitterberichten"
 
-#: plugins/twitterfeed/models.py:33
+#: plugins/twitterfeed/models.py:36
 msgid "Search for"
 msgstr "Zoek naar"
 
-#: plugins/twitterfeed/models.py:33
+#: plugins/twitterfeed/models.py:36
 msgid ""
 "<a href=\"https://support.twitter.com/articles/71577\" target=\"_blank"
 "\">Twitter search syntax</a> is allowed."
@@ -412,7 +437,7 @@ msgstr ""
 "<a href=\"https://support.twitter.com/articles/71577\" target=\"_blank"
 "\">Twitter zoek syntax</a> is toegestaan."
 
-#: plugins/twitterfeed/models.py:44 plugins/twitterfeed/models.py:45
+#: plugins/twitterfeed/models.py:47 plugins/twitterfeed/models.py:48
 msgid "Twitter search feed"
 msgstr "Twitter zoekresultaten"
 
@@ -425,21 +450,25 @@ msgstr "Tweets worden opgehaald..."
 msgid "There are no options to configure for this element."
 msgstr "Er zijn geen instellingen nodig voor dit element."
 
-#: templates/admin/fluent_contents/placeholder/inline_tabs.html:51
+#: templates/admin/fluent_contents/placeholder/inline_tabs.html:57
 msgid "Loading layout data..."
 msgstr "Layoutgegevens inladen..."
 
-#: templates/admin/fluent_contents/placeholder/inline_tabs.html:52
+#: templates/admin/fluent_contents/placeholder/inline_tabs.html:58
 msgid "Orphaned content"
 msgstr "Gevonden inhoud"
 
-#: templates/admin/fluent_contents/placeholder/inline_tabs.html:79
+#: templates/admin/fluent_contents/placeholder/inline_tabs.html:93
 msgid "There are no placeholders in this template."
 msgstr "Er zijn geen placeholders in deze template."
 
 #: templates/admin/fluent_contents/placeholderfield/controls.html:11
 msgid "Add"
 msgstr "Toevoegen"
+
+#: templates/admin/fluent_contents/placeholderfield/controls.html:22
+msgid "Copy language"
+msgstr "Kopieer taal"
 
 #: templates/admin/fluent_contents/placeholderfield/pane.html:3
 msgid "Placeholder empty"
