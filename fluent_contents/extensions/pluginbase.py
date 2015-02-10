@@ -371,10 +371,11 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
             base_key = get_rendering_cache_key(placeholder_name, instance)
             cachekeys = ["{0}-s{1}".format(base_key, site_id) for site_id in site_ids]
 
-        if self.cache_output_per_language:
+        if self.cache_output_per_language or self.render_ignore_item_language:
             # Append language code to all keys,
-            # have to invalidate a lot more items in memcache
+            # have to invalidate a lot more items in memcache.
             # Also added "None" suffix, since get_parent_language_code() may return that.
+            # TODO: ideally for render_ignore_item_language, only invalidate all when the fallback language changed.
             total_list = []
             cache_languages = list(self.cache_supported_language_codes) + ['unsupported', 'None']
 

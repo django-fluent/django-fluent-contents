@@ -10,6 +10,7 @@ Version 1.0 (dev)
 * Fix handling ``CheckboxSelectMultiple`` in admin form widgets.
 * Fix missing API parameters for ``ContentItem.objects.create_for_placeholder()`` and ``Placeholder.objects.create_for_parent()``.
 * Fix static default ``SITE_ID`` value for ``SharedContent``, for compatibility with django-multisite_.
+* Fix cache invalidation when using ``render_ignore_item_language``.
 
 
 Released on 1.0c3:
