@@ -242,7 +242,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
 
 
     def __repr__(self):
-        return '<{0} for {1} model>'.format(self.__class__.__name__, str(self.model.__name__).encode('ascii'))
+        return '<{0} for {1} model>'.format(self.__class__.__name__, self.model.__name__)
 
 
     @property
