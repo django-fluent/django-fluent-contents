@@ -24,6 +24,18 @@ from fluent_contents.models import ContentItemOutput, ImmutableMedia, get_parent
 
 
 logger = logging.getLogger(__name__)
+_LOG_DEBUG = None
+
+def _optimize_logger():
+    # At runtime, when logging is not active,
+    # replace the .debug() call with a no-op.
+    global _LOG_DEBUG
+    if _LOG_DEBUG is None:
+        _LOG_DEBUG = logger.isEnabledFor(logging.DEBUG)
+        if not _LOG_DEBUG:
+            def dummy_debug(msg, *args, **kwargs):
+                pass
+            logger.debug = dummy_debug
 
 
 def get_cached_placeholder_output(parent_object, placeholder_name):
@@ -65,6 +77,10 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
     :type fallback_language: bool/str
     :rtype: :class:`~fluent_contents.models.ContentItemOutput`
     """
+    _optimize_logger()
+    placeholder_name = _get_placeholder_name(placeholder)
+    logger.debug("Rendering placeholder '%s'", placeholder_name)
+
     if cachable is None:
         # default: True unless there is a template.
         cachable = not bool(template_name)
@@ -76,6 +92,8 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
             and cachable
     cache_key = None
     output = None
+
+    logger.debug("- try_cache=%s cachable=%s template_name=%s", try_cache, cachable, template_name)
 
     if parent_object is None:
         # To support filtering the placeholders by parent language, the parent object needs to be known.
@@ -90,11 +108,17 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
     if output is None:
         # No full-placeholder cache. Get the items
         items = placeholder.get_content_items(parent_object, limit_parent_language=limit_parent_language).non_polymorphic()
+        if _LOG_DEBUG and items.query.is_empty():  # Detect qs.none() was applied
+            logging.debug("- skipping regular language, parent object has no translation for it.")
+
         if fallback_language \
         and not items:  # NOTES: performs query, so hence the .non_polymorphic() above
             # There are no items, but there is a fallback option.
-            try_cache = False  # This is not supported yet, content can be rendered in a different gettext language domain.
+            # This is not supported yet, content can be rendered in a different gettext language domain.
+            try_cache = False
+
             language_code = appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE if fallback_language is True else fallback_language
+            logger.debug("- reading fallback language %s, try_cache=%s", language_code, try_cache)
             items = placeholder.get_content_items(parent_object, limit_parent_language=False).translated(language_code).non_polymorphic()
 
         output = _render_items(request, placeholder, items, parent_object=parent_object, template_name=template_name, cachable=cachable)
@@ -102,6 +126,8 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
         # Store the full-placeholder contents in the cache.
         if try_cache and output.cacheable and cache_key is not None:
             cache.set(cache_key, output)
+    else:
+        logger.debug("- fetched cached output")
 
     if is_edit_mode(request):
         output.html = _wrap_placeholder_output(output.html, placeholder)
@@ -225,7 +251,9 @@ def _render_items(request, placeholder, items, parent_object=None, template_name
     # See if the queryset contained anything.
     # This test is moved here, to prevent earlier query execution.
     if not items:
-        return ContentItemOutput(mark_safe(u"<!-- no items in placeholder '{0}' -->".format(escape(_get_placeholder_name(placeholder)))))
+        placeholder_name = _get_placeholder_name(placeholder)
+        logger.debug("- no items in placeholder '%s'", placeholder_name)
+        return ContentItemOutput(mark_safe(u"<!-- no items in placeholder '{0}' -->".format(escape(placeholder_name))))
     elif remaining_items:
         # Render remaining items
         for contentitem in remaining_items:
@@ -233,6 +261,7 @@ def _render_items(request, placeholder, items, parent_object=None, template_name
                 plugin = contentitem.plugin
             except PluginNotFound as e:
                 output = ContentItemOutput(mark_safe(u'<!-- error: {0} -->\n'.format(str(e))))
+                logger.debug("- item #%s has no matching plugin: %s", contentitem.pk, str(e))
             else:
                 if plugin.render_ignore_item_language \
                 or (plugin.cache_output and plugin.cache_output_per_language):
@@ -257,9 +286,14 @@ def _render_items(request, placeholder, items, parent_object=None, template_name
                 and plugin.cache_output \
                 and output.cacheable \
                 and contentitem.pk:
+                    # Cache the output
                     contentitem.plugin.set_cached_output(placeholder_cache_name, contentitem, output)
                 else:
+                    # Item blocks caching the complete placeholder.
                     all_cacheable = False
+
+                    if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT:
+                        logger.debug("- item #%s is NOT cachable! Prevented by %r", contentitem.pk, plugin)
 
                 if edit_mode:
                     output.html = _wrap_contentitem_output(output.html, contentitem)
