@@ -10,10 +10,14 @@ from fluent_contents import appsettings
 from fluent_contents.cache import get_placeholder_cache_key
 from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_language_code
 from fluent_contents.models.mixins import CachedModelMixin
+from parler.models import TranslatableModel
 from parler.signals import post_translation_delete
 from parler.utils import get_language_title
 from polymorphic import PolymorphicModel
 from polymorphic.base import PolymorphicModelBase
+
+# Leave flag so testing this feature is possible.
+OPTIMIZE_TRANSLATED_MODEL = True
 
 
 
@@ -88,6 +92,17 @@ class Placeholder(models.Model):
         By passing the :attr:`parent` object, the items can additionally
         be filtered by the parent language.
         """
+        # Optimization: if the parent is a TranslatableModel,
+        # the code can already tell if there can be any content items.
+        # If there is no translation for a current language, avoid trying to fetch items.
+        # This speeds up sites where all content exists in fallback languages only.
+        if OPTIMIZE_TRANSLATED_MODEL \
+        and parent is not None \
+        and limit_parent_language \
+        and isinstance(parent, TranslatableModel) \
+        and not parent.has_translation():
+            return ContentItem.objects.none()
+
         item_qs = self.contentitems.all()   # django-polymorphic FTW!
 
         if parent:
