@@ -267,9 +267,9 @@ var cp_plugins = {};
     for(var i = 0; i < $inputs.length; i++)
     {
       var $input = $inputs.eq(i)
-        , id = $input.attr("id") || $input.attr("name");  // multiple input checkbox has one name, but different IDs
-
-      if( $input[0].type == 'radio' && !$input[0].checked )
+        , id = $input.attr("id") || $input.attr("name")  // multiple input checkbox has one name, but different IDs
+        , input_type = $input[0].type;
+      if((input_type == 'radio' || input_type == 'checkbox') && !$input[0].checked)
         continue;
 
       if( !ignoreTestFunc || !ignoreTestFunc(name) )
