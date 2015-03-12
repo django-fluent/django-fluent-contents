@@ -11,6 +11,7 @@ Version 1.0 (dev)
 * Fix missing API parameters for ``ContentItem.objects.create_for_placeholder()`` and ``Placeholder.objects.create_for_parent()``.
 * Fix static default ``SITE_ID`` value for ``SharedContent``, for compatibility with django-multisite_.
 * Fix cache invalidation when using ``render_ignore_item_language``.
+* Fix adding a second ``PlaceholderField`` to a model in a later stage.
 
 
 Released on 1.0c3:
