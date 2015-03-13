@@ -2,7 +2,6 @@ from copy import deepcopy
 from future.utils import with_metaclass, python_2_unicode_compatible, PY3
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.core.cache import cache
 from django.db import models
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
@@ -13,6 +12,7 @@ from fluent_contents.models.mixins import CachedModelMixin
 from parler.models import TranslatableModel
 from parler.signals import post_translation_delete
 from parler.utils import get_language_title
+from fluent_utils.dry.models import get_db_table
 from polymorphic import PolymorphicModel
 from polymorphic.base import PolymorphicModelBase
 
@@ -163,6 +163,11 @@ class ContentItemMetaClass(PolymorphicModelBase):
             if db_table.startswith(app_label + '_'):
                 model_name = db_table[len(app_label)+1:]
                 new_class._meta.db_table = "contentitem_%s_%s" % (app_label, model_name)
+                if hasattr(new_class._meta, 'original_attrs'):
+                    # Make sure that the Django 1.7 migrations also pick up this change!
+                    # Changing the db_table beforehand might be cleaner,
+                    # but also requires duplicating the whole algorithm that Django uses.
+                    new_class._meta.original_attrs['db_table'] = new_class._meta.db_table
 
             # Enforce good manners. The name is often not visible, except for the delete page.
             if not hasattr(new_class, '__str__') or new_class.__str__ == ContentItem.__str__:

@@ -193,7 +193,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     #: ..versionadded:: 1.0
     #: By default, the plugin is rendered in the :attr:`language_code` it's written in.
     #: It can be disabled explicitly in case the content should be rendered language agnostic.
-    #: For fallback content or plugins that cache output per language, this flag will be ignored.
+    #: For plugins that cache output per language, this will be done already.
     #:
     #: See also: :attr:`cache_output_per_language`
     render_ignore_item_language = False
