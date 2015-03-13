@@ -12,7 +12,6 @@ from fluent_contents.models.mixins import CachedModelMixin
 from parler.models import TranslatableModel
 from parler.signals import post_translation_delete
 from parler.utils import get_language_title
-from fluent_utils.dry.models import get_db_table
 from polymorphic import PolymorphicModel
 from polymorphic.base import PolymorphicModelBase
 
