@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+import django
 from django.conf import settings, global_settings as default_settings
 from django.core.management import execute_from_command_line
 
@@ -32,7 +33,7 @@ if not settings.configured:
             'django.contrib.auth.middleware.AuthenticationMiddleware',
         ),
         ROOT_URLCONF = 'fluent_contents.tests.testapp.urls',
-        TEST_RUNNER='django.test.simple.DjangoTestSuiteRunner',   # for Django 1.6, see https://docs.djangoproject.com/en/dev/releases/1.6/#new-test-runner
+        TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner' if django.VERSION < (1.6) else 'django.test.runner.DiscoverRunner',
         SITE_ID = 3,
         FLUENT_CONTENTS_CACHE_OUTPUT = True,
         FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT = True,
