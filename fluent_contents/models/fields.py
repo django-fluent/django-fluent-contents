@@ -250,16 +250,17 @@ class PlaceholderField(PlaceholderRelation):
 
 
 
-try:
-    from south.modelsinspector import add_ignored_fields
-except ImportError:
-    pass
-else:
-    # South 0.7.x ignores GenericRelation fields but doesn't ignore subclasses.
-    # Taking the same fix as applied in http://south.aeracode.org/ticket/414
-    _name_re = "^" + __name__.replace(".", "\.")
-    add_ignored_fields((
-        _name_re + "\.PlaceholderField",
-        _name_re + "\.PlaceholderRelation",
-        _name_re + "\.ContentItemRelation",
-    ))
+if django.VERSION < (1,7):
+    try:
+        from south.modelsinspector import add_ignored_fields
+    except ImportError:
+        pass
+    else:
+        # South 0.7.x ignores GenericRelation fields but doesn't ignore subclasses.
+        # Taking the same fix as applied in http://south.aeracode.org/ticket/414
+        _name_re = "^" + __name__.replace(".", "\.")
+        add_ignored_fields((
+            _name_re + "\.PlaceholderField",
+            _name_re + "\.PlaceholderRelation",
+            _name_re + "\.ContentItemRelation",
+        ))

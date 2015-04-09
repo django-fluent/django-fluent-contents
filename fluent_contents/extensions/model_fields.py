@@ -4,6 +4,7 @@ the API is exposed via __init__.py
 
 This package contains model fields which are usable for extensions.
 """
+import django
 from django.conf import settings
 from django.db import models
 from django.utils.safestring import mark_safe
@@ -48,13 +49,14 @@ class PluginHtmlField(models.TextField):
 
 
 # Tell South how to create custom fields
-try:
-    from south.modelsinspector import add_introspection_rules
-    add_introspection_rules([], [
-        "^fluent_contents\.extensions\.model_fields\.PluginHtmlField",
-    ])
-except ImportError:
-    pass
+if django.VERSION < (1,7):
+    try:
+        from south.modelsinspector import add_introspection_rules
+        add_introspection_rules([], [
+            "^fluent_contents\.extensions\.model_fields\.PluginHtmlField",
+        ])
+    except ImportError:
+        pass
 
 # Tell the Django admin it shouldn't override the widget because it's a TextField
 from django.contrib.admin import options

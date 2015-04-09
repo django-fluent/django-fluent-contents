@@ -1,3 +1,4 @@
+import django
 from django.core.exceptions import ValidationError
 from django.db.models import URLField
 from django.utils.translation import ugettext_lazy as _
@@ -23,9 +24,10 @@ class OEmbedUrlField(URLField):
         return url
 
 
-try:
-    from south.modelsinspector import add_introspection_rules
-except ImportError:
-    pass
-else:
-    add_introspection_rules([], ["^" + __name__.replace(".", "\.") + "\.OEmbedUrlField"])
+if django.VERSION < (1,7):
+    try:
+        from south.modelsinspector import add_introspection_rules
+    except ImportError:
+        pass
+    else:
+        add_introspection_rules([], ["^" + __name__.replace(".", "\.") + "\.OEmbedUrlField"])
