@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='contentitem',
             name='polymorphic_ctype',
-            field=models.ForeignKey(related_name=b'polymorphic_fluent_contents.contentitem_set', editable=False, to='contenttypes.ContentType', null=True),
+            field=models.ForeignKey(related_name=b'polymorphic_fluent_contents.contentitem_set+', editable=False, to='contenttypes.ContentType', null=True),
             preserve_default=True,
         ),
     ]
