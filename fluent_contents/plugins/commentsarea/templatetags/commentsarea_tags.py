@@ -1,11 +1,18 @@
 """
 A proxy to automatically switch to the ``threadedcomments`` template tags if they are available.
 """
-from django.contrib.comments.templatetags import comments
 from django import template
 from django.core.exceptions import ImproperlyConfigured
-from django.template.loader import render_to_string
 from fluent_contents.plugins.commentsarea import appsettings
+from fluent_utils.softdeps.comments import django_comments
+
+if django_comments.__name__ == 'django.contrib.comments':
+    from django.contrib.comments.templatetags import comments
+elif django_comments.__name__ == 'django_comments':
+    from django_comments.templatetags import comments
+else:
+    raise NotImplementedError("Unknown comments module: {0}".format(django_comments.__name__))
+
 
 register = template.Library()
 
