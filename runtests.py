@@ -33,7 +33,7 @@ if not settings.configured:
             'django.contrib.auth.middleware.AuthenticationMiddleware',
         ),
         ROOT_URLCONF = 'fluent_contents.tests.testapp.urls',
-        TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner' if django.VERSION < (1.6) else 'django.test.runner.DiscoverRunner',
+        TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner' if django.VERSION < (1,6) else 'django.test.runner.DiscoverRunner',
         SITE_ID = 3,
         FLUENT_CONTENTS_CACHE_OUTPUT = True,
         FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT = True,
