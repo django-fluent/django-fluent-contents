@@ -37,10 +37,10 @@ setup(
 
     install_requires=[
         'django-fluent-utils>=1.1.5',      # DRY utility code
-        'django-parler>=1.3',              # Needed for Django 1.7 compatibility
-        'django-polymorphic>=0.6',         # Needed for Django 1.7 compatibility
-        'django-tag-parser>=2.0',
-        'django-template-analyzer>=1.4',   # Needed for Django 1.7 compatibility
+        'django-parler>=1.4',              # Needed for Django 1.8 compatibility
+        'django-polymorphic>=0.7',         # Needed for Django 1.8 compatibility
+        'django-tag-parser>=2.1',          # Needed for Django 1.8 compatibility
+        'django-template-analyzer>=1.5',   # Needed for Django 1.7 compatibility
         'future>=0.12.2',
         'six>=1.5.2',
     ],
