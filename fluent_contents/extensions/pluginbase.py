@@ -257,7 +257,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     def name(self):
         """
         Return the classname of the plugin, this is mainly provided for templates.
-        This value can also be used in :func:`PluginPool.
+        This value can also be used in :func:`PluginPool`.
         """
         return self.__class__.__name__
 

@@ -4,7 +4,7 @@ The commentsarea plugin
 =======================
 
 The `commentsarea`  plugin displays the form and messagelist
-that django.contrib.comments_ renders.
+that django-contrib-comments_ (or django.contrib.comments_) renders.
 
   .. figure:: /images/plugins/commentsarea-admin.*
      :width: 732px
@@ -36,7 +36,7 @@ Add the following settings to ``settings.py``:
 .. code-block:: python
 
     INSTALLED_APPS += (
-        'django.contrib.comments',
+        'django_comments',
         'fluent_contents.plugins.commentsarea',
     )
 
@@ -46,10 +46,16 @@ Add the following to ``urls.py``:
 .. code-block:: python
 
     urlpatterns += patterns('',
-        url(r'^blog/comments/', include('django.contrib.comments.urls')),
+        url(r'^blog/comments/', include('django_comments.urls')),
     )
 
 This URL can be anything off course, like ``/comments/``, ``/respond/comments/`` or ``/blog/comments/`` for example.
+
+.. note::
+   As of Django 1.8, the django.contrib.comments_ module is no longer bundled with Django.
+   It's provided as separate application that can be installed from PyPI.
+
+   For older Django projects, replace ``django_comments`` with ``django.contrib.comments`` in the example above.
 
 
 Configuration
@@ -167,3 +173,4 @@ These modules can enhance the commentsarea even further.
 .. _Akismet: http://akismet.com/
 .. _django.contrib.comments: https://docs.djangoproject.com/en/dev/ref/contrib/comments/
 .. _django-fluent-comments: https://github.com/edoburu/django-fluent-comments/
+.. _django-contrib-comments: http://django-contrib-comments.readthedocs.org/

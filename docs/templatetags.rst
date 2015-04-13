@@ -62,7 +62,7 @@ The following variables are available:
    When a template is used, the system assumes that the output can change per request.
    Hence, even though :ref:`FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT` may be set,
    but the final merged output will no longer be cached.
-   Add ``template_cachable=1`` to enable output caching for templates too.
+   Add ``cachable=1`` to enable output caching for templates too.
 
    The output of individual items will always be cached,
    as that is subject to the :ref:`FLUENT_CONTENTS_CACHE_OUTPUT` setting.
@@ -92,6 +92,7 @@ Fallback languages
 
    This can be used to display the "english" content everywhere by default for example,
    until a translator fills the contents of the page.
+   The fallback language is defined in the :ref:`FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE` setting.
 
 
 Frontend media

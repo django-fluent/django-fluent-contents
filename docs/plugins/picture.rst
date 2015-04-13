@@ -52,7 +52,7 @@ The following settings are available:
 
 
 FLUENT_PICTURE_UPLOAD_TO
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 The upload folder for all pictures. Defaults to the root of the media folder.
 

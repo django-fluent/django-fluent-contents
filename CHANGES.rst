@@ -4,6 +4,7 @@ Changelog
 Version 1.0 (dev)
 -----------------
 
+* Added Django 1.8 support.
 * Added caching support for the complete ``{% render_placeholder %}``, ``{% page_placeholder %}`` and ``{% sharedcontent %}`` tags.
 * Added ``as var`` syntax for ``{% render_placeholder %}``, ``{% page_placeholder %}`` and ``{% sharedcontent %}`` tags.
 * Added ``ContentItem.copy_to_placeholder()`` and ``ContentItem.objects.copy_to_placeholder()`` API functions

@@ -7,7 +7,8 @@ A quick overview of the available settings:
 
 .. code-block:: python
 
-    FLUENT_CONTENTS_CACHE_OUTPUT = True
+    FLUENT_CONTENTS_CACHE_OUTPUT = True               # disable sometimes for development
+    FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT = False  # enable for production
 
     FLUENT_CONTENTS_PLACEHOLDER_CONFIG = {
         'slot_name': {
@@ -21,6 +22,12 @@ A quick overview of the available settings:
         }
     }
 
+    FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE = LANGUAGE_CODE  # e.g. "en"
+    FLUENT_CONTENTS_FILTER_SITE_ID = True
+
+
+Rendering options
+-----------------
 
 .. _FLUENT_CONTENTS_CACHE_OUTPUT:
 
@@ -41,16 +48,38 @@ FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This setting can be used to enable the output of entire placeholders.
-This should be enabled for production.
+Preferably, this should be enabled for production.
 
-This setting is not practical in development,
-because that would no longer cause changes in the code or templates to appear.
+This feature is impractical in development, because any changes to code or templates won't appear.
 Hence, the default value is ``False``.
 
 Without this setting, only individual content plugins are cached.
-The surrounding objects (e.g. the Placeholder, SharedContent and list of ContentItem models)
-will still be queried from the database.
+The surrounding objects will still be queried from the database.
+That includes the :class:`~fluent_contents.models.Placeholder`,
+:class:`~fluent_contents.plugins.sharedcontent.models.SharedContent`
+and the base class of each :class:`~fluent_contents.models.ContentItem` model.
 
+.. _FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE:
+
+FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The default language for items. This value is used as:
+
+* The fallback language for rendering content items.
+* The default language for the :attr:`ContentItem.language_code <fluent_contents.models.ContentItem.language_code>` model field
+  when the parent object is not translatable.
+* The initial migration of data when you migrate a 0.9 project to v1.0
+
+When this value is not defined, the following settings will be tried:
+
+* ``FLUENT_DEFAULT_LANGUAGE_CODE``
+* ``PARLER_DEFAULT_LANGUAGE_CODE``
+* ``LANGUAGE_CODE``
+
+
+Admin settings
+--------------
 
 .. _FLUENT_CONTENTS_PLACEHOLDER_CONFIG:
 
@@ -64,3 +93,37 @@ By default, all plugins are allowed to be used everywhere.
 The list of plugins can refer to class names, or point to the actual classes themselves.
 When a list of plugins is explicitly passed to a :class:`~fluent_contents.models.PlaceholderField`,
 it overrides the defaults given via the settings file.
+
+
+Advanced admin settings
+-----------------------
+
+
+.. _FLUENT_CONTENTS_FILTER_SITE_ID:
+
+FLUENT_CONTENTS_FILTER_SITE_ID
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+By default, contents is displayed for the current site only.
+
+By default, each :class:`~django.contrib.sites.models.Site` model has it's own contents.
+This enables the multi-site support, where you can run multiple instances with different sites.
+To run a single Django instance with multiple sites, use a module such as django-multisite_.
+
+You can disable it using this by using:
+
+.. code-block:: python
+
+    FLUENT_PAGES_FILTER_SITE_ID = False
+
+This completely disables the multisite support, and should only be used as last resort.
+The :class:`~fluent_contents.plugins.sharedcontent.models.SharedContent` model
+is unsplit, making all content available for all sites.
+
+.. note::
+   The "Shared Content" module also provides a "Share between all sites" setting to share a single object explicitly
+   between multiple sites. Enable it using the :ref:`FLUENT_SHARED_CONTENT_ENABLE_CROSS_SITE` setting.
+   Using that feature is recommended above disabling multisite support completely.
+
+
+.. _django-multisite: https://github.com/ecometrica/django-multisite
