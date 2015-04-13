@@ -40,7 +40,7 @@ setup(
         'django-parler>=1.4',              # Needed for Django 1.8 compatibility
         'django-polymorphic>=0.7',         # Needed for Django 1.8 compatibility
         'django-tag-parser>=2.1',          # Needed for Django 1.8 compatibility
-        'django-template-analyzer>=1.5',   # Needed for Django 1.7 compatibility
+        'django-template-analyzer>=1.5',   # Needed for Django 1.8 compatibility
         'future>=0.12.2',
         'six>=1.5.2',
     ],
