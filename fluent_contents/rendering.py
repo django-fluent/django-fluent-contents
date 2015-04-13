@@ -18,6 +18,10 @@ from fluent_contents import appsettings
 from fluent_contents.cache import get_rendering_cache_key, get_placeholder_cache_key_for_parent
 from fluent_contents.extensions import PluginNotFound, ContentPlugin
 from fluent_contents.models import ContentItemOutput, ImmutableMedia, get_parent_language_code
+try:
+    from django.template.backends.django import Template as TemplateAdapter
+except ImportError:
+    TemplateAdapter = None
 
 # This code is separate from the templatetags,
 # so it can be called outside the templates as well.
@@ -417,12 +421,18 @@ def _is_template_updated(request, contentitem, cachekey):
         template_names = [template_names]
 
     # With TEMPLATE_DEBUG = True, each node tracks it's origin.
-    node0 = select_template(template_names).nodelist[0]
-    attr = 'source' if hasattr(node0, 'source') else 'origin'  # attribute depends on object type
-    try:
-        template_filename = getattr(node0, attr)[0].name
-    except (AttributeError, IndexError):
-        return False
+    template = select_template(template_names)
+    if TemplateAdapter is not None and isinstance(template, TemplateAdapter):
+        # Django 1.8 template wrapper
+        template_filename = template.origin.name
+    else:
+        node0 = template.nodelist[0]
+        attr = 'source' if hasattr(node0, 'source') else 'origin'  # attribute depends on object type
+
+        try:
+            template_filename = getattr(node0, attr)[0].name
+        except (AttributeError, IndexError):
+            return False
 
     cache_stat = cache.get(cachekey + ".debug-stat")
     current_stat = os.path.getmtime(template_filename)
