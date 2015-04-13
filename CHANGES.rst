@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Version 1.0 (dev)
------------------
+Version 1.0
+-----------
 
 * Added Django 1.8 support.
 * Added caching support for the complete ``{% render_placeholder %}``, ``{% page_placeholder %}`` and ``{% sharedcontent %}`` tags.
