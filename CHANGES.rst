@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Version 1.01 (dev)
+------------------
+
+* Fix rendering in development for Django 1.4 and 1.5
+
+
 Version 1.0
 -----------
 
