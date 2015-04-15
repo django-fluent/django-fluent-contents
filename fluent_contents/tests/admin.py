@@ -45,7 +45,8 @@ class AdminTest(AppTestCase):
         self.admin_site.register(PlaceholderFieldTestPage, PlaceholderFieldTestPageAdmin)
         modeladmin = self.admin_site._registry[PlaceholderFieldTestPage]
 
-        # Making a POST call with an unused ID should add the recipe.
+        # Get all post data.
+        # Includes all inlines, so all inline formsets of other plugins will be added (with TOTAL_FORMS 0)
         contents_slot = PlaceholderFieldTestPage.contents.slot
         formdata = self._get_management_form_data(modeladmin)
         formdata.update({
@@ -63,6 +64,8 @@ class AdminTest(AppTestCase):
             'rawhtmltestitem-0-sort_order': '1',
             'rawhtmltestitem-0-html': u'<b>foo</b>',
         })
+
+        # Make a POST to the admin page.
         response = self._post_add(modeladmin, formdata)
         self.assertEqual(response.status_code, 302, "No redirect, received:\n\n{0}".format(self._render_response(response)))
 

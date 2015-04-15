@@ -3,12 +3,12 @@ from django.core.cache import cache
 from django.template import Template, Context, VariableDoesNotExist, TemplateSyntaxError
 from django.test import RequestFactory
 from template_analyzer import get_node_instances
+
 from fluent_contents import appsettings
-from fluent_contents.cache import get_placeholder_cache_key
 from fluent_contents.models import Placeholder
 from fluent_contents.templatetags.fluent_contents_tags import PagePlaceholderNode
 from fluent_contents.tests.testapp.models import TestPage, RawHtmlTestItem, PlaceholderFieldTestPage
-from fluent_contents.tests.utils import AppTestCase, override_settings
+from fluent_contents.tests.utils import AppTestCase
 from fluent_contents.analyzer import get_template_placeholder_data
 
 
