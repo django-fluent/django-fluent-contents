@@ -21,15 +21,7 @@ from django.utils.html import linebreaks, escape
 from django.utils.translation import ugettext as _, get_language
 from fluent_contents.cache import get_rendering_cache_key, get_placeholder_cache_key
 from fluent_contents.forms import ContentItemForm
-from fluent_contents.models import ContentItemOutput, ImmutableMedia
-
-try:
-    # Django 1.6 started using a sentinel value to indicate the default.
-    # The values 0 and None became allowed values which mean set+forget and indefinitely.
-    from django.core.cache.backends.base import DEFAULT_TIMEOUT
-except ImportError:
-    # Provide the value for older Django versions in a compatible way.
-    DEFAULT_TIMEOUT = object()
+from fluent_contents.models import ContentItemOutput, ImmutableMedia, DEFAULT_TIMEOUT
 
 
 # Some standard request processors to use in the plugins,
@@ -314,7 +306,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
             # Old 0.9 syntax, wrap it.
             # The 'cacheable' is implied in the rendering already, but this is just for completeness.
             media = self.get_frontend_media(instance)
-            return ContentItemOutput(result, media, cacheable=self.cache_output)
+            return ContentItemOutput(result, media, cacheable=self.cache_output, cache_timeout=self.cache_timeout)
 
 
     def get_output_cache_base_key(self, placeholder_name, instance):

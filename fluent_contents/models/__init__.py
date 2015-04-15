@@ -31,6 +31,14 @@ __all__ = (
 
 _ALLOWED_ROLES = list(dict(Placeholder.ROLES).keys())
 
+try:
+    # Django 1.6 started using a sentinel value to indicate the default.
+    # The values 0 and None became allowed values which mean set+forget and indefinitely.
+    from django.core.cache.backends.base import DEFAULT_TIMEOUT
+except ImportError:
+    # Provide the value for older Django versions in a compatible way.
+    DEFAULT_TIMEOUT = object()
+
 
 class PlaceholderData(object):
     """
@@ -101,10 +109,12 @@ class ContentItemOutput(SafeData):
     Instances can be treated like a string object,
     but also allows reading the :attr:`html` and :attr:`media` attributes.
     """
-    def __init__(self, html, media=None, cacheable=True):
+    def __init__(self, html, media=None, cacheable=True, cache_timeout=DEFAULT_TIMEOUT):
         self.html = conditional_escape(html)  # enforce consistency
         self.media = media or ImmutableMedia.empty_instance
-        self.cacheable = cacheable  # Mainly used internally for the _render_items()
+        # Mainly used internally for the _render_items():
+        self.cacheable = cacheable
+        self.cache_timeout = cache_timeout or DEFAULT_TIMEOUT
 
     # Pretend to be a string-like object.
     # Both makes the caller easier to use, and keeps compatibility with 0.9 code.
@@ -132,6 +142,7 @@ class ContentItemOutput(SafeData):
         html_str, css, js = state
         self.html = mark_safe(html_str)
         self.cacheable = True  # Implied by retrieving from cache.
+        self.cache_timeout = DEFAULT_TIMEOUT
 
         if not css and not js:
             self.media = ImmutableMedia.empty_instance

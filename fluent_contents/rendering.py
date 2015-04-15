@@ -18,7 +18,8 @@ from parler.utils.context import smart_override
 from fluent_contents import appsettings
 from fluent_contents.cache import get_rendering_cache_key, get_placeholder_cache_key_for_parent
 from fluent_contents.extensions import PluginNotFound, ContentPlugin
-from fluent_contents.models import ContentItemOutput, ImmutableMedia, get_parent_language_code
+from fluent_contents.models import ContentItemOutput, ImmutableMedia, get_parent_language_code, DEFAULT_TIMEOUT
+
 try:
     from django.template.backends.django import Template as TemplateAdapter
 except ImportError:
@@ -141,7 +142,12 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
 
         # Store the full-placeholder contents in the cache.
         if try_cache and output.cacheable and cache_key is not None:
-            cache.set(cache_key, output)
+            # The timeout takes notice of the minimal timeout used in plugins.
+            if output.cache_timeout is not DEFAULT_TIMEOUT:
+                cache.set(cache_key, output, output.cache_timeout)
+            else:
+                # Don't want to mix into the default 0/None issue.
+                cache.set(cache_key, output)
     else:
         logger.debug("- fetched cached output")
 
@@ -219,6 +225,8 @@ def _render_items(request, placeholder, items, parent_object=None, template_name
     item_output = {}
     output_ordering = []
     all_cacheable = True
+    all_timeout = DEFAULT_TIMEOUT
+
     placeholder_cache_name = '@global@' if placeholder is None else placeholder.slot
 
     if not hasattr(items, "non_polymorphic"):
@@ -237,17 +245,21 @@ def _render_items(request, placeholder, items, parent_object=None, template_name
         for i, contentitem in enumerate(items):
             output_ordering.append(contentitem.pk)
             output = None
-            try:
-                # Respect the cache output setting of the plugin
-                if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and contentitem.plugin.cache_output and contentitem.pk:
-                    output = contentitem.plugin.get_cached_output(placeholder_cache_name, contentitem)
+            # Respect the cache output setting of the plugin
+            if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT:
+                try:
+                    plugin = contentitem.plugin
+                except PluginNotFound:
+                    pass
+                else:
+                    if plugin.cache_output and contentitem.pk:
+                        output = plugin.get_cached_output(placeholder_cache_name, contentitem)
+                        all_timeout = _min_timeout(all_timeout, plugin.cache_timeout)
 
-                    # Support transition to new output format.
-                    if output is not None and not isinstance(output, ContentItemOutput):
-                        output = None
-                        logger.debug("Flushed cached output of {0}#{1} to store new ContentItemOutput format (key: {2})".format(contentitem.plugin.type_name, contentitem.pk, placeholder_cache_name))
-            except PluginNotFound:
-                pass
+                        # Support transition to new output format.
+                        if output is not None and not isinstance(output, ContentItemOutput):
+                            output = None
+                            logger.debug("Flushed cached output of {0}#{1} to store new ContentItemOutput format (key: {2})".format(plugin.type_name, contentitem.pk, placeholder_cache_name))
 
             # For debugging, ignore cached values when the template is updated.
             if output and settings.DEBUG:
@@ -365,7 +377,7 @@ def _render_items(request, placeholder, items, parent_object=None, template_name
     if not cachable:
         all_cacheable = False
 
-    return ContentItemOutput(merged_output, merged_media, cacheable=all_cacheable)
+    return ContentItemOutput(merged_output, merged_media, cacheable=all_cacheable, cache_timeout=all_timeout)
 
 
 def _wrap_placeholder_output(html, placeholder):
@@ -404,6 +416,18 @@ def _get_placeholder_name(placeholder):
         return "shared_content:{0}".format(sharedcontent.slug)
 
     return placeholder.slot
+
+
+def _min_timeout(val1, val2):
+    # Avoid min(int, object). That may work but it's
+    # a CPython implementation detail to compare that as "int" < "object"
+    if not isinstance(val2, six.integer_types):
+        return val1
+
+    if not isinstance(val1, six.integer_types):
+        return val2
+
+    return min(val1, val2)
 
 
 def _add_media(dest, media):

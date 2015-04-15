@@ -49,3 +49,19 @@ class RawHtmlTestItem(ContentItem):
 
     def __str__(self):
         return self.html
+
+
+@python_2_unicode_compatible
+class TimeoutTestItem(ContentItem):
+    """
+    The most basic "raw HTML" content item, for testing.
+    """
+    html = models.TextField("HTML code")
+
+    class Meta:
+        app_label = 'testapp'
+        verbose_name = 'Timeout test'
+        verbose_name_plural = 'Timeout test'
+
+    def __str__(self):
+        return self.html
