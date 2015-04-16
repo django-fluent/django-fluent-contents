@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Version 1.0.1 (dev)
--------------------
+Version 1.0.1
+-------------
 
 * Fix rendering in development for Django 1.4 and 1.5
 * Fix placeholder cache timeout values, take ``ContentPlugin.cache_output`` into account.
