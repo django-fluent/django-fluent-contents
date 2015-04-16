@@ -33,7 +33,7 @@ if not settings.configured:
             'fluent_contents.plugins.iframe',
             #'fluent_contents.plugins.markup',
             #'fluent_contents.plugins.oembeditem',
-            'fluent_contents.plugins.picture',
+            #'fluent_contents.plugins.picture',
             'fluent_contents.plugins.rawhtml',
             'fluent_contents.plugins.sharedcontent',
             #'fluent_contents.plugins.text',
