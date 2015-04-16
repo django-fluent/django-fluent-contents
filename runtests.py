@@ -24,6 +24,23 @@ if not settings.configured:
             'django.contrib.sites',
             'django.contrib.admin',
             'fluent_contents',
+            #'fluent_contents.plugins.code',
+            'fluent_contents.plugins.commentsarea',
+            #'fluent_contents.plugins.disquswidgets',
+            #'fluent_contents.plugins.formdesignerlink',
+            'fluent_contents.plugins.gist',
+            'fluent_contents.plugins.googledocsviewer',
+            'fluent_contents.plugins.iframe',
+            #'fluent_contents.plugins.markup',
+            #'fluent_contents.plugins.oembeditem',
+            'fluent_contents.plugins.picture',
+            'fluent_contents.plugins.rawhtml',
+            'fluent_contents.plugins.sharedcontent',
+            #'fluent_contents.plugins.text',
+            #'fluent_contents.plugins.twitterfeed',
+            #'disqus',
+            #'django_wysiwyg',
+            #'form_designer',
             'fluent_contents.tests.testapp',
         ),
         MIDDLEWARE_CLASSES = (
@@ -37,6 +54,9 @@ if not settings.configured:
         SITE_ID = 3,
         FLUENT_CONTENTS_CACHE_OUTPUT = True,
         FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT = True,
+        #DISQUS_API_KEY = 'test',
+        #DISQUS_WEBSITE_SHORTNAME = 'test',
+        STATIC_URL = '/static/',
     )
 
 def runtests():
