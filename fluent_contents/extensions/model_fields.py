@@ -3,34 +3,65 @@ This is an internal module for the plugin system,
 the API is exposed via __init__.py
 
 This package contains model fields which are usable for extensions.
+It has a soft coupling to the real apps that are being used,
+which makes it easy to switch the complete plugin file/url/html fields
+This avoids fixing the generic plugin to specific Django extensions or packages.
+Each project can use their preferred file browser/image browser/URL selector for the entire site.
+
+Using *django-any-urlfield* or *django-any-imagefield* is completely optional, yet highly recommended.
+When those apps are installed, they are used by the plugins.
 """
-import django
-from django.conf import settings
 from django.db import models
 from django.utils.safestring import mark_safe
 from fluent_contents.forms.widgets import WysiwygWidget
+from fluent_utils.softdeps.any_urlfield import AnyUrlField
+from fluent_utils.softdeps.any_imagefield import AnyFileField, AnyImageField
+
+_this_module_name = __name__
+def _get_path(cls):
+    module = cls.__module__
+    # Hide ".model_fields" unless the field is overwritten.
+    if module == _this_module_name:
+        module = 'fluent_contents.extensions'
+    return "{0}.{1}".format(module, cls.__name__)
 
 
-# Keep the apps optional, however, it's highly recommended to use them.
-# This avoids fixing the generic plugin to specific extensions.
-# Each project can use their preferred file browser/image browser/URL selector for the entire site.
-if 'any_urlfield' in settings.INSTALLED_APPS:
-    from any_urlfield.models import AnyUrlField
-    PluginUrlField = AnyUrlField
-else:
-    PluginUrlField = models.URLField
+class MigrationMixin(object):
+    def south_field_triple(self):
+        # Undo the softdep feature
+        # Show as Plugin..Field in the migrations.
+        from south.modelsinspector import introspector
+        path = _get_path(self.__class__)
+        args, kwargs = introspector(self)
+        return (path, args, kwargs)
+
+    def deconstruct(self):
+        # Don't masquerade as optional field like fluent-utils does,
+        # Show as Plugin..Field in the migrations.
+        name, path, args, kwargs = super(MigrationMixin, self).deconstruct()
+        path = _get_path(self.__class__)
+        return name, path, args, kwargs
 
 
-if 'any_imagefield' in settings.INSTALLED_APPS:
-    from any_imagefield.models import AnyFileField, AnyImageField
-    PluginFileField = AnyFileField
-    PluginImageField = AnyImageField
-else:
-    PluginFileField = models.FileField
-    PluginImageField = models.ImageField
+class PluginUrlField(MigrationMixin, AnyUrlField):
+    """
+    An URL field for plugins.
+    """
 
 
-class PluginHtmlField(models.TextField):
+class PluginFileField(MigrationMixin, AnyFileField):
+    """
+    A file upload field for plugins.
+    """
+
+
+class PluginImageField(MigrationMixin, AnyImageField):
+    """
+    A image upload field for plugins.
+    """
+
+
+class PluginHtmlField(MigrationMixin, models.TextField):
     """
     A large string field for HTML content; it's replaced with django-wysiwyg in the admin.
     """
@@ -47,16 +78,6 @@ class PluginHtmlField(models.TextField):
     def to_python(self, value):
         return mark_safe(value)
 
-
-# Tell South how to create custom fields
-if django.VERSION < (1,7):
-    try:
-        from south.modelsinspector import add_introspection_rules
-        add_introspection_rules([], [
-            "^fluent_contents\.extensions\.model_fields\.PluginHtmlField",
-        ])
-    except ImportError:
-        pass
 
 # Tell the Django admin it shouldn't override the widget because it's a TextField
 from django.contrib.admin import options

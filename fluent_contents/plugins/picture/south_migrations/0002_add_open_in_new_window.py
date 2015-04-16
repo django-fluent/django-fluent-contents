@@ -48,9 +48,9 @@ class Migration(SchemaMigration):
             'align': ('django.db.models.fields.CharField', [], {'max_length': '10', 'blank': 'True'}),
             'caption': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             u'contentitem_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['fluent_contents.ContentItem']", 'unique': 'True', 'primary_key': 'True'}),
-            'image': ('django.db.models.fields.files.ImageField', [], {'max_length': '100'}),
+            'image': ('fluent_contents.extensions.PluginImageField', [], {'max_length': '100'}),
             'in_new_window': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})
+            'url': ('fluent_contents.extensions.PluginUrlField', [], {'max_length': '300', 'blank': 'True'})
         }
     }
 

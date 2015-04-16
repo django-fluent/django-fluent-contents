@@ -14,10 +14,10 @@ class Migration(SchemaMigration):
         # Adding model 'PictureItem'
         db.create_table('contentitem_picture_pictureitem', (
             ('contentitem_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['fluent_contents.ContentItem'], unique=True, primary_key=True)),
-            ('image', self.gf('django.db.models.fields.files.ImageField')(max_length=100)),
+            ('image', self.gf('fluent_contents.extensions.PluginImageField')(max_length=100)),
             ('caption', self.gf('django.db.models.fields.TextField')(blank=True)),
             ('align', self.gf('django.db.models.fields.CharField')(max_length=10, blank=True)),
-            ('url', self.gf('django.db.models.fields.URLField')(max_length=200, blank=True)),
+            ('url', self.gf('fluent_contents.extensions.PluginUrlField')(max_length=300, blank=True)),
         ))
         db.send_create_signal('picture', ['PictureItem'])
 
@@ -58,8 +58,8 @@ class Migration(SchemaMigration):
             'align': ('django.db.models.fields.CharField', [], {'max_length': '10', 'blank': 'True'}),
             'caption': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'contentitem_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['fluent_contents.ContentItem']", 'unique': 'True', 'primary_key': 'True'}),
-            'image': ('django.db.models.fields.files.ImageField', [], {'max_length': '100'}),
-            'url': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'})
+            'image': ('fluent_contents.extensions.PluginImageField', [], {'max_length': '100'}),
+            'url': ('fluent_contents.extensions.PluginUrlField', [], {'max_length': '300', 'blank': 'True'})
         }
     }
 
