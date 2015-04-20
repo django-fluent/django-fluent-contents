@@ -24,3 +24,7 @@ class TimeoutTestPlugin(ContentPlugin):
 
     def render(self, request, instance, **kwargs):
         return mark_safe(instance.html)
+
+    def get_render_template(self, request, instance, **kwargs):
+        # This is for test_debug_is_method_overwritten()
+        return super(TimeoutTestPlugin, self).get_render_template(request, instance, **kwargs)

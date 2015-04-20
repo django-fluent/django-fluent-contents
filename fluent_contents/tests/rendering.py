@@ -1,7 +1,7 @@
 from django.test import RequestFactory
 from fluent_contents import rendering
 from fluent_contents.models import Placeholder, DEFAULT_TIMEOUT
-from fluent_contents.tests.testapp.models import TestPage, RawHtmlTestItem, TimeoutTestItem
+from fluent_contents.tests.testapp.models import TestPage, RawHtmlTestItem, TimeoutTestItem, OverrideBase
 from fluent_contents.tests.utils import AppTestCase
 
 
@@ -13,6 +13,9 @@ class RenderingTests(AppTestCase):
     install_apps = (
         'fluent_contents.tests.testapp',
     )
+
+    # Most rendering tests happen in the "templatetags" tests.
+    # These functions test the other constraints
 
 
     def test_render_timeout(self):
@@ -32,3 +35,20 @@ class RenderingTests(AppTestCase):
         output = rendering.render_placeholder(self.dummy_request, placeholder2, parent_object=page2, cachable=False)
         self.assertEqual(output.html, '<b>Item1!</b><b>Item2!</b>')
         self.assertEqual(output.cache_timeout, 60)  # this is that timeout that should be used for the placeholder cache item.
+
+
+    def test_debug_is_method_overwritten(self):
+        """
+        Test the "is method overwritten" logic to detect template changes
+        :return:
+        :rtype:
+        """
+        class OverrideSame(OverrideBase):
+            pass
+
+        class OverrideReplace(OverrideBase):
+            def get_render_template(self):
+                pass
+
+        self.assertFalse(rendering._is_method_overwritten(OverrideSame(), OverrideBase, 'get_render_template'))
+        self.assertTrue(rendering._is_method_overwritten(OverrideReplace(), OverrideBase, 'get_render_template'))

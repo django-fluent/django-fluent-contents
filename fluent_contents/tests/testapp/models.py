@@ -3,6 +3,12 @@ from django.db import models
 from fluent_contents.models import ContentItem, PlaceholderField, PlaceholderRelation, ContentItemRelation
 
 
+class OverrideBase(object):
+    # Needs to be in a different module for our tests.
+    def get_render_template(self):
+        pass
+
+
 class TestPage(models.Model):
     """
     A plain model, for testing placeholders.

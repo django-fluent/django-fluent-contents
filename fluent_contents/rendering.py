@@ -443,7 +443,7 @@ def _is_template_updated(request, contentitem, cachekey):
     # so the cached values can be ignored.
 
     plugin = contentitem.plugin
-    if plugin.get_render_template.__func__ is not ContentPlugin.get_render_template.__func__:
+    if _is_method_overwritten(plugin, ContentPlugin, 'get_render_template'):
         # oh oh, really need to fetch the real object.
         # Won't be needed that often.
         contentitem = contentitem.get_real_instance()  # Need to determine get_render_template(), this is only done with DEBUG=True
@@ -475,3 +475,20 @@ def _is_template_updated(request, contentitem, cachekey):
     if cache_stat != current_stat:
         cache.set(cachekey + ".debug-stat", current_stat)
         return True
+
+
+def _is_method_overwritten(object, cls, method_name):
+    # This is the easiest Python 2+3 compatible way to check if something was overwritten,
+    # assuming that it always happens in a different package (which it does in our case).
+    # This avoids the differences with im_func, or __func__ not being available.
+    #
+    # This worked in 2.7:
+    #   object.get_render_template.__func__ is not cls.get_render_template.__func__
+    #
+    # This worked in 3.2 and 3.3:
+    #   object.get_render_template.__func__ is not cls.get_render_template
+    #
+    # This all fails in 3.4, so just checking the __module__ instead.
+    method = getattr(object, method_name)
+    cls_method = getattr(cls, method_name)
+    return method.__module__ != cls_method.__module__
