@@ -32,5 +32,4 @@ The ``PlaceholderEditorInline`` class
 The ``get_content_item_inlines`` function
 -----------------------------------------
 
-.. autoclass:: fluent_contents.admin.get_content_item_inlines
-   :members:
+.. autofunction:: fluent_contents.admin.get_content_item_inlines

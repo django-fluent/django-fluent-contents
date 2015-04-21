@@ -46,24 +46,32 @@ class MigrationMixin(object):
 class PluginUrlField(MigrationMixin, AnyUrlField):
     """
     An URL field for plugins.
+
+    Use this instead of the standard :class:`~django.db.models.URLField`.
     """
 
 
 class PluginFileField(MigrationMixin, AnyFileField):
     """
     A file upload field for plugins.
+
+    Use this instead of the standard :class:`~django.db.models.FileField`.
     """
 
 
 class PluginImageField(MigrationMixin, AnyImageField):
     """
-    A image upload field for plugins.
+    An image upload field for plugins.
+
+    Use this instead of the standard :class:`~django.db.models.ImageField`.
     """
 
 
 class PluginHtmlField(MigrationMixin, models.TextField):
     """
-    A large string field for HTML content; it's replaced with django-wysiwyg in the admin.
+    A HTML field for plugins.
+
+    This field is replaced with a django-wysiwyg editor in the admin.
     """
     def __init__(self, *args, **kwargs):
         # This method override is primary included to improve the API documentation

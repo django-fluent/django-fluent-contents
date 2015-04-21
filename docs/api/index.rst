@@ -10,7 +10,6 @@ API documentation
    analyzer
    cache
    extensions
-   forms
    middleware
    models
    rendering

@@ -58,7 +58,7 @@ Once enabled, a shared content item is visible across all websites that the Djan
 
 This can be enabled to support content such as the text of an "About" or  "Terms and Conditions" page.
 
-When :ref:`FLUENT_PAGES_FILTER_SITE_ID` is disabled, this feature is nullified,
+When :ref:`FLUENT_CONTENTS_FILTER_SITE_ID` is disabled, this feature is nullified,
 as all contents is always available across all sites.
 
 

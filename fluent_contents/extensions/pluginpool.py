@@ -61,11 +61,12 @@ class PluginPool(object):
 
     def register(self, plugin):
         """
-        Make a plugin known by the CMS.
+        Make a plugin known to the CMS.
 
         :param plugin: The plugin class, deriving from :class:`ContentPlugin`.
+        :type plugin: :class:`ContentPlugin`
 
-        The plugin will be instantiated, just like Django does this with :class:`~django.contrib.admin.ModelAdmin` classes.
+        The plugin will be instantiated once, just like Django does this with :class:`~django.contrib.admin.ModelAdmin` classes.
         If a plugin is already registered, this will raise a :class:`PluginAlreadyRegistered` exception.
         """
         # Duck-Typing does not suffice here, avoid hard to debug problems by upfront checks.
@@ -158,6 +159,9 @@ class PluginPool(object):
     def get_plugin_by_model(self, model_class):
         """
         Return the corresponding plugin for a given model.
+
+        You can also use the :attr:`ContentItem.plugin <fluent_contents.models.ContentItem.plugin>` property directly.
+        This is the low-level function that supports that feature.
         """
         self._import_plugins()                       # could happen during rendering that no plugin scan happened yet.
         assert issubclass(model_class, ContentItem)  # avoid confusion between model instance and class here!

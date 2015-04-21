@@ -28,7 +28,10 @@ Model fields
 
 .. versionadded:: 0.9.0
 
-The model fields ensure a consistent look and feel between plugins. See :ref:`optional-integration` for more details.
+The model fields ensure a consistent look and feel between plugins.
+It's recommended to use these fields instead of the standard Django counterparts,
+so all plugins have a consistent look and feel.
+See :ref:`optional-integration` for more details.
 
 .. autoclass:: fluent_contents.extensions.PluginFileField
    :members:

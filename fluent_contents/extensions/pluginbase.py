@@ -118,13 +118,18 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         It is therefore not possible to store per-request state at the plugin object.
         This is similar to the behavior of the :class:`~django.contrib.admin.ModelAdmin` classes in Django.
 
-    To customize the admin, the :attr:`admin_form_template`, :attr:`admin_form` can be defined,
-    and a ``class Media`` can be included to provide extra CSS and JavaScript files for the admin interface.
+    To customize the admin, the :attr:`admin_form_template` and :attr:`form` can be defined.
     Some well known properties of the :class:`~django.contrib.admin.ModelAdmin` class can also be specified on plugins;
-    such as the
-    :attr:`~django.contrib.admin.ModelAdmin.raw_id_fields`,
-    :attr:`~django.contrib.admin.ModelAdmin.fieldsets` and
-    :attr:`~django.contrib.admin.ModelAdmin.readonly_fields` settings.
+    such as:
+
+    * :attr:`~django.contrib.admin.ModelAdmin.fieldsets`
+    * :attr:`~django.contrib.admin.ModelAdmin.filter_horizontal`
+    * :attr:`~django.contrib.admin.ModelAdmin.filter_vertical`
+    * :attr:`~django.contrib.admin.ModelAdmin.prepopulated_fields`
+    * :attr:`~django.contrib.admin.ModelAdmin.radio_fields`
+    * :attr:`~django.contrib.admin.ModelAdmin.raw_id_fields`
+    * :attr:`~django.contrib.admin.ModelAdmin.readonly_fields`
+    * A ``class Media`` to provide extra CSS and JavaScript files for the admin interface.
 
     The rendered output of a plugin is cached by default, assuming that most content is static.
     This also avoids extra database queries to retrieve the model objects.
@@ -162,13 +167,12 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     #: Cache the plugin output per language.
     #: This can be useful for sites which either:
     #:
-    #: * Display fallback content on pages, but still use `{% trans %}` inside templates.
+    #: * Display fallback content on pages, but still use ``{% trans %}`` inside templates.
     #: * Dynamically switch the language per request, and *share* content between multiple languages.
     #:
-    #: .. note::
-    #:    This option doesn't have to be used for translated CMS pages,
-    #:    as each page has it's own :class:`~fluent_contents.models.ContentItem` objects.
-    #:    It's only needed for rendering the *same* item in different languages.
+    #: This option does not have to be used for translated CMS pages,
+    #: as each page can have it's own set of :class:`~fluent_contents.models.ContentItem` objects.
+    #: It's only needed for rendering the *same* item in different languages.
     cache_output_per_language = False
 
     #: .. versionadded: 1.0
@@ -177,9 +181,11 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
 
     #: .. versionadded:: 1.0
     #: Tell which languages the plugin will cache.
+    #: It defaults to the language codes from the :django:setting:`LANGUAGES` setting.
     cache_supported_language_codes = [code for code, _ in settings.LANGUAGES]
 
-    #: The category to display the plugin at.
+    #: The category title to place the plugin into.
+    #: This is only used for the "Add Plugin" menu.
     category = None
 
     #: ..versionadded:: 1.0

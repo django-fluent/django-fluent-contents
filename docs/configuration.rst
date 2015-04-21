@@ -34,13 +34,20 @@ Rendering options
 FLUENT_CONTENTS_CACHE_OUTPUT
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, the HTML output of all plugins is cached.
-The output is only updated when a staff member saves changes in in the Django admin.
-Caching greatly improves the performance of the web site, as very little database queries are needed.
-Most pages look the same for every visitor anyways.
+Typically, most web site pages look the same for every visitor.
+Hence, this module takes the following default policies:
 
-In case this conflicts with your caching setup,
-disable this feature side-wide by setting this flag to ``False``.
+* the output of plugins is cached by default.
+* the cache is refreshed when a staff member updates saves changes in in the Django admin.
+* each :class:`~fluent_contents.extensions.ContentPlugin` can specify custom :ref:`caching settings <output-caching>` to influence this.
+* caching is even enabled for development (to test production setup), but changes in templates are detected.
+
+Caching greatly improves the performance of the web site, as very little database queries are needed.
+If you have a few custom plugins that should not be cached per request (e.g. a contact form),
+update the :ref:`output caching <output-caching>` settings of that specific plugin.
+
+However, in case this is all too complex, you can disable the caching mechanism entirely.
+The caching can be disabled by setting this option to ``False``.
 
 .. _FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT:
 
@@ -55,9 +62,11 @@ Hence, the default value is ``False``.
 
 Without this setting, only individual content plugins are cached.
 The surrounding objects will still be queried from the database.
-That includes the :class:`~fluent_contents.models.Placeholder`,
-:class:`~fluent_contents.plugins.sharedcontent.models.SharedContent`
-and the base class of each :class:`~fluent_contents.models.ContentItem` model.
+That includes:
+
+ * The :class:`~fluent_contents.models.Placeholder`
+ * Any :class:`~fluent_contents.plugins.sharedcontent.models.SharedContent` model.
+ * The base class of each :class:`~fluent_contents.models.ContentItem` model.
 
 .. _FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE:
 

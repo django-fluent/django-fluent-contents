@@ -86,11 +86,9 @@ The standard :func:`~fluent_contents.extensions.ContentPlugin.render` method bas
 * It uses the the context provided by :func:`~fluent_contents.extensions.ContentPlugin.get_context`.
 * It uses :func:`~fluent_contents.extensions.ContentPlugin.render_to_string` method which adds the ``STATIC_URL`` and ``MEDIA_URL`` variables in the template.
 
-.. warning::
-
-    When implementing a custom :func:`~fluent_contents.extensions.ContentPlugin.render` method, you need to take care of output escaping as well.
-    Unless the content is meant to be used as HTML, the variables should be escaped with the :func:`django.utils.html.escape` function.
-    Hence, it's preferred to use a template unless it's either too much hassle, or the workflow is too complex.
+The output will be escaped by default, so use Django's :func:`~django.utils.html.format_html`
+or :func:`~django.utils.safestring.mark_safe` when content should not be escaped.
+Hence, it's preferred to use a template unless that makes things more complex.
 
 Internally, the :func:`~fluent_contents.extensions.ContentPlugin.render_to_string` method
 wraps the rendering context in a :func:`~fluent_contents.extensions.PluginContext`.
@@ -163,6 +161,7 @@ For example:
 Equally, there is a :attr:`~fluent_contents.extensions.ContentPlugin.frontend_media` property,
 and :attr:`~fluent_contents.extensions.ContentPlugin.get_frontend_media` method.
 
+.. _output-caching:
 
 Output caching
 --------------
@@ -174,9 +173,11 @@ and most pages look the same for every visitor anyways.
 * When the plugin output is dynamic set the :attr:`~fluent_contents.extensions.ContentPlugin.cache_output` to ``False``.
 * When the plugin output differs per :django:setting:`SITE_ID` only,
   set :attr:`~fluent_contents.extensions.ContentPlugin.cache_output_per_site` to ``True``.
-* When the plugin oputput differs per language,
+* When the plugin output differs per language,
   set :attr:`~fluent_contents.extensions.ContentPlugin.cache_output_per_language` to ``True``.
-* The caching can be disabled entirely project-wide using the :ref:`FLUENT_CONTENTS_CACHE_OUTPUT` setting.
+* When the output should be refreshed more often,
+  change the :attr:`~fluent_contents.extensions.ContentPlugin.cache_timeout`.
+* As last resort, the caching can be disabled entirely project-wide using the :ref:`FLUENT_CONTENTS_CACHE_OUTPUT` setting.
   This should be used temporary for development, or special circumstances only.
 
 Most plugins deliver exactly the same content for every request, hence the setting is tuned for speed by default.
