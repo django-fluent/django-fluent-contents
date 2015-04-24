@@ -119,7 +119,12 @@ class BaseContentItemInline(GenericInlineModelAdmin):
             media += self.plugin.media  # form fields first, plugin afterwards
         return media
 
-
+    def queryset(self, request):
+        try:
+            return super(BaseContentItemInline, self).get_queryset(request)
+        except AttributeError:
+            return super(BaseContentItemInline, self).queryset(request)
+    
     def get_fieldsets(self, request, obj=None):
         # If subclass declares fieldsets, this is respected
         if not self.extra_fieldsets or self.declared_fieldsets:
