@@ -1,4 +1,5 @@
 from abc import abstractmethod
+import django
 from django.conf.urls import patterns, url
 from django.contrib.admin import ModelAdmin
 from django.contrib.admin.helpers import InlineAdminFormSet
@@ -270,7 +271,12 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
         # as some form fields (e.g. picture field or MultiValueField) have a different representation.
         # The only way to pass a form copy to the client is by actually rendering it.
         # Hence, emulating change_view code here:
-        formset = FormSet(instance=obj, prefix='', queryset=inline.queryset(request))
+        if django.VERSION >= (1,6):
+            queryset = inline.get_queryset(request)
+        else:
+            queryset = inline.queryset(request)
+
+        formset = FormSet(instance=obj, prefix='', queryset=queryset)
         fieldsets = list(inline.get_fieldsets(request, obj))
         readonly = list(inline.get_readonly_fields(request, obj))
         prepopulated = dict(inline.get_prepopulated_fields(request, obj))
