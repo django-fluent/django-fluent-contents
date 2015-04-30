@@ -1,6 +1,15 @@
 Changelog
 =========
 
+Changes in git
+--------------
+
+* Fix using ``ContentItemInline.get_queryset()`` in Django 1.6/1.7/1.8
+* Fix Python 3.4 support for development (fixed ``_is_template_updated`` / "is method overwritten" check)
+* Fix support for returning an ``HttpRedirectRequest`` in the ``ContentPlugin.render()`` method.
+* Fix ``copy_to_placeholder()`` to accidently setting an empty "FK cache" entry for the ``ContentItem.parent`` field.
+
+
 Version 1.0.1
 -------------
 
