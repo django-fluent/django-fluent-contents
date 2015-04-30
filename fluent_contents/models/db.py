@@ -315,7 +315,12 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
         copy.placeholder = placeholder
         copy.parent_type = placeholder.parent_type
         copy.parent_id = placeholder.parent_id
-        setattr(copy, '_parent_cache', getattr(placeholder, '_parent_cache', None))  # by GenericForeignKey (_meta.virtual_fields[0].cache_attr)
+
+        try:
+            # Copy cache property set by GenericForeignKey (_meta.virtual_fields[0].cache_attr)
+            setattr(copy, '_parent_cache', placeholder._parent_cache)
+        except AttributeError:
+            pass
 
         if sort_order is not None:
             copy.sort_order = sort_order
