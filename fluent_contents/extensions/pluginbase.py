@@ -307,7 +307,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         elif isinstance(result, (HttpResponseRedirect, HttpResponsePermanentRedirect)):
             # Can't return a HTTP response from a plugin that is rendered as a string in a template.
             # However, this response can be translated into our custom exception-based redirect mechanism.
-            return self.redirect(result.url, result.status_code)
+            return self.redirect(result['Location'], result.status_code)
         else:
             # Old 0.9 syntax, wrap it.
             # The 'cacheable' is implied in the rendering already, but this is just for completeness.
