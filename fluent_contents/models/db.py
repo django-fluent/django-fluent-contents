@@ -305,6 +305,30 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
             return None
 
 
+    def move_to_placeholder(self, placeholder, sort_order=None):
+        """
+        .. versionadded: 1.0.2 Move this content item to a new placeholder.
+
+        The object is saved afterwards.
+        """
+        # Transfer parent
+        self.placeholder = placeholder
+        self.parent_type = placeholder.parent_type
+        self.parent_id = placeholder.parent_id
+
+        try:
+            # Copy cache property set by GenericForeignKey (_meta.virtual_fields[0].cache_attr)
+            setattr(self, '_parent_cache', placeholder._parent_cache)
+        except AttributeError:
+            pass
+
+        if sort_order is not None:
+            self.sort_order = sort_order
+        self.save()
+
+    move_to_placeholder.alters_data = True
+
+
     def copy_to_placeholder(self, placeholder, sort_order=None, in_place=False):
         """
         .. versionadded: 1.0 Copy this content item to a new placeholder.
@@ -322,21 +346,7 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
         copy.id = None  # reset this base class.
         copy._state.adding = True
 
-        # Transfer parent
-        copy.placeholder = placeholder
-        copy.parent_type = placeholder.parent_type
-        copy.parent_id = placeholder.parent_id
-
-        try:
-            # Copy cache property set by GenericForeignKey (_meta.virtual_fields[0].cache_attr)
-            setattr(copy, '_parent_cache', placeholder._parent_cache)
-        except AttributeError:
-            pass
-
-        if sort_order is not None:
-            copy.sort_order = sort_order
-
-        copy.save()
+        copy.move_to_placeholder(placeholder, sort_order=sort_order)
         return copy
 
     copy_to_placeholder.alters_data = True
