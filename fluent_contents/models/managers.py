@@ -118,7 +118,7 @@ class ContentItemQuerySet(PolymorphicQuerySet):
         qs = self.all()  # Get clone
         for item in qs:
             # Change the item directly in the resultset.
-            item.move_to_placeholder(placeholder, sort_order=sort_order, in_place=True)
+            item.move_to_placeholder(placeholder, sort_order=sort_order)
             if sort_order is not None:
                 sort_order += 1
 
