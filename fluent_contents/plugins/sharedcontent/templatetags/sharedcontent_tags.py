@@ -6,14 +6,13 @@ from fluent_contents import appsettings
 from fluent_contents import rendering
 from fluent_contents.plugins.sharedcontent.cache import get_shared_content_cache_key_ptr, get_shared_content_cache_key
 from fluent_contents.plugins.sharedcontent.models import SharedContent
-from tag_parser import template_tag
 from tag_parser.basetags import BaseAssignmentOrOutputNode
 from fluent_contents.utils.templatetags import is_true, extract_literal
 
 register = Library()
 
 
-@template_tag(register, 'sharedcontent')
+@register.tag('sharedcontent')
 def sharedcontent(parser, token):
     """
     Render a shared content block. Usage:
