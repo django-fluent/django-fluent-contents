@@ -111,7 +111,8 @@ class ContentItemQuerySet(PolymorphicQuerySet):
 
     def copy_to_placeholder(self, placeholder, sort_order=None):
         """
-        Copy the entire queryset to a new object.
+        .. versionadded: 1.0 Copy the entire queryset to a new object.
+
         Returns a queryset with the newly created objects.
         """
         qs = self.all()  # Get clone
@@ -123,6 +124,7 @@ class ContentItemQuerySet(PolymorphicQuerySet):
 
         return qs
 
+    copy_to_placeholder.alters_data = True
 
 
 class ContentItemManager(PolymorphicManager):

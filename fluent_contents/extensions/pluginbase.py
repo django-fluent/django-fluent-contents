@@ -188,7 +188,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     #: This is only used for the "Add Plugin" menu.
     category = None
 
-    #: ..versionadded:: 1.0
+    #: .. versionadded:: 1.0
     #: By default, the plugin is rendered in the :attr:`language_code` it's written in.
     #: It can be disabled explicitly in case the content should be rendered language agnostic.
     #: For plugins that cache output per language, this will be done already.

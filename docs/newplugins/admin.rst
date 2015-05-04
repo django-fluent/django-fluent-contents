@@ -115,6 +115,8 @@ The following attributes control the overall appearance of form fields in the ad
   A list of fields to display as readonly.
 
 
+.. _custom-model-fields:
+
 Custom model fields
 -------------------
 

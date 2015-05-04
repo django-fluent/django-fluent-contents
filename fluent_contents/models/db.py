@@ -195,7 +195,18 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
             class Meta:
                 verbose_name = "Example item"
 
-    The `ContentItem` class is polymorphic; when querying the objects, the derived instances will be returned automatically:
+    All standard Django model fields can be used in a `ContentItem`. Some things to note:
+
+    * There are special fields for URL, WYSIWYG and file/image fields, which keep the admin styles consistent.
+      These are the :class:`~fluent_contents.extensions.PluginFileField`,
+      :class:`~fluent_contents.extensions.PluginHtmlField`,
+      :class:`~fluent_contents.extensions.PluginImageField` and
+      :class:`~fluent_contents.extensions.PluginUrlField` fields.
+      See the :ref:`custom-model-fields` section for more details.
+    * When adding a M2M field, make sure to override :attr:`copy_to_placeholder`, so the M2M data will be copied.
+
+    When querying the objects through the ORM, the derived instances will be returned automatically.
+    This happens because the `ContentItem` class is polymorphic:
 
     >>> from fluent_contents.models import ContentItem
     >>> ContentItem.objects.all()
@@ -296,7 +307,7 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
 
     def copy_to_placeholder(self, placeholder, sort_order=None, in_place=False):
         """
-        Copy this content item to a new placeholder.
+        .. versionadded: 1.0 Copy this content item to a new placeholder.
 
         Note: if you have M2M relations on the model,
         override this method to transfer those values.
