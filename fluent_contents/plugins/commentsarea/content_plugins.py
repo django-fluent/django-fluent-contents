@@ -15,7 +15,6 @@ The least you need to do, is:
    * It could contains links to the blog page.
    * It could redirect automatically back to the blog in a few seconds.
 """
-from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.commentsarea.models import CommentsAreaItem
 
@@ -23,5 +22,5 @@ from fluent_contents.plugins.commentsarea.models import CommentsAreaItem
 @plugin_pool.register
 class CommentsAreaPlugin(ContentPlugin):
     model = CommentsAreaItem
-    category = _('Interactivity')
+    category = ContentPlugin.INTERACTIVITY
     render_template = "fluent_contents/plugins/commentsarea/commentsarea.html"

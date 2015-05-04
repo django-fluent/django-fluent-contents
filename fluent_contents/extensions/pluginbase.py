@@ -135,6 +135,18 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     This also avoids extra database queries to retrieve the model objects.
     In case the plugin needs to output content dynamically, include ``cache_output = False`` in the plugin definition.
     """
+    #: .. versionadded:: 1.1
+    #:    Category for media
+    MEDIA = _("Media")
+    #: .. versionadded:: 1.1
+    #:    Category for programming plugins
+    PROGRAMMING = _("Programming")
+    #: .. versionadded:: 1.1
+    #:    Category for interactive plugins (e.g. forms, comments)
+    INTERACTIVITY = _("Interactivity")
+    #: .. versionadded:: 1.1
+    #:    Category for advanced plugins (e.g. raw HTML, iframes)
+    ADVANCED = _("Advanced")
 
     # -- Settings to override:
 
@@ -186,6 +198,8 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
 
     #: The category title to place the plugin into.
     #: This is only used for the "Add Plugin" menu.
+    #: You can provide a string here, :func:`~django.utils.translation.ugettext_lazy`
+    #: or one of the predefined constants (:attr:`MEDIA`, :attr:`INTERACTIVITY:`, :attr:`PROGRAMMING` and :attr:`ADVANCED`).
     category = None
 
     #: .. versionadded:: 1.0

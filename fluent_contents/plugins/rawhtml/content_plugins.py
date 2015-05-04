@@ -1,5 +1,4 @@
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.rawhtml.models import RawHtmlItem
 
@@ -12,7 +11,7 @@ class RawHtmlPlugin(ContentPlugin):
     for example for Google Docs, YouTube or SlideShare.
     """
     model = RawHtmlItem
-    category = _('Advanced')
+    category = ContentPlugin.ADVANCED
     admin_form_template = ContentPlugin.ADMIN_TEMPLATE_WITHOUT_LABELS
 
     class Media:

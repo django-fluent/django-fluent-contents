@@ -11,7 +11,6 @@ For example, use:
 """
 from inspect import getargspec
 from django.contrib.messages.api import get_messages
-from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.formdesignerlink.models import FormDesignerLink
 from form_designer import settings as form_designer_settings
@@ -30,7 +29,7 @@ for _name in ('disable_redirection', 'is_cms_plugin'):
 @plugin_pool.register
 class FormDesignerLinkPlugin(ContentPlugin):
     model = FormDesignerLink
-    category = _('Interactivity')
+    category = ContentPlugin.INTERACTIVITY
     cache_output = False
 
 

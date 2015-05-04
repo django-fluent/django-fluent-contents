@@ -3,7 +3,6 @@ Plugin for rendering Gist snippets, hosted by Github.
 """
 from django.utils.http import urlquote
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.gist.models import GistItem
 
@@ -11,7 +10,7 @@ from fluent_contents.plugins.gist.models import GistItem
 @plugin_pool.register
 class GistPlugin(ContentPlugin):
     model = GistItem
-    category = _('Programming')
+    category = ContentPlugin.PROGRAMMING
 
 
     def render(self, request, instance, **kwargs):

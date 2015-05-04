@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
 from fluent_contents import appsettings
 from fluent_contents.extensions import ContentPlugin, ContentItemForm, plugin_pool
 from fluent_contents.plugins.sharedcontent.models import SharedContentItem
@@ -27,7 +26,7 @@ class SharedContentPlugin(ContentPlugin):
     """
     model = SharedContentItem
     form = SharedContentItemForm
-    category = _('Advanced')
+    category = ContentPlugin.ADVANCED
     cache_output = False                # Caching happens via the placeholder/template tag.
     render_ignore_item_language = True  # Only switch for individual items, not this entire block.
 

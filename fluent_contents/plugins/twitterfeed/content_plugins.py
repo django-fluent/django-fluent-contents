@@ -1,11 +1,10 @@
-from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.twitterfeed import appsettings
 from fluent_contents.plugins.twitterfeed.models import TwitterRecentEntriesItem, TwitterSearchItem
 
 
 class BaseTwitterPlugin(ContentPlugin):
-    category = _('Media')
+    category = ContentPlugin.MEDIA
 
     def get_context(self, request, instance, **kwargs):
         context = super(BaseTwitterPlugin, self).get_context(request, instance, **kwargs)

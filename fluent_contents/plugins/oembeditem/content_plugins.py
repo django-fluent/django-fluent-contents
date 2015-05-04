@@ -1,7 +1,6 @@
 """
 Definition of the plugin.
 """
-from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.oembeditem.models import OEmbedItem
 import re
@@ -12,7 +11,7 @@ re_safe = re.compile(r'[^\w_-]')
 @plugin_pool.register
 class OEmbedPlugin(ContentPlugin):
     model = OEmbedItem
-    category = _('Media')
+    category = ContentPlugin.MEDIA
     admin_form_template = "admin/fluent_contents/plugins/oembeditem/admin_form.html"
     render_template = "fluent_contents/plugins/oembed/default.html"
 
