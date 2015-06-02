@@ -53,7 +53,11 @@ setup(
         'formdesignerlink': ['django-form-designer'],
         'markup': ['docutils', 'textile', 'Markdown>=1.7'],
         'oembeditem': ['micawber>=0.2.6'],
-        'text': ['django-wysiwyg>=0.5.1', 'html5lib'],
+        'text': [
+            'django-wysiwyg>=0.5.1',
+            # Work around https://github.com/html5lib/html5lib-python/issues/189
+            'html5lib >= 0.999, != 0.9999, != 1.0b5, != 0.99999, != 1.0b6',
+        ],
         'twitterfeed': ['twitter-text-py>=1.0.3'],
     },
     dependency_links = [
@@ -75,7 +79,7 @@ setup(
     test_suite = 'runtests',
     tests_require = [
         'django-wysiwyg>=0.5.1',
-        'html5lib',
+        'html5lib >= 0.999, != 0.9999, != 1.0b5, != 0.99999, != 1.0b6',
     ],
 
     zip_safe=False,
