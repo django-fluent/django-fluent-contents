@@ -36,10 +36,10 @@ if not settings.configured:
             #'fluent_contents.plugins.picture',
             'fluent_contents.plugins.rawhtml',
             #'fluent_contents.plugins.sharedcontent',
-            #'fluent_contents.plugins.text',
+            'fluent_contents.plugins.text',
             #'fluent_contents.plugins.twitterfeed',
             #'disqus',
-            #'django_wysiwyg',
+            'django_wysiwyg',
             #'form_designer',
             'fluent_contents.tests.testapp',
         ),
@@ -59,8 +59,22 @@ if not settings.configured:
         STATIC_URL = '/static/',
     )
 
+if sys.version_info[0] == 2:
+    DEFAULT_TEST_APPS = [
+        'fluent_contents',
+        'fluent_contents.plugins.text',
+    ]
+else:
+    DEFAULT_TEST_APPS = [
+        'fluent_contents',
+        'text',
+    ]
+
+
 def runtests():
-    argv = sys.argv[:1] + ['test', 'fluent_contents', '--traceback'] + sys.argv[1:]
+    other_args = list(filter(lambda arg: arg.startswith('-'), sys.argv[1:]))
+    test_apps = list(filter(lambda arg: not arg.startswith('-'), sys.argv[1:])) or DEFAULT_TEST_APPS
+    argv = sys.argv[:1] + ['test', '--traceback'] + other_args + test_apps
     execute_from_command_line(argv)
 
 if __name__ == '__main__':
