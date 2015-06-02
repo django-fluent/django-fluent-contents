@@ -1,4 +1,5 @@
 from pprint import pprint
+from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
 from django.template import Template, Context, VariableDoesNotExist, TemplateSyntaxError
 from django.test import RequestFactory
@@ -17,6 +18,7 @@ class TemplateTagTests(AppTestCase):
     Test cases for template tags
     """
     dummy_request = RequestFactory().get('/')
+    dummy_request.user = AnonymousUser()
     install_apps = (
         'fluent_contents.tests.testapp',
     )
