@@ -59,15 +59,16 @@ if not settings.configured:
         STATIC_URL = '/static/',
     )
 
-if sys.version_info[0] == 2:
+if django.VERSION < (1,6):
+    # Different test runner, needs to name all apps,
+    # it doesn't locate a tests*.py in each subfolder.
     DEFAULT_TEST_APPS = [
         'fluent_contents',
-        'fluent_contents.plugins.text',
+        'text',
     ]
 else:
     DEFAULT_TEST_APPS = [
         'fluent_contents',
-        'text',
     ]
 
 
