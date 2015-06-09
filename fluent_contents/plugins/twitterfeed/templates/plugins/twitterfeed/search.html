@@ -1,7 +1,7 @@
 {% extends "plugins/twitterfeed/base.html" %}
 
-{% block jsoptions %}
-      query: '{{ instance.query }}{% if not instance.include_retweets %}+exclude:retweets{% endif %}',
-      {% if not instance.include_replies %}filter: function(t){ return t.tweet_raw_text.substring(0,1) != '@'; },{% endif %}
-      {% if not instance.include_retweets or not include_replies %}fetch: Math.max(20, {{ instance.amount }} * 4),{% endif %}
+{% load i18n %}
+
+{% block htmlcontainer %}
+  <a class="twitter-timeline" href="https://twitter.com/search?q={{ instance.query|iriencode }}" data-widget-id="{{ instance.widget_id }}" data-tweet-limit="{{ instance.amount }}" data-show-replies="false">{% trans "Tweet" %}</a>
 {% endblock %}
