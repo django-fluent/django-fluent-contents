@@ -15,6 +15,7 @@ from django.utils.html import conditional_escape, escape
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
 from parler.utils.context import smart_override
+from fluent_utils.django_compat import is_queryset_empty
 from fluent_contents import appsettings
 from fluent_contents.cache import get_rendering_cache_key, get_placeholder_cache_key_for_parent
 from fluent_contents.extensions import PluginNotFound, ContentPlugin
@@ -24,17 +25,6 @@ try:
     from django.template.backends.django import Template as TemplateAdapter
 except ImportError:
     TemplateAdapter = None
-
-if django.VERSION >= (1,6):
-    def _is_queryset_empty(queryset):
-        """
-        Check whether a queryset is empty by using ``.none()``.
-        """
-        return queryset.query.is_empty()
-else:
-    from django.db.models.query import EmptyQuerySet
-    def _is_queryset_empty(queryset):
-        return isinstance(queryset, EmptyQuerySet)
 
 # This code is separate from the templatetags,
 # so it can be called outside the templates as well.
@@ -125,7 +115,7 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
     if output is None:
         # No full-placeholder cache. Get the items
         items = placeholder.get_content_items(parent_object, limit_parent_language=limit_parent_language).non_polymorphic()
-        if _LOG_DEBUG and _is_queryset_empty(items):  # Detect qs.none() was applied
+        if _LOG_DEBUG and is_queryset_empty(items):  # Detect qs.none() was applied
             logging.debug("- skipping regular language, parent object has no translation for it.")
 
         if fallback_language \
