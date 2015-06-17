@@ -169,13 +169,14 @@ class ContentItemMetaClass(PolymorphicModelBase):
                     new_class._meta.original_attrs['db_table'] = new_class._meta.db_table
 
             # Enforce good manners. The name is often not visible, except for the delete page.
-            if not hasattr(new_class, '__str__') or new_class.__str__ == ContentItem.__str__:
-                if PY3:
-                    raise TypeError("The {0} class should implement a __str__() function.".format(name))
-                else:
-                    # The first check is for python_2_unicode_compatible tricks, also check for __unicode__ only.
-                    if not hasattr(new_class, '__unicode__') or new_class.__unicode__ == ContentItem.__unicode__:
-                        raise TypeError("The {0} class should implement a __unicode__() or __str__() function.".format(name))
+            if not new_class._meta.abstract:
+                if not hasattr(new_class, '__str__') or new_class.__str__ == ContentItem.__str__:
+                    if PY3:
+                        raise TypeError("The {0} class should implement a __str__() function.".format(name))
+                    else:
+                        # The first check is for python_2_unicode_compatible tricks, also check for __unicode__ only.
+                        if not hasattr(new_class, '__unicode__') or new_class.__unicode__ == ContentItem.__unicode__:
+                            raise TypeError("The {0} class should implement a __unicode__() or __str__() function.".format(name))
 
 
         return new_class
