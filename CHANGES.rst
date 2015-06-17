@@ -5,10 +5,12 @@ Changes in git
 --------------
 
 * Added ``ContentItem.move_to_placeholder()`` and ``ContentItem.objects.move_to_placeholder()`` API functions
+* Added check against bad html5lib versions that break HTML cleanup.
 * Fix using ``ContentItemInline.get_queryset()`` in Django 1.6/1.7/1.8
 * Fix Python 3.4 support for development (fixed ``_is_template_updated`` / "is method overwritten" check)
 * Fix support for returning an ``HttpRedirectRequest`` in the ``ContentPlugin.render()`` method.
 * Fix ``copy_to_placeholder()`` to accidently setting an empty "FK cache" entry for the ``ContentItem.parent`` field.
+* Fix ``TypeError`` when abstract ``ContentItem`` class has no ``__str__()`` method.
 
 
 Version 1.0.1
