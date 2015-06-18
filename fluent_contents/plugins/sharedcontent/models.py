@@ -46,7 +46,7 @@ class SharedContent(CachedModelMixin, TranslatableModel):
         ordering = ('slug',)
 
     def __str__(self):
-        return self.title
+        return self.safe_translation_getter('title', self.slug)
 
     def __init__(self, *args, **kwargs):
         super(SharedContent, self).__init__(*args, **kwargs)

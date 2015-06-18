@@ -12,6 +12,7 @@ Changes in git
 * Fix ``copy_to_placeholder()`` to accidently setting an empty "FK cache" entry for the ``ContentItem.parent`` field.
 * Fix ``TypeError`` when abstract ``ContentItem`` class has no ``__str__()`` method.
 * Fix initial migration for sharedcontent plugin.
+* Fix handling of ``SharedContent.__str__()`` for missing translations.
 
 
 Version 1.0.1
