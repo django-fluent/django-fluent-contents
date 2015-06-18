@@ -32,7 +32,7 @@ class SharedContent(CachedModelMixin, TranslatableModel):
     # NOTE: settings such as "template_name", and which plugins are allowed can be added later.
 
     # Adding the reverse relation for ContentItem objects
-    # causes the admin to list these objects when moving the shared content
+    # causes the admin to list the related objects when deleting this model.
     contentitem_set = ContentItemRelation()
 
     objects = SharedContentManager()
