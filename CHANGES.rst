@@ -11,6 +11,7 @@ Changes in git
 * Fix support for returning an ``HttpRedirectRequest`` in the ``ContentPlugin.render()`` method.
 * Fix ``copy_to_placeholder()`` to accidently setting an empty "FK cache" entry for the ``ContentItem.parent`` field.
 * Fix ``TypeError`` when abstract ``ContentItem`` class has no ``__str__()`` method.
+* Fix initial migration for sharedcontent plugin.
 
 
 Version 1.0.1

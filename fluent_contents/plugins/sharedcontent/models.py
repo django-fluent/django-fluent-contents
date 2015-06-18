@@ -9,7 +9,7 @@ from fluent_contents.models import ContentItem, PlaceholderField, ContentItemRel
 from fluent_contents.plugins.sharedcontent.cache import get_shared_content_cache_key_ptr
 from parler.models import TranslatableModel, TranslatedFields
 from .managers import SharedContentManager
-from .utils import get_current_site
+from .utils import get_current_site_id
 
 
 @python_2_unicode_compatible
@@ -21,7 +21,7 @@ class SharedContent(CachedModelMixin, TranslatableModel):
         title = models.CharField(_("Title"), max_length=200)
     )
 
-    parent_site = models.ForeignKey(Site, editable=False, default=get_current_site)
+    parent_site = models.ForeignKey(Site, editable=False, default=get_current_site_id)
     slug = models.SlugField(_("Template code"), help_text=_("This unique name can be used refer to this content in in templates."))
     is_cross_site = models.BooleanField(_("Share between all sites"), blank=True, default=False,
         help_text=_("This allows contents can be shared between multiple sites in this project.<br>\n"

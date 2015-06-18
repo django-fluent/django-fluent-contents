@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('slug', models.SlugField(help_text='This unique name can be used refer to this content in in templates.', verbose_name='Template code')),
                 ('is_cross_site', models.BooleanField(default=False, help_text='This allows contents can be shared between multiple sites in this project.<br>\nMake sure that any URLs in the content work with all sites where the content is displayed.', verbose_name='Share between all sites')),
-                ('parent_site', models.ForeignKey(default=fluent_contents.plugins.sharedcontent.utils.get_current_site, editable=False, to='sites.Site')),
+                ('parent_site', models.ForeignKey(default=fluent_contents.plugins.sharedcontent.utils.get_current_site_id, editable=False, to='sites.Site')),
             ],
             options={
                 'ordering': ('slug',),
