@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Changes in git
---------------
+Version 1.0.2
+-------------
 
 * Added ``ContentItem.move_to_placeholder()`` and ``ContentItem.objects.move_to_placeholder()`` API functions
 * Added check against bad html5lib versions that break HTML cleanup.
