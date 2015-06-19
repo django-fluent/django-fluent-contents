@@ -13,6 +13,9 @@ if 'sdist' in sys.argv or 'develop' in sys.argv:
     try:
         from django.core import management
         management.call_command('compilemessages', stdout=sys.stderr, verbosity=1)
+    except ImportError:
+        if 'sdist' in sys.argv:
+            raise
     finally:
         os.chdir('..')
 
@@ -52,7 +55,7 @@ setup(
         'disquscommentsarea': ['django-disqus'],
         'formdesignerlink': ['django-form-designer'],
         'markup': ['docutils', 'textile', 'Markdown>=1.7'],
-        'oembeditem': ['micawber>=0.2.6'],
+        'oembeditem': ['micawber>=0.2.6', 'beautifulsoup4>=4.3.2'],
         'text': [
             'django-wysiwyg>=0.5.1',
             # Work around https://github.com/html5lib/html5lib-python/issues/189
