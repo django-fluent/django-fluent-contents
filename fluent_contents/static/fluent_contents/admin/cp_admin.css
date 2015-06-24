@@ -150,6 +150,7 @@ form .form-row.no-labels p.help {
   */
   background-image: url('img/admin/nav-bg.gif');
   background-position: left bottom;
+  background-color: #fff;  /* for django-flat-theme */
   color: #999999;
   border-left: 1px solid #eee;
   border-right: 1px solid #eee;
@@ -158,6 +159,7 @@ form .form-row.no-labels p.help {
 .cp-content .inline-related fieldset h2 {
   background-image: url('img/admin/nav-bg-reverse.gif');
   background-position: left bottom;
+  background-color: #E2E2E2;  /* for django-flat-theme */
   color: #999999;
 }
 
