@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Changes in git
+--------------
+
+* Improve styling with django-flat-theme_ theme.
+* Fix form field order so CSS can select ``.form-row:last-child``.
+
 Version 1.0.2
 -------------
 
@@ -192,6 +198,7 @@ so it's time to show this module to the public.
 
 .. _django-any-urlfield: https://github.com/edoburu/django-any-urlfield
 .. _django-any-imagefield: https://github.com/edoburu/django-any-imagefield
+.. _django-flat-theme: https://github.com/elky/django-flat-theme
 .. _django-parler: https://github.com/edoburu/django-parler
 .. _django-polymorphic: https://github.com/chrisglass/django_polymorphic
 .. _django-multisite: https://github.com/ecometrica/django-multisite

@@ -1,3 +1,4 @@
+import django
 from django.contrib.contenttypes.generic import BaseGenericInlineFormSet, GenericInlineModelAdmin
 from fluent_contents import extensions, appsettings
 from fluent_contents.forms import ContentItemForm
@@ -119,6 +120,22 @@ class BaseContentItemInline(GenericInlineModelAdmin):
             media += self.plugin.media  # form fields first, plugin afterwards
         return media
 
+    def get_formset(self, request, obj=None, **kwargs):
+        FormSet = super(BaseContentItemInline, self).get_formset(request, obj=obj, **kwargs)
+
+        # Make sure that the automatically generated form does have all our common fields first.
+        # This allows the admin CSS to pick .form-row:last-child
+        form = FormSet.form
+        first_fields = list(ContentItemForm.base_fields.keys())
+        field_order = first_fields + [f for f in form.base_fields.keys() if f not in first_fields]
+        if django.VERSION >= (1,7):
+            # Recreate collections.OrderedDict object
+            base_fields = form.base_fields
+            form.base_fields = base_fields.__class__((k, base_fields[k]) for k in field_order)
+        else:
+            # Update Django's SortedDict
+            form.base_fields.keyOrder = field_order
+        return FormSet
 
     def get_fieldsets(self, request, obj=None):
         # If subclass declares fieldsets, this is respected
