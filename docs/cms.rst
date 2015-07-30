@@ -4,7 +4,7 @@ Creating a CMS system
 =====================
 
 Besides the :class:`~fluent_contents.models.PlaceholderField` class,
-thee `fluent_contents` module also provides additional admin classes to build a CMS interface.
+the `fluent_contents` module also provides additional admin classes to build a CMS interface.
 
 The main difference between the CMS interface, and :class:`~fluent_contents.models.PlaceholderField`
 class is that the placeholders will be created dynamically based on the template of the current page.
