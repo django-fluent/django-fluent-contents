@@ -1,6 +1,7 @@
 from django.test import RequestFactory
 from fluent_contents import rendering
 from fluent_contents.models import Placeholder, DEFAULT_TIMEOUT
+from fluent_contents.rendering import utils as rendering_utils
 from fluent_contents.tests.testapp.models import TestPage, RawHtmlTestItem, TimeoutTestItem, OverrideBase
 from fluent_contents.tests.utils import AppTestCase
 
@@ -50,5 +51,5 @@ class RenderingTests(AppTestCase):
             def get_render_template(self):
                 pass
 
-        self.assertFalse(rendering._is_method_overwritten(OverrideSame(), OverrideBase, 'get_render_template'))
-        self.assertTrue(rendering._is_method_overwritten(OverrideReplace(), OverrideBase, 'get_render_template'))
+        self.assertFalse(rendering_utils._is_method_overwritten(OverrideSame(), OverrideBase, 'get_render_template'))
+        self.assertTrue(rendering_utils._is_method_overwritten(OverrideReplace(), OverrideBase, 'get_render_template'))
