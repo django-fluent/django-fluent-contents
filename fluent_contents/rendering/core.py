@@ -50,12 +50,25 @@ class ResultTracker(object):
         # Other state fields
         self.placeholder_name = get_placeholder_name(placeholder)
 
-    def add_output(self, contentitem, output):
+    def store_output(self, contentitem, output):
         """
         Track the output of a given content item.
         :type contentitem: ContentItem
         :type output: O
         """
+        self._set_output(contentitem, output)
+
+    def store_exception(self, contentitem, exception):
+        # Track exceptions.
+        # Currently done in self.item_output, but avoid the store_output() call,
+        # so this implementation detail is hidden from code that overrides store_output()
+        self._set_output(contentitem, exception)
+
+    def set_skipped(self, contentitem):
+        # See store_exception() for this logic.
+        self._set_output(contentitem, self.SKIPPED)
+
+    def _set_output(self, contentitem, output):
         # Using index by pk, because contentitem could be a derived or base instance.
         item_id = self._get_item_id(contentitem)
         self.item_output[item_id] = output
@@ -91,7 +104,7 @@ class ResultTracker(object):
         """
         # Order all rendered items in the correct sequence.
         # Don't assume the derived tables are in perfect shape, hence the dict + KeyError handling.
-        # The derived tables could be truncated/reset or add_output() could be omitted.
+        # The derived tables could be truncated/reset or store_output() could be omitted.
         ordered_output = []
         for item_id in self.output_ordering:
             try:
@@ -100,12 +113,13 @@ class ResultTracker(object):
                 # The item was not rendered!
                 if not include_exceptions:
                     continue
-                else:
-                    output = self.MISSING
+
+                output = self.MISSING
             else:
                 # Filter exceptions out.
-                if not include_exceptions and isinstance(output, Exception):
-                    continue
+                if not include_exceptions:
+                    if isinstance(output, Exception) or output is self.SKIPPED:
+                        continue
 
             ordered_output.append((item_id, output))
 
@@ -196,7 +210,7 @@ class RenderingPipe(object):
             try:
                 plugin = contentitem.plugin
             except PluginNotFound as ex:
-                result.add_output(contentitem, ex)  # Will deal with that later.
+                result.store_exception(contentitem, ex)  # Will deal with that later.
                 logger.debug("- item #%s has no matching plugin: %s", contentitem.pk, str(ex))
                 continue
 
@@ -217,7 +231,7 @@ class RenderingPipe(object):
                     output = None
 
             if output:
-                result.add_output(contentitem, output)
+                result.store_output(contentitem, output)
             else:
                 result.add_remaining(contentitem)
 
@@ -238,11 +252,11 @@ class RenderingPipe(object):
             try:
                 output = self.render_item(contentitem)
             except PluginNotFound as ex:
-                result.add_output(contentitem, ex)
+                result.store_exception(contentitem, ex)
                 logger.debug("- item #%s has no matching plugin: %s", contentitem.pk, str(ex))
                 continue
             except SkipItem:
-                result.add_output(contentitem, ResultTracker.SKIPPED)
+                result.set_skipped(contentitem)
                 continue
 
             # Try caching it.
@@ -250,7 +264,7 @@ class RenderingPipe(object):
             if self.edit_mode:
                 output.html = markers.wrap_contentitem_output(output.html, contentitem)
 
-            result.add_output(contentitem, output)
+            result.store_output(contentitem, output)
 
     def render_item(self, contentitem):
         """

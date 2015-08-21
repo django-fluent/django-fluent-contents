@@ -11,12 +11,12 @@ _get_dummy_search_request = memoize(get_dummy_request, _SEARCH_REQUEST_CACHE, 1)
 
 
 class SearchResultTracker(ResultTracker):
-    def add_output(self, contentitem, output):
+    def store_output(self, contentitem, output):
         # Strip all output from HTML tags while collecting
         # (the output is already cached at this point)
         output.html = get_cleaned_string(output.html)
         output.cacheable = False
-        super(SearchResultTracker, self).add_output(contentitem, output)
+        super(SearchResultTracker, self).store_output(contentitem, output)
 
 
 class SearchRenderingPipe(PlaceholderRenderingPipe):
