@@ -128,6 +128,10 @@ class RenderingPipe(object):
     #: The class which stores intermediate results
     result_class = ResultTracker
 
+    #: Tell whether the cache can be consulted for output.
+    use_cached_output = True
+
+
     def __init__(self, request, edit_mode=None):
         if edit_mode is None:
             edit_mode = markers.is_edit_mode(request)
@@ -181,7 +185,7 @@ class RenderingPipe(object):
         The items are 'non-polymorphic', so only point to their base class.
         If these are found, there is no need to query the derived data from the database.
         """
-        if not appsettings.FLUENT_CONTENTS_CACHE_OUTPUT:
+        if not appsettings.FLUENT_CONTENTS_CACHE_OUTPUT or not self.use_cached_output:
             result.add_remaining_list(items)
             return
 
@@ -197,7 +201,7 @@ class RenderingPipe(object):
                 continue
 
             # Respect the cache output setting of the plugin
-            if self.should_fetch_cached_output(contentitem):
+            if self.can_use_cached_output(contentitem):
                 result.add_plugin_timeout(plugin)
                 output = plugin.get_cached_output(result.placeholder_name, contentitem)
 
@@ -217,8 +221,10 @@ class RenderingPipe(object):
             else:
                 result.add_remaining(contentitem)
 
-    def should_fetch_cached_output(self, contentitem):
-        # Tell whether the code should try reading cached output
+    def can_use_cached_output(self, contentitem):
+        """
+        Tell whether the code should try reading cached output
+        """
         plugin = contentitem.plugin
         return appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and plugin.cache_output and contentitem.pk
 

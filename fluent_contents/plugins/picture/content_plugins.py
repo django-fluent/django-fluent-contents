@@ -13,6 +13,7 @@ class PicturePlugin(ContentPlugin):
     model = PictureItem
     category = _('Media')
     render_template = "fluent_contents/plugins/picture/default.html"
+    search_fields = ('caption',)
 
     formfield_overrides = {
         'caption': {

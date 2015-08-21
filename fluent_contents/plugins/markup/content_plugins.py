@@ -25,6 +25,7 @@ class MarkupPluginBase(ContentPlugin):
     category = _('Markup')
     form = MarkupItemForm
     admin_form_template = ContentPlugin.ADMIN_TEMPLATE_WITHOUT_LABELS
+    search_output = True
 
     class Media:
         css = {'screen': ('fluent_contents/plugins/markup/markup_admin.css',)}

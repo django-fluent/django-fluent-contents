@@ -29,24 +29,30 @@ class SearchRenderingPipe(PlaceholderRenderingPipe):
         request = get_dummy_request(language)
         super(SearchRenderingPipe, self).__init__(request)
 
-    def should_fetch_cached_output(self, contentitem):
-        # Only fetch items from the cache when the item was output indexed.
+    def can_use_cached_output(self, contentitem):
+        """
+        Read the cached output - only when search needs it.
+        """
         return contentitem.plugin.search_output and not contentitem.plugin.search_fields \
-           and super(SearchRenderingPipe, self).should_fetch_cached_output(contentitem)
+           and super(SearchRenderingPipe, self).can_use_cached_output(contentitem)
 
     def render_item(self, contentitem):
+        """
+        Render the item - but render as search text instead.
+        """
         plugin = contentitem.plugin
         if not plugin.search_output and not plugin.search_fields:
             # Only render items when the item was output will be indexed.
             raise SkipItem
 
-        if plugin.search_output:
-            output = super(SearchRenderingPipe, self).render_item(contentitem)
+        if not plugin.search_output:
+            output = ContentItemOutput('', cacheable=False)
         else:
-            output = ContentItemOutput('')
+            output = super(SearchRenderingPipe, self).render_item(contentitem)
 
         if plugin.search_fields:
-            output.html += self.get_search_fields(contentitem)
+            # Just add the results into the output, but avoid caching that somewhere.
+            output.html += plugin.get_search_text(contentitem)
             output.cacheable = False
 
         return output
@@ -64,37 +70,3 @@ class SearchRenderingPipe(PlaceholderRenderingPipe):
 
         merged_html = mark_safe(u''.join(html_output))
         return ContentItemOutput(merged_html, cacheable=False)   # since media is not included, don't cache this
-
-    def get_search_fields(self, contentitem):
-        """
-        Extract the search fields from the model, add these to the index.
-        """
-        plugin = contentitem.plugin
-        values = []
-        for field_name in plugin.search_fields:
-            value = getattr(contentitem, field_name)
-
-            # Just assume all strings may contain HTML.
-            # Not checking for just the PluginHtmlField here.
-            if value and isinstance(value, six.string_types):
-                value = strip_tags(force_unicode(value))
-
-            values.append(value)
-
-        return _clean_join(u" ", values)
-
-
-
-def _get_cleaned_bits(data):
-    """
-    Cleanup a string/HTML output to consist of words only.
-    """
-    stripped = strip_tags(force_unicode(data))
-    return smart_split(stripped)
-
-
-def _clean_join(separator, iterable):
-    """
-    Filters out iterable to only join non empty items.
-    """
-    return separator.join(filter(None, iterable))
