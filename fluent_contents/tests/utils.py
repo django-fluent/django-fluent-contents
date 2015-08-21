@@ -18,6 +18,9 @@ class AppTestCase(TestCase):
     user = None
     install_apps = (
         'fluent_contents.tests.testapp',
+        'fluent_contents.plugins.sharedcontent',
+        'fluent_contents.plugins.picture',
+        'fluent_contents.plugins.text',
     )
 
 
