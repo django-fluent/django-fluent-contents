@@ -234,6 +234,11 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     #: The fields to display as readonly.
     readonly_fields = ()
 
+    #: Define which fields could be used for indexing the plugin in a site (e.g. haystack)
+    search_fields = []
+
+    #: Define whether the full output should be used for indexing.
+    search_output = None
 
     def __init__(self):
         self._type_id = None

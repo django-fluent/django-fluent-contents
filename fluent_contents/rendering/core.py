@@ -84,20 +84,29 @@ class ResultTracker(object):
         """Set that it can't cache all items as a single entry."""
         self.all_cacheable = False
 
-    def get_output(self):
+    def get_output(self, include_exceptions=False):
         """
         Return the output in the correct ordering.
         :rtype: list[Tuple[int, O]]
         """
-        # Order all rendered items in the correct sequence.  The derived tables could be truncated/reset,
-        # so the base class model indexes don't necessary match with the derived indexes. Hence the dict + KeyError handling.
+        # Order all rendered items in the correct sequence.
+        # Don't assume the derived tables are in perfect shape, hence the dict + KeyError handling.
+        # The derived tables could be truncated/reset or add_output() could be omitted.
         ordered_output = []
         for item_id in self.output_ordering:
             try:
                 output = self.item_output[item_id]
             except KeyError:
                 # The item was not rendered!
-                output = self.MISSING
+                if not include_exceptions:
+                    continue
+                else:
+                    output = self.MISSING
+            else:
+                # Filter exceptions out.
+                if not include_exceptions and isinstance(output, Exception):
+                    continue
+
             ordered_output.append((item_id, output))
 
         return ordered_output
@@ -164,7 +173,7 @@ class RenderingPipe(object):
             self._render_uncached_items(result.remaining_items, result=result)
 
         # And merge all items together.
-        return self._merge_output(result, items, template_name)
+        return self.merge_output(result, items, template_name)
 
     def _fetch_cached_output(self, items, result):
         """
@@ -188,7 +197,7 @@ class RenderingPipe(object):
                 continue
 
             # Respect the cache output setting of the plugin
-            if plugin.cache_output and contentitem.pk:
+            if self.should_fetch_cached_output(contentitem):
                 result.add_plugin_timeout(plugin)
                 output = plugin.get_cached_output(result.placeholder_name, contentitem)
 
@@ -200,7 +209,7 @@ class RenderingPipe(object):
             # For debugging, ignore cached values when the template is updated.
             if output and settings.DEBUG:
                 cachekey = get_rendering_cache_key(result.placeholder_name, contentitem)
-                if settings.DEBUG and is_template_updated(self.request, contentitem, cachekey):
+                if is_template_updated(self.request, contentitem, cachekey):
                     output = None
 
             if output:
@@ -208,35 +217,51 @@ class RenderingPipe(object):
             else:
                 result.add_remaining(contentitem)
 
+    def should_fetch_cached_output(self, contentitem):
+        # Tell whether the code should try reading cached output
+        plugin = contentitem.plugin
+        return appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and plugin.cache_output and contentitem.pk
+
     def _render_uncached_items(self, items, result):
         """
         Render a list of items, that didn't exist in the cache yet.
         """
         for contentitem in items:
+            # Render the item.
+            # Allow derived classes to skip it.
             try:
-                plugin = contentitem.plugin
+                output = self.render_item(contentitem)
             except PluginNotFound as ex:
                 result.add_output(contentitem, ex)
                 logger.debug("- item #%s has no matching plugin: %s", contentitem.pk, str(ex))
                 continue
-
-            render_language = get_render_language(contentitem)
-            with smart_override(render_language):
-                # Plugin output is likely HTML, but it should be placed in mark_safe() to raise awareness about escaping.
-                # This is just like Django's Input.render() and unlike Node.render().
-                output = plugin._render_contentitem(self.request, contentitem)
+            except SkipItem:
+                result.add_output(contentitem, ResultTracker.SKIPPED)
+                continue
 
             # Try caching it.
-            self._try_cache_output(plugin, contentitem, output, result=result)
+            self._try_cache_output(contentitem, output, result=result)
             if self.edit_mode:
                 output.html = markers.wrap_contentitem_output(output.html, contentitem)
 
             result.add_output(contentitem, output)
 
-    def _try_cache_output(self, plugin, contentitem, output, result):
+    def render_item(self, contentitem):
+        """
+        Render the individual item.
+        May raise :class:`SkipItem` to ignore an item.
+        """
+        render_language = get_render_language(contentitem)
+        with smart_override(render_language):
+            # Plugin output is likely HTML, but it should be placed in mark_safe() to raise awareness about escaping.
+            # This is just like Django's Input.render() and unlike Node.render().
+            return contentitem.plugin._render_contentitem(self.request, contentitem)
+
+    def _try_cache_output(self, contentitem, output, result):
+        plugin = contentitem.plugin
         if self._can_cache_output(plugin, output) and contentitem.pk:
             # Cache the output
-            contentitem.plugin.set_cached_output(result.placeholder_name, contentitem, output)
+            plugin.set_cached_output(result.placeholder_name, contentitem, output)
         else:
             # An item blocks caching the complete placeholder.
             result.set_uncachable()
@@ -263,12 +288,12 @@ class RenderingPipe(object):
             # Just return what the calling code already specified.
             return cachable
 
-    def _merge_output(self, result, items, template_name):
+    def merge_output(self, result, items, template_name):
         """
         Combine all rendered items. Allow rendering the items with a template,
         to inserting separators or nice start/end code.
         """
-        html_output, media = self._get_html_output(result, items)
+        html_output, media = self.get_html_output(result, items)
 
         if not template_name:
             merged_html = mark_safe(u''.join(html_output))
@@ -282,14 +307,14 @@ class RenderingPipe(object):
 
         return ContentItemOutput(merged_html, media, cacheable=result.all_cacheable, cache_timeout=result.all_timeout)
 
-    def _get_html_output(self, result, items):
+    def get_html_output(self, result, items):
         """
         Collect all HTML from the rendered items, in the correct ordering.
         The media is also collected in the same ordering, in case it's handled by django-compressor for example.
         """
         html_output = []
         merged_media = Media()
-        for item_id, output in result.get_output():
+        for item_id, output in result.get_output(include_exceptions=True):
             if output is ResultTracker.MISSING:
                 # Likely get_real_instances() didn't return an item for it.
                 # The get_real_instances() didn't return an item for the derived table. This happens when either:
@@ -382,6 +407,10 @@ class PlaceholderRenderingPipe(RenderingPipe):
     def may_cache_placeholders(cls):
         return appsettings.FLUENT_CONTENTS_CACHE_OUTPUT \
            and appsettings.FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT
+
+
+class SkipItem(RuntimeError):
+    pass
 
 
 def _get_stale_item_class_name(items, pk):

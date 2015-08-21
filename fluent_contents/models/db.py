@@ -123,6 +123,18 @@ class Placeholder(models.Model):
         return item_qs
 
 
+    def get_search_text(self, fallback_language=None):
+        """
+        Get the search text for all contents of this placeholder.
+
+        :param fallback_language: The fallback language to use if there are no items in the current language.
+                                  Passing ``True`` uses the default :ref:`FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE`.
+        :type fallback_language: bool|str
+        :rtype: str
+        """
+        from fluent_contents.rendering import render_placeholder_search_text
+        return render_placeholder_search_text(self, fallback_language=fallback_language)
+
     def get_absolute_url(self):
         """
         Return the URL of the parent object, if it has one.
