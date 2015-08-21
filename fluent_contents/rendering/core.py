@@ -20,6 +20,11 @@ from .utils import optimize_logger_level, get_placeholder_debug_name, add_media,
 logger = logging.getLogger('fluent_contents.rendering')
 
 
+def get_placeholder_name(placeholder):
+    # This check likely be removed, but keep for backwards compatibility.
+    return '@global@' if placeholder is None else placeholder.slot
+
+
 class ResultTracker(object):
     """
     A tracking of intermediate results during rendering.
@@ -29,8 +34,9 @@ class ResultTracker(object):
     MISSING = object()
     SKIPPED = object()
 
-    def __init__(self, placeholder, items):
+    def __init__(self, parent_object, placeholder, items):
         # The source
+        self.parent_object = parent_object
         self.placeholder = placeholder
         self.items = items
 
@@ -42,7 +48,7 @@ class ResultTracker(object):
         self.item_output = {}
 
         # Other state fields
-        self.placeholder_name = '@global@' if placeholder is None else placeholder.slot
+        self.placeholder_name = get_placeholder_name(placeholder)
 
     def add_output(self, contentitem, output):
         """
@@ -125,35 +131,40 @@ class RenderingPipe(object):
         """
         The main rendering sequence.
         """
-        # Variables filled during rendering:
-        result = self.result_class(placeholder, items)
-        if self.edit_mode or not self._can_cache_merged_output(template_name, cachable):
-            result.set_uncachable()
-
-        if not hasattr(items, "non_polymorphic"):
-            # The items is either a list of manually created items, or it's a QuerySet.
-            # Can't prevent reading the subclasses only, so don't bother with caching here.
-            result.add_remaining_list(items)
-        else:
-            # Unless it was done before, disable polymorphic effects.
+        # Unless it was done before, disable polymorphic effects.
+        is_queryset = False
+        if hasattr(items, "non_polymorphic"):
+            is_queryset = True
             if not items.polymorphic_disabled and items._result_cache is None:
                 items = items.non_polymorphic()
-
-            self._fetch_cached_output(items, result=result)
-            result.fetch_remaining_instances(queryset=items)
 
         # See if the queryset contained anything.
         # This test is moved here, to prevent earlier query execution.
         if not items:
             logger.debug("- no items in placeholder '%s'", get_placeholder_debug_name(placeholder))
-            return ContentItemOutput(format_html(u"<!-- no items in placeholder '{0}' -->", result.placeholder_name))
+            return ContentItemOutput(format_html(u"<!-- no items in placeholder '{0}' -->", get_placeholder_name(placeholder)), cacheable=True)
+
+        # Tracked data during rendering:
+        result = self.result_class(parent_object, placeholder, items)
+        if self.edit_mode or not self._can_cache_merged_output(template_name, cachable):
+            result.set_uncachable()
+
+        if is_queryset:
+            # Phase 1: get cached output
+            self._fetch_cached_output(items, result=result)
+            result.fetch_remaining_instances(queryset=items)
+        else:
+            # The items is either a list of manually created items, or it's a QuerySet.
+            # Can't prevent reading the subclasses only, so don't bother with caching here.
+            result.add_remaining_list(items)
 
         # Start the actual rendering of remaining items.
         if result.remaining_items:
+            # Phase 2: render remaining items
             self._render_uncached_items(result.remaining_items, result=result)
 
         # And merge all items together.
-        return self._merge_output(result, items, parent_object, template_name)
+        return self._merge_output(result, items, template_name)
 
     def _fetch_cached_output(self, items, result):
         """
@@ -252,7 +263,7 @@ class RenderingPipe(object):
             # Just return what the calling code already specified.
             return cachable
 
-    def _merge_output(self, result, items, parent_object, template_name):
+    def _merge_output(self, result, items, template_name):
         """
         Combine all rendered items. Allow rendering the items with a template,
         to inserting separators or nice start/end code.
@@ -264,7 +275,7 @@ class RenderingPipe(object):
         else:
             context = {
                 'contentitems': list(zip(items, html_output)),
-                'parent_object': parent_object,  # Can be None
+                'parent_object': result.parent_object,  # Can be None
                 'edit_mode': self.edit_mode,
             }
             merged_html = render_to_string(template_name, context, context_instance=RequestContext(self.request))
