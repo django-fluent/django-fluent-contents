@@ -6,7 +6,7 @@ from django.conf import settings
 from django.forms import Media
 from django.template.context import RequestContext
 from django.template.loader import render_to_string
-from django.utils.html import escape, format_html
+from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from parler.utils.context import smart_override
 from fluent_utils.django_compat import is_queryset_empty
@@ -155,7 +155,7 @@ class RenderingPipe(object):
         # This test is moved here, to prevent earlier query execution.
         if not items:
             logger.debug("- no items in placeholder '%s'", get_placeholder_debug_name(placeholder))
-            return ContentItemOutput(format_html(u"<!-- no items in placeholder '{0}' -->", get_placeholder_name(placeholder)), cacheable=True)
+            return ContentItemOutput(mark_safe(u"<!-- no items in placeholder '{0}' -->".format(escape(get_placeholder_name(placeholder)))), cacheable=True)
 
         # Tracked data during rendering:
         result = self.result_class(parent_object, placeholder, items)
@@ -328,7 +328,7 @@ class RenderingPipe(object):
                 #    A query at the derived table happens every time the page is being rendered.
                 # 2. the model was completely removed which means there is also a stale ContentType object.
                 class_name = _get_stale_item_class_name(items, pk=item_id)
-                html_output.append(format_html(u"<!-- Missing derived model for ContentItem #{id}: {cls}. -->\n", id=pk, cls=class_name))
+                html_output.append(mark_safe(u"<!-- Missing derived model for ContentItem #{id}: {cls}. -->\n".format(id=pk, cls=class_name)))
                 logger.warning("Missing derived model for ContentItem #{id}: {cls}.".format(id=pk, cls=class_name))
             elif isinstance(output, Exception):
                 html_output.append(u'<!-- error: {0} -->\n'.format(str(output)))
