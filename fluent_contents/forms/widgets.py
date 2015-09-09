@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 from django.forms.widgets import flatatt
 from django.utils.html import escape
-from fluent_contents.models import Placeholder, get_parent_language_code
+from fluent_contents.models import get_parent_language_code
 from fluent_contents.models.managers import get_parent_active_language_choices
 from fluent_utils.django_compat import smart_text
 
@@ -31,10 +31,11 @@ class PlaceholderFieldWidget(Widget):
         }
 
 
-    def __init__(self, attrs=None, slot=None, plugins=None):
+    def __init__(self, attrs=None, slot=None, parent_object=None, plugins=None):
         super(PlaceholderFieldWidget, self).__init__(attrs)
         self.slot = slot
         self._plugins = plugins
+        self.parent_object = parent_object
 
 
     def value_from_datadict(self, data, files, name):
@@ -49,11 +50,11 @@ class PlaceholderFieldWidget(Widget):
         """
         other_instance_languages = None
         if value and value != "-DUMMY-":
-            parent = Placeholder.objects.get(pk=int(value)).parent
-            language_code = get_parent_language_code(parent)
-            if language_code:
-                # Parent is a multilingual object, provide information for the copy dialog.
-                other_instance_languages = get_parent_active_language_choices(parent, exclude_current=True)
+            if get_parent_language_code(self.parent_object):
+                # Parent is a multilingual object, provide information
+                # for the copy dialog.
+                other_instance_languages = get_parent_active_language_choices(
+                    self.parent_object, exclude_current=True)
 
         context = {
             'cp_plugin_list': list(self.plugins),
