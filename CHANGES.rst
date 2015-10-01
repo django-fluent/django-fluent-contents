@@ -1,11 +1,13 @@
 Changelog
 =========
 
-Changes in git
---------------
+Changes in 1.0.3 (2015-10-01)
+-----------------------------
 
 * Improve styling with django-flat-theme_ theme.
+* Fix choices listing of the "Copy Language" button.
 * Fix form field order so CSS can select ``.form-row:last-child``.
+
 
 Version 1.0.2
 -------------
