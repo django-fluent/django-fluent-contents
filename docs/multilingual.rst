@@ -61,7 +61,7 @@ The fallback language has to be defined in :ref:`FLUENT_CONTENTS_DEFAULT_LANGUAG
 
 In the templates, use:
 
-.. source-code:: html+django
+.. code-block:: html+django
 
     {% render_placeholder ... fallback=True %}
 

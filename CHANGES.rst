@@ -27,7 +27,7 @@ Version 1.0.1
 * Fix rendering in development for Django 1.4 and 1.5
 * Fix placeholder cache timeout values, take ``ContentPlugin.cache_output`` into account.
   This is only an issue when using ``FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT = True``.
-* Fix migration files that enforced using django-any-urlfield_ / django-imagefield_.
+* Fix migration files that enforced using django-any-urlfield_ / django-any-imagefield_.
   NOTE: all migrations now explicitly refer to ``PluginUrlField`` / ``PluginImageField``.
   You can either generate new Django migrations, or simply replace the imports in your existing migrations.
 
