@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from copy import deepcopy
 from future.utils import with_metaclass, python_2_unicode_compatible, PY3
 from django.contrib.contenttypes.generic import GenericForeignKey
