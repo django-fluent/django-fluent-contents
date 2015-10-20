@@ -313,6 +313,11 @@ def _render_items(request, placeholder, items, parent_object=None, template_name
                     if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT:
                         logger.debug("- item #%s is NOT cachable! Prevented by %r", contentitem.pk, plugin)
 
+                if plugin.cache_output_per_site:
+                    # Unsupported: can't cache global output for placeholder yet if output differs per SITE_ID
+                    # Placeholders only have a single entry, the SITE_ID is not part of it's cache key yet.
+                    all_cacheable = False
+
                 if edit_mode:
                     output.html = _wrap_contentitem_output(output.html, contentitem)
 
