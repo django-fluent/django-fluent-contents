@@ -15,8 +15,13 @@ class CachedModelMixin(object):
 
 
     def delete(self, *args, **kwargs):
+        deleted_pk = self.pk
         super(CachedModelMixin, self).delete(*args, **kwargs)
+
+        # Temporary restore to allow get_cache_keys() / plugin.get_output_cache_keys() to read the PK
+        self.pk = deleted_pk
         self.clear_cache()
+        self.pk = None
 
     # Must restore these options, or risk removing with a template print statement.
     delete.alters_data = True

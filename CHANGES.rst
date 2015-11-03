@@ -7,6 +7,7 @@ Changes in 1.0.4 (in git)
 * Prevent caching complete placeholder/sharedcontent output when there are items with ``cache_output_per_site``.
   This only occurs in environments where ``FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT`` is enabled.
 * Fix Django migration unicode issues in Python 3
+* Fix error in ``get_output_cache_keys()`` when reading the ``pk`` field during deletion.
 
 
 Changes in 1.0.3 (2015-10-01)
