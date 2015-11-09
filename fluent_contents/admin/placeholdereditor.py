@@ -66,12 +66,14 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
         # The remaining scripts should just operate the same without it.
         js = (
             'fluent_contents/admin/jquery.cookie.js',
+            'fluent_contents/admin/jquery-ui.custom.min.js',
             'fluent_contents/admin/cp_admin.js',
             'fluent_contents/admin/cp_data.js',
             'fluent_contents/admin/cp_tabs.js',
             'fluent_contents/admin/cp_plugins.js',
             'fluent_contents/admin/cp_widgets.js',
             'fluent_contents/admin/fluent_contents.js',
+            'fluent_contents/admin/sortable.js',
         )
         css = {
             'screen': (
