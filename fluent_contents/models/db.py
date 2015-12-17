@@ -14,8 +14,12 @@ from fluent_contents.models.mixins import CachedModelMixin
 from parler.models import TranslatableModel
 from parler.signals import post_translation_delete
 from parler.utils import get_language_title
-from polymorphic import PolymorphicModel
 from polymorphic.base import PolymorphicModelBase
+
+try:
+    from polymorphic.models import PolymorphicModel  # django-polymorphic 0.8
+except ImportError:
+    from polymorphic import PolymorphicModel
 
 # Leave flag so testing this feature is possible.
 OPTIMIZE_TRANSLATED_MODEL = True

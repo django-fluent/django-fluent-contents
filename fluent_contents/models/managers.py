@@ -8,7 +8,8 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import get_language
 from parler.utils import get_language_title
-from polymorphic import PolymorphicManager, PolymorphicQuerySet
+from polymorphic.manager import PolymorphicManager
+from polymorphic.query import PolymorphicQuerySet
 
 
 class PlaceholderManager(models.Manager):
