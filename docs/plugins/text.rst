@@ -98,13 +98,112 @@ FLUENT_TEXT_SANITIZE_HTML
 
 if ``True``, unwanted HTML tags will be removed server side using html5lib_.
 
+
+TinyMCE integration example
+---------------------------
+
+The WYSIWYG editor can be configured to allow end-users to make minimal styling choices.
+The following configuration has proven to work nicely for most web sites,
+save it as :file:`django_wysiwyg/tinymce_advanced/includes.html` in a Django template folder.
+This code has the following features:
+
+* django-filebrowser_ integration.
+* Unnecessary styling is removed.
+* Styling choices are limited to a single "format" box.
+* It reads ``/static/frontend/css/tinymce.css``, allowing visual consistency between the editor and frontend web site.
+* It defines ``body_class`` so any ``.text`` CSS selectors that style this plugin output work as expected.
+
+.. code-block:: html+django
+
+   {% extends "django_wysiwyg/tinymce/includes.html" %}
+
+   <script>{# <- dummy element for editor formatting #}
+   {% block django_wysiwyg_editor_config %}
+       var django_wysiwyg_editor_config = {
+           plugins: 'paste,autoresize,inlinepopups',
+           strict_loading_mode: true,  // for pre 3.4 releases
+
+           // Behavioral settings
+           document_base_url: '/',
+           relative_urls: false,
+           custom_undo_redo_levels: 10,
+           width: '610px',
+
+           // Toolbars and layout
+           theme: "advanced",
+           theme_advanced_toolbar_location: 'top',
+           theme_advanced_toolbar_align: 'left',
+           theme_advanced_buttons1: 'styleselect,removeformat,cleanup,|,link,unlink,|,bullist,numlist,|,undo,redo,|,outdent,indent,|,sub,sup,|,image,charmap,anchor,hr,|,code',
+           theme_advanced_buttons2: '',
+           theme_advanced_buttons3: '',
+           theme_advanced_blockformats: 'h3,h4,p',
+           theme_advanced_resizing : true,
+
+           // Integrate custom styling
+           content_css: "{{ STATIC_URL }}frontend/css/tinymce.css",
+           body_class: 'text',
+
+           // Define user configurable styles
+           style_formats: [
+               {title: "Header 2", block: "h2"},
+               {title: "Header 3", block: "h3"},
+               {title: "Header 4", block: "h4"},
+               {title: "Paragraph", block: "p"},
+               {title: "Quote", block: "blockquote"},
+               {title: "Bold", inline: "strong"},
+               {title: "Emphasis", inline: "em"},
+               {title: "Strikethrough", inline: "s"},
+               {title: "Highlight word", inline: "span", classes: "highlight"},
+               {title: "Small footnote", inline: "small"}
+               //{title: "Code example", block: "pre"},
+               //{title: "Code keyword", inline: "code"}
+           ],
+
+           // Define how TinyMCE formats things
+           formats: {
+             underline: {inline: 'u', exact: true}
+             //strikethrough: {inline: 'del'},
+           },
+           //inline_styles: false,
+           fix_list_elements: true,
+           keep_styles: false,
+
+           // Integrate filebrowser
+           file_browser_callback: 'djangoFileBrowser'
+       };
+
+       function djangoFileBrowser(field_name, url, type, win) {
+           var url = "{% url 'filebrowser:fb_browse' %}?pop=2&type=" + type;
+
+           tinyMCE.activeEditor.windowManager.open(
+           {
+               'file': url,
+               'width': 880,
+               'height': 500,
+               'resizable': "yes",
+               'scrollbars': "yes",
+               'inline': "no",
+               'close_previous': "no"
+           },
+           {
+               'window': win,
+               'input': field_name,
+               'editor_id': tinyMCE.selectedInstance.editorId
+           });
+           return false;
+       }
+
+   {% endblock %}
+   </script>
+
+
 .. _CKEditor: http://ckeditor.com/
 .. _Redactor: http://redactorjs.com/
 .. _TinyMCE: http://www.tinymce.com/
 .. _YAHOO: http://developer.yahoo.com/yui/editor/
 .. _django-ckeditor: https://github.com/shaunsephton/django-ckeditor
+.. _django-filebrowser: https://github.com/smacker/django-filebrowser-no-grappelli
 .. _django-tinymce: https://github.com/aljosa/django-tinymce
 .. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg
 .. _html5lib: http://code.google.com/p/html5lib/
 .. _pytidylib: http://countergram.com/open-source/pytidylib
-
