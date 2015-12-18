@@ -22,12 +22,11 @@ from django.utils.translation import ugettext as _, get_language
 from fluent_contents.cache import get_rendering_cache_key, get_placeholder_cache_key
 from fluent_contents.forms import ContentItemForm
 from fluent_contents.models import ContentItemOutput, ImmutableMedia, DEFAULT_TIMEOUT
+from fluent_contents.utils.search import get_search_field_values, clean_join
 
 
 # Some standard request processors to use in the plugins,
 # Naturally, you want STATIC_URL to be available in plugins.
-
-
 def _add_debug(request):
     return {'debug': settings.DEBUG}
 
@@ -248,6 +247,11 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     #: The fields to display as readonly.
     readonly_fields = ()
 
+    #: Define which fields could be used for indexing the plugin in a site (e.g. haystack)
+    search_fields = []
+
+    #: Define whether the full output should be used for indexing.
+    search_output = None
 
     def __init__(self):
         self._type_id = None
@@ -551,6 +555,17 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         from the ``class FrontendMedia`` of the plugin.
         """
         return self.frontend_media
+
+
+    def get_search_text(self, instance):
+        """
+        Return a custom search text for a given instance.
+
+        .. note:: This method is called when :attr:`search_fields` is set.
+        """
+        bits = get_search_field_values(instance)
+        return clean_join(u" ", bits)
+
 
 
 class HttpRedirectRequest(Exception):

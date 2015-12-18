@@ -2,12 +2,12 @@ from __future__ import print_function
 from future.builtins import str
 from functools import wraps
 from django.conf import settings, UserSettingsHolder
-from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.contrib.sites.models import Site
 from django.db.models import loading
 from django.test import TestCase
 from django.utils.importlib import import_module
+from fluent_utils.django_compat import get_user_model
 import os
 
 
@@ -18,6 +18,9 @@ class AppTestCase(TestCase):
     user = None
     install_apps = (
         'fluent_contents.tests.testapp',
+        'fluent_contents.plugins.sharedcontent',
+        'fluent_contents.plugins.picture',
+        'fluent_contents.plugins.text',
     )
 
 

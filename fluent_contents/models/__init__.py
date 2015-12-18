@@ -113,6 +113,7 @@ class ContentItemOutput(SafeData):
         self.html = conditional_escape(html)  # enforce consistency
         self.media = media or ImmutableMedia.empty_instance
         # Mainly used internally for the _render_items():
+        # NOTE: this is the only place where 'cachable' was written was 'cacheable'
         self.cacheable = cacheable
         self.cache_timeout = cache_timeout or DEFAULT_TIMEOUT
 

@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from copy import deepcopy
+from django.utils.functional import cached_property
 from future.utils import with_metaclass, python_2_unicode_compatible, PY3
 from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -127,6 +128,18 @@ class Placeholder(models.Model):
 
         return item_qs
 
+
+    def get_search_text(self, fallback_language=None):
+        """
+        Get the search text for all contents of this placeholder.
+
+        :param fallback_language: The fallback language to use if there are no items in the current language.
+                                  Passing ``True`` uses the default :ref:`FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE`.
+        :type fallback_language: bool|str
+        :rtype: str
+        """
+        from fluent_contents.rendering import render_placeholder_search_text
+        return render_placeholder_search_text(self, fallback_language=fallback_language)
 
     def get_absolute_url(self):
         """
@@ -265,7 +278,7 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
     sort_order = models.IntegerField(default=1, db_index=True)
 
 
-    @property
+    @cached_property
     def plugin(self):
         """
         Access the parent plugin which renders this model.
@@ -273,13 +286,14 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
         :rtype: :class:`~fluent_contents.extensions.ContentPlugin`
         """
         from fluent_contents.extensions import plugin_pool
-        if self.__class__ in (ContentItem,):
+        model = self.__class__
+        if model is ContentItem:
             # Also allow a non_polymorphic() queryset to resolve the plugin.
             # Corresponding plugin_pool method is still private on purpose.
             # Not sure the utility method should be public, or how it should be named.
             return plugin_pool._get_plugin_by_content_type(self.polymorphic_ctype_id)
         else:
-            return plugin_pool.get_plugin_by_model(self.__class__)
+            return plugin_pool.get_plugin_by_model(model)
 
 
     def __str__(self):
