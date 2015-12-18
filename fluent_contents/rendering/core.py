@@ -282,6 +282,12 @@ class RenderingPipe(object):
         if self._can_cache_output(plugin, output) and contentitem.pk:
             # Cache the output
             plugin.set_cached_output(result.placeholder_name, contentitem, output)
+
+            if plugin.cache_output_per_site:
+                # Unsupported: can't cache global output for placeholder yet if output differs per SITE_ID
+                # Placeholders only have a single entry, the SITE_ID is not part of it's cache key yet.
+                logger.debug("- item #%s is blocks full placeholder caching. Prevented by %r.cache_output_per_site", contentitem.pk, contentitem.plugin)
+                result.set_uncachable()
         else:
             # An item blocks caching the complete placeholder.
             result.set_uncachable()
