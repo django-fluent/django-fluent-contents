@@ -1,7 +1,7 @@
 """
 Definition of the plugin.
 """
-from django.utils.html import format_html
+from django.utils.safestring import mark_safe
 from fluent_contents.extensions import ContentPlugin, plugin_pool, ContentItemForm
 from fluent_contents.plugins.text.models import TextItem
 
@@ -33,4 +33,4 @@ class TextPlugin(ContentPlugin):
         # Included in a DIV, so the next item will be displayed below.
         # The text_final is allowed to be None, to migrate old plugins.
         text = instance.text if instance.text_final is None else instance.text_final
-        return format_html(u'<div class="text">{0}</div>\n', text)
+        return mark_safe(u'<div class="text">{0}</div>\n'.format(text))
