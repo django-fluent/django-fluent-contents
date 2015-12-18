@@ -17,6 +17,5 @@ class RawHtmlPlugin(ContentPlugin):
     class Media:
         css = {'screen': ('fluent_contents/plugins/rawhtml/rawhtml_admin.css',)}
 
-
     def render(self, request, instance, **kwargs):
         return mark_safe(instance.html)

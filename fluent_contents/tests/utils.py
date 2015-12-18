@@ -23,7 +23,6 @@ class AppTestCase(TestCase):
         'fluent_contents.plugins.text',
     )
 
-
     @classmethod
     def setUpClass(cls):
         super(AppTestCase, cls).setUpClass()
@@ -57,7 +56,6 @@ class AppTestCase(TestCase):
         Site.objects.get_or_create(id=settings.SITE_ID, defaults=dict(domain='django.localhost', name='django at localhost'))
         (cls.user, _) = User.objects.get_or_create(is_superuser=True, is_staff=True, username="fluent-contents-admin")
 
-
     def assert200(self, url, msg_prefix=''):
         """
         Test that an URL exists.
@@ -65,7 +63,6 @@ class AppTestCase(TestCase):
         if msg_prefix:
             msg_prefix += ": "
         self.assertEqual(self.client.get(url).status_code, 200, str(msg_prefix) + u"Page at {0} should be found.".format(url))
-
 
     def assert404(self, url, msg_prefix=''):
         """
@@ -86,6 +83,7 @@ except ImportError:
         it's used with the ``with`` statement. In either event entering/exiting
         are called before and after, respectively, the function/block is executed.
         """
+
         def __init__(self, **kwargs):
             self.options = kwargs
             self.wrapped = settings._wrapped
@@ -101,9 +99,11 @@ except ImportError:
             if isinstance(test_func, type) and issubclass(test_func, TransactionTestCase):
                 original_pre_setup = test_func._pre_setup
                 original_post_teardown = test_func._post_teardown
+
                 def _pre_setup(innerself):
                     self.enable()
                     original_pre_setup(innerself)
+
                 def _post_teardown(innerself):
                     original_post_teardown(innerself)
                     self.disable()

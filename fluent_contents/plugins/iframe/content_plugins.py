@@ -12,7 +12,6 @@ class IframePlugin(ContentPlugin):
     model = IframeItem
     category = ContentPlugin.ADVANCED
 
-
     def render(self, request, instance, **kwargs):
         return mark_safe(u'<iframe class="iframe" src="{src}" width="{width}" height="{height}"></iframe>'.format(
             src=escape(instance.src),

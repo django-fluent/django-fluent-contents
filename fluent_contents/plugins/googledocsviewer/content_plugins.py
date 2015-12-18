@@ -21,7 +21,6 @@ class GoogleDocsViewerPlugin(ContentPlugin):
     model = GoogleDocsViewerItem
     category = ContentPlugin.MEDIA
 
-
     def render(self, request, instance, **kwargs):
         url = 'http://docs.google.com/viewer?url={url}&embedded=true'.format(url=urlquote(instance.url, ''))
         return mark_safe(u'<iframe class="googledocsviewer" src="{src}" width="{width}" height="{height}"></iframe>'.format(

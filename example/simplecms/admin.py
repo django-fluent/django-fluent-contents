@@ -27,15 +27,12 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
 
     cached_url.allow_tags = True
 
-
-
     # This is where the magic happens.
     # Tell the base class which tabs to create
 
     def get_placeholder_data(self, request, obj):
         template = self.get_page_template(obj)
         return get_template_placeholder_data(template)
-
 
     def get_page_template(self, obj):
         if not obj:
@@ -45,8 +42,6 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
             # Change page, honor template of object.
             return get_template(obj.template_name or appconfig.SIMPLECMS_DEFAULT_TEMPLATE)
 
-
-
     # Allow template layout changes in the client,
     # showing more power of the JavaScript engine.
 
@@ -54,7 +49,6 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
 
     class Media:
         js = ('simplecms/admin/simplecms_layouts.js',)
-
 
     def get_urls(self):
         """
@@ -65,7 +59,6 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
             url(r'^get_layout/$', self.admin_site.admin_view(self.get_layout_view))
         )
         return my_urls + urls
-
 
     def get_layout_view(self, request):
         """
@@ -90,7 +83,6 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
 
         jsonstr = json.dumps(jsondata)
         return HttpResponse(jsonstr, content_type='application/json', status=status)
-
 
 
 admin.site.register(Page, PageAdmin)

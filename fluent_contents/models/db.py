@@ -26,7 +26,6 @@ except ImportError:
 OPTIMIZE_TRANSLATED_MODEL = True
 
 
-
 @python_2_unicode_compatible
 class Placeholder(models.Model):
     """
@@ -77,10 +76,8 @@ class Placeholder(models.Model):
     def __str__(self):
         return self.title or self.slot
 
-
     def __repr__(self):
         return '<{0}: {1}; slot: {2}>'.format(self.__class__.__name__, unicode(self), self.slot)
-
 
     def get_allowed_plugins(self):
         """
@@ -88,7 +85,6 @@ class Placeholder(models.Model):
         """
         from fluent_contents import extensions  # avoid circular import
         return extensions.plugin_pool.get_allowed_plugins(self.slot)
-
 
     def get_content_items(self, parent=None, limit_parent_language=True):
         """
@@ -128,7 +124,6 @@ class Placeholder(models.Model):
 
         return item_qs
 
-
     def get_search_text(self, fallback_language=None):
         """
         Get the search text for all contents of this placeholder.
@@ -163,7 +158,6 @@ class Placeholder(models.Model):
     delete.alters_data = True
 
 
-
 class ContentItemMetaClass(PolymorphicModelBase):
     """
     Metaclass for all plugin models.
@@ -179,7 +173,7 @@ class ContentItemMetaClass(PolymorphicModelBase):
 
         if name != 'ContentItem':
             if db_table.startswith(app_label + '_'):
-                model_name = db_table[len(app_label)+1:]
+                model_name = db_table[len(app_label) + 1:]
                 new_class._meta.db_table = "contentitem_%s_%s" % (app_label, model_name)
                 if hasattr(new_class._meta, 'original_attrs'):
                     # Make sure that the Django 1.7 migrations also pick up this change!
@@ -196,7 +190,6 @@ class ContentItemMetaClass(PolymorphicModelBase):
                         # The first check is for python_2_unicode_compatible tricks, also check for __unicode__ only.
                         if not hasattr(new_class, '__unicode__') or new_class.__unicode__ == ContentItem.__unicode__:
                             raise TypeError("The {0} class should implement a __unicode__() or __str__() function.".format(name))
-
 
         return new_class
 
@@ -277,7 +270,6 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
     placeholder = models.ForeignKey(Placeholder, related_name='contentitems', null=True, on_delete=models.SET_NULL)
     sort_order = models.IntegerField(default=1, db_index=True)
 
-
     @cached_property
     def plugin(self):
         """
@@ -295,7 +287,6 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
         else:
             return plugin_pool.get_plugin_by_model(model)
 
-
     def __str__(self):
         # Note this representation is optimized for the admin delete page.
         return u"'{type} {id:d}' in '{language} {placeholder}'".format(
@@ -305,13 +296,11 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
             placeholder=self.placeholder
         )
 
-
     class Meta:
         app_label = 'fluent_contents'  # required for models subfolder
         ordering = ('placeholder', 'sort_order')
         verbose_name = _('Contentitem link')
         verbose_name_plural = _('Contentitem links')
-
 
     def get_absolute_url(self):
         """
@@ -324,7 +313,6 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
             return parent.get_absolute_url()
         except AttributeError:
             return None
-
 
     def move_to_placeholder(self, placeholder, sort_order=None):
         """
@@ -349,7 +337,6 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
 
     move_to_placeholder.alters_data = True
 
-
     def copy_to_placeholder(self, placeholder, sort_order=None, in_place=False):
         """
         .. versionadded: 1.0 Copy this content item to a new placeholder.
@@ -372,7 +359,6 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
 
     copy_to_placeholder.alters_data = True
 
-
     def save(self, *args, **kwargs):
         # Fallback, make sure the object has a language.
         # As this costs a query per object, the admin formset already sets the language_code whenever it can.
@@ -382,7 +368,6 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
         super(ContentItem, self).save(*args, **kwargs)
 
     save.alters_data = True
-
 
     def get_cache_keys(self):
         """
@@ -403,7 +388,6 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
         ]
         keys.extend(self.plugin.get_output_cache_keys(placeholder.slot, self))  # ensure list return type.
         return keys
-
 
 
 # Instead of overriding the admin classes (effectively inserting the TranslatableAdmin

@@ -117,7 +117,7 @@ INSTALLED_APPS = (
     'tinymce',
 )
 
-if django.VERSION < (1,7):
+if django.VERSION < (1, 7):
     INSTALLED_APPS += (
         # For DB upgrades
         'south',

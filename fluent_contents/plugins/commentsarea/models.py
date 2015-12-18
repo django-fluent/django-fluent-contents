@@ -43,4 +43,3 @@ def _on_comment_changed(instance, **kwargs):
 @receiver(comments_signals.comment_was_flagged)
 def _on_comment_posted(comment, **kwargs):
     clear_commentarea_cache(comment)
-

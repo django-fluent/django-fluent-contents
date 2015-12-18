@@ -58,7 +58,6 @@ class PluginPool(object):
         self._name_for_ctype_id = None
         self.detected = False
 
-
     def register(self, plugin):
         """
         Make a plugin known to the CMS.
@@ -103,14 +102,12 @@ class PluginPool(object):
 
         return plugin  # Allow decorator syntax
 
-
     def get_plugins(self):
         """
         Return the list of all plugin instances which are loaded.
         """
         self._import_plugins()
         return list(self.plugins.values())
-
 
     def get_allowed_plugins(self, placeholder_slot):
         """
@@ -126,7 +123,6 @@ class PluginPool(object):
                 return self.get_plugins_by_name(*plugins)
             except PluginNotFound as e:
                 raise PluginNotFound(str(e) + " Update the plugin list of the FLUENT_CONTENTS_PLACEHOLDER_CONFIG['{0}'] setting.".format(placeholder_slot))
-
 
     def get_plugins_by_name(self, *names):
         """
@@ -147,14 +143,12 @@ class PluginPool(object):
                 raise TypeError("get_plugins_by_name() expects a plugin name or class, not: {0}".format(name))
         return plugin_instances
 
-
     def get_model_classes(self):
         """
         Return all :class:`~fluent_contents.models.ContentItem` model classes which are exposed by plugins.
         """
         self._import_plugins()
         return [plugin.model for plugin in self.plugins.values()]
-
 
     def get_plugin_by_model(self, model_class):
         """
@@ -171,7 +165,6 @@ class PluginPool(object):
         except KeyError:
             raise PluginNotFound("No plugin found for model '{0}'.".format(model_class.__name__))
         return self.plugins[name]
-
 
     def _get_plugin_by_content_type(self, contenttype):
         self._import_plugins()
@@ -192,7 +185,6 @@ class PluginPool(object):
             raise PluginNotFound("No plugin found for content type #{0} ({1}).".format(contenttype, ct_name))
 
         return self.plugins[name]
-
 
     def _import_plugins(self):
         """

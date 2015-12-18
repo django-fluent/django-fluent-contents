@@ -11,6 +11,7 @@ _get_dummy_search_request = memoize(get_dummy_request, _SEARCH_REQUEST_CACHE, 1)
 
 
 class SearchResultTracker(ResultTracker):
+
     def store_output(self, contentitem, output):
         # Strip all output from HTML tags while collecting
         # (the output is already cached at this point)

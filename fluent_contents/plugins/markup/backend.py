@@ -12,9 +12,11 @@ def render_restructuredtext(text):
     from docutils.core import publish_string
     return publish_string(text, writer_name='html')
 
+
 def render_markdown(text):
     from markdown import markdown
     return markdown(text, ','.join(appsettings.FLUENT_MARKUP_MARKDOWN_EXTRAS))
+
 
 def render_textile(text):
     from textile import textile

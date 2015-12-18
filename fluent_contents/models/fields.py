@@ -34,6 +34,7 @@ class PlaceholderRelation(GenericRelation):
         class Page(models.Model):
             placeholder_set = PlaceholderRelation()
     """
+
     def __init__(self, **kwargs):
         defaults = {
             'limit_choices_to': Q(
@@ -58,6 +59,7 @@ class ContentItemRelation(GenericRelation):
     Adding this relation also causes the admin delete page to list the
     :class:`~fluent_contents.models.ContentItem` objects which will be deleted.
     """
+
     def __init__(self, **kwargs):
         super(ContentItemRelation, self).__init__(to=ContentItem,
             object_id_field='parent_id', content_type_field='parent_type', **kwargs)
@@ -72,6 +74,7 @@ class PlaceholderRel(GenericRel):
     The internal :class:`~django.contrib.contenttypes.generic.GenericRel`
     that is used by the :class:`PlaceholderField` to support queries.
     """
+
     def __init__(self, field):
         limit_choices_to = Q(
             parent_type=lazy(lambda: ContentType.objects.get_for_model(Placeholder), ContentType)(),
@@ -100,10 +103,10 @@ class PlaceholderFieldDescriptor(object):
     by the :func:`~PlaceholderField.contribute_to_class` function.
     This causes ``instance.field`` to return a :class:`~fluent_contents.models.Placeholder` object.
     """
+
     def __init__(self, slot):
         """Set the slot this descriptor is created for."""
         self.slot = slot
-
 
     def __get__(self, instance, instance_type=None):
         """Return the placeholder by slot."""
@@ -121,7 +124,6 @@ class PlaceholderFieldDescriptor(object):
         else:
             placeholder.parent = instance  # fill the reverse cache
             return placeholder
-
 
     def __set__(self, instance, value):
         if instance is None:
@@ -159,6 +161,7 @@ class PlaceholderField(PlaceholderRelation):
        :height: 562px
        :alt: django-fluent-contents placeholder field preview
     """
+
     def __init__(self, slot, plugins=None, **kwargs):
         """
         Initialize the placeholder field.
@@ -175,7 +178,6 @@ class PlaceholderField(PlaceholderRelation):
         self.blank = True                     # TODO: support blank: False to enforce adding at least one plugin.
         self.rel = PlaceholderRel(self)       # This support queries
 
-
     def formfield(self, **kwargs):
         """
         Returns a :class:`PlaceholderFormField` instance for this database Field.
@@ -187,7 +189,6 @@ class PlaceholderField(PlaceholderRelation):
         }
         defaults.update(kwargs)
         return PlaceholderFormField(slot=self.slot, plugins=self._plugins, **defaults)
-
 
     def contribute_to_class(self, cls, name):
         """
@@ -220,7 +221,6 @@ class PlaceholderField(PlaceholderRelation):
             # Being able to move forward from the Placeholder to the derived models does not have that much value.
             setattr(self.rel.to, self.rel.related_name, None)
 
-
     @property
     def plugins(self):
         """
@@ -235,7 +235,6 @@ class PlaceholderField(PlaceholderRelation):
             except extensions.PluginNotFound as e:
                 raise extensions.PluginNotFound(str(e) + " Update the plugin list of '{0}.{1}' field or FLUENT_CONTENTS_PLACEHOLDER_CONFIG['{2}'] setting.".format(self.model._meta.object_name, self.name, self.slot))
 
-
     def value_from_object(self, obj):
         """
         Internal Django method, used to return the placeholder ID when exporting the model instance.
@@ -249,8 +248,7 @@ class PlaceholderField(PlaceholderRelation):
         return placeholder.id if placeholder else None  # Be consistent with other fields, like ForeignKey
 
 
-
-if django.VERSION < (1,7):
+if django.VERSION < (1, 7):
     try:
         from south.modelsinspector import add_ignored_fields
     except ImportError:

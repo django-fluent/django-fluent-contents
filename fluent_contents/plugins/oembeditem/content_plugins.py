@@ -34,7 +34,6 @@ class OEmbedPlugin(ContentPlugin):
             )
         }
 
-
     def get_render_template(self, request, instance, **kwargs):
         """
         Allow to style the item based on the type.

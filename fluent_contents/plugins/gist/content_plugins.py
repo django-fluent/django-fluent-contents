@@ -12,7 +12,6 @@ class GistPlugin(ContentPlugin):
     model = GistItem
     category = ContentPlugin.PROGRAMMING
 
-
     def render(self, request, instance, **kwargs):
         url = u'http://gist.github.com/{0}.js'.format(instance.gist_id)
         if instance.filename:

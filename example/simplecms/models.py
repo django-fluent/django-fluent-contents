@@ -28,14 +28,12 @@ class Page(MPTTModel):
     def __unicode__(self):
         return self.title
 
-
     def get_absolute_url(self):
         # cached_url always points to the URL within the URL config root.
         # when the application is mounted at a subfolder, or the 'cms.urls' config
         # is included at a sublevel, it needs to be prepended.
         root = reverse('simplecms-page').rstrip('/')
         return root + self._cached_url
-
 
     # ---- updating _cached_url:
 
@@ -45,7 +43,6 @@ class Page(MPTTModel):
     def __init__(self, *args, **kwargs):
         super(Page, self).__init__(*args, **kwargs)
         self._original_cached_url = self._cached_url
-
 
     # This code runs in a transaction since it's potentially editing a lot of records (all decendant urls).
     @commit_on_success
@@ -61,7 +58,6 @@ class Page(MPTTModel):
         # Update others
         self._update_decendant_urls()
         return super(Page, self).save(*args, **kwargs)
-
 
     # Following of the principles for "clean code"
     # the save() method is split in the 3 methods below,
@@ -84,7 +80,6 @@ class Page(MPTTModel):
             dupnr += 1
             self.slug = "%s-%d" % (origslug, dupnr)
 
-
     def _update_cached_url(self):
         """
         Update the URLs
@@ -94,7 +89,6 @@ class Page(MPTTModel):
             self._cached_url = u'/%s/' % self.slug
         else:
             self._cached_url = u'%s%s/' % (self.parent._cached_url, self.slug)
-
 
     def _update_decendant_urls(self):
         """

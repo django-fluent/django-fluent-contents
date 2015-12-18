@@ -47,6 +47,7 @@ class PluginContext(Context):
     A template Context class similar to :class:`~django.template.context.RequestContext`, that enters some pre-filled data.
     This ensures that variables such as ``STATIC_URL`` and ``request`` are available in the plugin templates.
     """
+
     def __init__(self, request, dict=None, current_app=None):
         # If there is any reason to site-global context processors for plugins,
         # I'd like to know the usecase, and it could be implemented here.
@@ -256,10 +257,8 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     def __init__(self):
         self._type_id = None
 
-
     def __repr__(self):
         return '<{0} for {1} model>'.format(self.__class__.__name__, self.model.__name__)
-
 
     @property
     def verbose_name(self):
@@ -267,7 +266,6 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         The title for the plugin, by default it reads the ``verbose_name`` of the model.
         """
         return self.model._meta.verbose_name
-
 
     @property
     def name(self):
@@ -277,14 +275,12 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         """
         return self.__class__.__name__
 
-
     @property
     def type_name(self):
         """
         Return the classname of the model, this is mainly provided for templates.
         """
         return self.model.__name__
-
 
     @property
     def type_id(self):
@@ -299,13 +295,11 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
 
         return self._type_id
 
-
     def get_model_instances(self):
         """
         Return the model instances the plugin has created.
         """
         return self.model.objects.all()
-
 
     def _render_contentitem(self, request, instance):
         # Internal wrapper for render(), to allow updating the method signature easily.
@@ -332,7 +326,6 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
             media = self.get_frontend_media(instance)
             return ContentItemOutput(result, media, cacheable=self.cache_output, cache_timeout=self.cache_timeout)
 
-
     def get_output_cache_base_key(self, placeholder_name, instance):
         """
         .. versionadded:: 1.0
@@ -340,7 +333,6 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
            By default, this function generates the cache key using :func:`~fluent_contents.cache.get_rendering_cache_key`.
         """
         return get_rendering_cache_key(placeholder_name, instance)
-
 
     def get_output_cache_key(self, placeholder_name, instance):
         """
@@ -363,7 +355,6 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
             cachekey = "{0}.{1}".format(cachekey, user_language)
 
         return cachekey
-
 
     def get_output_cache_keys(self, placeholder_name, instance):
         """
@@ -406,7 +397,6 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
 
         return cachekeys
 
-
     def get_cached_output(self, placeholder_name, instance):
         """
         .. versionadded:: 0.9
@@ -418,7 +408,6 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         """
         cachekey = self.get_output_cache_key(placeholder_name, instance)
         return cache.get(cachekey)
-
 
     def set_cached_output(self, placeholder_name, instance, output):
         """
@@ -441,7 +430,6 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         else:
             # Don't want to mix into the default 0/None issue.
             cache.set(cachekey, output)
-
 
     def render(self, request, instance, **kwargs):
         """
@@ -475,7 +463,6 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         context = self.get_context(request, instance, **kwargs)
         return self.render_to_string(request, render_template, context)
 
-
     def render_to_string(self, request, template, context, content_instance=None):
         """
         Render a custom template with the :class:`~PluginContext` as context instance.
@@ -484,14 +471,12 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
             content_instance = PluginContext(request)
         return render_to_string(template, context, context_instance=content_instance)
 
-
     def render_error(self, error):
         """
         A default implementation to render an exception.
         """
         return '<div style="color: red; border: 1px solid red; padding: 5px;">' \
                '<p><strong>%s</strong></p>%s</div>' % (_('Error:'), linebreaks(escape(str(error))))
-
 
     def redirect(self, url, status=302):
         """
@@ -519,14 +504,12 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         """
         raise HttpRedirectRequest(url, status=status)
 
-
     def get_render_template(self, request, instance, **kwargs):
         """
         Return the template to render for the specific model `instance` or `request`,
         By default it uses the ``render_template`` attribute.
         """
         return self.render_template
-
 
     def get_context(self, request, instance, **kwargs):
         """
@@ -537,7 +520,6 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
             'instance': instance,
         }
 
-
     @property
     def frontend_media(self):
         """
@@ -547,7 +529,6 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         # By adding this property, frontend_media_property() is further optimized.
         return ImmutableMedia.empty_instance
 
-
     def get_frontend_media(self, instance):
         """
         Return the frontend media for a specific instance.
@@ -555,7 +536,6 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         from the ``class FrontendMedia`` of the plugin.
         """
         return self.frontend_media
-
 
     def get_search_text(self, instance):
         """
@@ -567,12 +547,12 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         return clean_join(u" ", bits)
 
 
-
 class HttpRedirectRequest(Exception):
     """
     .. versionadded:: 1.0
     Request for a redirect from within a view.
     """
+
     def __init__(self, url, status=302):
         super(HttpRedirectRequest, self).__init__(
             "A redirect to '{0}' was requested by a plugin.\n"
@@ -581,4 +561,3 @@ class HttpRedirectRequest(Exception):
         )
         self.url = url
         self.status = status
-

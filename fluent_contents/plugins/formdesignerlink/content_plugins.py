@@ -32,11 +32,9 @@ class FormDesignerLinkPlugin(ContentPlugin):
     category = ContentPlugin.INTERACTIVITY
     cache_output = False
 
-
     def get_render_template(self, request, instance, **kwargs):
         # Overwritten to return a template from the instance.
         return instance.form_definition.form_template_name or self.render_template or form_designer_settings.DEFAULT_FORM_TEMPLATE
-
 
     def render(self, request, instance, **kwargs):
         # While overwriting get_context() would be sufficient here, this is rather easier to understand.

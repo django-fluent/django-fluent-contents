@@ -9,7 +9,6 @@ class DisqusCommentsPlugin(ContentPlugin):
     category = ContentPlugin.INTERACTIVITY
     render_template = "fluent_contents/plugins/disquswidgets/comments.html"
 
-
     def get_context(self, request, instance, **kwargs):
         parent_url = instance.parent.get_absolute_url()
         return {

@@ -9,6 +9,7 @@ class SharedContentItemForm(ContentItemForm):
     """
     Admin form for shared content item.
     """
+
     def __init__(self, *args, **kwargs):
         super(SharedContentItemForm, self).__init__(*args, **kwargs)
 

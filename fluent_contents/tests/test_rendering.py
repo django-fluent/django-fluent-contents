@@ -18,7 +18,6 @@ class RenderingTests(AppTestCase):
     # Most rendering tests happen in the "templatetags" tests.
     # These functions test the other constraints
 
-
     def test_render_timeout(self):
         """
         The ``render_placeholder`` should detect the maximum timeout that can be used for caching.
@@ -37,7 +36,6 @@ class RenderingTests(AppTestCase):
         self.assertEqual(output.html, '<b>Item1!</b><b>Item2!</b>')
         self.assertEqual(output.cache_timeout, 60)  # this is that timeout that should be used for the placeholder cache item.
 
-
     def test_debug_is_method_overwritten(self):
         """
         Test the "is method overwritten" logic to detect template changes
@@ -48,6 +46,7 @@ class RenderingTests(AppTestCase):
             pass
 
         class OverrideReplace(OverrideBase):
+
             def get_render_template(self):
                 pass
 

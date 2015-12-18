@@ -30,7 +30,6 @@ class MarkupPluginBase(ContentPlugin):
     class Media:
         css = {'screen': ('fluent_contents/plugins/markup/markup_admin.css',)}
 
-
     def render(self, request, instance, **kwargs):
         try:
             html = backend.render_text(instance.text, instance.language)

@@ -18,7 +18,6 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
         self._initial = kwargs.pop('initial', [])
         super(BaseInitialGenericInlineFormSet, self).__init__(*args, **kwargs)
 
-
     @property
     def management_form(self):
         try:
@@ -35,7 +34,6 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
                 ))
             else:
                 raise
-
 
     def initial_form_count(self):
         if self.is_bound:

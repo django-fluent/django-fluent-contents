@@ -145,7 +145,6 @@ class RenderingPipe(object):
     #: Tell whether the cache can be consulted for output.
     use_cached_output = True
 
-
     def __init__(self, request, edit_mode=None):
         if edit_mode is None:
             edit_mode = markers.is_edit_mode(request)
