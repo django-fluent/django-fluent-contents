@@ -4,6 +4,7 @@ Changelog
 Changes in 1.1 (git/development)
 --------------------------------
 
+* Added django-debug-toolbar_ panel: ``fluent_contents.panels.ContentPluginPanel'``.
 * Added API for full text indexing support; ``Placeholder.get_search_text()``.
 * Added ``FLUENT_TEXT_POST_FILTERS`` and ``FLUENT_TEXT_PRE_FILTERS`` to the text plugin for further processing of the text.
 

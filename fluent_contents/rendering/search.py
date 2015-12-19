@@ -66,7 +66,7 @@ class SearchRenderingPipe(PlaceholderRenderingPipe):
     def merge_output(self, result, items, template_name):
         # Collect all individual rendered items.
         html_output = []
-        for item_id, output in result.get_output():
+        for contentitem, output in result.get_output():
             html_output.append(output.html)
 
         merged_html = mark_safe(u''.join(html_output))

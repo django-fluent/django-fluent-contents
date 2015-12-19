@@ -49,7 +49,14 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
     :type fallback_language: bool/str
     :rtype: :class:`~fluent_contents.models.ContentItemOutput`
     """
-    output = PlaceholderRenderingPipe(request).render_placeholder(placeholder, parent_object=parent_object, template_name=template_name, cachable=cachable, limit_parent_language=limit_parent_language, fallback_language=fallback_language)
+    output = PlaceholderRenderingPipe(request).render_placeholder(
+        placeholder=placeholder,
+        parent_object=parent_object,
+        template_name=template_name,
+        cachable=cachable,
+        limit_parent_language=limit_parent_language,
+        fallback_language=fallback_language
+    )
 
     # Wrap the result after it's stored in the cache.
     if markers.is_edit_mode(request):
@@ -81,7 +88,13 @@ def render_content_items(request, items, template_name=None, cachable=None):
     if not items:
         output = ContentItemOutput(mark_safe(u"<!-- no items to render -->"))
     else:
-        output = RenderingPipe(request).render_items(None, items, parent_object=None, template_name=template_name, cachable=cachable)
+        output = RenderingPipe(request).render_items(
+            placeholder=None,
+            items=items,
+            parent_object=None,
+            template_name=template_name,
+            cachable=cachable
+        )
 
     # Wrap the result after it's stored in the cache.
     if markers.is_edit_mode(request):
@@ -104,5 +117,9 @@ def render_placeholder_search_text(placeholder, fallback_language=None):
     """
     parent_object = placeholder.parent   # this is a cached lookup thanks to PlaceholderFieldDescriptor
     language = get_parent_language_code(parent_object)
-    output = SearchRenderingPipe(language).render_placeholder(placeholder, parent_object=parent_object, fallback_language=fallback_language)
+    output = SearchRenderingPipe(language).render_placeholder(
+        placeholder=placeholder,
+        parent_object=parent_object,
+        fallback_language=fallback_language
+    )
     return output.html   # Tags already stripped.

@@ -34,8 +34,9 @@ class ResultTracker(object):
     MISSING = object()
     SKIPPED = object()
 
-    def __init__(self, parent_object, placeholder, items):
+    def __init__(self, request, parent_object, placeholder, items):
         # The source
+        self.request = request
         self.parent_object = parent_object
         self.placeholder = placeholder
         self.items = items
@@ -46,6 +47,7 @@ class ResultTracker(object):
         self.output_ordering = []
         self.remaining_items = []
         self.item_output = {}
+        self.item_source = {}  # for debugging
 
         # Other state fields
         self.placeholder_name = get_placeholder_name(placeholder)
@@ -72,6 +74,7 @@ class ResultTracker(object):
         # Using index by pk, because contentitem could be a derived or base instance.
         item_id = self._get_item_id(contentitem)
         self.item_output[item_id] = output
+        self.item_source[item_id] = contentitem
 
     def _get_item_id(self, contentitem):
         return contentitem.pk or id(contentitem)
@@ -100,13 +103,14 @@ class ResultTracker(object):
     def get_output(self, include_exceptions=False):
         """
         Return the output in the correct ordering.
-        :rtype: list[Tuple[int, O]]
+        :rtype: list[Tuple[contentitem, O]]
         """
         # Order all rendered items in the correct sequence.
         # Don't assume the derived tables are in perfect shape, hence the dict + KeyError handling.
         # The derived tables could be truncated/reset or store_output() could be omitted.
         ordered_output = []
         for item_id in self.output_ordering:
+            contentitem = self.item_source[item_id]
             try:
                 output = self.item_output[item_id]
             except KeyError:
@@ -121,7 +125,7 @@ class ResultTracker(object):
                     if isinstance(output, Exception) or output is self.SKIPPED:
                         continue
 
-            ordered_output.append((item_id, output))
+            ordered_output.append((contentitem, output))
 
         return ordered_output
 
@@ -171,7 +175,7 @@ class RenderingPipe(object):
             return ContentItemOutput(mark_safe(u"<!-- no items in placeholder '{0}' -->".format(escape(get_placeholder_name(placeholder)))), cacheable=True)
 
         # Tracked data during rendering:
-        result = self.result_class(parent_object, placeholder, items)
+        result = self.result_class(self.request, parent_object, placeholder, items)
         if self.edit_mode or not self._can_cache_merged_output(template_name, cachable):
             result.set_uncachable()
 
@@ -339,15 +343,15 @@ class RenderingPipe(object):
         """
         html_output = []
         merged_media = Media()
-        for item_id, output in result.get_output(include_exceptions=True):
+        for contentitem, output in result.get_output(include_exceptions=True):
             if output is ResultTracker.MISSING:
                 # Likely get_real_instances() didn't return an item for it.
                 # The get_real_instances() didn't return an item for the derived table. This happens when either:
                 # 1. that table is truncated/reset, while there is still an entry in the base ContentItem table.
                 #    A query at the derived table happens every time the page is being rendered.
                 # 2. the model was completely removed which means there is also a stale ContentType object.
-                class_name = _get_stale_item_class_name(items, pk=item_id)
-                html_output.append(mark_safe(u"<!-- Missing derived model for ContentItem #{id}: {cls}. -->\n".format(id=pk, cls=class_name)))
+                class_name = _get_stale_item_class_name(contentitem)
+                html_output.append(mark_safe(u"<!-- Missing derived model for ContentItem #{id}: {cls}. -->\n".format(id=contentitem.pk, cls=class_name)))
                 logger.warning("Missing derived model for ContentItem #{id}: {cls}.".format(id=pk, cls=class_name))
             elif isinstance(output, Exception):
                 html_output.append(u'<!-- error: {0} -->\n'.format(str(output)))
@@ -438,8 +442,7 @@ class SkipItem(RuntimeError):
     pass
 
 
-def _get_stale_item_class_name(items, pk):
-    item = next(item for item in items if item.pk == pk)
+def _get_stale_item_class_name(item):
     try:
         return item.plugin.type_name
     except PluginNotFound:

@@ -105,12 +105,20 @@ with some additional configuration.
 For more information, see the documentation of django-wysiwyg_.
 
 
+Debug toolbar
+-------------
+
+During development, the rendered items can be displayed in a special django-debug-toolbar_ panel.
+Include ``'fluent_contents.panels.ContentPluginPanel'`` in the ``DEBUG_TOOLBAR_PANELS`` setting.
+
+
 .. _CKEditor: http://ckeditor.com/
 .. _Redactor: http://redactorjs.com/
 .. _TinyMCE: http://www.tinymce.com/
 .. _YAHOO: http://developer.yahoo.com/yui/editor/
 .. _django-any-urlfield: https://github.com/edoburu/django-any-urlfield
 .. _django-any-imagefield: https://github.com/edoburu/django-any-imagefield
+.. _django-debug-toolbar: https://github.com/django-debug-toolbar/django-debug-toolbar
 .. _django-filebrowser-no-grappelli-django14: https://github.com/smacker/django-filebrowser-no-grappelli-django14
 .. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg
 .. _sorl-thumbnail: https://github.com/sorl/sorl-thumbnail
