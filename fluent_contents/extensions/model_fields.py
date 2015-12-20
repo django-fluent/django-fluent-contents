@@ -13,9 +13,13 @@ When those apps are installed, they are used by the plugins.
 """
 from django.db import models
 from django.utils.safestring import mark_safe
-from fluent_contents.forms.widgets import WysiwygWidget
 from fluent_utils.softdeps.any_urlfield import AnyUrlField
 from fluent_utils.softdeps.any_imagefield import AnyFileField, AnyImageField
+
+from fluent_contents import appsettings
+from fluent_contents.forms.widgets import WysiwygWidget
+from fluent_contents.utils.html import clean_html, sanitize_html
+
 
 _this_module_name = __name__
 
@@ -87,8 +91,16 @@ class PluginHtmlField(MigrationMixin, models.TextField):
 
         return super(PluginHtmlField, self).formfield(**defaults)
 
-    def to_python(self, value):
-        return mark_safe(value)
+    def to_python(self, html):
+        # Make well-formed if requested
+        if appsettings.FLUENT_TEXT_CLEAN_HTML:
+            html = clean_html(html)
+
+        # Remove unwanted tags if requested
+        if appsettings.FLUENT_TEXT_SANITIZE_HTML:
+            html = sanitize_html(html)
+
+        return mark_safe(html)
 
 
 # Tell the Django admin it shouldn't override the widget because it's a TextField

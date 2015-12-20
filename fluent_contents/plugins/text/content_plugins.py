@@ -2,20 +2,8 @@
 Definition of the plugin.
 """
 from django.utils.safestring import mark_safe
-from fluent_contents.extensions import ContentPlugin, plugin_pool, ContentItemForm
+from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.text.models import TextItem
-
-
-class TextItemForm(ContentItemForm):
-    """
-    Perform extra processing for the text item
-    """
-
-    def clean_text(self, html):
-        """
-        Perform the cleanup in the form, allowing to raise a ValidationError
-        """
-        return self.instance.apply_pre_filters(html)
 
 
 @plugin_pool.register
@@ -24,7 +12,6 @@ class TextPlugin(ContentPlugin):
     CMS plugin for WYSIWYG text items.
     """
     model = TextItem
-    form = TextItemForm
     admin_init_template = "admin/fluent_contents/plugins/text/admin_init.html"  # TODO: remove the need for this.
     admin_form_template = ContentPlugin.ADMIN_TEMPLATE_WITHOUT_LABELS
     search_output = True

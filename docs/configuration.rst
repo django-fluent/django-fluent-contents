@@ -87,6 +87,56 @@ When this value is not defined, the following settings will be tried:
 * ``LANGUAGE_CODE``
 
 
+HTML Field Settings
+-------------------
+
+.. _FLUENT_TEXT_CLEAN_HTML:
+
+FLUENT_TEXT_CLEAN_HTML
+~~~~~~~~~~~~~~~~~~~~~~
+
+If ``True``, the HTML content returned by the :class:`~fluent_contents.extensions.PluginHtmlField`
+will be rewritten to be well-formed using html5lib_.
+
+.. _FLUENT_TEXT_SANITIZE_HTML:
+
+FLUENT_TEXT_SANITIZE_HTML
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+if ``True``, unwanted HTML tags will be removed server side using html5lib_.
+
+
+.. _FLUENT_TEXT_POST_FILTERS:
+.. _FLUENT_TEXT_PRE_FILTERS:
+
+FLUENT_TEXT_POST_FILTERS, FLUENT_TEXT_PRE_FILTERS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+These settings accept a list of callable function names,
+which are called to update the HTML content.
+For example:
+
+.. code-block:: python
+
+   FLUENT_TEXT_PRE_FILTERS = (
+      'myapp.filters.cleanup_html',
+      'myapp.filters.validate_html',
+      'fluent_contents.plugins.text.filters.smartypants.smartypants_filter',
+   )
+
+   FLUENT_TEXT_POST_FILTERS = (
+      'fluent_contents.plugins.text.filters.softhypen.softhypen_filter',
+   )
+
+The pre-filters and post-filters differ in a slight way:
+
+* The *pre*-filters updates the source text, so they should be idempotent.
+* The *post*-filters only affect the displayed output, so they may manipulate the HTML completely.
+
+.. seealso::
+   The :doc:`filters` documentation.
+
+
 Admin settings
 --------------
 
@@ -135,4 +185,5 @@ is unsplit, making all content available for all sites.
    Using that feature is recommended above disabling multisite support completely.
 
 
+.. _html5lib: http://code.google.com/p/html5lib/
 .. _django-multisite: https://github.com/ecometrica/django-multisite

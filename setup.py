@@ -46,6 +46,8 @@ setup(
         'django-template-analyzer>=1.5',   # Needed for Django 1.8 compatibility
         'future>=0.12.2',
         'six>=1.5.2',
+        # Work around https://github.com/html5lib/html5lib-python/issues/189
+        'html5lib >= 0.999, != 0.9999, != 1.0b5, != 0.99999, != 1.0b6',
     ],
     requires=[
         'Django (>=1.4)',
@@ -56,11 +58,7 @@ setup(
         'formdesignerlink': ['django-form-designer'],
         'markup': ['docutils', 'textile', 'Markdown>=1.7'],
         'oembeditem': ['micawber>=0.2.6', 'beautifulsoup4>=4.3.2'],
-        'text': [
-            'django-wysiwyg>=0.5.1',
-            # Work around https://github.com/html5lib/html5lib-python/issues/189
-            'html5lib >= 0.999, != 0.9999, != 1.0b5, != 0.99999, != 1.0b6',
-        ],
+        'text': ['django-wysiwyg>=0.5.1'],
         'twitterfeed': ['twitter-text-py>=1.0.3'],
     },
     dependency_links = [
@@ -80,11 +78,6 @@ setup(
     include_package_data=True,
 
     test_suite = 'runtests',
-    tests_require = [
-        'django-wysiwyg>=0.5.1',
-        'html5lib >= 0.999, != 0.9999, != 1.0b5, != 0.99999, != 1.0b6',
-    ],
-
     zip_safe=False,
     classifiers=[
         'Development Status :: 4 - Beta',
