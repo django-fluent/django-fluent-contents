@@ -34,7 +34,7 @@ class ResultTracker(object):
     MISSING = object()
     SKIPPED = object()
 
-    def __init__(self, request, parent_object, placeholder, items):
+    def __init__(self, request, parent_object, placeholder, items, all_cacheable=True):
         # The source
         self.request = request
         self.parent_object = parent_object
@@ -43,7 +43,7 @@ class ResultTracker(object):
 
         # The results
         self.all_timeout = DEFAULT_TIMEOUT
-        self.all_cacheable = True
+        self.all_cacheable = all_cacheable
         self.output_ordering = []
         self.remaining_items = []
         self.item_output = {}
@@ -175,8 +175,14 @@ class RenderingPipe(object):
             return ContentItemOutput(mark_safe(u"<!-- no items in placeholder '{0}' -->".format(escape(get_placeholder_name(placeholder)))), cacheable=True)
 
         # Tracked data during rendering:
-        result = self.result_class(self.request, parent_object, placeholder, items)
-        if self.edit_mode or not self._can_cache_merged_output(template_name, cachable):
+        result = self.result_class(
+            request=self.request,
+            parent_object=parent_object,
+            placeholder=placeholder,
+            items=items,
+            all_cacheable=self._can_cache_merged_output(template_name, cachable),
+        )
+        if self.edit_mode:
             result.set_uncachable()
 
         if is_queryset:

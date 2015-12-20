@@ -11,7 +11,13 @@
     <tbody>
       <tr class="dbDebugEven"><th>{% trans "Parent" %}</th><td><code>{{ placeholder.parent_model }} #{{ placeholder.parent_id }}</code></td></tr>
       <tr class="dbDebugEven"><th>{% trans "Cachable" %}</th><td>
-        {% if not placeholder.all_cachable %}<strong>{% trans "no" %}</strong>{% else %}{% trans "yes" %}{% endif %}
+        {% if not placeholder.initial_all_cachable %}
+          {% trans "no, due to template setting" %}
+        {% elif not placeholder.all_cachable %}
+          <strong>{% trans "no" %}</strong>
+        {% else %}
+          {% trans "yes" %}
+        {% endif %}
       </td></tr>
       <tr class="dbDebugEven"><th>{% trans "Cache timeout" %}</th><td>{{ placeholder.all_timeout_str|default_if_none:default_time }}</td></tr>
     {% for item in placeholder.items %}
@@ -33,7 +39,7 @@
                 {% if not item.cache_output %}{% trans "no" %}{% else %}
                   {% trans "yes" %}<!--
                   -->{% if item.cache_output_per_site %}, <em>{% trans "per site" %}</em>{% endif %}<!--
-                  -->{% if item.cache_output_per_language %}, {% trans "per language" %}{% endif %}<!--
+                  -->{% if item.cache_output_per_language %}, {% trans "per gettext language" %}{% endif %}<!--
                   -->{% if item.cache_timeout %}, {{ item.cache_timeout_str }}{% endif %}
                 {% endif %}</td>
               </tr>

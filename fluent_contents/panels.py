@@ -21,6 +21,8 @@ class DebugResultTracker(ResultTracker):
         super(DebugResultTracker, self).__init__(*args, **kwargs)
         # Reference this result in the data collector.
         collector.collect(self)
+        # Track that the object was never cachable
+        self.initial_all_cachable = self.all_cacheable
 
 
 class ContentPluginPanel(Panel):
@@ -43,7 +45,7 @@ class ContentPluginPanel(Panel):
 
     @property
     def title(self):
-        return self.nav_title
+        return _("{0} content items rendered in {1} placeholders").format(self.num_items, self.num_placeholders)
 
     @property
     def nav_subtitle(self):
@@ -100,6 +102,7 @@ class ContentPluginPanel(Panel):
                 'slot': resulttracker.placeholder_name,
                 'debug_name': _debug_name(resulttracker),
                 'all_cachable': resulttracker.all_cacheable,
+                'initial_all_cachable': resulttracker.initial_all_cachable,
                 'all_timeout': all_timeout,
                 'all_timeout_str': str(timedelta(seconds=all_timeout)) if all_timeout else None,
                 'items': rendered_items,
