@@ -1,6 +1,5 @@
 from django.core.urlresolvers import reverse
-from django.db import models
-from django.db.transaction import commit_on_success
+from django.db import models, transaction
 from fluent_contents.models import PlaceholderRelation, ContentItemRelation
 from mptt.models import MPTTModel
 from simplecms import appconfig
@@ -45,7 +44,7 @@ class Page(MPTTModel):
         self._original_cached_url = self._cached_url
 
     # This code runs in a transaction since it's potentially editing a lot of records (all decendant urls).
-    @commit_on_success
+    @transaction.atomic
     def save(self, *args, **kwargs):
         """
         Save the model, and update caches.
