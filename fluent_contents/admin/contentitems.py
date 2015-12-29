@@ -1,8 +1,12 @@
 import django
-from django.contrib.contenttypes.generic import BaseGenericInlineFormSet, GenericInlineModelAdmin
 from fluent_contents import extensions, appsettings
 from fluent_contents.forms import ContentItemForm
 from fluent_contents.models import Placeholder, get_parent_language_code
+
+try:
+    from django.contrib.contenttypes.admin import BaseGenericInlineFormSet, GenericInlineModelAdmin  # Django 1.7
+except ImportError:
+    from django.contrib.contenttypes.generic import BaseGenericInlineFormSet, GenericInlineModelAdmin
 
 
 class BaseContentItemFormSet(BaseGenericInlineFormSet):
@@ -134,7 +138,7 @@ class BaseContentItemInline(GenericInlineModelAdmin):
 
     def get_fieldsets(self, request, obj=None):
         # If subclass declares fieldsets, this is respected
-        if not self.extra_fieldsets or self.declared_fieldsets:
+        if not self.extra_fieldsets or getattr(self, 'declared_fieldsets', None):
             return super(BaseContentItemInline, self).get_fieldsets(request, obj)
 
         return ((None, {'fields': self.base_fields}),) + self.extra_fieldsets

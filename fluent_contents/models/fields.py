@@ -75,7 +75,8 @@ class PlaceholderRel(GenericRel):
     that is used by the :class:`PlaceholderField` to support queries.
     """
 
-    def __init__(self, field):
+    def __init__(self, field, to, related_name=None, related_query_name=None, limit_choices_to=None):
+        # Note: all other args are provided for Django 1.9 compatibility
         limit_choices_to = Q(
             parent_type=lazy(lambda: ContentType.objects.get_for_model(Placeholder), ContentType)(),
             slot=field.slot,
@@ -161,13 +162,14 @@ class PlaceholderField(PlaceholderRelation):
        :height: 562px
        :alt: django-fluent-contents placeholder field preview
     """
+    rel_class = PlaceholderRel  # Django 1.9
 
     def __init__(self, slot, plugins=None, **kwargs):
         """
         Initialize the placeholder field.
         """
-        super(PlaceholderField, self).__init__(**kwargs)
         self.slot = slot
+        super(PlaceholderField, self).__init__(**kwargs)
 
         # See if a plugin configuration is defined in the settings
         self._slot_config = appsettings.FLUENT_CONTENTS_PLACEHOLDER_CONFIG.get(slot) or {}
@@ -176,7 +178,9 @@ class PlaceholderField(PlaceholderRelation):
         # Overwrite some hardcoded defaults from the base class.
         self.editable = True
         self.blank = True                     # TODO: support blank: False to enforce adding at least one plugin.
-        self.rel = PlaceholderRel(self)       # This support queries
+
+        if django.VERSION < (1, 9):
+            self.rel = PlaceholderRel(self, Placeholder)       # This support queries
 
     def formfield(self, **kwargs):
         """

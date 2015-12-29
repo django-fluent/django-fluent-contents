@@ -3,7 +3,6 @@ import django
 from django.conf.urls import patterns, url
 from django.contrib.admin import ModelAdmin
 from django.contrib.admin.helpers import InlineAdminFormSet
-from django.contrib.contenttypes.generic import GenericInlineModelAdmin
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import signals
 from django.dispatch import receiver
@@ -14,9 +13,14 @@ from django.utils.functional import curry
 from fluent_contents import extensions
 from fluent_contents.admin.contentitems import get_content_item_inlines, BaseContentItemFormSet
 from fluent_contents.admin.genericextensions import BaseInitialGenericInlineFormSet
-from fluent_contents.models import Placeholder, ContentItem, get_parent_language_code
+from fluent_contents.models import Placeholder
 from fluent_contents.models.managers import get_parent_active_language_choices
 from fluent_utils.ajax import JsonResponse
+
+try:
+    from django.contrib.contenttypes.admin import GenericInlineModelAdmin  # Django 1.7
+except ImportError:
+    from django.contrib.contenttypes.generic import GenericInlineModelAdmin
 
 
 class PlaceholderInlineFormSet(BaseInitialGenericInlineFormSet):

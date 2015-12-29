@@ -1,4 +1,3 @@
-from django.utils.functional import memoize
 from django.utils.safestring import mark_safe
 from fluent_contents.models import ContentItemOutput
 from fluent_contents.utils.search import get_cleaned_string
@@ -6,8 +5,13 @@ from .core import PlaceholderRenderingPipe, SkipItem, ResultTracker
 from .utils import get_dummy_request
 
 
-_SEARCH_REQUEST_CACHE = {}
-_get_dummy_search_request = memoize(get_dummy_request, _SEARCH_REQUEST_CACHE, 1)
+try:
+    from django.utils.functional import memoize
+    _SEARCH_REQUEST_CACHE = {}
+    _get_dummy_search_request = memoize(get_dummy_request, _SEARCH_REQUEST_CACHE, 1)
+except ImportError:
+    from django.utils.lru_cache import lru_cache  # Needs Python 2.7+
+    _get_dummy_search_request = lru_cache()(get_dummy_request)
 
 
 class SearchResultTracker(ResultTracker):

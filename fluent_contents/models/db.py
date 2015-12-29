@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 from copy import deepcopy
 from django.utils.functional import cached_property
 from future.utils import with_metaclass, python_2_unicode_compatible, PY3
-from django.contrib.contenttypes.generic import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.dispatch import receiver
@@ -12,6 +11,7 @@ from fluent_contents import appsettings
 from fluent_contents.cache import get_placeholder_cache_key
 from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_language_code
 from fluent_contents.models.mixins import CachedModelMixin
+from fluent_utils.django_compat.moves.contenttypes import GenericForeignKey
 from parler.models import TranslatableModel
 from parler.signals import post_translation_delete
 from parler.utils import get_language_title

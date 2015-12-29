@@ -1,7 +1,12 @@
-from django.contrib.contenttypes.generic import BaseGenericInlineFormSet
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.forms.formsets import ManagementForm
+
+try:
+    from django.contrib.contenttypes.forms import BaseGenericInlineFormSet  # Django 1.7
+except ImportError:
+    from django.contrib.contenttypes.generic import BaseGenericInlineFormSet
+
 
 
 class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
