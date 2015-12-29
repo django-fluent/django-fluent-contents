@@ -39,9 +39,9 @@ setup(
     license='Apache 2.0',
 
     install_requires=[
-        'django-fluent-utils>=1.2.1',      # DRY utility code
-        'django-parler>=1.4',              # Needed for Django 1.8 compatibility
-        'django-polymorphic>=0.7',         # Needed for Django 1.8 compatibility
+        'django-fluent-utils>=1.2.3',      # DRY utility code
+        'django-parler>=1.6',              # Needed for Django 1.9 compatibility
+        'django-polymorphic>=0.8.1',       # Needed for Django 1.9 compatibility
         'django-tag-parser>=2.1',          # Needed for Django 1.8 compatibility
         'django-template-analyzer>=1.5',   # Needed for Django 1.8 compatibility
         'future>=0.12.2',
@@ -50,15 +50,15 @@ setup(
         'html5lib >= 0.999, != 0.9999, != 1.0b5, != 0.99999, != 1.0b6',
     ],
     requires=[
-        'Django (>=1.4)',
+        'Django (>=1.5)',
     ],
     extras_require = {
         'code': ['Pygments'],
         'disquscommentsarea': ['django-disqus'],
         'formdesignerlink': ['django-form-designer'],
         'markup': ['docutils', 'textile', 'Markdown>=1.7'],
-        'oembeditem': ['micawber>=0.2.6', 'beautifulsoup4>=4.3.2'],
-        'text': ['django-wysiwyg>=0.5.1'],
+        'oembeditem': ['micawber>=0.3.1', 'beautifulsoup4>=4.3.2'],
+        'text': ['django-wysiwyg>=0.7.1'],
         'twitterfeed': ['twitter-text-py>=1.0.3'],
     },
     dependency_links = [
