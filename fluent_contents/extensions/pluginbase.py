@@ -18,7 +18,7 @@ from django.forms import Media, MediaDefiningClass
 from django.template.context import Context
 from django.template.loader import render_to_string
 from django.utils.html import linebreaks, escape
-from django.utils.translation import ugettext as _, get_language
+from django.utils.translation import ugettext_lazy as _, get_language
 from fluent_contents.cache import get_rendering_cache_key, get_placeholder_cache_key
 from fluent_contents.forms import ContentItemForm
 from fluent_contents.models import ContentItemOutput, ImmutableMedia, DEFAULT_TIMEOUT
