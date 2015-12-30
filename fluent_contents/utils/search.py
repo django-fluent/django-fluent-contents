@@ -1,7 +1,7 @@
 """
 Internal utils for search.
 """
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.html import strip_tags
 import six
 
@@ -34,7 +34,7 @@ def get_cleaned_string(data):
     """
     Cleanup a string/HTML output to consist of words only.
     """
-    return strip_tags(force_unicode(data))
+    return strip_tags(force_text(data))
 
 
 def clean_join(separator, iterable):
