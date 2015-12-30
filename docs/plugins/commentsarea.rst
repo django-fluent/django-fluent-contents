@@ -45,9 +45,9 @@ Add the following to ``urls.py``:
 
 .. code-block:: python
 
-    urlpatterns += patterns('',
+    urlpatterns += [
         url(r'^blog/comments/', include('django_comments.urls')),
-    )
+    ]
 
 This URL can be anything off course, like ``/comments/``, ``/respond/comments/`` or ``/blog/comments/`` for example.
 

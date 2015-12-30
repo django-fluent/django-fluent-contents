@@ -1,6 +1,6 @@
 from abc import abstractmethod
 import django
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.contrib.admin import ModelAdmin
 from django.contrib.admin.helpers import InlineAdminFormSet
 from django.core.exceptions import ImproperlyConfigured
@@ -202,13 +202,13 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
     def get_urls(self):
         urls = super(PlaceholderEditorAdmin, self).get_urls()
         info = _get_url_format(self.model._meta)
-        return patterns('',
+        return [
             url(
                 r'^(?P<object_id>\d+)/api/get_placeholder_data/',
                 self.admin_site.admin_view(self.get_placeholder_data_view),
                 name='{0}_{1}_get_placeholder_data'.format(*info)
             )
-        ) + urls
+        ] + urls
 
     def get_placeholder_data_view(self, request, object_id):
         """

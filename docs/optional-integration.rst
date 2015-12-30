@@ -79,9 +79,9 @@ And update ``urls.py``:
 
     from filebrowser.sites import site as fb_site
 
-    urlpatterns += patterns('',
+    urlpatterns += [
         url(r'^admin/filebrowser/', include(fb_site.urls)),
-    )
+    ]
 
 
 This package either uses the standard Django :class:`~django.db.models.ImageField`,

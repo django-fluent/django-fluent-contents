@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.contrib import admin
 from django.http import HttpResponse
 from django.template.loader import get_template
@@ -55,9 +55,9 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
         Introduce more urls
         """
         urls = super(PageAdmin, self).get_urls()
-        my_urls = patterns('',
+        my_urls = [
             url(r'^get_layout/$', self.admin_site.admin_view(self.get_layout_view))
-        )
+        ]
         return my_urls + urls
 
     def get_layout_view(self, request):
