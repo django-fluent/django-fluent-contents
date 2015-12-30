@@ -1,17 +1,18 @@
+import django
 from django.utils.safestring import mark_safe
 from fluent_contents.models import ContentItemOutput
 from fluent_contents.utils.search import get_cleaned_string
 from .core import PlaceholderRenderingPipe, SkipItem, ResultTracker
 from .utils import get_dummy_request
 
-
-try:
+if django.VERSION >= (1, 8):
+    # Use modern lru_cache, avoids deprecation warnings. Needs Python 2.7+
+    from django.utils.lru_cache import lru_cache
+    _get_dummy_search_request = lru_cache()(get_dummy_request)
+else:
     from django.utils.functional import memoize
     _SEARCH_REQUEST_CACHE = {}
     _get_dummy_search_request = memoize(get_dummy_request, _SEARCH_REQUEST_CACHE, 1)
-except ImportError:
-    from django.utils.lru_cache import lru_cache  # Needs Python 2.7+
-    _get_dummy_search_request = lru_cache()(get_dummy_request)
 
 
 class SearchResultTracker(ResultTracker):
