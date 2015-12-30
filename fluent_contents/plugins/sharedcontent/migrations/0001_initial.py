@@ -1,9 +1,24 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.conf import settings
 from django.db import models, migrations
 import fluent_contents.plugins.sharedcontent.utils
 import fluent_contents.models.mixins
+
+
+def make_site(apps, schema_editor):
+    Site = apps.get_model("sites", "Site")
+    Site.objects.get_or_create(
+        pk=settings.SITE_ID,
+        defaults=dict(
+            name='example',
+            domain='example.com',
+        ))
+
+
+def remove_site(apps, schema_editor):
+    pass
 
 
 class Migration(migrations.Migration):
@@ -14,6 +29,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunPython(make_site, reverse_code=remove_site),
         migrations.CreateModel(
             name='SharedContent',
             fields=[
