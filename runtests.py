@@ -57,6 +57,9 @@ if not settings.configured:
         #DISQUS_API_KEY = 'test',
         #DISQUS_WEBSITE_SHORTNAME = 'test',
         STATIC_URL = '/static/',
+        SILENCED_SYSTEM_CHECKS = (
+            'fields.E210',   # ImageField needs to have PIL/Pillow installed
+        ),
     )
 
 if django.VERSION < (1,6):
