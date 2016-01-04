@@ -24,7 +24,15 @@
       <tr class="{% cycle 'dbDebugEven' 'dbDebugOdd'%}">
         <th><br><br>
           {{ item.model }}#{{ item.pk }}<br/>
-          {% if item.cached %}<em>{% trans "(from cache)" %}</em>{% else %}<strong>{% trans "(fetched!)" %}</strong>{% endif %}
+          {% if item.status == 'cached' %}
+            <em>{% trans "(from cache)" %}</em>
+          {% elif item.status == 'skipped' %}
+            <strong>{% trans "(skipped!)" %}</strong>
+          {% elif item.status == 'missing' %}
+            <strong>{% trans "(missing!)" %}</strong>
+          {% else %}
+            <strong>{% trans "(fetched!)" %}</strong>
+          {% endif %}
         </th>
         <td>
           <table>

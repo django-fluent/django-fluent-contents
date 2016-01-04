@@ -75,8 +75,20 @@ class ContentPluginPanel(Panel):
                 if templates is not None and not isinstance(templates, (list,tuple)):
                     templates = [templates]
 
-                cache_timeout = output.cache_timeout if not is_cached else plugin.cache_timeout
-                cache_timeout = None if isinstance(cache_timeout, object) else int(cache_timeout)
+                cache_timeout = output.cache_timeout
+                if output is ResultTracker.MISSING:
+                    status = 'missing'
+                elif output is ResultTracker.SKIPPED:
+                    status = 'skipped'
+                else:
+                    if not is_cached:
+                        status = 'fetched'
+                        cache_timeout = output.cache_timeout
+                    else:
+                        status = 'cached'
+                        cache_timeout = plugin.cache_timeout
+
+                    cache_timeout = None if isinstance(cache_timeout, object) else int(cache_timeout)
 
                 rendered_items.append({
                     'model': plugin.model.__name__,
@@ -86,6 +98,7 @@ class ContentPluginPanel(Panel):
                     'pk': contentitem.pk,
                     'templates': templates,
                     'templates_dummy': template_dummy,
+                    'status': status,
                     'cached': is_cached,
                     'cache_output': plugin.cache_output,
                     'cache_output_per_language': plugin.cache_output_per_language,
