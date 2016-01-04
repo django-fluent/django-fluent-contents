@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Changes in 1.1.1 (2016-01-04)
+-----------------------------
+
+* Fixed errors when rendering pages with missing items
+
+
 Changes in 1.1 (2015-12-29)
 ---------------------------
 
