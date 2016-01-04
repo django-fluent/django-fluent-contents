@@ -79,6 +79,11 @@ class ResultTracker(object):
     def _get_item_id(self, contentitem):
         return contentitem.pk or id(contentitem)
 
+    def add_ordering(self, contentitem):
+        item_id = self._get_item_id(contentitem)
+        self.item_source[item_id] = contentitem
+        self.output_ordering.append(item_id)
+
     def add_remaining(self, contentitem):
         """Track that an item is not rendered yet, and needs to be processed later."""
         self.remaining_items.append(contentitem)
@@ -213,7 +218,7 @@ class RenderingPipe(object):
             return
 
         for contentitem in items:
-            result.output_ordering.append(contentitem.pk)
+            result.add_ordering(contentitem)
             output = None
 
             try:
