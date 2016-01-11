@@ -42,9 +42,9 @@ To display previews, the `form_designer` application also requires an additional
 
 .. code-block:: python
 
-    urlpatterns += patterns('',
+    urlpatterns += [
         url(r'^forms/', include('form_designer.urls')),
-    )
+    ]
 
 Each page can now be enriched with a form, that was created by the `form_designer` application.
 

@@ -6,6 +6,7 @@ from tag_parser import template_tag, parse_as_var, parse_token_kwargs
 
 register = Library()
 
+
 @register.filter
 def only_content_item_inlines(inlines):
     return [i for i in inlines if isinstance(i, BaseContentItemInline)]
@@ -82,6 +83,7 @@ def plugin_categories_to_choices(categories):
 
 @template_tag(register, 'getfirstof')
 class GetFirstOfNode(Node):
+
     def __init__(self, filters, var_name):
         self.filters = filters    # list of FilterExpression nodes.
         self.var_name = var_name

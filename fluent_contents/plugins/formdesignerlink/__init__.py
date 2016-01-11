@@ -4,7 +4,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 VERSION = (0, 1)
 
-if django.VERSION < (1,7):
+if django.VERSION < (1, 7):
     # TODO: this needs to be ported to system checks
     # providing these checks at import time breaks Django 1.7
 

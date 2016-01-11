@@ -110,19 +110,21 @@ INSTALLED_APPS = (
     'theme1',
 
     # Other apps
-    'django.contrib.comments',  # should be below theme1
     'django_wysiwyg',
     #'disqus',
     #'form_designer',
     'tinymce',
 )
 
-if django.VERSION < (1,7):
+if django.VERSION < (1, 7):
     INSTALLED_APPS += (
-        # For DB upgrades
-        'south',
+        'django.contrib.comments',  # should be below theme1
+        'south',  # For DB upgrades
     )
 else:
+    INSTALLED_APPS += (
+        'django_comments',
+    )
     TEST_RUNNER = 'django.test.runner.DiscoverRunner'  # silence system checks
 
 SIMPLECMS_TEMPLATE_CHOICES = (

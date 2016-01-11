@@ -23,7 +23,6 @@ class TemplateTagTests(AppTestCase):
         'fluent_contents.tests.testapp',
     )
 
-
     def test_page_placeholder_metadata(self):
         """
         The ``page_placeholder`` tag should expose metadata, which ``fluent_contents.analyzer`` can read.
@@ -44,7 +43,6 @@ class TemplateTagTests(AppTestCase):
         self.assertEqual(data[0].title, 'SlotTest1')
         self.assertEqual(data[0].role, 's')
 
-
         # Test2: fallback code
         template = Template("""{% load fluent_contents_tags %}{% page_placeholder page "slot_test2" %}""")
 
@@ -61,7 +59,6 @@ class TemplateTagTests(AppTestCase):
         self.assertEqual(data[0].slot, 'slot_test2')
         self.assertEqual(data[0].title, 'Slot Test2')
         self.assertEqual(data[0].role, 'm')  # Defaults to "main"
-
 
     def test_page_placeholder(self):
         """
@@ -95,7 +92,6 @@ class TemplateTagTests(AppTestCase):
         # Test if a missing arguments are reported
         self.assertRaises(TemplateSyntaxError, lambda: Template("""{% load fluent_contents_tags %}{% page_placeholder %}"""))
         self.assertRaises(TemplateSyntaxError, lambda: Template("""{% load fluent_contents_tags %}{% page_placeholder arg1 arg2 arg3 %}"""))
-
 
     def test_render_placeholder(self):
         """
@@ -149,7 +145,6 @@ class TemplateTagTests(AppTestCase):
         self.assertRaises(TemplateSyntaxError, lambda: Template("""{% load fluent_contents_tags %}{% render_placeholder %}"""))
         self.assertRaises(TemplateSyntaxError, lambda: Template("""{% load fluent_contents_tags %}{% render_placeholder arg1 arg2 %}"""))
 
-
     def test_num_item_queries(self):
         page3 = PlaceholderFieldTestPage.objects.create()
         placeholder1 = Placeholder.objects.create_for_object(page3, 'field_slot1')
@@ -188,7 +183,6 @@ class TemplateTagTests(AppTestCase):
             self._render("""{% load fluent_contents_tags %}{% page_placeholder 'field_slot1' fallback=True %}""", {'page': page3})
             #pprint(ctx.captured_queries)
 
-
     def test_num_placeholder_queries(self):
         page3 = PlaceholderFieldTestPage.objects.create()
         placeholder1 = Placeholder.objects.create_for_object(page3, 'field_slot1')
@@ -220,8 +214,6 @@ class TemplateTagTests(AppTestCase):
         with self.assertNumQueries(0) as ctx:
             self._render("""{% load fluent_contents_tags %}{% page_placeholder 'field_slot1' fallback=True %}""", {'page': page3})
             #pprint(ctx.captured_queries)
-
-
 
     def _render(self, template_code, context_data):
         """

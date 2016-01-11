@@ -1,9 +1,8 @@
 from abc import abstractmethod
 import django
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.contrib.admin import ModelAdmin
 from django.contrib.admin.helpers import InlineAdminFormSet
-from django.contrib.contenttypes.generic import GenericInlineModelAdmin
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import signals
 from django.dispatch import receiver
@@ -14,9 +13,14 @@ from django.utils.functional import curry
 from fluent_contents import extensions
 from fluent_contents.admin.contentitems import get_content_item_inlines, BaseContentItemFormSet
 from fluent_contents.admin.genericextensions import BaseInitialGenericInlineFormSet
-from fluent_contents.models import Placeholder, ContentItem, get_parent_language_code
+from fluent_contents.models import Placeholder
 from fluent_contents.models.managers import get_parent_active_language_choices
 from fluent_utils.ajax import JsonResponse
+
+try:
+    from django.contrib.contenttypes.admin import GenericInlineModelAdmin  # Django 1.7
+except ImportError:
+    from django.contrib.contenttypes.generic import GenericInlineModelAdmin
 
 
 class PlaceholderInlineFormSet(BaseInitialGenericInlineFormSet):
@@ -35,7 +39,6 @@ class PlaceholderInlineFormSet(BaseInitialGenericInlineFormSet):
     @property
     def other_instance_languages(self):
         return get_parent_active_language_choices(self.instance, exclude_current=True)
-
 
 
 class PlaceholderEditorInline(GenericInlineModelAdmin):
@@ -83,7 +86,6 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
 
         extend = False   # No need for the standard 'admin/js/inlines.min.js' here.
 
-
     def get_all_allowed_plugins(self):
         """
         Return *all* plugin categories which can be used by placeholder content.
@@ -92,7 +94,6 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
         This field is used in the template.
         """
         return self._get_parent_modeladmin().get_all_allowed_plugins()
-
 
     def get_formset(self, request, obj=None, **kwargs):
         """
@@ -123,7 +124,6 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
         FormSetClass.__init__ = curry(FormSetClass.__init__, initial=initial)
         return FormSetClass
 
-
     def _get_parent_modeladmin(self):
         # HACK: accessing private field.
         try:
@@ -134,7 +134,6 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
         # Do some "type" checking to developers are aided in inheriting their parent ModelAdmin screens with the proper classes.
         assert isinstance(parentadmin, PlaceholderEditorBaseMixin), "The '{0}' class can only be used in admin screens which implement a PlaceholderEditor mixin class.".format(self.__class__.__name__)
         return parentadmin
-
 
 
 class PlaceholderEditorBaseMixin(object):
@@ -154,7 +153,6 @@ class PlaceholderEditorBaseMixin(object):
         # but it could also be reused by other derived classes off course.
         raise NotImplementedError("The '{0}' subclass should implement get_placeholder_data().".format(self.__class__.__name__))
 
-
     def get_all_allowed_plugins(self):
         """
         Return all plugin categories which can be used by placeholder content.
@@ -163,7 +161,6 @@ class PlaceholderEditorBaseMixin(object):
         :rtype: list of :class:`~fluent_contents.extensions.ContentPlugin`
         """
         return extensions.plugin_pool.get_plugins()
-
 
 
 class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
@@ -179,7 +176,6 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
        :alt: django-fluent-contents placeholder editor preview
     """
     placeholder_inline = PlaceholderEditorInline
-
 
     def get_inline_instances(self, request, *args, **kwargs):
         """
@@ -198,7 +194,6 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
 
         return extra_inline_instances + inlines
 
-
     def get_extra_inlines(self):
         """
         Return the extra inlines for the placeholder editor.
@@ -206,18 +201,16 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
         """
         return [self.placeholder_inline] + get_content_item_inlines(plugins=self.get_all_allowed_plugins())
 
-
     def get_urls(self):
         urls = super(PlaceholderEditorAdmin, self).get_urls()
         info = _get_url_format(self.model._meta)
-        return patterns('',
+        return [
             url(
                 r'^(?P<object_id>\d+)/api/get_placeholder_data/',
                 self.admin_site.admin_view(self.get_placeholder_data_view),
                 name='{0}_{1}_get_placeholder_data'.format(*info)
             )
-        ) + urls
-
+        ] + urls
 
     def get_placeholder_data_view(self, request, object_id):
         """
@@ -247,7 +240,6 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
 
         return JsonResponse(json, status=status)
 
-
     def _get_object_formset_data(self, request, obj):
         inline_instances = self.get_inline_instances(request, obj)
         placeholder_slots = dict(Placeholder.objects.parent(obj).values_list('id', 'slot'))
@@ -267,13 +259,12 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
         all_forms.sort(key=lambda x: (x['placeholder_slot'], x['sort_order']))
         return all_forms
 
-
     def _get_contentitem_formset_html(self, request, obj, FormSet, inline, placeholder_slots):
         # Passing serialized object fields to the client doesn't work,
         # as some form fields (e.g. picture field or MultiValueField) have a different representation.
         # The only way to pass a form copy to the client is by actually rendering it.
         # Hence, emulating change_view code here:
-        if django.VERSION >= (1,6):
+        if django.VERSION >= (1, 6):
             queryset = inline.get_queryset(request)
         else:
             queryset = inline.queryset(request)
@@ -316,7 +307,6 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
             })
         return form_data
 
-
     def save_formset(self, request, form, formset, change):
         # Track deletion of Placeholders across the formsets.
         # When a Placeholder is deleted, the ContentItem can't be saved anymore with the old placeholder_id
@@ -331,7 +321,6 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
             request._deleted_placeholders = [obj._old_pk for obj in formset.deleted_objects]
 
         return saved_instances
-
 
 
 @receiver(signals.post_delete, sender=Placeholder)

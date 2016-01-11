@@ -51,7 +51,6 @@ class PlaceholderData(object):
         'related': Placeholder.RELATED
     }
 
-
     def __init__(self, slot, title=None, role=None, fallback_language=None):
         """
         Create the placeholder data with a slot, and optional title and role.
@@ -67,7 +66,6 @@ class PlaceholderData(object):
         # Ensure upfront value checking
         if self.role not in _ALLOWED_ROLES:
             raise ValueError("Invalid role '{0}' for placeholder '{1}': allowed are: {2}.".format(self.role, self.title or self.slot, ', '.join(list(self.ROLE_ALIASES.keys()))))
-
 
     def as_dict(self):
         """
@@ -89,11 +87,9 @@ class PlaceholderData(object):
             'allowed_plugins': [plugin.name for plugin in plugins],
         }
 
-
     def get_allowed_plugins(self):
         from fluent_contents import extensions
         return extensions.plugin_pool.get_allowed_plugins(self.slot)
-
 
     def __repr__(self):
         return '<{0}: slot={1} role={2} title={3}>'.format(self.__class__.__name__, self.slot, self.role, self.title)
@@ -109,10 +105,12 @@ class ContentItemOutput(SafeData):
     Instances can be treated like a string object,
     but also allows reading the :attr:`html` and :attr:`media` attributes.
     """
+
     def __init__(self, html, media=None, cacheable=True, cache_timeout=DEFAULT_TIMEOUT):
         self.html = conditional_escape(html)  # enforce consistency
         self.media = media or ImmutableMedia.empty_instance
         # Mainly used internally for the _render_items():
+        # NOTE: this is the only place where 'cachable' was written was 'cacheable'
         self.cacheable = cacheable
         self.cache_timeout = cache_timeout or DEFAULT_TIMEOUT
 
@@ -161,7 +159,6 @@ class ContentItemOutput(SafeData):
         else:
             # Needs to be merged as new copy, can't risk merging the 'media' object
             self.media = media + self.media
-
 
 
 # Avoid continuous construction of Media objects.

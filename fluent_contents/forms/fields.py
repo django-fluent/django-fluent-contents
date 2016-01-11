@@ -7,6 +7,7 @@ class PlaceholderFormField(forms.Field):
     The internal form field to display a placeholder field.
     It displays the :class:`~fluent_dashboard.forms.PlaceholderFieldWidget`.
     """
+
     def __init__(self, slot, plugins=None, parent_object=None, **kwargs):
         # Pass along...
         self.slot = slot

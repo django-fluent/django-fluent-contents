@@ -46,16 +46,13 @@ class AbstractOEmbedItem(ContentItem):
     width = models.IntegerField(editable=False, null=True, blank=True)
     html = models.TextField(editable=False, null=True, blank=True)
 
-
     class Meta:
         abstract = True
         verbose_name = _("Online media")
         verbose_name_plural = _("Online media")
 
-
     def __str__(self):
         return self.title or self.embed_url
-
 
     def __init__(self, *args, **kwargs):
         super(AbstractOEmbedItem, self).__init__(*args, **kwargs)
@@ -63,11 +60,9 @@ class AbstractOEmbedItem(ContentItem):
         self._old_embed_max_width = self.embed_max_width
         self._old_embed_max_height = self.embed_max_height
 
-
     def save(self, *args, **kwargs):
         self.update_oembed_data()  # if clean() did not run, still update the oembed
         super(AbstractOEmbedItem, self).save(*args, **kwargs)
-
 
     def clean(self):
         # Avoid getting server errors when the URL is not valid.
@@ -75,7 +70,6 @@ class AbstractOEmbedItem(ContentItem):
             self.update_oembed_data()
         except ProviderException as e:
             raise ValidationError(str(e))
-
 
     def update_oembed_data(self, force=False, **backend_params):
         """
@@ -97,7 +91,6 @@ class AbstractOEmbedItem(ContentItem):
             self._old_embed_max_width = self.embed_max_width
             self._old_embed_max_height = self.embed_max_height
 
-
     def get_oembed_params(self, embed_url):
         """
         .. versionadded:: 1.0
@@ -109,13 +102,11 @@ class AbstractOEmbedItem(ContentItem):
             'max_height': self.embed_max_height,
         }
 
-
     def _input_changed(self):
         return not self.type \
             or self._old_embed_url != self.embed_url \
             or self._old_embed_max_width != self.embed_max_width \
             or self._old_embed_max_height != self.embed_max_height
-
 
     def store_response(self, response):
         # Store the OEmbed response
@@ -129,7 +120,6 @@ class AbstractOEmbedItem(ContentItem):
         for key in KEYS:
             if key in response:
                 setattr(self, key, response[key])
-
 
 
 class OEmbedItem(AbstractOEmbedItem):

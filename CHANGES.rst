@@ -1,11 +1,30 @@
 Changelog
 =========
 
-Changes in 1.0.4 (in git)
---------------------------
+Changes in 1.1.1 (2016-01-04)
+-----------------------------
+
+* Fixed errors when rendering pages with missing items
+
+
+Changes in 1.1 (2015-12-29)
+---------------------------
+
+* Added Django 1.9 support
+* Added django-debug-toolbar_ panel: ``fluent_contents.panels.ContentPluginPanel'``.
+* Added ``Placeholder.get_search_text()`` API for full text indexing support.
+* Added ``FLUENT_TEXT_POST_FILTERS`` and ``FLUENT_TEXT_PRE_FILTERS`` to the text plugin for further processing of the text.
+* Dropped Django 1.4 support
+
+
+Changes in 1.0.4 (2015-12-17)
+-----------------------------
 
 * Prevent caching complete placeholder/sharedcontent output when there are items with ``cache_output_per_site``.
   This only occurs in environments where ``FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT`` is enabled.
+* Fix Django migration unicode issues in Python 3
+* Fix error in ``get_output_cache_keys()`` when reading the ``pk`` field during deletion.
+* Fix compatibility with django-polymorphic_ 0.8.
 
 
 Changes in 1.0.3 (2015-10-01)

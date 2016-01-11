@@ -14,7 +14,7 @@ if not settings.configured:
         TEMPLATE_LOADERS = (
             'django.template.loaders.app_directories.Loader',
         ),
-        TEMPLATE_CONTEXT_PROCESSORS = default_settings.TEMPLATE_CONTEXT_PROCESSORS + (
+        TEMPLATE_CONTEXT_PROCESSORS = tuple(default_settings.TEMPLATE_CONTEXT_PROCESSORS) + (
             'django.core.context_processors.request',
         ),
         INSTALLED_APPS = (
@@ -33,9 +33,9 @@ if not settings.configured:
             'fluent_contents.plugins.iframe',
             #'fluent_contents.plugins.markup',
             #'fluent_contents.plugins.oembeditem',
-            #'fluent_contents.plugins.picture',
+            'fluent_contents.plugins.picture',
             'fluent_contents.plugins.rawhtml',
-            #'fluent_contents.plugins.sharedcontent',
+            'fluent_contents.plugins.sharedcontent',
             'fluent_contents.plugins.text',
             #'fluent_contents.plugins.twitterfeed',
             #'disqus',
@@ -57,6 +57,9 @@ if not settings.configured:
         #DISQUS_API_KEY = 'test',
         #DISQUS_WEBSITE_SHORTNAME = 'test',
         STATIC_URL = '/static/',
+        SILENCED_SYSTEM_CHECKS = (
+            'fields.E210',   # ImageField needs to have PIL/Pillow installed
+        ),
     )
 
 if django.VERSION < (1,6):

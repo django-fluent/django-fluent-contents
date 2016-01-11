@@ -14,7 +14,7 @@ class Migration(SchemaMigration):
         # Adding model 'TextItem'
         db.create_table('contentitem_text_textitem', (
             ('contentitem_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['fluent_contents.ContentItem'], unique=True, primary_key=True)),
-            ('text', self.gf('django.db.models.fields.TextField')(blank=True)),
+            ('text', self.self.gf('fluent_contents.extensions.PluginHtmlField')(blank=True)),
         ))
         db.send_create_signal('text', ['TextItem'])
 
@@ -54,7 +54,7 @@ class Migration(SchemaMigration):
         'text.textitem': {
             'Meta': {'ordering': "('placeholder', 'sort_order')", 'object_name': 'TextItem', 'db_table': "'contentitem_text_textitem'", '_ormbases': ['fluent_contents.ContentItem']},
             'contentitem_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['fluent_contents.ContentItem']", 'unique': 'True', 'primary_key': 'True'}),
-            'text': ('django.db.models.fields.TextField', [], {'blank': 'True'})
+            'text': ('fluent_contents.extensions.PluginHtmlField', [], {'blank': 'True'}),
         }
     }
 

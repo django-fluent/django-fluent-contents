@@ -49,4 +49,3 @@ def extract_literal_bool(templatevar):
             return None
 
     return is_true(templatevar)
-

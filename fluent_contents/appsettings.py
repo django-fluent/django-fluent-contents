@@ -2,6 +2,8 @@
 Overview of all settings which can be customized.
 """
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
+from fluent_utils.load import import_class
 from parler import appsettings as parler_appsettings
 
 # By default, output is cached.
@@ -23,3 +25,33 @@ FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE = getattr(settings, 'FLUENT_CONTENTS_DEFAU
 # Allow to disable multisite support.
 # Only used by sharedcontent plugin for now.
 FLUENT_CONTENTS_FILTER_SITE_ID = getattr(settings, "FLUENT_CONTENTS_FILTER_SITE_ID", True)
+
+# Settings for all PluginHtmlFields:
+FLUENT_TEXT_CLEAN_HTML = getattr(settings, "FLUENT_TEXT_CLEAN_HTML", False)
+FLUENT_TEXT_SANITIZE_HTML = getattr(settings, "FLUENT_TEXT_SANITIZE_HTML", False)
+
+FLUENT_TEXT_PRE_FILTERS = getattr(settings, "FLUENT_TEXT_PRE_FILTERS", ())
+FLUENT_TEXT_POST_FILTERS = getattr(settings, "FLUENT_TEXT_POST_FILTERS", ())
+
+
+def _load_callables(setting_name, setting_value):
+    funcs = []
+    for import_path in setting_value:
+        # TODO: replace with import_symbol() or import_func()
+        func = import_class(import_path, setting_name)
+        if not callable(func):
+            raise ImproperlyConfigured("{0} element '{1}' is not callable!".format(setting_name, import_path))
+        funcs.append(func)
+    return funcs
+
+
+PRE_FILTER_FUNCTIONS = _load_callables('FLUENT_TEXT_PRE_FILTERS', FLUENT_TEXT_PRE_FILTERS)
+POST_FILTER_FUNCTIONS = _load_callables('FLUENT_TEXT_POST_FILTERS', FLUENT_TEXT_POST_FILTERS)
+
+if FLUENT_TEXT_CLEAN_HTML or FLUENT_TEXT_SANITIZE_HTML:
+    try:
+        import django_wysiwyg
+    except ImportError:
+        raise ImproperlyConfigured(
+            "The 'FLUENT_TEXT_CLEAN_HTML' and 'FLUENT_TEXT_SANITIZE_HTML' settings require django-wysiwyg to be installed."
+        )

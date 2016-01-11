@@ -8,7 +8,8 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import get_language
 from parler.utils import get_language_title
-from polymorphic import PolymorphicManager, PolymorphicQuerySet
+from polymorphic.manager import PolymorphicManager
+from polymorphic.query import PolymorphicQuerySet
 
 
 class PlaceholderManager(models.Manager):
@@ -26,7 +27,6 @@ class PlaceholderManager(models.Manager):
         lookup = get_parent_lookup_kwargs(parent_object)
         return self.all().filter(**lookup)
 
-
     def get_by_slot(self, parent_object, slot):
         """
         Return a placeholder by key.
@@ -34,7 +34,6 @@ class PlaceholderManager(models.Manager):
         placeholder = self.parent(parent_object).get(slot=slot)
         placeholder.parent = parent_object  # fill the reverse cache
         return placeholder
-
 
     def create_for_object(self, parent_object, slot, role='m', title=None):
         """
@@ -56,6 +55,7 @@ class ContentItemQuerySet(PolymorphicQuerySet):
     """
     QuerySet methods for ``ContentItem.objects.``.
     """
+
     def translated(self, *language_codes):
         """
         .. versionadded:: 1.0
@@ -79,7 +79,6 @@ class ContentItemQuerySet(PolymorphicQuerySet):
         else:
             return self.filter(language_code__in=language_codes)
 
-
     def parent(self, parent_object, limit_parent_language=True):
         """
         Return all content items which are associated with a given parent object.
@@ -95,7 +94,6 @@ class ContentItemQuerySet(PolymorphicQuerySet):
 
         return self.filter(**lookup)
 
-
     def clear_cache(self):
         """
         .. versionadded:: 1.0 Clear the cache of the selected entries.
@@ -107,7 +105,6 @@ class ContentItemQuerySet(PolymorphicQuerySet):
             contentitem.clear_cache()
 
     clear_cache.alters_data = True
-
 
     def move_to_placeholder(self, placeholder, sort_order=None):
         """
@@ -125,7 +122,6 @@ class ContentItemQuerySet(PolymorphicQuerySet):
         return qs
 
     move_to_placeholder.alters_data = True
-
 
     def copy_to_placeholder(self, placeholder, sort_order=None):
         """
@@ -151,7 +147,6 @@ class ContentItemManager(PolymorphicManager):
     """
     queryset_class = ContentItemQuerySet
 
-
     def translated(self, *language_codes):
         """
         .. versionadded:: 1.0
@@ -165,13 +160,11 @@ class ContentItemManager(PolymorphicManager):
         # This avoids all issues with Django 1.5/1.6/1.7 compatibility.
         return self.all().translated(language_codes)
 
-
     def parent(self, parent_object, limit_parent_language=True):
         """
         Return all content items which are associated with a given parent object.
         """
         return self.all().parent(parent_object, limit_parent_language)
-
 
     def create_for_placeholder(self, placeholder, sort_order=1, language_code=None, **kwargs):
         """

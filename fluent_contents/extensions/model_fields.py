@@ -13,11 +13,17 @@ When those apps are installed, they are used by the plugins.
 """
 from django.db import models
 from django.utils.safestring import mark_safe
-from fluent_contents.forms.widgets import WysiwygWidget
 from fluent_utils.softdeps.any_urlfield import AnyUrlField
 from fluent_utils.softdeps.any_imagefield import AnyFileField, AnyImageField
 
+from fluent_contents import appsettings
+from fluent_contents.forms.widgets import WysiwygWidget
+from fluent_contents.utils.html import clean_html, sanitize_html
+
+
 _this_module_name = __name__
+
+
 def _get_path(cls):
     module = cls.__module__
     # Hide ".model_fields" unless the field is overwritten.
@@ -27,6 +33,7 @@ def _get_path(cls):
 
 
 class MigrationMixin(object):
+
     def south_field_triple(self):
         # Undo the softdep feature
         # Show as Plugin..Field in the migrations.
@@ -73,6 +80,7 @@ class PluginHtmlField(MigrationMixin, models.TextField):
 
     This field is replaced with a django-wysiwyg editor in the admin.
     """
+
     def __init__(self, *args, **kwargs):
         # This method override is primary included to improve the API documentation
         super(PluginHtmlField, self).__init__(*args, **kwargs)
@@ -83,8 +91,16 @@ class PluginHtmlField(MigrationMixin, models.TextField):
 
         return super(PluginHtmlField, self).formfield(**defaults)
 
-    def to_python(self, value):
-        return mark_safe(value)
+    def to_python(self, html):
+        # Make well-formed if requested
+        if appsettings.FLUENT_TEXT_CLEAN_HTML:
+            html = clean_html(html)
+
+        # Remove unwanted tags if requested
+        if appsettings.FLUENT_TEXT_SANITIZE_HTML:
+            html = sanitize_html(html)
+
+        return mark_safe(html)
 
 
 # Tell the Django admin it shouldn't override the widget because it's a TextField

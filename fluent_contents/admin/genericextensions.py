@@ -1,7 +1,12 @@
-from django.contrib.contenttypes.generic import BaseGenericInlineFormSet
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.forms.formsets import ManagementForm
+
+try:
+    from django.contrib.contenttypes.forms import BaseGenericInlineFormSet  # Django 1.7
+except ImportError:
+    from django.contrib.contenttypes.generic import BaseGenericInlineFormSet
+
 
 
 class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
@@ -17,7 +22,6 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
         # This instance is created each time in the change_view() function.
         self._initial = kwargs.pop('initial', [])
         super(BaseInitialGenericInlineFormSet, self).__init__(*args, **kwargs)
-
 
     @property
     def management_form(self):
@@ -35,7 +39,6 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
                 ))
             else:
                 raise
-
 
     def initial_form_count(self):
         if self.is_bound:

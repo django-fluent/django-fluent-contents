@@ -1,15 +1,15 @@
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
 from fluent_contents import appsettings
 from fluent_contents.extensions import ContentPlugin, ContentItemForm, plugin_pool
 from fluent_contents.plugins.sharedcontent.models import SharedContentItem
-from fluent_contents.rendering import render_placeholder
+from fluent_contents.rendering import render_placeholder, render_placeholder_search_text
 
 
 class SharedContentItemForm(ContentItemForm):
     """
     Admin form for shared content item.
     """
+
     def __init__(self, *args, **kwargs):
         super(SharedContentItemForm, self).__init__(*args, **kwargs)
 
@@ -27,9 +27,10 @@ class SharedContentPlugin(ContentPlugin):
     """
     model = SharedContentItem
     form = SharedContentItemForm
-    category = _('Advanced')
+    category = ContentPlugin.ADVANCED
     cache_output = False                # Caching happens via the placeholder/template tag.
     render_ignore_item_language = True  # Only switch for individual items, not this entire block.
+    search_fields = True                # Make sure the indexer processes this plugin too.
 
     def render(self, request, instance, **kwargs):
         # Not using "template" parameter yet of render_placeholder().
@@ -40,3 +41,9 @@ class SharedContentPlugin(ContentPlugin):
 
     # NOTE: typically, get_frontend_media() should be overwritten,
     # but render_placeholder() already tracks all media in the request.
+
+    def get_search_text(self, instance):
+        # Provide the search text for all items stored within this object.
+        # This gives recursion the rendering function.
+        shared_content = instance.shared_content
+        return render_placeholder_search_text(shared_content.contents, fallback_language=True)
