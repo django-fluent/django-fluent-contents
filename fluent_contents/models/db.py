@@ -4,7 +4,8 @@ from copy import deepcopy
 from django.utils.functional import cached_property
 from future.utils import with_metaclass, python_2_unicode_compatible, PY3
 from django.contrib.contenttypes.models import ContentType
-from django.db import models
+from django.db import connection, models
+from django.db.backends.utils import truncate_name
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents import appsettings
@@ -174,7 +175,7 @@ class ContentItemMetaClass(PolymorphicModelBase):
         if name != 'ContentItem':
             if db_table.startswith(app_label + '_'):
                 model_name = db_table[len(app_label) + 1:]
-                new_class._meta.db_table = "contentitem_%s_%s" % (app_label, model_name)
+                new_class._meta.db_table = truncate_name("contentitem_%s_%s" % (app_label, model_name), connection.ops.max_name_length())
                 if hasattr(new_class._meta, 'original_attrs'):
                     # Make sure that the Django 1.7 migrations also pick up this change!
                     # Changing the db_table beforehand might be cleaner,
