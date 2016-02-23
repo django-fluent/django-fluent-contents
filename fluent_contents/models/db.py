@@ -5,13 +5,13 @@ from django.utils.functional import cached_property
 from future.utils import with_metaclass, python_2_unicode_compatible, PY3
 from django.contrib.contenttypes.models import ContentType
 from django.db import connection, models
-from django.db.backends.utils import truncate_name
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents import appsettings
 from fluent_contents.cache import get_placeholder_cache_key
 from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_language_code
 from fluent_contents.models.mixins import CachedModelMixin
+from fluent_utils.django_compat import truncate_name
 from fluent_utils.django_compat.moves.contenttypes import GenericForeignKey
 from parler.models import TranslatableModel
 from parler.signals import post_translation_delete
