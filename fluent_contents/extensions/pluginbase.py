@@ -57,7 +57,12 @@ class PluginContext(Context):
     def __init__(self, request, dict=None, current_app=None):
         # If there is any reason to site-global context processors for plugins,
         # I'd like to know the usecase, and it could be implemented here.
-        Context.__init__(self, dict, current_app=current_app)
+        if current_app is None:
+            # Avoid RemovedInDjango110Warning
+            Context.__init__(self, dict)
+        else:
+            Context.__init__(self, dict, current_app=current_app)
+
         for processor in _STANDARD_REQUEST_CONTEXT_PROCESSORS:
             self.update(processor(request))
 
@@ -475,7 +480,13 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         """
         if not content_instance:
             content_instance = PluginContext(request)
-        return render_to_string(template, context, context_instance=content_instance)
+
+        if django.VERSION >= (1, 8):
+            # Avoid RemovedInDjango110Warning
+            content_instance.update(context)
+            return render_to_string(template, content_instance)
+        else:
+            return render_to_string(template, context, context_instance=content_instance)
 
     def render_error(self, error):
         """
