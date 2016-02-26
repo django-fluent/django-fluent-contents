@@ -2,6 +2,9 @@
 Internal module for the plugin system,
 the API is exposed via __init__.py
 """
+import django
+import django.contrib.auth.context_processors
+import django.contrib.messages.context_processors
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
 from future.builtins import str
 from future.utils import with_metaclass
@@ -9,9 +12,6 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sites.models import Site
-from django.core import context_processors
-from django.contrib.auth import context_processors as auth_context_processors
-from django.contrib.messages import context_processors as messages_context_processors
 from django.core.cache import cache
 from django.db import DatabaseError
 from django.forms import Media, MediaDefiningClass
@@ -24,20 +24,26 @@ from fluent_contents.forms import ContentItemForm
 from fluent_contents.models import ContentItemOutput, ImmutableMedia, DEFAULT_TIMEOUT
 from fluent_contents.utils.search import get_search_field_values, clean_join
 
+try:
+    from django.template import context_processors  # Django 1.8+
+except ImportError:
+    from django.core import context_processors
+
 
 # Some standard request processors to use in the plugins,
 # Naturally, you want STATIC_URL to be available in plugins.
 def _add_debug(request):
     return {'debug': settings.DEBUG}
 
+
 _STANDARD_REQUEST_CONTEXT_PROCESSORS = (
+    context_processors.debug,
+    context_processors.i18n,
+    context_processors.media,
     context_processors.request,
     context_processors.static,
-    context_processors.csrf,
-    context_processors.media,
-    context_processors.i18n,
-    auth_context_processors.auth,
-    messages_context_processors.messages,
+    django.contrib.auth.context_processors.auth,
+    django.contrib.messages.context_processors.messages,
     _add_debug,
 )
 
