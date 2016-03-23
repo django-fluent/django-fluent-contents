@@ -43,7 +43,7 @@ setup(
         'django-parler>=1.6.1',            # Needed for Django 1.9 compatibility
         'django-polymorphic>=0.9.1',       # Needed for Django 1.9 compatibility
         'django-tag-parser>=2.1',          # Needed for Django 1.8 compatibility
-        'django-template-analyzer>=1.6',   # Needed for Django 1.9 compatibility
+        'django-template-analyzer>=1.6.1', # Needed for Django 1.9 compatibility + bugfixes
         'future>=0.12.2',
         'six>=1.5.2',
         # Work around https://github.com/html5lib/html5lib-python/issues/189
