@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Changes in 1.1.2 (git)
-----------------------
+Changes in 1.1.2 (2016-03-25)
+-----------------------------
 
 * Fix truncating long ``db_table`` names, just like Django does.
 * Fix various Django 1.9 warnings that would break once Django 1.10 is out.
