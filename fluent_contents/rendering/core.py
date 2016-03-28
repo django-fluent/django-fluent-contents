@@ -15,7 +15,7 @@ from parler.utils.context import smart_override
 from fluent_contents import appsettings
 from fluent_contents.cache import get_rendering_cache_key, get_placeholder_cache_key_for_parent
 from fluent_contents.extensions import PluginNotFound
-from fluent_contents.models import ContentItem, ContentItemOutput, DEFAULT_TIMEOUT, get_parent_language_code
+from fluent_contents.models import ContentItem, ContentItemOutput, ContentItemTree, DEFAULT_TIMEOUT, get_parent_language_code
 from . import markers
 from .utils import optimize_logger_level, get_placeholder_debug_name, add_media, get_render_language, is_template_updated
 
@@ -51,7 +51,7 @@ class ResultTracker(object):
         self.item_output = {}
         self.item_source = {}  # for debugging
 
-        # Other state fields
+        # Other state fields, also used for generating cache keys
         self.placeholder_name = get_placeholder_name(placeholder)
 
     def store_output(self, contentitem, output):
@@ -100,8 +100,41 @@ class ResultTracker(object):
         if self.remaining_items:
             self.remaining_items = ContentItem.objects.get_real_instances(self.remaining_items)
 
-    def add_plugin_timeout(self, plugin):
+    def add_plugin_cache_settings(self, plugin, contentitem):
+        """
+        Track the cache settings for the plugin.
+        This may influence the caching of the parent group (placeholder/container)
+        """
+        # The minimum timeout defines the timeout for these items
         self.all_timeout = _min_timeout(self.all_timeout, plugin.cache_timeout)
+
+        # The cache settings may prevent caching the parent block. (placeholder/container)
+        if not plugin.cache_container_output:
+            # Content item indicates it's parent can't be cached.
+            logger.debug(
+                "- item #%s is blocks full placeholder caching. Prevented by disabled %r.cache_container_output",
+                contentitem.pk, plugin)
+            self.set_uncachable()
+        elif plugin.cache_output_per_site:
+            # Unsupported: can't cache global output for placeholder yet if output differs per SITE_ID
+            # Placeholders only have a single entry, the SITE_ID is not part of it's cache key yet.
+            logger.debug("- item #%s is blocks full placeholder caching. Prevented by %r.cache_output_per_site",
+                         contentitem.pk, contentitem.plugin)
+            self.set_uncachable()
+
+    def add_child_cache_settings(self, content_output):
+        """
+        Take the cache settings for a child rendering.
+        :type content_output: fluent_contents.models.ContentItemOutput
+        """
+        # The minimum timeout defines the timeout for these items
+        self.all_timeout = _min_timeout(self.all_timeout, content_output.cache_timeout)
+        if not content_output.cacheable:
+            logger.debug("- child rendering blocks full placeholder caching.")
+            self.set_uncachable()
+
+        # TODO: what to do with media from the resulting output?
+        # where should it get merged?
 
     def set_uncachable(self):
         """Set that it can't cache all items as a single entry."""
@@ -167,13 +200,19 @@ class RenderingPipe(object):
     def render_items(self, placeholder, items, parent_object=None, template_name=None, cachable=None):
         """
         The main rendering sequence.
+
+        :type placeholder: fluent_contents.models.Placeholder
+        :type items: Union[list, fluent_contents.models.managers.ContentItemQuerySet]
+        :rtype: fluent_contents.models.ContentItemOutput
         """
         # Unless it was done before, disable polymorphic effects.
-        is_queryset = False
+        is_base_set = False
         if hasattr(items, "non_polymorphic"):
-            is_queryset = True
+            is_base_set = True
             if not items.polymorphic_disabled and items._result_cache is None:
                 items = items.non_polymorphic()
+        elif isinstance(items, ContentItemTree):
+            is_base_set = True
 
         # See if the queryset contained anything.
         # This test is moved here, to prevent earlier query execution.
@@ -192,7 +231,7 @@ class RenderingPipe(object):
         if self.edit_mode:
             result.set_uncachable()
 
-        if is_queryset:
+        if is_base_set:
             # Phase 1: get cached output
             self._fetch_cached_output(items, result=result)
             result.fetch_remaining_instances()
@@ -232,7 +271,9 @@ class RenderingPipe(object):
 
             # Respect the cache output setting of the plugin
             if self.can_use_cached_output(contentitem):
-                result.add_plugin_timeout(plugin)
+                # Do track the cache settings of the plugin
+                result.add_plugin_cache_settings(plugin, contentitem)
+
                 output = plugin.get_cached_output(result.placeholder_name, contentitem)
 
                 # Support transition to new output format.
@@ -270,7 +311,7 @@ class RenderingPipe(object):
             # Render the item.
             # Allow derived classes to skip it.
             try:
-                output = self.render_item(contentitem)
+                output = self.render_item(contentitem, result)
             except PluginNotFound as ex:
                 result.store_exception(contentitem, ex)
                 logger.debug("- item #%s has no matching plugin: %s", contentitem.pk, str(ex))
@@ -286,7 +327,7 @@ class RenderingPipe(object):
 
             result.store_output(contentitem, output)
 
-    def render_item(self, contentitem):
+    def render_item(self, contentitem, result_tracker):
         """
         Render the individual item.
         May raise :class:`SkipItem` to ignore an item.
@@ -295,19 +336,14 @@ class RenderingPipe(object):
         with smart_override(render_language):
             # Plugin output is likely HTML, but it should be placed in mark_safe() to raise awareness about escaping.
             # This is just like Django's Input.render() and unlike Node.render().
-            return contentitem.plugin._render_contentitem(self.request, contentitem)
+            return contentitem.plugin._render_contentitem(self.request, contentitem, result_tracker)
 
     def _try_cache_output(self, contentitem, output, result):
         plugin = contentitem.plugin
         if self._can_cache_output(plugin, output) and contentitem.pk:
             # Cache the output
             plugin.set_cached_output(result.placeholder_name, contentitem, output)
-
-            if plugin.cache_output_per_site:
-                # Unsupported: can't cache global output for placeholder yet if output differs per SITE_ID
-                # Placeholders only have a single entry, the SITE_ID is not part of it's cache key yet.
-                logger.debug("- item #%s is blocks full placeholder caching. Prevented by %r.cache_output_per_site", contentitem.pk, contentitem.plugin)
-                result.set_uncachable()
+            result.add_plugin_cache_settings(plugin, contentitem)
         else:
             # An item blocks caching the complete placeholder.
             result.set_uncachable()
@@ -339,7 +375,7 @@ class RenderingPipe(object):
         Combine all rendered items. Allow rendering the items with a template,
         to inserting separators or nice start/end code.
         """
-        html_output, media = self.get_html_output(result, items)
+        html_output, merged_media = self.get_html_output(result, items)
 
         if not template_name:
             merged_html = mark_safe(u''.join(html_output))
@@ -353,7 +389,7 @@ class RenderingPipe(object):
             context = PluginContext(self.request, context)
             merged_html = render_to_string(template_name, context.flatten())
 
-        return ContentItemOutput(merged_html, media, cacheable=result.all_cacheable, cache_timeout=result.all_timeout)
+        return ContentItemOutput(merged_html, merged_media, cacheable=result.all_cacheable, cache_timeout=result.all_timeout)
 
     def get_html_output(self, result, items):
         """
@@ -417,6 +453,7 @@ class PlaceholderRenderingPipe(RenderingPipe):
         if output is None:
             # Get the items, and render them
             items, is_fallback = self._get_placeholder_items(placeholder, parent_object, limit_parent_language, fallback_language, try_cache)
+            items = ContentItemTree.from_list(items, placeholder=placeholder)
             output = self.render_items(placeholder, items, parent_object, template_name, cachable)
 
             if is_fallback:

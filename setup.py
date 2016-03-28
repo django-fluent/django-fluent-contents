@@ -40,8 +40,10 @@ setup(
 
     install_requires=[
         'django-fluent-utils>=2.0',        # DRY utility code
+        'django-mptt>=0.8.6',
         'django-parler>=1.9.1',
         'django-polymorphic>=2.0',
+        'django-polymorphic-tree>=1.5',
         'django-tag-parser>=2.1',
         'django-template-analyzer>=1.6.1',
         'future>=0.12.2',

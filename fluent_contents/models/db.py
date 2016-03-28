@@ -11,6 +11,8 @@ from django.db import connection, models
 from django.db.backends.utils import truncate_name
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
+from mptt.fields import TreeForeignKey
+
 from fluent_contents import appsettings
 from fluent_contents.cache import get_placeholder_cache_key
 from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_language_code
@@ -19,12 +21,7 @@ from fluent_contents.models.mixins import CachedModelMixin
 from parler.models import TranslatableModel
 from parler.signals import post_translation_delete
 from parler.utils import get_language_title
-from polymorphic.base import PolymorphicModelBase
-
-try:
-    from polymorphic.models import PolymorphicModel  # django-polymorphic 0.8
-except ImportError:
-    from polymorphic import PolymorphicModel
+from polymorphic_tree.models import PolymorphicMPTTModel, PolymorphicMPTTModelBase
 
 # Leave flag so testing this feature is possible.
 OPTIMIZE_TRANSLATED_MODEL = True
@@ -162,7 +159,7 @@ class Placeholder(models.Model):
     delete.alters_data = True
 
 
-class ContentItemMetaClass(PolymorphicModelBase):
+class ContentItemMetaClass(PolymorphicMPTTModelBase):
     """
     Metaclass for all plugin models.
 
@@ -183,7 +180,7 @@ class ContentItemMetaClass(PolymorphicModelBase):
         db_table  = new_class._meta.db_table
         app_label = new_class._meta.app_label
 
-        if name != 'ContentItem':
+        if app_label != 'fluent_contents' and name not in ('ContentItem', 'ContainerItem'):
             if db_table.startswith(app_label + '_'):
                 model_name = db_table[len(app_label) + 1:]
                 new_class._meta.db_table = truncate_name("contentitem_%s_%s" % (app_label, model_name), connection.ops.max_name_length())
@@ -194,7 +191,7 @@ class ContentItemMetaClass(PolymorphicModelBase):
                     new_class._meta.original_attrs['db_table'] = new_class._meta.db_table
 
             # Enforce good manners. The name is often not visible, except for the delete page.
-            if not new_class._meta.abstract:
+            if not new_class._meta.abstract and not new_class._meta.proxy:
                 if not hasattr(new_class, '__str__') or new_class.__str__ == ContentItem.__str__:
                     if PY3:
                         raise TypeError("The {0} class should implement a __str__() function.".format(name))
@@ -207,7 +204,7 @@ class ContentItemMetaClass(PolymorphicModelBase):
 
 
 @python_2_unicode_compatible
-class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, PolymorphicModel)):
+class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, PolymorphicMPTTModel)):
     """
     A `ContentItem` represents a content part (also called pagelet in other systems) which is displayed in a :class:`Placeholder`.
     To use the `ContentItem`, derive it in your model class:
@@ -279,7 +276,12 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
     parent_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     parent_id = models.IntegerField(null=True)    # Need to allow Null, because Placeholder is created before parent is saved.
     parent = GenericForeignKey('parent_type', 'parent_id')
+
+    # Filter on unique combinations
     language_code = models.CharField(max_length=15, db_index=True, editable=False, default='')
+
+    # Allow nested items
+    parent_item = TreeForeignKey('self', related_name='child_items', on_delete=models.CASCADE, null=True, blank=True)
 
     # Deleting a placeholder should not remove the items, only makes them orphaned.
     # Also, when updating the page, the PlaceholderEditorInline first adds/deletes placeholders before the items are updated.
@@ -303,6 +305,10 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
         else:
             return plugin_pool.get_plugin_by_model(model)
 
+    def __init__(self, *args, **kwargs):
+        super(ContentItem, self).__init__(*args, **kwargs)
+        self._children = None
+
     def __str__(self):
         # Note this representation is optimized for the admin delete page.
         # Make sure that the
@@ -325,9 +331,13 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
 
     class Meta:
         app_label = 'fluent_contents'  # required for models subfolder
-        ordering = ('placeholder', 'sort_order')
+        ordering = ('placeholder', 'tree_id', 'lft', 'sort_order')
         verbose_name = _('Contentitem link')
         verbose_name_plural = _('Contentitem links')
+
+    class MPTTMeta:
+        parent_attr = 'parent_item'
+        order_insertion_by = ('sort_order',)
 
     def get_absolute_url(self):
         """
@@ -340,6 +350,41 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
             return parent.get_absolute_url()
         except AttributeError:
             return None
+
+    @property
+    def can_have_children(self):
+        """
+        Whether the item can have children.
+        This is true when the plugin inherits from :class:`~fluent_contents.extensions.ContainerPlugin`.
+        """
+        # The `can_have_children` setting is read by PolymorphicMPTTModel to determine
+        # whether child elements can be added. This property turns that into a setting derived from the plugin.
+        return self.plugin.can_have_children
+
+    def get_nested_children(self):
+        # Internal function
+        from . import ContentItemTree
+        if self.can_have_children:
+            return ContentItemTree.from_list(self.get_descendants(), top_parent_id=self.pk)
+        else:
+            return ContentItemTree([])
+
+    @property
+    def children(self):
+        """
+        The children of this item, optimized for reading the complete tree.
+
+        :rtype: fluent_contents.models.ContentItemTree
+        """
+        if self._children is None:
+            # Worst case, information is not cached, need to fetch it ourselves.
+            # This means _set_children is not called.
+            self._children = self.get_nested_children()
+        return self._children
+
+    def _set_children(self, items):
+        # replace the @cached_property
+        self._children = items
 
     def move_to_placeholder(self, placeholder, sort_order=None):
         """
@@ -415,6 +460,19 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
         ]
         keys.extend(self.plugin.get_output_cache_keys(placeholder.slot, self))  # ensure list return type.
         return keys
+
+
+class ContainerItem(ContentItem):
+    """
+    Base class for all content items that may have children
+    """
+    can_have_children = True
+
+    class Meta:
+        app_label = 'fluent_contents'  # required for models subfolder
+        proxy = True
+        verbose_name = _('Content Container')
+        verbose_name_plural = _('Content Containers')
 
 
 # Instead of overriding the admin classes (effectively inserting the TranslatableAdmin

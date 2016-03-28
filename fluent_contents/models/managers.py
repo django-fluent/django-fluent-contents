@@ -9,8 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import get_language
 from parler import appsettings as parler_appsettings
 from parler.utils import get_language_title
-from polymorphic.managers import PolymorphicManager
-from polymorphic.query import PolymorphicQuerySet
+from polymorphic_tree.managers import PolymorphicMPTTModelManager, PolymorphicMPTTQuerySet
 
 
 class PlaceholderManager(models.Manager):
@@ -49,7 +48,7 @@ class PlaceholderManager(models.Manager):
         return obj
 
 
-class ContentItemQuerySet(PolymorphicQuerySet):
+class ContentItemQuerySet(PolymorphicMPTTQuerySet):
     """
     QuerySet methods for ``ContentItem.objects.``.
     """
@@ -91,6 +90,16 @@ class ContentItemQuerySet(PolymorphicQuerySet):
                 lookup['language_code'] = language_code
 
         return self.filter(**lookup)
+
+    def can_have_children(self):
+        """
+        .. versionadded:: 1.2 Return only items that can support children
+        """
+        from fluent_contents.extensions import plugin_pool
+        container_types = plugin_pool.get_container_types()
+        return self.filter(
+            polymorphic_ctype__in=container_types
+        )
 
     def clear_cache(self):
         """
@@ -138,8 +147,19 @@ class ContentItemQuerySet(PolymorphicQuerySet):
 
     copy_to_placeholder.alters_data = True
 
+    def exclude_descendants(self, node, include_self=False):
+        # narrow one level deeper for include_self=False effect
+        narrow = 0 if include_self else 1
 
-class ContentItemManager(PolymorphicManager):
+        # MPTT optimization, no need for a subquery.
+        return self.exclude(
+            tree_id=node.tree_id,
+            lft__gte=node.lft + narrow,
+            rght__lte=node.rght - narrow,
+        )
+
+
+class ContentItemManager(PolymorphicMPTTModelManager):
     """
     Extra methods for ``ContentItem.objects``.
     """
@@ -170,6 +190,9 @@ class ContentItemManager(PolymorphicManager):
         the :class:`~fluent_contents.models.managers.PlaceholderManager` methods were used to construct the object,
         such as :func:`~fluent_contents.models.managers.PlaceholderManager.create_for_object`
         or :func:`~fluent_contents.models.managers.PlaceholderManager.get_by_slot`
+
+        :type placeholder: fluent_contents.models.Placeholder
+        :rtype: fluent_contents.models.ContentItem
         """
         if language_code is None:
             # Could also use get_language() or appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE
@@ -194,6 +217,44 @@ class ContentItemManager(PolymorphicManager):
             obj.parent = parent
 
         return obj
+
+    def create_for_container(self, containeritem, sort_order=1, **kwargs):
+        """
+        Create a Content Item for a given parent item
+
+        :type containeritem: fluent_contents.models.ContainerItem
+        :rtype: fluent_contents.models.ContentItem
+        """
+        return self.create_for_placeholder(
+            placeholder=containeritem.placeholder,
+            sort_order=sort_order,
+            language_code=containeritem.language_code,
+            parent_item=containeritem,
+            **kwargs
+        )
+
+    def can_have_children(self):
+        """
+        .. versionadded:: 2.1 Return only items that can support children
+        """
+        return self.all().can_have_children()
+
+    def get_real_instances(self, base_result_objects=None):
+        results = super(ContentItemManager, self).get_real_instances(base_result_objects)
+
+        # Overwritten to copy the caches to the new queryset
+        # The 'result' is a list already.
+        if base_result_objects is not None:
+            cached_children = dict((item.pk, item._children) for item in base_result_objects if item._children is not None)
+            if cached_children:
+                for item in results:
+                    try:
+                        item._children = cached_children[item.pk]
+                    except KeyError:
+                        pass
+
+        return results
+
 
 
 # This low-level function is used for both ContentItem and Placeholder objects.

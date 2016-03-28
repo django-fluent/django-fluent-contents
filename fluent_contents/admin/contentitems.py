@@ -103,7 +103,7 @@ class BaseContentItemInline(GenericInlineModelAdmin):
     cp_admin_init_template = None
 
     # Extra settings
-    base_fields = ('placeholder', 'placeholder_slot', 'sort_order',)  # base fields in ContentItemForm
+    base_fields = ('placeholder', 'placeholder_slot', 'parent_item', 'sort_order',)  # base fields in ContentItemForm
 
     def __init__(self, *args, **kwargs):
         super(BaseContentItemInline, self).__init__(*args, **kwargs)

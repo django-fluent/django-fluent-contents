@@ -9,14 +9,14 @@ While plugins can be easily detected via ``__subclasses__()``, the register appr
 Having to do an explicit register ensures future compatibility with other API's like reversion.
 """
 from .model_fields import PluginUrlField, PluginFileField, PluginImageField, PluginHtmlField
-from .pluginbase import PluginContext, ContentPlugin, HttpRedirectRequest
+from .pluginbase import PluginContext, ContentPlugin, ContainerPlugin, HttpRedirectRequest
 from .pluginpool import plugin_pool, PluginPool, PluginNotFound, PluginAlreadyRegistered
 from fluent_contents.forms import ContentItemForm   # Expose over here now, still leave at old location.
 from fluent_contents.models import ContentItem      # Allow plugins to pick everything from 'extensions'
 
 
 __all__ = (
-    'PluginContext', 'ContentPlugin', 'HttpRedirectRequest',
+    'PluginContext', 'ContentPlugin', 'ContainerPlugin', 'HttpRedirectRequest',
     'ContentItem',
     'PluginUrlField', 'PluginFileField', 'PluginImageField', 'PluginHtmlField',
     'ContentItemForm',
