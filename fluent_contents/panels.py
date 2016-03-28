@@ -109,9 +109,10 @@ class ContentPluginPanel(Panel):
                 self.num_items += 1
 
             all_timeout = None if isinstance(resulttracker.all_timeout, object) else int(resulttracker.all_timeout)
+            parent_object = resulttracker.parent_object
             rendered_placeholders.append({
-                'parent_model': resulttracker.parent_object.__class__.__name__,
-                'parent_id': resulttracker.parent_object.pk,
+                'parent_model': parent_object.__class__.__name__ if parent_object is not None else None,
+                'parent_id': parent_object.pk if parent_object is not None else None,
                 'slot': resulttracker.placeholder_name,
                 'debug_name': _debug_name(resulttracker),
                 'all_cachable': resulttracker.all_cacheable,
