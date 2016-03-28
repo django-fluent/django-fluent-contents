@@ -78,10 +78,10 @@ def render_content_items(request, items, template_name=None, cachable=None):
     :param items: The list or queryset of objects to render. Passing a queryset is preferred.
     :type items: list or queryset of :class:`~fluent_contents.models.ContentItem`.
     :param template_name: Optional template name used to concatenate the placeholder output.
-    :type template_name: str
+    :type template_name: Optional[str]
     :param cachable: Whether the output is cachable, otherwise the full output will not be cached.
                      Default: False when using a template, True otherwise.
-    :type cachable: bool | None
+    :type cachable: Optional[bool]
 
     :rtype: :class:`~fluent_contents.models.ContentItemOutput`
     """
