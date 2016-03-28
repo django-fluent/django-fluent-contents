@@ -5,6 +5,7 @@ the API is exposed via __init__.py
 import django
 import django.contrib.auth.context_processors
 import django.contrib.messages.context_processors
+import logging
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
 from future.builtins import str
 from future.utils import with_metaclass
@@ -28,6 +29,8 @@ try:
     from django.template import context_processors  # Django 1.8+
 except ImportError:
     from django.core import context_processors
+
+logger = logging.getLogger(__name__)
 
 
 # Some standard request processors to use in the plugins,
@@ -147,6 +150,10 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     This also avoids extra database queries to retrieve the model objects.
     In case the plugin needs to output content dynamically, include ``cache_output = False`` in the plugin definition.
     """
+
+    # False by default, only explictly enabled on new container objects.
+    _can_have_children = False
+
     #: .. versionadded:: 1.1
     #:    Category for media
     MEDIA = _("Media")
@@ -159,6 +166,9 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     #: .. versionadded:: 1.1
     #:    Category for advanced plugins (e.g. raw HTML, iframes)
     ADVANCED = _("Advanced")
+    #: .. versionadded:: 1.3
+    #:    Category for container elements (e.g. rows/columns)
+    CONTAINER = _("Container")
 
     # -- Settings to override:
 
@@ -207,6 +217,10 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     #: Tell which languages the plugin will cache.
     #: It defaults to the language codes from the :django:setting:`LANGUAGES` setting.
     cache_supported_language_codes = [code for code, _ in settings.LANGUAGES]
+
+    #: .. versionadded: 1.3
+    #: Tell that this item uses custom caching which prevents the parent from caching the complete list,
+    cache_container_output = True
 
     #: The category title to place the plugin into.
     #: This is only used for the "Add Plugin" menu.
@@ -261,10 +275,17 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     readonly_fields = ()
 
     #: Define which fields could be used for indexing the plugin in a site (e.g. haystack)
+    #: .. versionadded:: 1.1
     search_fields = []
 
     #: Define whether the full output should be used for indexing.
+    #: .. versionadded:: 1.1
     search_output = None
+
+    #: Define which plugin types can be used as possible parents.
+    #: Note that setting this value makes the plugin very picky about it's container type.
+    #: .. versionadded:: 1.3
+    allowed_parent_types = None
 
     def __init__(self):
         self._type_id = None
@@ -313,10 +334,12 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         """
         return self.model.objects.all()
 
-    def _render_contentitem(self, request, instance):
+    def _render_contentitem(self, request, instance, result_tracker):
         # Internal wrapper for render(), to allow updating the method signature easily.
         # It also happens to really simplify code navigation.
-        result = self.render(request=request, instance=instance)
+        # The `result_tracker` is passed in case the item is rendered inside a container;
+        # so make sure the container cache settings are properly updated too.
+        result = self.render(request=request, instance=instance, _result_tracker=result_tracker)
 
         if isinstance(result, ContentItemOutput):
             # Return in new 1.0 format
@@ -534,8 +557,13 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         Return the context to use in the template defined by ``render_template`` (or :func:`get_render_template`).
         By default, it returns the model instance as ``instance`` field in the template.
         """
+        result_tracker = kwargs.get('_result_tracker', None)
+        if result_tracker is None:
+            raise RuntimeError("Plugin '{0}' does not pass render **kwargs to get_context()".format(self.name))
+
         return {
             'instance': instance,
+            '_result_tracker': result_tracker,
         }
 
     @property
@@ -563,6 +591,16 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         """
         bits = get_search_field_values(instance)
         return clean_join(u" ", bits)
+
+
+class ContainerPlugin(ContentPlugin):
+    """
+    Base class for container elements
+    """
+    #: Default category is set to container
+    category = ContentPlugin.CONTAINER
+
+    _can_have_children = True
 
 
 class HttpRedirectRequest(Exception):

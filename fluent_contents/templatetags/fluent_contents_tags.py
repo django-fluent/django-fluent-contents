@@ -29,11 +29,13 @@ from django.conf import settings
 from django.db.models import Manager
 from django.forms import Media
 from django.template import Library, Variable, TemplateSyntaxError
-from fluent_contents.models import Placeholder, ImmutableMedia
+
+from fluent_contents.models import Placeholder, ContentItem, ImmutableMedia
 from fluent_contents import rendering
 from tag_parser import parse_token_kwargs, parse_as_var
 from tag_parser.basetags import BaseNode, BaseAssignmentOrOutputNode
 from fluent_contents import appsettings
+from fluent_contents.models.managers import ContentItemQuerySet
 from fluent_contents.rendering import get_cached_placeholder_output
 from fluent_contents.utils.templatetags import is_true, extract_literal, extract_literal_bool
 
@@ -308,6 +310,72 @@ def _get_placeholder_arg(arg_name, placeholder):
             raise RuntimeWarning(u"No placeholders found for query '{0}.all.0'".format(arg_name))
     else:
         raise ValueError(u"The field '{0}' does not refer to a placeholder object!".format(arg_name))
+
+
+@register.tag
+def render_content_items(parser, token):
+    """
+    Render a shared placeholder. Syntax:
+
+    .. code-block:: html+django
+
+        {% render_content_item item %}
+    """
+    return RenderContentItems.parse(parser, token)
+
+
+class RenderContentItems(BaseAssignmentOrOutputNode):
+    """
+    The template node of the ``render_placeholder`` tag.
+    It renders the provided placeholder object.
+    """
+    min_args = 1
+    max_args = None
+    allowed_kwargs = ('template', 'cachable',)
+
+    @classmethod
+    def validate_args(cls, tag_name, *args, **kwargs):
+        if len(args) < 1:
+            raise TemplateSyntaxError("""{0} tag needs at least one content item object.""".format(tag_name))
+
+        super(RenderContentItems, cls).validate_args(tag_name, *args, **kwargs)
+
+    def get_value(self, context, *tag_args, **tag_kwargs):
+        request = self.get_request(context)
+
+        # Single parameter: can be a queryset or list.
+        # Multiple parameters: can be multiple ContentItem objects.
+        # more complex variants can be implemented later if needed.
+        if len(tag_args) == 1 and isinstance(tag_args[0], (ContentItemQuerySet, list, tuple)):
+            items = tag_args[0]
+        else:
+            items = tag_args
+
+            for contentitem in tag_args:
+                if not isinstance(contentitem, ContentItem):
+                    raise TemplateSyntaxError("""{0} tag expects ContentItem objects only when receiving multiple arguments""")
+
+        # Parse arguments
+        template_name = tag_kwargs.get('template', None)
+        cachable = is_true(tag_kwargs.get('cachable', not bool(template_name)))  # default: True unless there is a template.
+
+        if template_name and cachable and not extract_literal(self.kwargs['template']):
+            # If the template name originates from a variable, it can change any time.
+            # See PagePlaceholderNode.render_tag() why this is not allowed.
+            raise TemplateSyntaxError("{0} tag does not allow 'cachable' for variable template names!".format(self.tag_name))
+
+        # Fetching placeholder.parent should not cause queries if fetched via PlaceholderFieldDescriptor.
+        # See render_placeholder() for more details
+        output = rendering.render_content_items(request, items, template_name=template_name, cachable=cachable)
+        rendering.register_frontend_media(request, output.media)   # Need to track frontend media here, as the template tag can't return it.
+
+        # If this was invoked from a parent container,
+        # update the cache settings of that parent loop.
+        parent_result_tracker = context.get('_result_tracker', None)
+        if parent_result_tracker is not None:
+            parent_result_tracker.add_child_cache_settings(output)
+
+        return output.html
 
 
 @register.tag

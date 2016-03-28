@@ -13,18 +13,21 @@ Secondly, there are a few possible fields to add to parent models:
 Finally, to exchange template data, a :class:`PlaceholderData` object is available
 which mirrors the relevant fields of the :class:`Placeholder` model.
 """
+from collections import OrderedDict
+
+from django.utils import six
 from future.builtins import str
 from future.utils import python_2_unicode_compatible
 from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.forms import Media
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe, SafeData
-from fluent_contents.models.db import Placeholder, ContentItem
+from fluent_contents.models.db import Placeholder, ContentItem, ContainerItem
 from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_lookup_kwargs, get_parent_language_code
 from fluent_contents.models.fields import PlaceholderField, PlaceholderRelation, ContentItemRelation
 
 __all__ = (
-    'Placeholder', 'ContentItem',
+    'Placeholder', 'ContentItem', 'ContainerItem',
     'PlaceholderData', 'ContentItemOutput', 'ImmutableMedia',
     'PlaceholderManager', 'ContentItemManager', 'get_parent_lookup_kwargs', 'get_parent_language_code',
     'PlaceholderField', 'PlaceholderRelation', 'ContentItemRelation',
@@ -152,6 +155,38 @@ class ContentItemOutput(SafeData):
         else:
             # Needs to be merged as new copy, can't risk merging the 'media' object
             self.media = media + self.media
+
+
+class ContentItemTree(list):
+    """
+    Structured tree of all content items.
+
+    Note that when a queryset is passed, it will be processed to determine the structure;
+    hence any polymorphic processing may also happen when passing an item list to this class.
+    """
+    def __init__(self, items, flat_items=None):
+        list.__init__(self, items)
+        self.flat_items = flat_items
+
+    @classmethod
+    def from_list(cls, items, top_parent_id=None):
+        """
+        Construct a tree from a flat list.
+        """
+        items = list(items)
+
+        parents = OrderedDict()
+        lookup = {}
+        for item in items:
+            parents.setdefault(item.parent_item_id, []).append(item)
+            lookup[item.id] = item
+
+        for parent_id, children in six.iteritems(parents):
+            if parent_id is not None and parent_id != top_parent_id:
+                lookup[parent_id]._set_children(ContentItemTree(children))
+
+        root_items = parents[top_parent_id]
+        return ContentItemTree(root_items, flat_items=items)
 
 
 # Avoid continuous construction of Media objects.
