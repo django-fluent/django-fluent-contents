@@ -75,7 +75,7 @@ class ContentPluginPanel(Panel):
                 if templates is not None and not isinstance(templates, (list,tuple)):
                     templates = [templates]
 
-                cache_timeout = output.cache_timeout
+                cache_timeout = None
                 if output is ResultTracker.MISSING:
                     status = 'missing'
                 elif output is ResultTracker.SKIPPED:
