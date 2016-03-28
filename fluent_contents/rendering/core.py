@@ -236,7 +236,11 @@ class RenderingPipe(object):
                 # Support transition to new output format.
                 if output is not None and not isinstance(output, ContentItemOutput):
                     output = None
-                    logger.debug("Flushed cached output of {0}#{1} to store new ContentItemOutput format (key: {2})".format(plugin.type_name, contentitem.pk, placeholder_cache_name))
+                    logger.debug("Flushed cached output of {0}#{1} to store new ContentItemOutput format (key: {2})".format(
+                        plugin.type_name,
+                        contentitem.pk,
+                        get_placeholder_name(contentitem.placeholder)
+                    ))
 
             # For debugging, ignore cached values when the template is updated.
             if output and settings.DEBUG:
@@ -363,7 +367,7 @@ class RenderingPipe(object):
                 # 2. the model was completely removed which means there is also a stale ContentType object.
                 class_name = _get_stale_item_class_name(contentitem)
                 html_output.append(mark_safe(u"<!-- Missing derived model for ContentItem #{id}: {cls}. -->\n".format(id=contentitem.pk, cls=class_name)))
-                logger.warning("Missing derived model for ContentItem #{id}: {cls}.".format(id=pk, cls=class_name))
+                logger.warning("Missing derived model for ContentItem #{id}: {cls}.".format(id=contentitem.pk, cls=class_name))
             elif isinstance(output, Exception):
                 html_output.append(u'<!-- error: {0} -->\n'.format(str(output)))
             else:
