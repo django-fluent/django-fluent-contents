@@ -123,7 +123,7 @@ class ContentItemOutput(SafeData):
         return len(str(self.html))
 
     def __repr__(self):
-        return "<PluginOutput '{0}'>".format(repr(self.html))
+        return "<ContentItemOutput '{0}'>".format(repr(self.html))
 
     def __getattr__(self, item):
         return getattr(self.html, item)
