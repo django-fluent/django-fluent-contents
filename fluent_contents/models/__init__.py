@@ -168,6 +168,9 @@ class ContentItemTree(list):
         list.__init__(self, items)
         self.flat_items = flat_items
 
+    def __repr__(self):
+        return 'ContentItemTree{0}'.format(super(ContentItemTree, self).__repr__())
+
     @classmethod
     def from_list(cls, items, top_parent_id=None):
         """
