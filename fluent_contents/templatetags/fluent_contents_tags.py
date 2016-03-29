@@ -30,7 +30,7 @@ from django.db.models import Manager
 from django.forms import Media
 from django.template import Library, Variable, TemplateSyntaxError
 
-from fluent_contents.models import Placeholder, ContentItem, ImmutableMedia
+from fluent_contents.models import Placeholder, ContentItem, ContentItemTree, ImmutableMedia
 from fluent_contents import rendering
 from tag_parser import parse_token_kwargs, parse_as_var
 from tag_parser.basetags import BaseNode, BaseAssignmentOrOutputNode
@@ -336,7 +336,7 @@ class RenderContentItems(BaseAssignmentOrOutputNode):
     @classmethod
     def validate_args(cls, tag_name, *args, **kwargs):
         if len(args) < 1:
-            raise TemplateSyntaxError("""{0} tag needs at least one content item object.""".format(tag_name))
+            raise TemplateSyntaxError("{0} tag needs at least one content item object.".format(tag_name))
 
         super(RenderContentItems, cls).validate_args(tag_name, *args, **kwargs)
 
@@ -346,14 +346,16 @@ class RenderContentItems(BaseAssignmentOrOutputNode):
         # Single parameter: can be a queryset or list.
         # Multiple parameters: can be multiple ContentItem objects.
         # more complex variants can be implemented later if needed.
-        if len(tag_args) == 1 and isinstance(tag_args[0], (ContentItemQuerySet, list, tuple)):
+        if len(tag_args) == 1 and isinstance(tag_args[0], (ContentItemQuerySet, ContentItemTree, list, tuple)):
             items = tag_args[0]
         else:
             items = tag_args
 
             for contentitem in tag_args:
                 if not isinstance(contentitem, ContentItem):
-                    raise TemplateSyntaxError("""{0} tag expects ContentItem objects only when receiving multiple arguments""")
+                    raise TemplateSyntaxError("{0} tag expects ContentItem objects only when receiving multiple arguments".format(
+                        self.tag_name
+                    ))
 
         # Parse arguments
         template_name = tag_kwargs.get('template', None)
