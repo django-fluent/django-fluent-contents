@@ -293,6 +293,10 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
         else:
             return plugin_pool.get_plugin_by_model(model)
 
+    def __init__(self, *args, **kwargs):
+        super(ContentItem, self).__init__(*args, **kwargs)
+        self._children = None
+
     def __str__(self):
         # Note this representation is optimized for the admin delete page.
         # Make sure that the
@@ -345,25 +349,30 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
         # whether child elements can be added. This property turns that into a setting derived from the plugin.
         return self.plugin.can_have_children
 
-    def get_children(self):
+    def get_nested_children(self):
         # Internal function
         from . import ContentItemTree
-        return ContentItemTree.from_list(self.get_descendants(), top_parent_id=self.pk)
+        if self.can_have_children:
+            return ContentItemTree.from_list(self.get_descendants(), top_parent_id=self.pk)
+        else:
+            return ContentItemTree([])
 
-    @cached_property
+    @property
     def children(self):
         """
         The children of this item, optimized for reading the complete tree.
 
         :rtype: fluent_contents.models.ContentItemTree
         """
-        # Worst case, information is not cached, need to fetch it ourselves.
-        # This means _set_children is not called.
-        return self.get_children()
+        if self._children is None:
+            # Worst case, information is not cached, need to fetch it ourselves.
+            # This means _set_children is not called.
+            self._children = self.get_nested_children()
+        return self._children
 
     def _set_children(self, items):
         # replace the @cached_property
-        self.__dict__['children'] = items
+        self._children = items
 
     def move_to_placeholder(self, placeholder, sort_order=None):
         """

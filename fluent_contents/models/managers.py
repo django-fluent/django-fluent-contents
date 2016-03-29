@@ -238,6 +238,23 @@ class ContentItemManager(PolymorphicMPTTModelManager):
         """
         return self.all().can_have_children()
 
+    def get_real_instances(self, base_result_objects=None):
+        results = super(ContentItemManager, self).get_real_instances(base_result_objects)
+
+        # Overwritten to copy the caches to the new queryset
+        # The 'result' is a list already.
+        if base_result_objects is not None:
+            cached_children = dict((item.pk, item._children) for item in base_result_objects if item._children is not None)
+            if cached_children:
+                for item in results:
+                    try:
+                        item._children = cached_children[item.pk]
+                    except KeyError:
+                        pass
+
+        return results
+
+
 
 # This low-level function is used for both ContentItem and Placeholder objects.
 # Only the first has language_code support, the second one not.
