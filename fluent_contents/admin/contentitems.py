@@ -1,9 +1,12 @@
 import django
 from django.contrib.contenttypes.admin import BaseGenericInlineFormSet, GenericInlineModelAdmin
+from django.utils.lru_cache import lru_cache
+from polymorphic_tree.admin import PolymorphicMPTTParentModelAdmin, PolymorphicMPTTChildModelAdmin
 
 from fluent_contents import extensions, appsettings
+from fluent_contents.extensions import plugin_pool
 from fluent_contents.forms import ContentItemForm
-from fluent_contents.models import Placeholder, get_parent_language_code
+from fluent_contents.models import Placeholder, ContentItem, get_parent_language_code
 
 
 
@@ -80,20 +83,9 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
         return self.model.__name__
 
 
-class BaseContentItemInline(GenericInlineModelAdmin):
-    """
-    The ``InlineModelAdmin`` class used for all content items.
-    """
-    # inline settings
-    ct_field = "parent_type"
-    ct_fk_field = "parent_id"
-    formset = BaseContentItemFormSet
+class BaseContentItemAdminOptions(object):
+    # Default admin settings
     form = ContentItemForm
-    exclude = ('contentitem_ptr',)    # Fix django-polymorphic
-    extra = 0
-    ordering = ('sort_order',)
-    template = 'admin/fluent_contents/contentitem/inline_container.html'
-    is_fluent_editor_inline = True  # Allow admin templates to filter the inlines
 
     # overwritten by subtype
     name = None
@@ -103,19 +95,42 @@ class BaseContentItemInline(GenericInlineModelAdmin):
     cp_admin_form_template = None
     cp_admin_init_template = None
 
-    # Extra settings
-    base_fields = ('placeholder', 'placeholder_slot', 'parent_item', 'sort_order',)  # base fields in ContentItemForm
+    @property
+    def media(self):
+        media = super(BaseContentItemAdminOptions, self).media
+        if self.plugin:
+            media += self.plugin.media  # form fields first, plugin afterwards
+        return media
+
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        # Allow to use formfield_overrides using a fieldname too.
+        # Avoids the major need to reroute formfield_for_dbfield() via the plugin.
+        try:
+            attrs = self.formfield_overrides[db_field.name]
+            kwargs = dict(attrs, **kwargs)
+        except KeyError:
+            pass
+        return super(BaseContentItemAdminOptions, self).formfield_for_dbfield(db_field, **kwargs)
+
+
+class BaseContentItemInline(BaseContentItemAdminOptions, GenericInlineModelAdmin):
+    """
+    The ``InlineModelAdmin`` class used for all content items.
+    """
+    # inline settings
+    ct_field = "parent_type"
+    ct_fk_field = "parent_id"
+    formset = BaseContentItemFormSet
+    exclude = ('contentitem_ptr',)    # Fix django-polymorphic
+    extra = 0
+    ordering = ('sort_order',)
+    template = 'admin/fluent_contents/contentitem/inline_container.html'
+    is_fluent_editor_inline = True  # Allow admin templates to filter the inlines
+    media = BaseContentItemAdminOptions.media  # optimize MediaDefiningClass
 
     def __init__(self, *args, **kwargs):
         super(BaseContentItemInline, self).__init__(*args, **kwargs)
         self.verbose_name_plural = u'---- ContentItem Inline: %s' % (self.verbose_name_plural,)
-
-    @property
-    def media(self):
-        media = super(BaseContentItemInline, self).media
-        if self.plugin:
-            media += self.plugin.media  # form fields first, plugin afterwards
-        return media
 
     def get_formset(self, request, obj=None, **kwargs):
         FormSet = super(BaseContentItemInline, self).get_formset(request, obj=obj, **kwargs)
@@ -134,69 +149,101 @@ class BaseContentItemInline(GenericInlineModelAdmin):
             form.base_fields.keyOrder = field_order
         return FormSet
 
-    def get_fieldsets(self, request, obj=None):
-        # If subclass declares fieldsets, this is respected
-        if not self.extra_fieldsets or getattr(self, 'declared_fieldsets', None):
-            return super(BaseContentItemInline, self).get_fieldsets(request, obj)
-
-        return ((None, {'fields': self.base_fields}),) + self.extra_fieldsets
-
-    def formfield_for_dbfield(self, db_field, **kwargs):
-        # Allow to use formfield_overrides using a fieldname too.
-        # Avoids the major need to reroute formfield_for_dbfield() via the plugin.
-        try:
-            attrs = self.formfield_overrides[db_field.name]
-            kwargs = dict(attrs, **kwargs)
-        except KeyError:
-            pass
-        return super(BaseContentItemInline, self).formfield_for_dbfield(db_field, **kwargs)
-
 
 def get_content_item_inlines(plugins=None, base=BaseContentItemInline):
     """
     Dynamically generate genuine django inlines for all registered content item types.
     When the `plugins` parameter is ``None``, all plugin inlines are returned.
     """
-    COPY_FIELDS = (
-        'form', 'raw_id_fields', 'filter_vertical', 'filter_horizontal',
-        'radio_fields', 'prepopulated_fields', 'formfield_overrides', 'readonly_fields',
-    )
     if plugins is None:
         plugins = extensions.plugin_pool.get_plugins()
 
     inlines = []
-    for plugin in plugins:  # self.model._supported_...()
-        # Avoid errors that are hard to trace
-        if not isinstance(plugin, extensions.ContentPlugin):
-            raise TypeError("get_content_item_inlines() expects to receive ContentPlugin instances, not {0}".format(plugin))
-
-        ContentItemType = plugin.model
-
-        # Create a new Type that inherits CmsPageItemInline
-        # Read the static fields of the ItemType to override default appearance.
-        # This code is based on FeinCMS, (c) Simon Meers, BSD licensed
-        class_name = '%s_AutoInline' %  ContentItemType.__name__
-        attrs = {
-            '__module__': plugin.__class__.__module__,
-            'model': ContentItemType,
-
-            # Add metadata properties for template
-            'name': plugin.verbose_name,
-            'plugin': plugin,
-            'type_name': plugin.type_name,
-            'extra_fieldsets': plugin.fieldsets,
-            'cp_admin_form_template': plugin.admin_form_template,
-            'cp_admin_init_template': plugin.admin_init_template,
-        }
-
-        # Copy a restricted set of admin fields to the inline model too.
-        for name in COPY_FIELDS:
-            if getattr(plugin, name):
-                attrs[name] = getattr(plugin, name)
-
-        inlines.append(type(class_name, (base,), attrs))
+    for plugin in plugins:
+        inline = create_inline_for_plugin(plugin, base=base)
+        inlines.append(inline)
 
     # For consistency, enforce ordering
     inlines.sort(key=lambda inline: inline.name.lower())
 
     return inlines
+
+
+def get_content_item_admin_options(plugin):
+    """
+    Get the settings for the Django admin class
+    """
+    # Avoid errors that are hard to trace
+    if not isinstance(plugin, extensions.ContentPlugin):
+        raise TypeError("get_content_item_inlines() expects to receive ContentPlugin instances, not {0}".format(plugin))
+
+    COPY_FIELDS = (
+        'form', 'raw_id_fields', 'filter_vertical', 'filter_horizontal',
+        'radio_fields', 'prepopulated_fields', 'formfield_overrides', 'readonly_fields',
+    )
+    BASE_FIELDS = ('placeholder', 'placeholder_slot', 'parent_item', 'sort_order',)  # base fields in ContentItemForm
+
+    attrs = {
+        '__module__': plugin.__class__.__module__,
+        'model': plugin.model,
+
+        # Add metadata properties for BaseContentItemAdminOptions and the template
+        'name': plugin.verbose_name,
+        'plugin': plugin,
+        'type_name': plugin.type_name,
+        'cp_admin_form_template': plugin.admin_form_template,
+        'cp_admin_init_template': plugin.admin_init_template,
+    }
+
+    if plugin.fieldsets:
+        attrs['fieldsets'] = ((None, {'fields': BASE_FIELDS}),) + tuple(plugin.fieldsets)
+
+    # Copy a restricted set of admin fields to the inline model too.
+    for name in COPY_FIELDS:
+        if getattr(plugin, name):
+            attrs[name] = getattr(plugin, name)
+    return attrs
+
+
+@lru_cache()
+def create_inline_for_plugin(plugin, base=BaseContentItemInline):
+    """
+    Create the admin inline for a ContentItem plugin.
+    """
+    attrs = get_content_item_admin_options(plugin)
+    class_name = '%s_AutoInline' % plugin.model.__name__
+    return type(class_name, (base,), attrs)
+
+
+class ContentItemParentAdmin(PolymorphicMPTTParentModelAdmin):
+    """
+    Base admin to show a single ContentItem
+    """
+    base_model = ContentItem
+
+    def get_child_models(self):
+        results = []
+        for plugin in plugin_pool.get_plugins():
+            child_admin = create_admin_for_plugin(plugin)
+            results.append((plugin.model, child_admin))
+        return results
+
+
+class ContentItemChildAdmin(BaseContentItemAdminOptions, PolymorphicMPTTChildModelAdmin):
+    """
+    Base admin to show a single ContentItem
+    """
+    base_model = ContentItem
+    base_form = ContentItemForm
+    media = BaseContentItemAdminOptions.media  # optimize MediaDefiningClass
+
+
+@lru_cache()
+def create_admin_for_plugin(plugin, base=ContentItemChildAdmin):
+    """
+    Create the admin instance for a ContentItem plugin.
+    """
+    attrs = get_content_item_admin_options(plugin)
+    #attrs['base_form'] = attrs['form']
+    class_name = '%s_ChildAdmin' % plugin.model.__name__
+    return type(class_name, (base,), attrs)
