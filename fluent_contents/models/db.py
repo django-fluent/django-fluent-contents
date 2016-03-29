@@ -343,7 +343,7 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
         """
         # The `can_have_children` setting is read by PolymorphicMPTTModel to determine
         # whether child elements can be added. This property turns that into a setting derived from the plugin.
-        return self.plugin._can_have_children
+        return self.plugin.can_have_children
 
     def get_children(self):
         # Internal function

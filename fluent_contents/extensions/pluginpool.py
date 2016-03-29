@@ -58,6 +58,7 @@ class PluginPool(object):
         self._name_for_model = {}
         self._name_for_ctype_id = None
         self.detected = False
+        self._container_types = None
 
     def register(self, plugin):
         """
@@ -92,6 +93,9 @@ class PluginPool(object):
                 plugin.__name__
             ))
 
+        # Reset caches
+        self._container_types = None
+
         # Make a single static instance, similar to ModelAdmin.
         plugin_instance = plugin()
         self.plugins[name] = plugin_instance
@@ -106,6 +110,7 @@ class PluginPool(object):
     def get_plugins(self):
         """
         Return the list of all plugin instances which are loaded.
+        :rtype: List[ContentPlugin]
         """
         self._import_plugins()
         return list(self.plugins.values())
@@ -186,6 +191,20 @@ class PluginPool(object):
             raise PluginNotFound("No plugin found for content type #{0} ({1}).".format(contenttype, ct_name))
 
         return self.plugins[name]
+
+    def get_container_types(self):
+        """
+        Return the :class:`~django.contrib.contenttypes.models.ContentType` id's
+        of content items types that operate as a container for sub items.
+        """
+        if self._container_types is None:
+            ct_ids = []
+            for plugin in self.get_plugins():
+                if plugin.can_have_children:
+                    ct_ids.append(plugin.type_id)
+            self._container_types = ct_ids  # folder_types is reset during plugin scan.
+
+        return self._container_types
 
     def _import_plugins(self):
         """

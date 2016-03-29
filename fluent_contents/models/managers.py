@@ -90,6 +90,16 @@ class ContentItemQuerySet(PolymorphicMPTTQuerySet):
 
         return self.filter(**lookup)
 
+    def can_have_children(self):
+        """
+        .. versionadded:: 1.2 Return only items that can support children
+        """
+        from fluent_contents.extensions import plugin_pool
+        container_types = plugin_pool.get_container_types()
+        return self.filter(
+            polymorphic_ctype__in=container_types
+        )
+
     def clear_cache(self):
         """
         .. versionadded:: 1.0 Clear the cache of the selected entries.
@@ -221,6 +231,12 @@ class ContentItemManager(PolymorphicMPTTModelManager):
             parent_item=containeritem,
             **kwargs
         )
+
+    def can_have_children(self):
+        """
+        .. versionadded:: 1.2 Return only items that can support children
+        """
+        return self.all().can_have_children()
 
 
 # This low-level function is used for both ContentItem and Placeholder objects.
