@@ -8,6 +8,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import connection, models
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
+from mptt.fields import TreeForeignKey
+
 from fluent_contents import appsettings
 from fluent_contents.cache import get_placeholder_cache_key
 from fluent_contents.models.managers import PlaceholderManager, ContentItemManager, get_parent_language_code
@@ -269,7 +271,7 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
     language_code = models.CharField(max_length=15, db_index=True, editable=False, default='')
 
     # Allow nested items
-    parent_item = models.ForeignKey('self', related_name='child_items', null=True, blank=True)
+    parent_item = TreeForeignKey('self', related_name='child_items', null=True, blank=True)
 
     # Deleting a placeholder should not remove the items, only makes them orphaned.
     # Also, when updating the page, the PlaceholderEditorInline first adds/deletes placeholders before the items are updated.

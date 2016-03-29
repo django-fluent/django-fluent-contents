@@ -1,10 +1,13 @@
 from django import forms
+from mptt.forms import TreeNodeChoiceField
+from polymorphic_tree.admin import PolymorpicMPTTAdminForm
+
 from fluent_contents.models import Placeholder, ContentItem
 
 __all__ = ('ContentItemForm',)
 
 
-class ContentItemForm(forms.ModelForm):
+class ContentItemForm(PolymorpicMPTTAdminForm):
     """
     The base form for custom :class:`~fluent_contents.models.ContentItem` types.
     It displays the additional meta fields as hidden fields.
@@ -13,7 +16,7 @@ class ContentItemForm(forms.ModelForm):
     use this class as base to ensure all fields are properly set up.
     """
     placeholder = forms.ModelChoiceField(widget=forms.HiddenInput(), required=False, queryset=Placeholder.objects.all())
-    parent_item = forms.ModelChoiceField(widget=forms.Select(), required=False, queryset=ContentItem.objects.none())
+    parent_item = TreeNodeChoiceField(widget=forms.Select(), required=False, queryset=ContentItem.objects.none())
     sort_order = forms.IntegerField(widget=forms.HiddenInput(), initial=1)
 
     # The placeholder_slot is an extra field that does not exist in the model.

@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+import mptt.fields
 
 
 class Migration(migrations.Migration):
@@ -18,7 +19,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='contentitem',
             name='parent_item',
-            field=models.ForeignKey(related_name='child_items', blank=True, to='fluent_contents.ContentItem', null=True),
+            field=mptt.fields.TreeForeignKey(related_name='child_items', blank=True, to='fluent_contents.ContentItem', null=True),
             preserve_default=False,
         ),
         migrations.AddField(
