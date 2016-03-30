@@ -32,7 +32,7 @@ class SearchRenderingPipe(PlaceholderRenderingPipe):
         return contentitem.plugin.search_output and not contentitem.plugin.search_fields \
            and super(SearchRenderingPipe, self).can_use_cached_output(contentitem)
 
-    def render_item(self, contentitem):
+    def render_item(self, contentitem, result_tracker):
         """
         Render the item - but render as search text instead.
         """
@@ -44,7 +44,7 @@ class SearchRenderingPipe(PlaceholderRenderingPipe):
         if not plugin.search_output:
             output = ContentItemOutput('', cacheable=False)
         else:
-            output = super(SearchRenderingPipe, self).render_item(contentitem)
+            output = super(SearchRenderingPipe, self).render_item(contentitem, result_tracker)
 
         if plugin.search_fields:
             # Just add the results into the output, but avoid caching that somewhere.
