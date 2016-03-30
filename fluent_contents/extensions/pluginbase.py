@@ -37,6 +37,7 @@ def _add_debug(request):
 
 
 _STANDARD_REQUEST_CONTEXT_PROCESSORS = (
+    context_processors.csrf,
     context_processors.debug,
     context_processors.i18n,
     context_processors.media,

@@ -1,5 +1,8 @@
+from django.middleware.csrf import get_token
+from django.template import Template
 from django.test import RequestFactory
 from fluent_contents import rendering
+from fluent_contents.extensions import PluginContext
 from fluent_contents.models import Placeholder, DEFAULT_TIMEOUT
 from fluent_contents.rendering import utils as rendering_utils
 from fluent_contents.tests.testapp.models import TestPage, RawHtmlTestItem, TimeoutTestItem, OverrideBase
@@ -52,3 +55,16 @@ class RenderingTests(AppTestCase):
 
         self.assertFalse(rendering_utils._is_method_overwritten(OverrideSame(), OverrideBase, 'get_render_template'))
         self.assertTrue(rendering_utils._is_method_overwritten(OverrideReplace(), OverrideBase, 'get_render_template'))
+
+    def test_render_csrf_token(self):
+        """
+        Rendered plugins should have access to the CSRF token
+        """
+        request = RequestFactory().get('/')
+        request.META['CSRF_COOKIE'] = 'TEST1TEST2'
+
+        template = Template('{% csrf_token %}')
+        context = PluginContext(request)
+        self.assertTrue(context.get('csrf_token', None), 'csrf_token not found in context')
+        self.assertNotEqual(str(context['csrf_token']), 'NOTPROVIDED', 'csrf_token is NOTPROVIDED')
+        self.assertTrue('TEST1TEST2' in template.render(context), 'csrf_token not found in template')
