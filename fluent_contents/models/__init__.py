@@ -177,6 +177,8 @@ class ContentItemTree(list):
         Construct a tree from a flat list.
         """
         items = list(items)
+        if not items:
+            return ContentItemTree([])
 
         parents = OrderedDict()
         lookup = {}
