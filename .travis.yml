@@ -2,44 +2,45 @@ language: python
 sudo: false
 cache: pip
 python:
-  - "3.4"
-  - "3.3"
-  - "2.7"
-  - "2.6"
+- '3.4'
+- '3.3'
+- '2.7'
+- '2.6'
 env:
-  - PACKAGES="django==1.5.8"
-  - PACKAGES="django==1.6.5"
-  - PACKAGES="django==1.7.1"
-  - PACKAGES="django==1.8"
+- PACKAGES="django==1.5.8"
+- PACKAGES="django==1.6.5"
+- PACKAGES="django==1.7.1"
+- PACKAGES="django==1.8"
 matrix:
   exclude:
-  - python: "2.6"
+  - python: '2.6'
     env: PACKAGES="django==1.7.1"
-  - python: "2.6"
+  - python: '2.6'
     env: PACKAGES="django==1.8"
 before_install:
-  - pip install codecov
+- pip install codecov
 install:
-  - pip install -U pip wheel
-  - pip install -q $PACKAGES django-wysiwyg html5lib==1.0b8 Pillow
-  - pip install -q -e .
+- pip install -U pip wheel
+- pip install -q $PACKAGES django-wysiwyg html5lib==1.0b8 Pillow
+- pip install -q -e .
 script:
-  - coverage run --source=fluent_contents runtests.py
+- coverage run --source=fluent_contents runtests.py
 after_success:
-  - codecov
-
+- codecov
 branches:
   only:
-    - master
+  - master
 notifications:
   irc:
     channels:
-      - "irc.freenode.org#django-fluent"
+    - irc.freenode.org#django-fluent
     template:
-      - "%{repository}#%{build_number} (%{commit}) %{message}  --  %{build_url}"
+    - '%{repository}#%{build_number} (%{commit}) %{message}  --  %{build_url}'
     skip_join: true
   email:
     recipients:
-      - travis@edoburu.nl
+    - travis@edoburu.nl
     on_success: never
     on_failure: always
+  slack:
+    secure: CJ+oORfxdm/EQDbIbQ8VZmPLgA15wohO7tv5RpgZXnuTBIWrWE/DwGULqms8P6qiDgHyvR/S8g2wGdaS2HXdz/aDpPPfypyRJJu9y1mupuv1tG2NkN7+7qmjRhjTrn9vvo5I8GaEGKtGVh5jMeahsZkqrYykmLB9rsHoyhZwNmo=
