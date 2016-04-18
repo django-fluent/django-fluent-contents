@@ -3,7 +3,6 @@
  */
 
 var cp_admin = {};
-var cp_widgets = {};
 
 (function($){
 

@@ -264,7 +264,7 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
     # Track relation to parent
     # This makes it much easier to use it as inline.
     parent_type = models.ForeignKey(ContentType)
-    parent_id = models.IntegerField(null=True)    # Need to allow Null, because Placeholder is created before parent is saved.
+    parent_id = models.IntegerField(null=True)    # Need to allow Null, because ContentItem can be created before parent is saved.
     parent = GenericForeignKey('parent_type', 'parent_id')
 
     # Filter on unique combinations

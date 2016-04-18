@@ -1,16 +1,34 @@
-{% load i18n %}
-  <div id="{{ inline_admin_formset.formset.prefix }}-group" class="inline-group inline-contentitem-group inline-{{ inline_admin_formset.formset.type_name }}-group" data-inline-model="{{ inline_admin_formset.formset.type_name }}">
+{% load i18n %}{% comment %}
+
+  This loops over all forms in the ContentItemInline.
+  As this is a polymorphic inline, each form may be a different type.
+
+{% endcomment %}
+  <div id="{{ inline_admin_formset.formset.prefix }}-group" class="inline-group inline-contentitem-group">
     {{ inline_admin_formset.formset.management_form }}
     {{ inline_admin_formset.formset.non_form_errors }}
 
-    {% if inline_admin_formset.opts.cp_admin_init_template %}
-      {% include inline_admin_formset.opts.cp_admin_init_template %}
-    {% endif %}
+    {% comment %}
+      For all child inline types, display the `cp_admin_init_template.
 
-    {# looping in `inline_admin_formset.formset.forms` excludes empty form #}
-    {# looping in `inline_admin_formset` includes the empty placeholder as last item #}
+      inline_admin_formset = InlinePolymorphicAdminFormSet
+      inline_admin_formset.opts = ContentItemInline (BaseContentItemParentInline)
+
+    {% endcomment %}
+    {% for child_inline in inline_admin_formset.opts.child_inline_instances %}
+      {% if child_inline.cp_admin_init_template %}
+        {% include child_inline.cp_admin_init_template %}
+      {% endif %}
+    {% endfor %}
+
+    {% comment %}
+      Loop over all forms, via the inline_admin_formset helper class (InlinePolymorphicAdminFormSet).
+      Looping in `inline_admin_formset.formset.forms` excludes empty form.
+      Looping in `inline_admin_formset` includes the empty placeholder as last item
+      The `inline_admin_form.model_admin` returns the BaseContentItemChildInline.
+    {% endcomment %}
     {% for inline_admin_form in inline_admin_formset %}
-      <div class="inline-related inline-{{ inline_admin_form.model_admin.type_name }}{% if forloop.last %} empty-form last-related{% endif %}" id="{{ inline_admin_formset.formset.prefix }}-{% if not forloop.last %}{{ forloop.counter0 }}{% else %}empty{% endif %}">
+      <div data-inline-type="{{ inline_admin_form.model_admin.type_name }}" class="inline-related inline-{{ inline_admin_form.model_admin.type_name }}{% if not inline_admin_form.original.pk %} empty-form{% endif %}" id="{{ inline_admin_formset.formset.prefix }}-{% if inline_admin_form.original.pk %}{{ forloop.counter0 }}{% else %}empty{% endif %}">
         <h2 class="cp-formset-item-title cp-clearfix">
           <span class="title">{{ inline_admin_formset.opts.name }}</span>
           <span class="cp-item-controls">
@@ -32,9 +50,7 @@
           {% endif %}
 
           {% block formfields %}
-            {% with inline_admin_form.form as form %}
-              {% include inline_admin_formset.opts.cp_admin_form_template %}
-            {% endwith %}
+            {% include inline_admin_form.model_admin.cp_admin_form_template with form=inline_admin_form.form %}
           {% endblock %}
         </div>
       </div>
