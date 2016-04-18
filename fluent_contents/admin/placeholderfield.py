@@ -1,6 +1,7 @@
 from functools import partial
 
-from django.contrib import admin
+from django.forms import Media
+
 from fluent_contents import extensions
 from fluent_contents.admin.placeholdereditor import PlaceholderEditorInline, PlaceholderEditorAdmin
 from fluent_contents.models import PlaceholderData
@@ -12,6 +13,15 @@ class PlaceholderFieldInline(PlaceholderEditorInline):
     The inline used to process placeholder fields.
     """
     template = "admin/fluent_contents/placeholderfield/inline_init.html"
+
+    @property
+    def media(self):
+        # Avoid cp_tabs.js for the placeholder field.
+        media = super(PlaceholderFieldInline, self).media
+        return Media(
+            js=[f for f in media._js if not f.endswith('cp_tabs.js')],
+            css=media._css,
+        )
 
 
 class PlaceholderFieldAdmin(PlaceholderEditorAdmin):
