@@ -164,21 +164,23 @@ class ContentItemTree(list):
     Note that when a queryset is passed, it will be processed to determine the structure;
     hence any polymorphic processing may also happen when passing an item list to this class.
     """
-    def __init__(self, items, flat_items=None):
+    def __init__(self, items, flat_items=None, placeholder=None, parent_item=None):
         list.__init__(self, items)
         self.flat_items = flat_items
+        self.placeholder = placeholder
+        self.parent_item = parent_item
 
     def __repr__(self):
         return 'ContentItemTree{0}'.format(super(ContentItemTree, self).__repr__())
 
     @classmethod
-    def from_list(cls, items, top_parent_id=None):
+    def from_list(cls, items, top_parent_id=None, placeholder=None, parent_item=None):
         """
         Construct a tree from a flat list.
         """
         items = list(items)
         if not items:
-            return ContentItemTree([])
+            return ContentItemTree([], placeholder=placeholder, parent_item=parent_item)
 
         parents = OrderedDict()
         lookup = {}
@@ -188,10 +190,11 @@ class ContentItemTree(list):
 
         for parent_id, children in six.iteritems(parents):
             if parent_id is not None and parent_id != top_parent_id:
-                lookup[parent_id]._set_children(ContentItemTree(children))
+                sub_parent_item = lookup[parent_id]
+                sub_parent_item._set_children(ContentItemTree(children, placeholder=placeholder, parent_item=sub_parent_item))
 
         root_items = parents[top_parent_id]
-        return ContentItemTree(root_items, flat_items=items)
+        return ContentItemTree(root_items, flat_items=items, placeholder=placeholder, parent_item=parent_item)
 
 
 # Avoid continuous construction of Media objects.

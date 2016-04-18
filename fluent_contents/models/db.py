@@ -365,9 +365,16 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
         # Internal function
         from . import ContentItemTree
         if self.can_have_children:
-            return ContentItemTree.from_list(self.get_descendants(), top_parent_id=self.pk)
+            items = self.get_descendants().order_by('tree_id', 'lft')
         else:
-            return ContentItemTree([])
+            items = []
+
+        return ContentItemTree.from_list(
+            items=items,
+            top_parent_id=self.pk,
+            placeholder=self.placeholder,
+            parent_item=self  # metadata for debugging!
+        )
 
     @property
     def children(self):
