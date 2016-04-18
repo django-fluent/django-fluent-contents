@@ -15,6 +15,7 @@ class ContentItemForm(PolymorpicMPTTAdminForm):
     When creating custom admin forms (e.g. to add validation for specific fields),
     use this class as base to ensure all fields are properly set up.
     """
+    polymorphic_ctype = forms.ChoiceField(widget=forms.HiddenInput(), required=True)  # redefined by formset
     placeholder = forms.ModelChoiceField(widget=forms.HiddenInput(), required=False, queryset=Placeholder.objects.all())
     parent_item = TreeNodeChoiceField(widget=forms.Select(), required=False, queryset=ContentItem.objects.none())
     sort_order = forms.IntegerField(widget=forms.HiddenInput(), initial=1)

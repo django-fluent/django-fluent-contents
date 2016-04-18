@@ -193,7 +193,7 @@ var cp_plugins = {};
     // Initialisation completed!
     if( is_first_layout )
     {
-      console.log("Initialized editor, placeholders=", cp_data.get_placeholders(), " contentitems=", cp_data.contentitem_metadata);
+      console.log("Initialized editor, placeholders=", cp_data.get_placeholders(), " contentitems=", cp_data.contentitem_metadata.child_inlines);
       is_first_layout = false;
     }
   }
@@ -425,7 +425,7 @@ var cp_plugins = {};
 
     // Get objects
     var inline_meta = cp_data.get_contentitem_metadata_by_type(model_name);
-    var group_prefix = inline_meta.auto_id.replace(/%s/, inline_meta.prefix);
+    var group_prefix = cp_data.get_group_prefix();
     var placeholder = cp_data.get_placeholder_by_slot(placeholder_slot);
     var dom_placeholder = cp_data.get_or_create_dom_placeholder(placeholder);
 
@@ -490,7 +490,7 @@ var cp_plugins = {};
   {
     // Currently redetermining group_prefix, avoid letting fs_item to go out of sync with different call paths.
     var current_item = cp_data.get_inline_formset_item_info($fs_item);
-    var group_prefix = current_item.auto_id.replace(/%s/, current_item.prefix);
+    var group_prefix = cp_data.get_group_prefix();
     return group_prefix + "-" + current_item.index;
   }
 
@@ -772,13 +772,14 @@ var cp_plugins = {};
 
       // Replace the server-side generated prefix,
       // as this clearly won't be the same as what we'll generate client-side.
-      var re_old_prefix = new RegExp(itemdata.prefix + '-', 'g');
+      var field_prefix = cp_data.get_field_prefix('');
+      var re_old_prefix = new RegExp(field_prefix, 'g');
 
       cp_plugins.add_formset_item(itemdata.placeholder_slot, itemdata.model, {
         'get_html': function(inline_meta, new_index) {
           // Use the server-side provided HTML, which has fields filled in
           // with all template-styling handled. It's a literal copy of the edit page.
-          var new_prefix = inline_meta.prefix + "-" + new_index + "-";
+          var new_prefix = cp_data.get_field_prefix(new_index) + "-";
           var new_formfields = itemdata.html.replace(re_old_prefix, new_prefix);
 
           // Take the original template, replace the contents of the 'cp-formset-item-fields' block.
@@ -910,12 +911,12 @@ var cp_plugins = {};
     }
 
     // Offer plugin view handlers a change to initialize after the placeholder editor is loaded, but before the items are moved.
+    var $formset_group = $("#" + cp_data.get_field_prefix("group"));
     for( var model_name in plugin_handlers )
     {
       if( plugin_handlers.hasOwnProperty(model_name) && plugin_handlers[model_name].initialize )
       {
         var item_meta = cp_data.get_contentitem_metadata_by_type(model_name);
-        var $formset_group = $("#" + item_meta.prefix + "-group");
         plugin_handlers[model_name].initialize($formset_group);
       }
     }

@@ -8,25 +8,27 @@
 <script type="text/javascript">
   // Pass database data to the cp_admin.js file.
   // Each tab hosts a placeholder pane.
-  var placeholder_metadata = {% block js_placeholders %}[ {% for inline_admin_form in inline_admin_formset %}{% with form=inline_admin_form.form placeholder=inline_admin_form.form.instance %}{% if not forloop.last %}{% if not forloop.first %}, {% endif %}{
-    id: {% if placeholder and placeholder.id %}{{ placeholder.id }}{% else %}''{% endif %},{# if test added to support TEMPLATE_STRING_IF_INVALID #}
-    slot: '{{ form.slot.value|default:forloop.counter0|escapejs }}',
-    title: '{{ form.title.value|default:"?"|escapejs }}',
-    role: '{{ form.role.value|default:'?' }}',
-    domnode: 'cp-placeholderfield-{{ form.slot.value|default:forloop.counter0|slugify }}'
-  }{% endif %}
-    {% endwith %}{% endfor %}]{% endblock %};
-  var contentitem_metadata = {% block js_contentitemtypes %}{ {% for fs in inline_admin_formsets|only_content_item_formsets %}'{{ fs.opts.type_name|escapejs }}': {
-    type: '{{ fs.opts.type_name|escapejs }}',{# fs.opts = BaseContentItemInline #}
-    name: '{{ fs.opts.name|escapejs }}',
-    plugin: '{{ fs.opts.plugin.name|escapejs }}',
-    prefix: '{{ fs.formset.prefix|escapejs }}',{# fs.formset = targetobjectformFormSet #}
-    rel_name: '{{ fs.formset.rel_name|escapejs }}',
-    auto_id: '{{ fs.formset.auto_id|escapejs }}'
-  }{% if not forloop.last %}, {% endif %}
-  {% endfor %}}{% endblock %};
-  cp_data.set_placeholders( placeholder_metadata );
-  cp_data.set_contentitem_metadata( contentitem_metadata );
+  cp_data.set_placeholders({% block js_placeholders %}[ {% for form in inline_admin_formset.formset.forms %}{% with placeholder=form.instance %}{% if not forloop.first %}, {% endif %}
+    {
+      id: {% if placeholder and placeholder.id %}{{ placeholder.id }}{% else %}''{% endif %},{# if test added to support TEMPLATE_STRING_IF_INVALID #}
+      slot: '{{ form.slot.value|default:forloop.counter0|escapejs }}',
+      title: '{{ form.title.value|default:"?"|escapejs }}',
+      role: '{{ form.role.value|default:'?' }}',
+      domnode: 'cp-placeholderfield-{{ form.slot.value|default:forloop.counter0|slugify }}'
+    }{% endwith %}{% endfor %}
+  ]{% endblock %});
+  cp_data.set_contentitem_metadata({% with parent_formset=inline_admin_formsets|get_content_item_formset %}{
+    prefix: '{{ parent_formset.prefix|escapejs }}',{# fs.formset = targetobjectformFormSet #}
+    auto_id: '{{ parent_formset.auto_id|escapejs }}',
+    child_inlines: {% block js_contentitemtypes %}{{% for child_inline in inline_admin_formsets|all_content_item_child_inlines %}
+      '{{ child_inline.type_name|escapejs }}': {
+        type: '{{ child_inline.type_name|escapejs }}',
+        plugin: '{{ child_inline.plugin.name|escapejs }}',
+        name: '{{ child_inline.name|escapejs }}',
+        contenttype_id: {{ child_inline.content_type.pk }}
+      }{% if not forloop.last %}, {% endif %}{% endfor %}
+    }{% endblock %}
+  });{% endwith %}
 </script>
 
 <div id="{{ inline_admin_formset.formset.prefix }}-group"

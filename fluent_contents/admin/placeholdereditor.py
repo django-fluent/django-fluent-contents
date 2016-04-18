@@ -1,4 +1,5 @@
 from abc import abstractmethod
+
 from django.conf import settings
 from django.conf.urls import url
 from django.contrib.admin import ModelAdmin
@@ -11,12 +12,14 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.functional import curry
+from fluent_utils.ajax import JsonResponse
+
 from fluent_contents import extensions
 from fluent_contents.admin.contentitems import get_content_item_inlines, BaseContentItemFormSet
 from fluent_contents.admin.genericextensions import BaseInitialGenericInlineFormSet
+from fluent_contents.polymorphic.admin import PolymorphicInlineSupportMixin
 from fluent_contents.models import Placeholder
 from fluent_contents.models.managers import get_parent_active_language_choices
-from fluent_utils.ajax import JsonResponse
 
 
 class PlaceholderInlineFormSet(BaseInitialGenericInlineFormSet):
@@ -171,7 +174,7 @@ class PlaceholderEditorBaseMixin(object):
         return extensions.plugin_pool.get_plugins()
 
 
-class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
+class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, PolymorphicInlineSupportMixin, ModelAdmin):
     """
     The base functionality for :class:`~django.contrib.admin.ModelAdmin` dialogs to display a placeholder editor with plugins.
     It loads the inlines using :func:`get_extra_inlines`.

@@ -11,17 +11,28 @@
   // Pass database data to the cp_admin.js file.
   // Because this is the admin page of the Placeholder itself, and not some other model,
   // the placeholder array is actually a dummy referring to the current model.
-  var placeholders = {% block js_placeholders %}[{ id: {{ original.id|default:"''" }}, slot: '{{ original.slot|default:"DUMMY"|escapejs }}', title: '{{ original.title|escapejs }}', role: '{{ original.role }}', domnode: 'content_placeholder_inlines' }];{% endblock %}
-  var itemtypes = {% block js_contentitemtypes %}{ {% for fs in inline_admin_formsets %}'{{ fs.opts.type_name|escapejs }}': {
-                      type: '{{ fs.opts.type_name|escapejs }}',
-                      name: '{{ fs.opts.name|escapejs }}',
-                      prefix: '{{ fs.formset.prefix|escapejs }}',
-                      rel_name: '{{ fs.formset.rel_name|escapejs }}',
-                      auto_id: '{{ fs.formset.auto_id|escapejs }}'
-                    }{% if not forloop.last %}, {% endif %}
-                  {% endfor %}}{% endblock %};
-  cp_data.set_placeholders( placeholders );
-  cp_data.set_content_item_types( itemtypes );
+  cp_data.set_placeholders({% block js_placeholders %}[
+    {
+      id: {{ original.id|default:"''" }},
+      slot: '{{ original.slot|default:"DUMMY"|escapejs }}',
+      title: '{{ original.title|escapejs }}',
+      role: '{{ original.role }}',
+      domnode: 'content_placeholder_inlines'
+    }
+  ]{% endblock %});
+  cp_data.set_contentitem_metadata({% with parent_formset=inline_admin_formsets|get_content_item_formset %}{
+    prefix: '{{ parent_formset.prefix|escapejs }}',{# fs.formset = targetobjectformFormSet #}
+    auto_id: '{{ parent_formset.auto_id|escapejs }}',
+    child_inlines: {% block js_contentitemtypes %}{{% for child_inline in inline_admin_formsets|all_content_item_child_inlines %}
+      '{{ child_inline.type_name|escapejs }}': {
+        type: '{{ child_inline.type_name|escapejs }}',
+        plugin: '{{ child_inline.plugin.name|escapejs }}',
+        name: '{{ child_inline.name|escapejs }}',
+        contenttype_id: {{ child_inline.content_type.pk }}
+      }{% if not forloop.last %}, {% endif %}{% endfor %}
+    }{% endblock %}
+  });{% endwith %}
+
 </script>
 {% endblock %}
 

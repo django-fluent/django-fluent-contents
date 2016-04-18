@@ -15,7 +15,7 @@ var cp_data = {};
   // Public data (also for debugging)
   cp_data.placeholders = null;  // [ { slot: 'main', title: 'Main', role: 'm', domnode: 'someid' }, { slot: 'sidebar', ...} ]
   cp_data.initial_placeholders = null;
-  cp_data.contentitem_metadata = null;  // { 'ModelName': { type: "ModelName", name: "Text item", prefix: "modelname", rel_name: "TypeName_set", auto_id: "id_%s" }, ... }
+  cp_data.contentitem_metadata = null;
 
 
   // Public initialisation functions
@@ -49,22 +49,20 @@ var cp_data = {};
     // NOTE: assumes the ContentItem was already moved outside it's inline-group.
     // The parsing only happens with the
     var id = $fs_item.attr("id");
-    var pos = id.lastIndexOf('-');      // have to split at last '-' for generic inlines (inlinetype-id / app-model-ctfield-ctfkfield-id)
+    var pos = id.lastIndexOf('-');
 
     this.fs_item = $fs_item;
-    this.prefix = id.substring(0, pos);
     this.index = parseInt(id.substring(pos + 1));
 
-    // Global metadata
-    this.type = null;
-    this.name = null;
+    // The metadata, overwritten by the externally provided `child_inlines` info.
+    this.type = $fs_item.data('inlineType');  // data-inline-type
     this.plugin = null;
-    this.rel_name = null;
-    this.auto_id = null;
+    this.name = null;
+    this.contenttype_id = null;
     this.item_template = null;
 
     // Overwrite properties with global metadata about the ContentItem
-    var contentitem_metadata = cp_data._get_contentitem_metadata_by_prefix(this.prefix);
+    var contentitem_metadata = cp_data.get_contentitem_metadata_by_type(this.type);
     if( contentitem_metadata )
       $.extend(this, contentitem_metadata);
   }
@@ -138,11 +136,22 @@ var cp_data = {};
         $("body").addClass('cp-single-placeholder');
     }
 
+    // Locate all item templates.
+    var item_templates = {};
+    $(".inline-related.empty-form").each(function(){
+      var $empty_form = $(this);
+      var inlineType = $empty_form.data('inlineType');  // data-inline-type
+      if(inlineType) {
+        item_templates[inlineType] = $empty_form;
+      }
+    });
+
     // Amend the contentitem metadata with the empty-form template
-    for(var model_name in cp_data.contentitem_metadata)
+    var child_inlines = cp_data.contentitem_metadata.child_inlines;
+    for(var model_name in child_inlines)
     {
-      var item_meta = cp_data.contentitem_metadata[model_name];
-      item_meta.item_template = $("#" + item_meta.prefix + "-empty");
+      var item_meta = child_inlines[model_name];
+      item_meta.item_template = item_templates[model_name];
     }
   }
 
@@ -313,10 +322,24 @@ var cp_data = {};
   }
 
 
+  cp_data.get_group_prefix = function()
+  {
+    // Everything is part of a single polymorphic formset.
+    return cp_data.contentitem_metadata.auto_id.replace(/%s/, cp_data.contentitem_metadata.prefix);
+  }
+
+
+  cp_data.get_field_prefix = function(index)
+  {
+    // Everything is part of a single polymorphic formset.
+    return cp_data.contentitem_metadata.prefix + "-" + index;
+  }
+
+
   cp_data.get_formset_dom_info = function(child_node)
   {
     var current_item = cp_data.get_inline_formset_item_info(child_node);
-    var group_prefix = current_item.auto_id.replace(/%s/, current_item.prefix);
+    var group_prefix = cp_data.get_group_prefix();
     var field_prefix = group_prefix + "-" + current_item.index;
 
     var placeholder_id = $("#" + field_prefix + "-placeholder").val();  // .val allows <select> for debugging.
@@ -335,9 +358,9 @@ var cp_data = {};
       total_forms: $("#" + group_prefix + "-TOTAL_FORMS")[0],
 
       // Item fields
-      id_field: $("#" + field_prefix + "-contentitem_ptr"),
+      id_field: $("#" + field_prefix + "-id"),
       delete_checkbox: $("#" + field_prefix + "-DELETE"),
-      placeholder_id: placeholder_id,  // .val allows <select> for debugging.
+      placeholder_id: placeholder_id,
       placeholder_slot: placeholder_slot
     };
   }
@@ -359,23 +382,20 @@ var cp_data = {};
   }
 
 
-  cp_data._get_contentitem_metadata_by_prefix = function(prefix)
-  {
-    return _get_contentitem_metadata_by_prop('prefix', prefix);
-  }
-
-
   function _get_contentitem_metadata_by_prop(prop, value)
   {
     if( cp_data.contentitem_metadata == null )
       throw new Error("cp_data.set_contentitem_metadata() was never called");
+    if(! value)
+      return null;
 
-    for(var model_name in cp_data.contentitem_metadata)
+    var child_inlines = cp_data.contentitem_metadata.child_inlines;
+    for(var model_name in child_inlines)
     {
-      if(! cp_data.contentitem_metadata.hasOwnProperty(model_name))
+      if(! child_inlines.hasOwnProperty(model_name))
         continue;
 
-      var candidate = cp_data.contentitem_metadata[model_name];
+      var candidate = child_inlines[model_name];
       if( candidate[prop] == value )
         return candidate;
     }
@@ -391,7 +411,7 @@ var cp_data = {};
     if( cp_data.contentitem_metadata == null )
       throw new Error("cp_data.set_contentitem_metadata() was never called. Does the ModelAdmin inherit from the correct base class?");
 
-    return cp_data.contentitem_metadata[model_name];
+    return cp_data.contentitem_metadata.child_inlines[model_name];
   }
 
 
