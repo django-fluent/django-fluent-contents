@@ -8,9 +8,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import PluginNotFound
 
-from fluent_contents.models import ContentItem
+from fluent_contents.models import ContentItem, ContentItemTree
 from fluent_contents.rendering.core import RenderingPipe, ResultTracker
-from fluent_contents.rendering.utils import get_placeholder_debug_name
 
 collector = ThreadCollector()
 
@@ -25,6 +24,24 @@ class DebugResultTracker(ResultTracker):
         collector.collect(self)
         # Track that the object was never cachable
         self.initial_all_cachable = self.all_cacheable
+
+    @property
+    def placeholder_debug_name(self):
+        """
+        Return a nicer name for the placeholder to show in the debug panel.
+        """
+        if self.placeholder_name == 'shared_content':
+            return self.parent_object.slug
+        elif isinstance(self.items, ContentItemTree):
+            parent_path = [self.placeholder_name]
+            # Include any container elements, in case it's a child rendering.
+            if self.items.parent_item is not None:
+                for pk, ctype_id in self.items.get_ancestors(ascending=False).values_list('pk', 'polymorphic_ctype'):
+                    parent_path.append("{0}#{1}".format(ContentType.objects.get_for_id(ctype_id).model_class()._meta.verbose_name, pk))
+
+            return " / ".join(parent_path)
+        else:
+            return self.placeholder_name
 
 
 class ContentPluginPanel(Panel):
@@ -138,7 +155,7 @@ class ContentPluginPanel(Panel):
                 'parent_model': parent_object.__class__.__name__ if parent_object is not None else None,
                 'parent_id': parent_object.pk if parent_object is not None else None,
                 'slot': resulttracker.placeholder_name,
-                'debug_name': _debug_name(resulttracker),
+                'debug_name': resulttracker.placeholder_debug_name,
                 'all_cachable': resulttracker.all_cacheable,
                 'initial_all_cachable': resulttracker.initial_all_cachable,
                 'all_timeout': all_timeout,
@@ -156,10 +173,3 @@ class ContentPluginPanel(Panel):
 
 def _full_python_path(cls):
     return "{0}.{1}".format(cls.__module__, cls.__name__)
-
-
-def _debug_name(resulttracker):
-    if resulttracker.placeholder_name == 'shared_content':
-        return resulttracker.parent_object.slug
-    else:
-        return resulttracker.placeholder_name

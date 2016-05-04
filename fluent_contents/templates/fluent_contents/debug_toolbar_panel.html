@@ -3,13 +3,15 @@
 {% for placeholder in runs %}
   {% if placeholder.slot == 'shared_content' %}
     <h4>Sharedcontent "{{ placeholder.debug_name }}"</h4>
+  {% elif '/' in placeholder.debug_name %}
+    <h4>Placeholder children "{{ placeholder.debug_name }}"</h4>
   {% else %}
     <h4>Placeholder "{{ placeholder.debug_name }}"</h4>
   {% endif %}
 
   <table>
     <tbody>
-      <tr class="dbDebugEven"><th>{% trans "Parent" %}</th><td><code>{{ placeholder.parent_model }} #{{ placeholder.parent_id }}</code></td></tr>
+      <tr class="dbDebugEven"><th>{% trans "Parent" %}</th><td><code>{{ placeholder.parent_model }}{% if placeholder.parent_id %} #{{ placeholder.parent_id }}{% endif %}</code></td></tr>
       <tr class="dbDebugEven"><th>{% trans "Cachable" %}</th><td>
         {% if not placeholder.initial_all_cachable %}
           {% trans "no, due to template setting" %}
