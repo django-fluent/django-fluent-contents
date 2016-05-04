@@ -43,7 +43,8 @@
 
         {% if inline_admin_form.has_auto_field or inline_admin_form.needs_explicit_pk_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
 
-        <div class="cp-formset-item-fields">{# this div is used for the copy-language functionality #}
+        {# this div is used for the copy-language functionality #}
+        <div class="cp-formset-item-fields inline-{{ inline_admin_form.model_admin.type_name }}-fields">
           {# render the form fields. Each Content Type can override it. Default is "admin/cp/cmspageitem/admin_form.html". #}
           {% if inline_admin_form.form.non_field_errors %}
             <div class="form-row">{{ inline_admin_form.form.non_field_errors }}</div>
@@ -53,6 +54,11 @@
             {% include inline_admin_form.model_admin.cp_admin_form_template with form=inline_admin_form.form %}
           {% endblock %}
         </div>
+        {% if inline_admin_form.model_admin.plugin.can_have_children %}
+          <div class="cp-formset-item-children inline-{{ inline_admin_form.model_admin.type_name }}-children">
+            (todo: show children here)
+          </div>
+        {% endif %}
       </div>
     {% endfor %}
   </div>
