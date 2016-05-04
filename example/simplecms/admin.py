@@ -68,7 +68,7 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
 
         # Check if template is allowed, avoid parsing random templates
         templates = dict(appconfig.SIMPLECMS_TEMPLATE_CHOICES)
-        if not templates.has_key(template_name):
+        if template_name not in templates:
             jsondata = {'success': False, 'error': 'Template not found'}
             status = 404
         else:
