@@ -201,6 +201,12 @@ class ContentItemTree(list):
         root_items.sort(key=lambda item: item.sort_order)
         return ContentItemTree(root_items, flat_items=items, placeholder=placeholder, parent_item=parent_item)
 
+    def get_ancestors(self, ascending=False):
+        if self.parent_item is None:
+            return ContentItem.objects.none()
+        else:
+            return self.parent_item.get_ancestors(ascending=ascending, include_self=True)
+
 
 # Avoid continuous construction of Media objects.
 class ImmutableMedia(Media):
