@@ -18,6 +18,7 @@ class ContentItemForm(PolymorpicMPTTAdminForm):
     polymorphic_ctype = forms.ChoiceField(widget=forms.HiddenInput(), required=True)  # redefined by formset
     placeholder = forms.ModelChoiceField(widget=forms.HiddenInput(), required=False, queryset=Placeholder.objects.all())
     parent_item = TreeNodeChoiceField(widget=forms.Select(), required=False, queryset=ContentItem.objects.none())
+    parent_item_uid = forms.CharField(widget=forms.HiddenInput(), required=False)  # to link items before saving
     sort_order = forms.IntegerField(widget=forms.HiddenInput(), initial=1)
 
     # The placeholder_slot is an extra field that does not exist in the model.
@@ -34,6 +35,7 @@ class ContentItemForm(PolymorpicMPTTAdminForm):
                 parent_type=self.instance.parent_type_id,
                 parent_id=self.instance.parent_id,
             ).exclude_descendants(self.instance, include_self=True)
+            self.initial['parent_item_uid'] = self.instance.parent_id
         #else:
         #    self.fields['parent_item'].queryset = ContentItem.objects.can_have_children()
 
