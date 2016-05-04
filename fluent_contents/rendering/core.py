@@ -52,7 +52,7 @@ class ResultTracker(object):
         self.item_output = {}
         self.item_source = {}  # for debugging
 
-        # Other state fields
+        # Other state fields, also used for generating cache keys
         self.placeholder_name = get_placeholder_name(placeholder)
 
     def store_output(self, contentitem, output):
@@ -458,7 +458,7 @@ class PlaceholderRenderingPipe(RenderingPipe):
         if output is None:
             # Get the items, and render them
             items, is_fallback = self._get_placeholder_items(placeholder, parent_object, limit_parent_language, fallback_language, try_cache)
-            items = ContentItemTree.from_list(items)
+            items = ContentItemTree.from_list(items, placeholder=placeholder)
             output = self.render_items(placeholder, items, parent_object, template_name, cachable)
 
             if is_fallback:
