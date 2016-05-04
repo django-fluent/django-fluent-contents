@@ -456,7 +456,24 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
             get_placeholder_cache_key(placeholder, self.language_code),
         ]
         keys.extend(self.plugin.get_output_cache_keys(placeholder.slot, self))  # ensure list return type.
+
+        # Also clear the parent cache
+        if self.parent_item_id:
+            self._prefetch_parent_items()
+            keys += self.parent_item.get_cache_keys()
+
         return keys
+
+    def _prefetch_parent_items(self):
+        # Fetch all parent items with a single query, fill FK cache
+        if self.parent_item_id and not getattr(self, '_parent_item_cache', None):  # See ForeignObjectRel.get_cache_name()
+            parent_items = list(self.get_ancestors(ascending=True))
+            self.parent_item = parent_items[-1]
+            for i, ancestor_item in enumerate(parent_items):
+                if i > 0:
+                    parent_item = parent_items[i - 1]
+                    assert ancestor_item.parent_item_id == parent_item.pk  # avoid breaing save
+                    ancestor_item.parent_item = parent_item
 
 
 class ContainerItem(ContentItem):
