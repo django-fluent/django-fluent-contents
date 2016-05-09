@@ -1,7 +1,7 @@
 import django
 from django.db import DEFAULT_DB_ALIAS
 
-if django.VERSION >= (1,8):
+if django.VERSION >= (1, 8):
     from django.core.management import CommandError
 
     # No longer possible, Django 1.8 always uses the actual model name.
@@ -13,7 +13,6 @@ else:
     from django.dispatch import receiver
     from fluent_contents.models import ContentItem
 
-
     @receiver(signals.post_syncdb)
     def _on_post_syncdb(app, verbosity=2, db=DEFAULT_DB_ALIAS, **kwargs):
         """
@@ -23,7 +22,6 @@ else:
         app_models = [m for m in get_models(app) if issubclass(m, ContentItem)]
         for model in app_models:
             update_model_prefix(model, verbosity=verbosity, db=db)
-
 
     def update_model_prefix(model, db=DEFAULT_DB_ALIAS, verbosity=2):
         """

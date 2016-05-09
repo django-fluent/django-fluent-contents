@@ -18,6 +18,7 @@ class HttpRedirectRequestMiddleware(object):
        a :class:`~fluent_contents.extensions.HttpRedirectRequest` exception is raised.
        This middleware handles the exception, and returns the proper redirect response.
     """
+
     def process_exception(self, request, exception):
         """
         Return a redirect response for the :class:`~fluent_contents.extensions.HttpRedirectRequest`
@@ -36,7 +37,6 @@ class HttpRedirectRequestMiddleware(object):
         # as these objects render outside the "try,call-view,except" block..
         response.render = _new_render(response)
         return response
-
 
 
 def _new_render(response):

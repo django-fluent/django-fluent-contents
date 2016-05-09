@@ -11,6 +11,7 @@ class OEmbedUrlField(URLField):
 
     This feature is provided as model field, so other apps can use the same logic too.
     """
+
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('help_text', _("Enter the URL of the online content to embed (e.g. a YouTube or Vimeo video, SlideShare presentation, etc..)"))
         super(OEmbedUrlField, self).__init__(*args, **kwargs)
@@ -24,7 +25,7 @@ class OEmbedUrlField(URLField):
         return url
 
 
-if django.VERSION < (1,7):
+if django.VERSION < (1, 7):
     try:
         from south.modelsinspector import add_introspection_rules
     except ImportError:

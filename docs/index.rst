@@ -32,6 +32,7 @@ Getting started
    configuration
    templatetags
    optional-integration
+   filters
 
 
 Using the plugins

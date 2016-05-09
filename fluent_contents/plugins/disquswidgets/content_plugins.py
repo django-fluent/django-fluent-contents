@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.disquswidgets.models import DisqusCommentsAreaItem
 
@@ -7,9 +6,8 @@ from fluent_contents.plugins.disquswidgets.models import DisqusCommentsAreaItem
 @plugin_pool.register
 class DisqusCommentsPlugin(ContentPlugin):
     model = DisqusCommentsAreaItem
-    category = _('Interactivity')
+    category = ContentPlugin.INTERACTIVITY
     render_template = "fluent_contents/plugins/disquswidgets/comments.html"
-
 
     def get_context(self, request, instance, **kwargs):
         parent_url = instance.parent.get_absolute_url()

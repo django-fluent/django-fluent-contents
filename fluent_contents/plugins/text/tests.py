@@ -4,7 +4,6 @@ from unittest import TestCase
 from django_wysiwyg.utils import clean_html, sanitize_html
 
 
-
 class TextPluginTests(TestCase):
     """
     Test whether the sanitation works as expected.

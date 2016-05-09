@@ -2,7 +2,6 @@
 Definition of the plugin.
 """
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.code.models import CodeItem
 from fluent_contents.plugins.code import appsettings, backend
@@ -11,7 +10,7 @@ from fluent_contents.plugins.code import appsettings, backend
 @plugin_pool.register
 class CodePlugin(ContentPlugin):
     model = CodeItem
-    category = _('Programming')
+    category = ContentPlugin.PROGRAMMING
     admin_form_template = "admin/fluent_contents/plugins/code/admin_form.html"
     render_template = "fluent_contents/plugins/code/code.html"
 

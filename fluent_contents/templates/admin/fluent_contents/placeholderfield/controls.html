@@ -1,4 +1,4 @@
-{% load i18n admin_urls placeholder_admin_tags %}{% load url from future %}
+{% load i18n admin_urls placeholder_admin_tags %}
           <div class="cp-controls">
             <select>{% for category_title, plugins in cp_plugin_list|group_plugins_into_categories|plugin_categories_to_list %}
               {% if category_title %}<optgroup label="{{ category_title }}">{% endif %}

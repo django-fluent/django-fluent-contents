@@ -19,7 +19,6 @@ class ArticleAdmin(PlaceholderFieldAdmin):
 admin.site.register(Article, ArticleAdmin)
 
 
-
 # For debugging:
 
 #class ArticleTextItemAdmin(admin.ModelAdmin):

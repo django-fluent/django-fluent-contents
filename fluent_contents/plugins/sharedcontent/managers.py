@@ -9,16 +9,15 @@ class SharedContentQuerySet(TranslatableQuerySet):
     """
     The QuerySet for SharedContent models.
     """
+
     def __init__(self, *args, **kwargs):
         super(SharedContentQuerySet, self).__init__(*args, **kwargs)
         self._parent_site = None
-
 
     def _clone(self, klass=None, setup=False, **kw):
         c = super(SharedContentQuerySet, self)._clone(klass, setup, **kw)
         c._parent_site = self._parent_site
         return c
-
 
     def parent_site(self, site):
         """
@@ -33,7 +32,6 @@ class SharedContentQuerySet(TranslatableQuerySet):
         else:
             return self.filter(parent_site=site)
 
-
     def _single_site(self):
         """
         Make sure the queryset is filtered on a parent site, if that didn't happen already.
@@ -42,7 +40,6 @@ class SharedContentQuerySet(TranslatableQuerySet):
             return self.parent_site(settings.SITE_ID)
         else:
             return self
-
 
     def get_for_slug(self, slug):
         """

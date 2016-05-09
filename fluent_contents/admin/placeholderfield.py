@@ -29,13 +29,11 @@ class PlaceholderFieldAdmin(PlaceholderEditorAdmin):
     """
     placeholder_inline = PlaceholderFieldInline
 
-
     def get_form(self, request, obj=None, **kwargs):
         kwargs['formfield_callback'] = partial(
             self.formfield_for_dbfield, request=request, obj=obj)
         return super(PlaceholderFieldAdmin, self).get_form(
             request, obj=obj, **kwargs)
-
 
     def formfield_for_dbfield(self, db_field, **kwargs):
         obj = kwargs.pop('obj', None)
@@ -43,7 +41,6 @@ class PlaceholderFieldAdmin(PlaceholderEditorAdmin):
             kwargs['parent_object'] = obj
         return super(PlaceholderFieldAdmin, self).formfield_for_dbfield(
             db_field, **kwargs)
-
 
     def get_placeholder_data(self, request, obj=None):
         """
@@ -63,7 +60,6 @@ class PlaceholderFieldAdmin(PlaceholderEditorAdmin):
             ))
 
         return data
-
 
     def get_all_allowed_plugins(self):
         """

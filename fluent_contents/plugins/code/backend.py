@@ -8,7 +8,7 @@ from pygments.styles import get_all_styles
 from django.utils.translation import ugettext as _
 from fluent_contents.plugins.code import appsettings
 
-STYLE_CHOICES = [(x,x) for x in get_all_styles()]
+STYLE_CHOICES = [(x, x) for x in get_all_styles()]
 STYLE_CHOICES.sort(key=lambda x: x[1].lower())
 
 _languageChoices = [(x[1][0], x[0]) for x in get_all_lexers() if x[1]]   # x = ('Title', ('name1', 'name2', 'nameN'), ('*.ext1', '*.ext2'), ('mimetype1',))

@@ -33,10 +33,8 @@ class AdminTest(AppTestCase):
         )
         self.settings.enable()
 
-
     def tearDown(self):
         self.settings.disable()
-
 
     def test_add_page(self):
         """
@@ -89,7 +87,6 @@ class AdminTest(AppTestCase):
         rawhtmltestitem = placeholder.contentitems.all()[0]
         self.assertEqual(rawhtmltestitem.html, u'<b>foo</b>')
 
-
     def _post_add(self, modeladmin, formdata):
         opts = modeladmin.opts
         url = reverse('admin:{0}_{1}_add'.format(*_get_url_format(opts)))
@@ -106,7 +103,6 @@ class AdminTest(AppTestCase):
 
         # Make a direct call, circumvents login page.
         return modeladmin.add_view(request)
-
 
     def _get_management_form_data(self, modeladmin):
         """
@@ -136,7 +132,6 @@ class AdminTest(AppTestCase):
                 formdata[boundfield.html_name] = boundfield.value()
 
         return formdata
-
 
     def _render_response(self, response):
         if hasattr(response, 'render'):

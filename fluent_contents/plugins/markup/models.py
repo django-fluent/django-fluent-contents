@@ -30,7 +30,6 @@ class MarkupItemForm(ContentItemForm):
         return self.cleaned_data['text']
 
 
-
 @python_2_unicode_compatible
 class MarkupItem(ContentItem):
     """
@@ -57,8 +56,8 @@ class MarkupItem(ContentItem):
             self.__class__ = ProxyModelClass
 
 
-
 class MarkupLanguageManager(PolymorphicManager):
+
     def __init__(self, fixed_language):
         super(MarkupLanguageManager, self).__init__()
         self.fixed_language = fixed_language
@@ -66,10 +65,9 @@ class MarkupLanguageManager(PolymorphicManager):
     def get_queryset(self):
         return super(MarkupLanguageManager, self).get_queryset().filter(language=self.fixed_language)
 
-    if django.VERSION < (1,6):
+    if django.VERSION < (1, 6):
         def get_query_set(self):
             return super(MarkupLanguageManager, self).get_query_set().filter(language=self.fixed_language)
-
 
 
 def _create_markup_model(fixed_language):

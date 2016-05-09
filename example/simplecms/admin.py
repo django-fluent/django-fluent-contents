@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from django.contrib import admin
 from django.http import HttpResponse
 from django.template.loader import get_template
@@ -27,15 +27,12 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
 
     cached_url.allow_tags = True
 
-
-
     # This is where the magic happens.
     # Tell the base class which tabs to create
 
     def get_placeholder_data(self, request, obj):
         template = self.get_page_template(obj)
         return get_template_placeholder_data(template)
-
 
     def get_page_template(self, obj):
         if not obj:
@@ -45,8 +42,6 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
             # Change page, honor template of object.
             return get_template(obj.template_name or appconfig.SIMPLECMS_DEFAULT_TEMPLATE)
 
-
-
     # Allow template layout changes in the client,
     # showing more power of the JavaScript engine.
 
@@ -55,17 +50,15 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
     class Media:
         js = ('simplecms/admin/simplecms_layouts.js',)
 
-
     def get_urls(self):
         """
         Introduce more urls
         """
         urls = super(PageAdmin, self).get_urls()
-        my_urls = patterns('',
+        my_urls = [
             url(r'^get_layout/$', self.admin_site.admin_view(self.get_layout_view))
-        )
+        ]
         return my_urls + urls
-
 
     def get_layout_view(self, request):
         """
@@ -75,7 +68,7 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
 
         # Check if template is allowed, avoid parsing random templates
         templates = dict(appconfig.SIMPLECMS_TEMPLATE_CHOICES)
-        if not templates.has_key(template_name):
+        if template_name not in templates:
             jsondata = {'success': False, 'error': 'Template not found'}
             status = 404
         else:
@@ -90,7 +83,6 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
 
         jsonstr = json.dumps(jsondata)
         return HttpResponse(jsonstr, content_type='application/json', status=status)
-
 
 
 admin.site.register(Page, PageAdmin)

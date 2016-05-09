@@ -96,7 +96,6 @@ class PagePlaceholderNode(BaseAssignmentOrOutputNode):
     min_args = 1
     max_args = 2
 
-
     def __init__(self, tag_name, as_var, parent_expr, slot_expr, **kwargs):
         super(PagePlaceholderNode, self).__init__(tag_name, as_var, parent_expr, slot_expr, **kwargs)
         self.slot_expr = slot_expr
@@ -110,7 +109,6 @@ class PagePlaceholderNode(BaseAssignmentOrOutputNode):
                 self.meta_kwargs[arg] = kwargs.pop(arg)
             except KeyError:
                 pass
-
 
     @classmethod
     def parse(cls, parser, token):
@@ -144,14 +142,12 @@ class PagePlaceholderNode(BaseAssignmentOrOutputNode):
             **kwargs
         )
 
-
     def get_slot(self):
         """
         Return the string literal that is used for the placeholder slot in the template.
         When the variable is not a string literal, ``None`` is returned.
         """
         return extract_literal(self.slot_expr)
-
 
     def get_title(self):
         """
@@ -167,7 +163,6 @@ class PagePlaceholderNode(BaseAssignmentOrOutputNode):
 
             return None
 
-
     def get_role(self):
         """
         Return the string literal that is used in the template.
@@ -178,7 +173,6 @@ class PagePlaceholderNode(BaseAssignmentOrOutputNode):
         except KeyError:
             return None
 
-
     def get_fallback_language(self):
         """
         Return whether to use the fallback language.
@@ -188,7 +182,6 @@ class PagePlaceholderNode(BaseAssignmentOrOutputNode):
             return extract_literal_bool(self.kwargs['fallback']) or None
         except KeyError:
             return False
-
 
     def get_value(self, context, *tag_args, **tag_kwargs):
         request = self.get_request(context)
@@ -233,7 +226,6 @@ class PagePlaceholderNode(BaseAssignmentOrOutputNode):
         return output.html
 
 
-
 @register.tag
 def render_placeholder(parser, token):
     """
@@ -261,7 +253,6 @@ class RenderPlaceholderNode(BaseAssignmentOrOutputNode):
             raise TemplateSyntaxError("""{0} tag allows only one parameter: a placeholder object.""".format(tag_name))
 
         super(RenderPlaceholderNode, cls).validate_args(tag_name, *args, **kwargs)
-
 
     def get_value(self, context, *tag_args, **tag_kwargs):
         request = self.get_request(context)

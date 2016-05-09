@@ -50,14 +50,12 @@ class SharedContentNode(BaseAssignmentOrOutputNode):
     max_args = 1
     allowed_kwargs = ('template', 'cachable')
 
-
     @classmethod
     def validate_args(cls, tag_name, *args, **kwargs):
         if len(args) != 1:
             raise TemplateSyntaxError("""{0} tag allows one arguments: 'slot name' and optionally: template="..".""".format(tag_name))
 
         super(SharedContentNode, cls).validate_args(tag_name, *args)
-
 
     def get_value(self, context, *tag_args, **tag_kwargs):
         request = self.get_request(context)

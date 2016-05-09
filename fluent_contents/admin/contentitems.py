@@ -1,14 +1,19 @@
 import django
-from django.contrib.contenttypes.generic import BaseGenericInlineFormSet, GenericInlineModelAdmin
 from fluent_contents import extensions, appsettings
 from fluent_contents.forms import ContentItemForm
 from fluent_contents.models import Placeholder, get_parent_language_code
+
+try:
+    from django.contrib.contenttypes.admin import BaseGenericInlineFormSet, GenericInlineModelAdmin  # Django 1.7
+except ImportError:
+    from django.contrib.contenttypes.generic import BaseGenericInlineFormSet, GenericInlineModelAdmin
 
 
 class BaseContentItemFormSet(BaseGenericInlineFormSet):
     """
     Correctly save placeholder fields.
     """
+
     def __init__(self, *args, **kwargs):
         instance = kwargs['instance']
         if instance:
@@ -20,7 +25,6 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
 
         super(BaseContentItemFormSet, self).__init__(*args, **kwargs)
         self._deleted_placeholders = ()  # internal property, set by PlaceholderEditorAdmin
-
 
     def save_new(self, form, commit=True):
         # This is the moment to link the form 'placeholder_slot' field to a placeholder..
@@ -43,12 +47,10 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
 
         return instance
 
-
     def save_existing(self, form, instance, commit=True):
         if commit:
             self._set_placeholder_id(form)
         return form.save(commit=commit)
-
 
     def _set_placeholder_id(self, form):
         # If the slot is given, it overwrites whatever placeholder is selected.
@@ -65,7 +67,6 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
                 # ContentItem was in a deleted placeholder, and gets orphaned.
                 form.cleaned_data['placeholder'] = None
                 form.instance.placeholder = None
-
 
     @classmethod
     def get_default_prefix(cls):
@@ -107,11 +108,9 @@ class BaseContentItemInline(GenericInlineModelAdmin):
     # Extra settings
     base_fields = ('placeholder', 'placeholder_slot', 'sort_order',)  # base fields in ContentItemForm
 
-
     def __init__(self, *args, **kwargs):
         super(BaseContentItemInline, self).__init__(*args, **kwargs)
         self.verbose_name_plural = u'---- ContentItem Inline: %s' % (self.verbose_name_plural,)
-
 
     @property
     def media(self):
@@ -128,7 +127,7 @@ class BaseContentItemInline(GenericInlineModelAdmin):
         form = FormSet.form
         first_fields = list(ContentItemForm.base_fields.keys())
         field_order = first_fields + [f for f in form.base_fields.keys() if f not in first_fields]
-        if django.VERSION >= (1,7):
+        if django.VERSION >= (1, 7):
             # Recreate collections.OrderedDict object
             base_fields = form.base_fields
             form.base_fields = base_fields.__class__((k, base_fields[k]) for k in field_order)
@@ -139,11 +138,10 @@ class BaseContentItemInline(GenericInlineModelAdmin):
 
     def get_fieldsets(self, request, obj=None):
         # If subclass declares fieldsets, this is respected
-        if not self.extra_fieldsets or self.declared_fieldsets:
+        if not self.extra_fieldsets or getattr(self, 'declared_fieldsets', None):
             return super(BaseContentItemInline, self).get_fieldsets(request, obj)
 
         return ((None, {'fields': self.base_fields}),) + self.extra_fieldsets
-
 
     def formfield_for_dbfield(self, db_field, **kwargs):
         # Allow to use formfield_overrides using a fieldname too.
@@ -154,7 +152,6 @@ class BaseContentItemInline(GenericInlineModelAdmin):
         except KeyError:
             pass
         return super(BaseContentItemInline, self).formfield_for_dbfield(db_field, **kwargs)
-
 
 
 def get_content_item_inlines(plugins=None, base=BaseContentItemInline):

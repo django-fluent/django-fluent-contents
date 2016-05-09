@@ -1,0 +1,62 @@
+{% load i18n %}
+{% trans "default" as default_time %}
+{% for placeholder in runs %}
+  {% if placeholder.slot == 'shared_content' %}
+    <h4>Sharedcontent "{{ placeholder.debug_name }}"</h4>
+  {% else %}
+    <h4>Placeholder "{{ placeholder.debug_name }}"</h4>
+  {% endif %}
+
+  <table>
+    <tbody>
+      <tr class="dbDebugEven"><th>{% trans "Parent" %}</th><td><code>{{ placeholder.parent_model }} #{{ placeholder.parent_id }}</code></td></tr>
+      <tr class="dbDebugEven"><th>{% trans "Cachable" %}</th><td>
+        {% if not placeholder.initial_all_cachable %}
+          {% trans "no, due to template setting" %}
+        {% elif not placeholder.all_cachable %}
+          <strong>{% trans "no" %}</strong>
+        {% else %}
+          {% trans "yes" %}
+        {% endif %}
+      </td></tr>
+      <tr class="dbDebugEven"><th>{% trans "Cache timeout" %}</th><td>{{ placeholder.all_timeout_str|default_if_none:default_time }}</td></tr>
+    {% for item in placeholder.items %}
+      <tr class="{% cycle 'dbDebugEven' 'dbDebugOdd'%}">
+        <th><br><br>
+          {{ item.model }}#{{ item.pk }}<br/>
+          {% if item.status == 'cached' %}
+            <em>{% trans "(from cache)" %}</em>
+          {% elif item.status == 'skipped' %}
+            <strong>{% trans "(skipped!)" %}</strong>
+          {% elif item.status == 'missing' %}
+            <strong>{% trans "(missing!)" %}</strong>
+          {% else %}
+            <strong>{% trans "(fetched!)" %}</strong>
+          {% endif %}
+        </th>
+        <td>
+          <table>
+            <tbody>
+              <tr class="djDebugOdd"><th>{% trans "Plugin" %}</th><td><code>{{ item.plugin_path }}</code></td></tr>
+              <tr class="djDebugEven"><th>{% trans "Model" %}</th><td><code>{{ item.model_path }}</code></td></tr>
+              <tr class="djDebugOdd"><th>{% trans "Template" %}</th><td>
+                {% if not item.templates %}-{% else %}<code>{{ item.templates|join:"<br>" }}</code>{% endif %}
+                {% if item.templates_dummy %}<em>({% trans "guessed" %})</em>{% endif %}
+              </td></tr>
+              <tr class="djDebugEven"><th>{% trans "Cachable" %}</th><td>
+                {% if not item.cache_output %}{% trans "no" %}{% else %}
+                  {% trans "yes" %}<!--
+                  -->{% if item.cache_output_per_site %}, <em>{% trans "per site" %}</em>{% endif %}<!--
+                  -->{% if item.cache_output_per_language %}, {% trans "per gettext language" %}{% endif %}<!--
+                  -->{% if item.cache_timeout %}, {{ item.cache_timeout_str }}{% endif %}
+                {% endif %}</td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+{% endfor %}
