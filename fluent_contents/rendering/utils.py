@@ -6,7 +6,6 @@ import os
 
 import django
 import six
-from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
 from django.test import RequestFactory
 from django.conf import settings
@@ -50,6 +49,7 @@ def get_dummy_request(language=None):
     """
     Returns a Request instance populated with cms specific attributes.
     """
+
     if settings.ALLOWED_HOSTS and settings.ALLOWED_HOSTS != "*":
         host = settings.ALLOWED_HOSTS[0]
     else:
@@ -60,7 +60,11 @@ def get_dummy_request(language=None):
     request.LANGUAGE_CODE = language or settings.LANGUAGE_CODE
     # Needed for plugin rendering.
     request.current_page = None
-    request.user = AnonymousUser()
+
+    if 'django.contrib.auth' in settings.INSTALLED_APPS:
+        from django.contrib.auth.models import AnonymousUser
+        request.user = AnonymousUser()
+
     return request
 
 
