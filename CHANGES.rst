@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Changes in 1.1.3 (git)
-----------------------
+Changes in 1.1.3 (2016-05-11)
+-----------------------------
 
 * Fixed ``{% csrf_token %}`` support in plugin templates.
 * Fixed django-debug-toolbar_ support for skipped items.
