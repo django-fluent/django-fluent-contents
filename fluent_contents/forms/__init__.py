@@ -17,7 +17,7 @@ class ContentItemForm(PolymorpicMPTTAdminForm):
     """
     polymorphic_ctype = forms.ChoiceField(widget=forms.HiddenInput(), required=True)  # redefined by formset
     placeholder = forms.ModelChoiceField(widget=forms.HiddenInput(), required=False, queryset=Placeholder.objects.all())
-    parent_item = TreeNodeChoiceField(widget=forms.Select(), required=False, queryset=ContentItem.objects.none())
+    parent_item = TreeNodeChoiceField(widget=forms.HiddenInput(), required=False, queryset=ContentItem.objects.none())
     parent_item_uid = forms.CharField(widget=forms.HiddenInput(), required=False)  # to link items before saving
     sort_order = forms.IntegerField(widget=forms.HiddenInput(), initial=1)
 
