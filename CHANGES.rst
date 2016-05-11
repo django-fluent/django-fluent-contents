@@ -30,6 +30,7 @@ Changes in 1.1 (2015-12-29)
 * Added django-debug-toolbar_ panel: ``fluent_contents.panels.ContentPluginPanel'``.
 * Added ``Placeholder.get_search_text()`` API for full text indexing support.
 * Added ``FLUENT_TEXT_POST_FILTERS`` and ``FLUENT_TEXT_PRE_FILTERS`` to the text plugin for further processing of the text.
+* **BACKWARDS INCOMPATIBLE:** as text filters became global, the settings in :mod:`fluent_contents.plugins.text.appsettings` moved to :mod:`fluent_contents.appsettings`.
 * Dropped Django 1.4 support
 
 
