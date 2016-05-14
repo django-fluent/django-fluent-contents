@@ -10,11 +10,15 @@ class OverrideBase(object):
         pass
 
 
+@python_2_unicode_compatible
 class TestPage(models.Model):
     """
     A plain model, for testing placeholders.
     """
     contents = models.TextField("Contents")
+
+    def __str__(self):
+        return self.contents
 
     class Meta:
         app_label = 'testapp'
