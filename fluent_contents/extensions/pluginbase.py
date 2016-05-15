@@ -301,7 +301,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         """
         if self._type_id is None:
             try:
-                self._type_id = ContentType.objects.get_for_model(self.model).id
+                self._type_id = ContentType.objects.get_for_model(self.model, for_concrete_model=False).id
             except DatabaseError as e:
                 raise DatabaseError("Unable to fetch ContentType object, is a plugin being registered before the initial syncdb? (original error: {0})".format(str(e)))
 

@@ -3,6 +3,7 @@ Internal module for the plugin system,
 the API is exposed via __init__.py
 """
 import six
+from django.core.exceptions import ImproperlyConfigured
 
 from future.builtins import str
 from threading import Lock
@@ -75,9 +76,9 @@ class PluginPool(object):
         assert issubclass(plugin.form, ContentItemForm), "The plugin form must inherit from `ContentItemForm`"
 
         name = plugin.__name__  # using class here, no instance created yet.
+        name = name.lower()
         if name in self.plugins:
             raise PluginAlreadyRegistered("{0}: a plugin with this name is already registered".format(name))
-        name = name.lower()
 
         # Avoid registering 2 plugins to the exact same model. If you want to reuse code, use proxy models.
         if plugin.model in self._name_for_model:
@@ -212,7 +213,12 @@ class PluginPool(object):
             plugin_ctypes = {}  # separate dict to build, thread safe
             self._import_plugins()
             for name, plugin in self.plugins.items():
-                plugin_ctypes[plugin.type_id] = name
+                ct_id = plugin.type_id
+                if ct_id in plugin_ctypes:
+                    raise ImproperlyConfigured("The plugin '{0}' returns the same type_id as the '{1}' plugin does".format(
+                        plugin.name, plugin_ctypes[ct_id]
+                    ))
+                plugin_ctypes[ct_id] = name
 
             self._name_for_ctype_id = plugin_ctypes
 
