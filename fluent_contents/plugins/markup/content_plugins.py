@@ -40,12 +40,10 @@ class MarkupPluginBase(ContentPlugin):
         return mark_safe('<div class="markup">' + html + '</div>\n')
 
 
-# Dynamically create plugins for every language type.
-# Allows adding them separately in the admin, while using the same database table.
-for language, model in LANGUAGE_MODEL_CLASSES.items():
-    if language not in appsettings.FLUENT_MARKUP_LANGUAGES:
-        continue
-
+def _create_markup_plugin(language, model):
+    """
+    Create a new MarkupPlugin class that represents the plugin type.
+    """
     form = type("{0}MarkupItemForm".format(language.capitalize()), (MarkupItemForm,), {
         'default_language': language,
     })
@@ -56,5 +54,14 @@ for language, model in LANGUAGE_MODEL_CLASSES.items():
         'form': form,
     })
 
+    return PluginClass
+
+
+# Dynamically create plugins for every language type.
+# Allows adding them separately in the admin, while using the same database table.
+for language, model in LANGUAGE_MODEL_CLASSES.items():
+    if language not in appsettings.FLUENT_MARKUP_LANGUAGES:
+        continue
+
     #globals()[classname] = PluginClass
-    plugin_pool.register(PluginClass)
+    plugin_pool.register(_create_markup_plugin(language, model))
