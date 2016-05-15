@@ -61,6 +61,11 @@ setup(
         'text': ['django-wysiwyg>=0.7.1'],
         'twitterfeed': ['twitter-text-py>=1.0.3'],
     },
+    tests_require = [
+        'docutils',
+        'textile',
+        'Markdown>=1.7',
+    ],
     dependency_links = [
         'git+https://github.com/philomat/django-form-designer.git#egg=django-form-designer',
     ],

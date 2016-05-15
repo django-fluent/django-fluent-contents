@@ -9,8 +9,10 @@ from fluent_contents.plugins.markup import appsettings
 
 
 def render_restructuredtext(text):
-    from docutils.core import publish_string
-    return publish_string(text, writer_name='html')
+    from docutils.core import publish_parts
+    parts = publish_parts(text, writer_name='html')
+    # Want to return the html_body without the <div class="document" id="rst"> part
+    return parts['body_pre_docinfo'] + parts['body'] + parts['footer']
 
 
 def render_markdown(text):

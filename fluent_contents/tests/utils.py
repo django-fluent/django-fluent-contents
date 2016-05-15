@@ -10,10 +10,23 @@ from django.test import TestCase
 from fluent_utils.django_compat import get_user_model
 import os
 
+from fluent_contents import rendering
+from fluent_contents.rendering.utils import get_dummy_request
+
 try:
     from importlib import import_module
 except ImportError:
     from django.utils.importlib import import_module  # Python 2.6
+
+
+def render_content_items(items, request=None, language=None, template_name=None, cachable=False):
+    """
+    Render a content items with settings well suited for testing.
+    """
+    if request is None:
+        request = get_dummy_request(language=language)
+
+    return rendering.render_content_items(request, items, template_name=template_name, cachable=cachable)
 
 
 class AppTestCase(TestCase):
