@@ -4,9 +4,9 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import Truncator
 from django.utils.translation import ugettext_lazy as _
-from polymorphic.manager import PolymorphicManager
+
 from fluent_contents.forms import ContentItemForm
-from fluent_contents.models import ContentItem
+from fluent_contents.models import ContentItem, ContentItemManager
 from fluent_contents.plugins.markup import appsettings, backend
 
 LANGUAGE_MODEL_CLASSES = {}
@@ -56,7 +56,7 @@ class MarkupItem(ContentItem):
             self.__class__ = ProxyModelClass
 
 
-class MarkupLanguageManager(PolymorphicManager):
+class MarkupLanguageManager(ContentItemManager):
 
     def __init__(self, fixed_language):
         super(MarkupLanguageManager, self).__init__()
