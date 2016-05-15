@@ -8,6 +8,9 @@ from django.core.exceptions import ImproperlyConfigured
 COMMENTS_APP = getattr(settings, 'COMMENTS_APP', 'comments')
 FLUENT_COMMENTSAREA_THREADEDCOMMENTS = 'threadedcomments' in settings.INSTALLED_APPS
 
+FLUENT_BLOGS_INCLUDE_STATIC_FILES = getattr(settings, "FLUENT_BLOGS_INCLUDE_STATIC_FILES", True)
+FLUENT_COMMENTSAREA_INCLUDE_STATIC_FILES = getattr(settings, "FLUENT_COMMENTSAREA_INCLUDE_STATIC_FILES", FLUENT_BLOGS_INCLUDE_STATIC_FILES)
+
 
 # Test threadedcomments support
 if FLUENT_COMMENTSAREA_THREADEDCOMMENTS:

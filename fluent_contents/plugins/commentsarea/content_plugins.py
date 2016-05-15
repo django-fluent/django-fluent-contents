@@ -15,8 +15,11 @@ The least you need to do, is:
    * It could contains links to the blog page.
    * It could redirect automatically back to the blog in a few seconds.
 """
+from django.conf import settings
+
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.commentsarea.models import CommentsAreaItem
+from . import appsettings
 
 
 @plugin_pool.register
@@ -24,3 +27,12 @@ class CommentsAreaPlugin(ContentPlugin):
     model = CommentsAreaItem
     category = ContentPlugin.INTERACTIVITY
     render_template = "fluent_contents/plugins/commentsarea/commentsarea.html"
+
+    if 'fluent_comments' in settings.INSTALLED_APPS and appsettings.FLUENT_COMMENTSAREA_INCLUDE_STATIC_FILES:
+        class FrontendMedia:
+            css = {
+                'screen': ('fluent_comments/css/ajaxcomments.css',),
+            }
+            js = (
+                'fluent_comments/js/ajaxcomments.js',
+            )
