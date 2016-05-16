@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.utils.encoding import force_text
 
 from fluent_contents.plugins.markup.models import LANGUAGE_MODEL_CLASSES
 from fluent_contents.tests.factories import create_content_item
@@ -20,4 +21,4 @@ RST
 * Markup!""")
 
         expected = '''<div class="markup"><h1 class="title">RST</h1><ul class="simple"><li>Markup!</li></ul></div>'''
-        self.assertEqual(render_content_items([item]).replace('\n', ''), expected)
+        self.assertHTMLEqual(force_text(render_content_items([item])), expected)
