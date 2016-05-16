@@ -21,7 +21,7 @@ before_install:
 - pip install codecov
 install:
 - pip install -U pip wheel
-- pip install -q $PACKAGES django-wysiwyg html5lib==1.0b8 Pillow
+- pip install -q $PACKAGES django-wysiwyg html5lib==1.0b8 Pillow docutils textile MarkDown
 - pip install -q -e .
 script:
 - coverage run --source=fluent_contents runtests.py
