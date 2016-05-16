@@ -1,5 +1,6 @@
 from abc import abstractmethod
 import django
+from django.conf import settings
 from django.conf.urls import url
 from django.contrib.admin import ModelAdmin
 from django.contrib.admin.helpers import InlineAdminFormSet
@@ -76,11 +77,22 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
             'fluent_contents/admin/cp_widgets.js',
             'fluent_contents/admin/fluent_contents.js',
         )
-        css = {
-            'screen': (
-                'fluent_contents/admin/cp_admin.css',
-            ),
-        }
+        #if 'grapelli' in settings.INSTALLED_APPS:
+        # ...
+        if 'flat' in settings.INSTALLED_APPS or django.VERSION >= (1, 9):
+            css = {
+                'screen': (
+                    'fluent_contents/admin/cp_admin.css',
+                    'fluent_contents/admin/cp_admin_flat.css',
+                ),
+            }
+        else:
+            css = {
+                'screen': (
+                    'fluent_contents/admin/cp_admin.css',
+                    'fluent_contents/admin/cp_admin_classic.css',
+                ),
+            }
 
         extend = False   # No need for the standard 'admin/js/inlines.min.js' here.
 

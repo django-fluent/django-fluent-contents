@@ -1,0 +1,37 @@
+/* tabs */
+
+#cp-tabnav li {
+  margin-top: 3px;
+  min-width: 100px;
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+
+  font-size: 12px;
+  background-image: none;
+
+  color: #333333;
+}
+
+#cp-tabnav li.active {
+  margin-top: 0;
+  background-image: url('img/admin/default-bg.gif');
+  color: #ffffff;
+}
+
+#cp-tabnav li a {
+  padding: 5px 14px 5px 12px;
+  height: 13px;
+}
+
+#cp-tabnav li.active a {
+  padding-top: 6px;
+  padding-bottom: 7px;
+  color: #fff;
+}
+
+/* tab content */
+
+#cp-tabmain {
+  border: 1px solid #ccc;
+}

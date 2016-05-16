@@ -186,40 +186,15 @@ form .form-row.no-labels p.help {
   float: left;
   display: inline;
   list-style: none inside;
-
-  margin: 3px 0 0 0;
+  margin: 0;
   min-width: 100px;
-  border-top: 1px solid #ccc;
-  border-left: 1px solid #ccc;
-  border-right: 1px solid #ccc;
-
   font-weight: bold;
-  font-size: 12px;
-  background-image: none;
-
-  color: #333333;
-}
-
-#cp-tabnav li.active {
-  margin-top: 0;
-  background-image: url('img/admin/default-bg.gif');
-  color: #ffffff;
 }
 
 #cp-tabnav a {
   outline: 0;
   display: block;
   cursor: pointer;
-}
-
-#cp-tabnav a {
-  padding: 5px 14px 5px 12px;
-  height: 13px;
-}
-
-#cp-tabnav li.active a {
-  padding-top: 6px;
-  padding-bottom: 7px;
 }
 
 * html #cp-tabnav li.active a { height: 1%;    } /* IE 6 */
@@ -229,14 +204,20 @@ form .form-row.no-labels p.help {
   color: #fff;
 }
 
+/* tab content */
+
 #cp-tabmain {
   padding: 10px;
   margin: 0;  /* no bottom margin, .inline-placeholder-group already takes care of this */
-  border: 1px solid #ccc;
 }
 
 #cp-tabmain .cp-placeholder-delete {
   display: none;
+}
+
+.cp-content .form-row:last-child {
+  border-bottom: 0;
+  margin-bottom: 15px;
 }
 
 

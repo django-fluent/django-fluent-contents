@@ -1,0 +1,54 @@
+/* tabs */
+
+#cp-tabnav {
+  border-bottom: 1px solid #79AEC8;
+}
+
+#cp-tabnav li {
+  border-radius: 6px 6px 0 0;
+  border: 1px solid #C4DCE8;
+  font-size: 15px;
+  line-height: 17px;
+  background-color: #fff;
+  margin-top: 3px;  /* push down */
+  margin-right: 4px;
+  color: #333333;
+}
+
+#cp-tabnav li.active {
+  margin-top: 0;
+  background-color: #79AEC8;
+  border-color: #79AEC8;
+  color: #ffffff;
+}
+
+#cp-tabnav li a {
+  padding: 5px 16px 5px 16px;
+  height: 13px;
+}
+
+#cp-tabnav li.active a {
+  padding-top: 6px;
+  padding-bottom: 7px;
+  color: #fff;
+}
+
+
+/* tab content */
+
+#cp-tabmain {
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  border-radius: 0 0 4px 4px;
+}
+
+#content .cp-controls {
+  padding: 10px 15px 10px 15px;
+  background-color: #f6f6f6;
+}
+
+#content .cp-controls input.button {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
