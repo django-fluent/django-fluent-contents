@@ -1,13 +1,22 @@
-.. image::  https://travis-ci.org/edoburu/django-fluent-contents.png?branch=master
-  :target: http://travis-ci.org/edoburu/django-fluent-contents
-  :alt: build-status
+django-fluent-contents
+======================
 
-Introduction
-============
+.. image:: https://img.shields.io/travis/edoburu/django-fluent-contents/master.svg?branch=master
+    :target: http://travis-ci.org/edoburu/django-fluent-contents
+.. image:: https://img.shields.io/pypi/v/django-fluent-contents.svg
+    :target: https://pypi.python.org/pypi/django-fluent-contents/
+.. image:: https://img.shields.io/pypi/dm/django-fluent-contents.svg
+    :target: https://pypi.python.org/pypi/django-fluent-contents/
+.. image:: https://img.shields.io/badge/wheel-yes-green.svg
+    :target: https://pypi.python.org/pypi/django-fluent-contents/
+.. image:: https://img.shields.io/pypi/l/django-fluent-contents.svg
+    :target: https://pypi.python.org/pypi/django-fluent-contents/
+.. image:: https://img.shields.io/codecov/c/github/edoburu/django-fluent-contents/master.svg
+    :target: https://codecov.io/github/edoburu/django-fluent-contents?branch=master
 
 The *fluent_contents* module offers a widget engine to display various content on a Django page.
 
-This engine operates similarly like Django CMS, FeinCMS or django-portlets,
+This engine operates similarly like Django CMS, FeinCMS, Wagtail's streaming field or django-portlets,
 however, it can be used for any project, or CMS system.
 
 Page contents can be constructed with multiple "content items".
@@ -74,27 +83,37 @@ which displays each content placeholder in a tab:
 Installation
 ============
 
-First install the module, preferably in a virtual environment. It can be installed from PyPI::
+First install the module, preferably in a virtual environment. It can be installed from PyPI:
+
+.. code-block:: bash
 
     pip install django-fluent-contents
 
-Or the current folder can be installed::
+Or the current folder can be installed:
+
+.. code-block:: bash
 
     pip install .
 
-The dependencies of plugins are not included by default. To install those, include the plugin names as extra option::
+The dependencies of plugins are not included by default. To install those, include the plugin names as extra option:
+
+.. code-block:: bash
 
     pip install django-fluent-contents[code,disquscommentsarea,formdesignerlink,markup,oembeditem,text,twitterfeed]
 
 Configuration
 -------------
 
-Next, create a project which uses the module::
+Next, create a project which uses the module:
+
+.. code-block:: bash
 
     cd ..
     django-admin.py startproject fluentdemo
 
-It should have the following settings::
+It should have the following settings:
+
+.. code-block:: python
 
     INSTALLED_APPS += (
         'fluent_contents',
@@ -118,13 +137,17 @@ It should have the following settings::
         'form_designer',
     )
 
-The database tables can be created afterwards::
+The database tables can be created afterwards:
 
-    ./manage.py syncdb
+.. code-block:: bash
+
+    ./manage.py migrate
 
 Finally, it needs a model or application that displays the content.
 There are two ways to include content. The most simply way, is
-adding a ``PlaceholderField`` to a model::
+adding a ``PlaceholderField`` to a model:
+
+.. code-block:: python
 
     # models.py:
 
@@ -169,7 +192,9 @@ Take a look in the existing types at ``fluent_contents.plugins`` to see how it's
 
 It boils down to creating a package with 2 files:
 
-The ``models.py`` file should define the fields of the content item::
+The ``models.py`` file should define the fields of the content item:
+
+.. code-block:: python
 
   from django.db import models
   from fluent_contents.models import ContentItem
@@ -187,7 +212,9 @@ The ``models.py`` file should define the fields of the content item::
       def __unicode__(self):
           return self.title
 
-The ``content_plugins.py`` file defines the metadata and rendering::
+The ``content_plugins.py`` file defines the metadata and rendering:
+
+.. code-block:: python
 
   from fluent_contents.extensions import plugin_pool, ContentPlugin
   from .models import AnnouncementBlockItem
@@ -199,7 +226,9 @@ The ``content_plugins.py`` file defines the metadata and rendering::
      category = "Simple blocks"
 
 The plugin can also define the admin layout, by adding fields such as a ``fieldset``, but that is all optional.
-The template could look like::
+The template could look like:
+
+.. code-block:: html+django
 
     <div class="announcement">
         <h3>{{ instance.title }}</h3>
