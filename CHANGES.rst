@@ -1,6 +1,19 @@
 Changelog
 =========
 
+Changes in 1.1.4 (2016-05-16)
+-----------------------------
+
+* Added ``fluent_contents.tests.factories`` methods for easier plugin testing.
+* Added missing django-fluent-comments_ media files for ``contentarea`` plugin.
+  This is configurable with the ``FLUENT_COMMENTSAREA_INCLUDE_STATIC_FILES`` setting,
+  that defaults to ``FLUENT_BLOGS_INCLUDE_STATIC_FILES`` (``True``).
+* Fixed appearance in django-flat-theme / Django 1.9.
+* Fixed proxy model support for ``ContentItem`` models.
+* Fixed Markup plugin rendering.
+* Fixed reStructuredText rendering, avoid rendering the whole HTML document.
+
+
 Changes in 1.1.3 (2016-05-11)
 -----------------------------
 
