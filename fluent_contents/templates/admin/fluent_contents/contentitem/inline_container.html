@@ -55,8 +55,10 @@
           {% endblock %}
         </div>
         {% if inline_admin_form.model_admin.plugin.can_have_children %}
-          <div class="cp-formset-item-children inline-{{ inline_admin_form.model_admin.type_name }}-children">
-            (todo: show children here)
+          <div class="cp-content cp-content-children inline-{{ inline_admin_form.model_admin.type_name }}-children">
+            <div class="cp-empty-children">
+              {% trans "Add a new element, or drag elements here." %}
+            </div>
           </div>
         {% endif %}
       </div>
