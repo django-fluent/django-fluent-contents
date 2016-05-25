@@ -119,11 +119,27 @@ body.cp-single-placeholder #tab-orphaned .cp-item-move { display: inline; }  /* 
 .cp-empty {
   margin: 0.5em 0;
 }
-
 #cp-tabmain .cp-empty,
 #cp-tabs-empty {
   margin: 10px 5px;
 }
+
+/* ---- Editor item children ---- */
+
+.cp-content-children {
+  margin: 0.5em;
+  padding-left: 2em;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  color: #999;
+}
+
+.cp-empty-children {
+  margin: 2em 0;
+  text-align: center;
+  color: #555;
+}
+
 
 /* ---- Fieldset fixes ---- */
 
