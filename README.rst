@@ -150,6 +150,8 @@ adding a ``PlaceholderField`` to a model:
 .. code-block:: python
 
     # models.py:
+    
+    from fluent_contents.models import PlaceholderField
 
     class Article(models.Model):
         title = models.CharField("Title", max_length=200)
@@ -165,6 +167,8 @@ adding a ``PlaceholderField`` to a model:
 
 
     # admin.py:
+    
+    from fluent_contents.admin import PlaceholderFieldAdmin
 
     class ArticleAdmin(PlaceholderFieldAdmin):
         pass
