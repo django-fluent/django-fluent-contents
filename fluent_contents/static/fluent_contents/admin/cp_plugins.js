@@ -50,6 +50,9 @@ var cp_plugins = {};
   {
     $("#content-main > form").submit( cp_plugins.onFormSubmit );
 
+    // Event binding happens using a jQuery delegate, to make our life much easier.
+    // Individual content items are bound in enable_pageitem() / disable_pageitem()
+
     if($.fn.on) {
       // jQuery 1.7+
       $("#content-main")
@@ -468,7 +471,7 @@ var cp_plugins = {};
 
     // Configure it
     cp_plugins._set_pageitem_data($fs_item, placeholder, new_index);
-    cp_plugins.enable_pageitem($fs_item);
+    cp_plugins.enable_pageitem($fs_item, false);
     cp_plugins.update_sort_order(pane);  // Not required, but keep the form state consistent all the time.
     if(options.on_post_add) options.on_post_add($fs_item);
   }
@@ -828,7 +831,7 @@ var cp_plugins = {};
 
     // Disable item, wysiwyg, etc..
     current_item.fs_item.css("height", current_item.fs_item.height() + "px");  // Fixate height, less redrawing.
-    cp_plugins.disable_pageitem(current_item.fs_item);
+    cp_plugins.disable_pageitem(current_item.fs_item, false);
 
     // In case there is a delete checkbox, save it.
     if( dominfo.delete_checkbox.length )
@@ -926,7 +929,10 @@ var cp_plugins = {};
   }
 
 
-  cp_plugins.enable_pageitem = function($fs_item)
+  /**
+   * Configure the event bindings for a content item.
+   */
+  cp_plugins.enable_pageitem = function($fs_item, is_move)
   {
     // Default actions:
     cp_widgets.enable_wysiwyg($fs_item);
@@ -937,7 +943,10 @@ var cp_plugins = {};
   }
 
 
-  cp_plugins.disable_pageitem = function($fs_item)
+  /**
+   * Remove the revent bindings for a content item.
+   */
+  cp_plugins.disable_pageitem = function($fs_item, is_move)
   {
     // Default actions:
     cp_widgets.disable_wysiwyg($fs_item);
