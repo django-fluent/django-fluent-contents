@@ -155,6 +155,7 @@ var cp_tabs = {};
       var $new_tab = cp_tabs._create_tab_content(newplaceholder, ( newplaceholder.id ? id_index : new_index ));
       $tabs_root.append( $new_tab );
       newplaceholder.domnode = $new_tab.attr('id');
+      cp_plugins.init_placeholder($new_tab);
 
       if( newplaceholder.id )
         id_index++;
@@ -302,8 +303,9 @@ var cp_tabs = {};
 
     // Hide and mark as expired (will be deleted soon).
     // Remove ID so the tab can't be found anymore by cp_data.get_placeholder_by_id()
-    var all_tabs = $tabs_root.children(".cp-region-tab:not(#tab-template)");
-    all_tabs.removeClass("cp-region-tab").addClass("cp-expired-tab").removeAttr("id").hide();
+    var $all_tabs = $tabs_root.children(".cp-region-tab:not(#tab-template)");
+    $all_tabs.removeClass("cp-region-tab").addClass("cp-expired-tab").removeAttr("id").hide();
+    cp_plugins.unload_placeholders($all_tabs);
   }
 
 

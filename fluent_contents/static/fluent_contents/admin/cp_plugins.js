@@ -85,11 +85,28 @@ var cp_plugins = {};
     }
 
     // Do normal initialisation
+    cp_plugins.init_placeholders();
     cp_plugins.move_items_to_placeholders();
   }
 
 
   /**
+   * Initialize additional event binding for the placeholders.
+   */
+  cp_plugins.init_placeholders = function() {
+
+  }
+  
+  cp_plugins.init_placeholder = function($placeholder) {
+    
+  }
+  
+  cp_plugins.unload_placeholders = function($all_placeholders) {
+    
+  }
+
+  /**
+   * This is the starting signal after all tabs or placeholders are created.
    * Move all formset items to their appropriate tabs.
    * The tab is selected based on template key, and role.
    */
