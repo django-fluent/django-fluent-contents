@@ -290,10 +290,21 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
 
     def __str__(self):
         # Note this representation is optimized for the admin delete page.
+        # Make sure that the
+        try:
+            real_type = ContentType.objects.get_for_id(self.polymorphic_ctype_id).model_class()
+        except ContentType.DoesNotExist:
+            real_type_text = "(type deleted)"
+        else:
+            if real_type is None:
+                real_type_text = "(type deleted)"
+            else:
+                real_type_text = "(type deleted)"
+
         return u"'{type} {id:d}' in '{language} {placeholder}'".format(
-            type=ContentType.objects.get_for_id(self.polymorphic_ctype_id).model_class()._meta.verbose_name,
+            type=real_type_text,
             id=self.id or 0,
-            language=get_language_title(self.language_code),
+            language=get_language_title(self.language_code) if self.language_code else None,
             placeholder=self.placeholder
         )
 
