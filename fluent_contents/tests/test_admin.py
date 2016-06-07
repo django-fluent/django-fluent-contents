@@ -77,6 +77,7 @@ class AdminTest(AdminTestCase):
         rawhtmltestitem = RawHtmlTestItem.objects.get(html=u'<b>foo</b>')
         self.assertEqual(rawhtmltestitem.placeholder, placeholder)
         self.assertEqual(rawhtmltestitem.parent, page)
+        self.assertEqual(rawhtmltestitem.language_code, 'nl')
 
         # Also check reverse relation of placeholder
         rawhtmltestitem = placeholder.contentitems.all()[0]
@@ -88,9 +89,9 @@ class AdminTest(AdminTestCase):
         """
         # Create item outside Django admin
         slot = PlaceholderFieldTestPage.contents.slot
-        page = PlaceholderFieldTestPage.objects.create(title='TEST2')
+        page = PlaceholderFieldTestPage.objects.create(title='TEST2', language_code='nl')
         placeholder = Placeholder.objects.create_for_object(page, slot, role='m')
-        item1 = RawHtmlTestItem.objects.create_for_placeholder(placeholder, language_code='en', html='<b>foo</b>')
+        item1 = RawHtmlTestItem.objects.create_for_placeholder(placeholder, html='<b>foo</b>')
 
         # Fetch the page
         response = self.admin_get_change(page.pk)
@@ -109,6 +110,7 @@ class AdminTest(AdminTestCase):
         self.assertEqual(formdata, {
             'title': u'TEST2',
             'contents': 1,
+            'language_code': 'nl',
             'placeholder-fs-INITIAL_FORMS': 1,
             'placeholder-fs-MIN_NUM_FORMS': 0,
             'placeholder-fs-MAX_NUM_FORMS': 1000,
@@ -150,7 +152,7 @@ class AdminTest(AdminTestCase):
             if value is None:
                 formdata[key] = ''
 
-        response = self.admin_post_change(page.pk, formdata)
+        self.admin_post_change(page.pk, formdata)
 
         # Must have created two items
         self.assertEqual([item.html for item in placeholder.contentitems.all()], [u'<b>foo</b>', u'<b>bar</b>'])
