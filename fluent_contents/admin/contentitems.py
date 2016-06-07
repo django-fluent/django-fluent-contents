@@ -41,6 +41,7 @@ class BaseContentItemFormSet(BasePolymorphicGenericInlineFormSet):
 
         super(BaseContentItemFormSet, self).__init__(*args, **kwargs)
         self._deleted_placeholders = ()  # internal property, set by PlaceholderEditorAdmin
+        self._placeholders_by_slot = {}
 
     def get_form_class(self, model):
         form = super(BaseContentItemFormSet, self).get_form_class(model)
@@ -89,7 +90,13 @@ class BaseContentItemFormSet(BasePolymorphicGenericInlineFormSet):
             form_placeholder = form.cleaned_data['placeholder']   # could already be updated, or still point to previous placeholder.
 
             if not form_placeholder or form_placeholder.slot != form_slot:
-                desired_placeholder = Placeholder.objects.parent(self.instance).get(slot=form_slot)
+                # Fetch the placeholder if needed, avoid having to repeat that query.
+                try:
+                    desired_placeholder = self._placeholders_by_slot[form_slot]
+                except KeyError:
+                    desired_placeholder = Placeholder.objects.parent(self.instance).get(slot=form_slot)
+                    self._placeholders_by_slot[form_slot] = desired_placeholder
+
                 form.cleaned_data['placeholder'] = desired_placeholder
                 form.instance.placeholder = desired_placeholder
 
