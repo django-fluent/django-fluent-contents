@@ -10,20 +10,17 @@ from fluent_contents.models import Placeholder
 from fluent_contents.tests import factories
 from fluent_contents.tests.testapp.admin import PlaceholderFieldTestPageAdmin
 from fluent_contents.tests.testapp.models import PlaceholderFieldTestPage, RawHtmlTestItem
-from fluent_contents.tests.utils import AppTestCase
+from fluent_contents.tests.utils import AdminTestCase
 
 
-class AdminTest(AppTestCase):
+class AdminTest(AdminTestCase):
     """
     Test the admin functions.
     """
+    model = PlaceholderFieldTestPage
+    admin_class = PlaceholderFieldTestPageAdmin
 
     def setUp(self):
-        # Admin objects for all tests.
-        self.factory = RequestFactory()
-        self.admin_site = AdminSite()
-        self.admin_user = User.objects.get(is_superuser=True)
-
         self.settings = override_settings(
             MIDDLEWARE_CLASSES = (
                 'django.middleware.common.CommonMiddleware',
@@ -42,15 +39,15 @@ class AdminTest(AppTestCase):
         """
         Test adding an object with placeholder field via the admin.
         """
-        self.admin_site.register(PlaceholderFieldTestPage, PlaceholderFieldTestPageAdmin)
-        modeladmin = self.admin_site._registry[PlaceholderFieldTestPage]
-
         # Get all post data.
         # Includes all inlines, so all inline formsets of other plugins will be added (with TOTAL_FORMS 0)
         contents_slot = PlaceholderFieldTestPage.contents.slot
-        formdata = self._get_management_form_data(modeladmin)
-        formdata.update({
+        formdata = {
             'title': 'TEST1',
+            'language_code': 'nl',
+            'placeholder-fs-INITIAL_FORMS': 0,
+            'placeholder-fs-MIN_NUM_FORMS': 0,
+            'placeholder-fs-MAX_NUM_FORMS': 1000,
             'placeholder-fs-TOTAL_FORMS': '1',
             'placeholder-fs-0-slot': contents_slot,
             'placeholder-fs-0-role': Placeholder.MAIN,
@@ -62,11 +59,10 @@ class AdminTest(AppTestCase):
             'contentitem-0-placeholder_slot': contents_slot,   # BaseContentItemFormSet resolves the placeholder after it's created
             'contentitem-0-sort_order': '1',
             'contentitem-0-html': u'<b>foo</b>',
-        })
+        }
 
         # Make a POST to the admin page.
-        response = self._post_add(modeladmin, formdata)
-        self.assertEqual(response.status_code, 302, "No redirect, received:\n\n{0}".format(self._render_response(response)))
+        self.admin_post_add(formdata)
 
         # Check that the page exists.
         page = PlaceholderFieldTestPage.objects.get(title='TEST1')
