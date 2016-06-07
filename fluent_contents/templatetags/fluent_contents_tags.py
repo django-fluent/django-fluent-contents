@@ -376,6 +376,12 @@ class RenderContentItems(BaseAssignmentOrOutputNode):
         parent_result_tracker = context.get('_result_tracker', None)
         if parent_result_tracker is not None:
             parent_result_tracker.add_child_cache_settings(output)
+        else:
+            # When the template context indicates there is a plugin in plugin rendering,
+            # there should be a result tracker. Otherwise cache settings break and possibly more.
+            # This is extra safeguard to avoid hard to debug issues.
+            if context.get('_inside_contentplugin', False):
+                raise RuntimeError("A Plugin should pass **kwargs to get_context()")
 
         return output.html
 

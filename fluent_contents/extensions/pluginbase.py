@@ -558,12 +558,10 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         By default, it returns the model instance as ``instance`` field in the template.
         """
         result_tracker = kwargs.get('_result_tracker', None)
-        if result_tracker is None:
-            raise RuntimeError("Plugin '{0}' does not pass render **kwargs to get_context()".format(self.name))
-
         return {
             'instance': instance,
             '_result_tracker': result_tracker,
+            '_inside_contentplugin': True,  # to detect plugin in plugin rendering.
         }
 
     @property
