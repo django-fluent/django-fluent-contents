@@ -16,6 +16,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('title', models.CharField(max_length=200)),
+                ('language_code', models.CharField(max_length=10, default='en')),
             ],
             options={
                 'verbose_name': 'Test page',
