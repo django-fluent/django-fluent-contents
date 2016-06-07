@@ -2,6 +2,7 @@ from pprint import pformat
 from django.contrib.admin import AdminSite
 from django.contrib.admin.templatetags.admin_urls import admin_urlname
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.messages.middleware import MessageMiddleware
 from django.test import RequestFactory, override_settings
 from django.urls import reverse
@@ -53,13 +54,14 @@ class AdminTest(AppTestCase):
             'placeholder-fs-TOTAL_FORMS': '1',
             'placeholder-fs-0-slot': contents_slot,
             'placeholder-fs-0-role': Placeholder.MAIN,
-            'rawhtmltestitem-TOTAL_FORMS': '1',
-            'rawhtmltestitem-MAX_NUM_FORMS': '',
-            'rawhtmltestitem-INITIAL_FORMS': '0',
-            'rawhtmltestitem-0-placeholder': '',                   # The placeholder is not defined yet, as item is not yet created.
-            'rawhtmltestitem-0-placeholder_slot': contents_slot,   # BaseContentItemFormSet resolves the placeholder after it's created
-            'rawhtmltestitem-0-sort_order': '1',
-            'rawhtmltestitem-0-html': u'<b>foo</b>',
+            'contentitem-TOTAL_FORMS': '1',
+            'contentitem-MAX_NUM_FORMS': '',
+            'contentitem-INITIAL_FORMS': '0',
+            'contentitem-0-polymorphic_ctype': ContentType.objects.get_for_model(RawHtmlTestItem).pk,
+            'contentitem-0-placeholder': '',                   # The placeholder is not defined yet, as item is not yet created.
+            'contentitem-0-placeholder_slot': contents_slot,   # BaseContentItemFormSet resolves the placeholder after it's created
+            'contentitem-0-sort_order': '1',
+            'contentitem-0-html': u'<b>foo</b>',
         })
 
         # Make a POST to the admin page.
