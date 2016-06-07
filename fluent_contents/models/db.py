@@ -434,6 +434,26 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
         if not self.language_code:
             self.language_code = get_parent_language_code(self.parent) or appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE
 
+        # Setup the node for insertion,
+        # the default order_insertion_by doesn't work for us.
+        if not self.lft and not self.rght:
+            qs = ContentItem.objects.non_polymorphic().filter(
+                parent_type=self.parent_type_id,
+                parent_id=self.parent_id,
+                parent_item=self.parent_item_id,
+                language_code=self.language_code,
+                sort_order__lt=self.sort_order
+            ).order_by('-sort_order')
+            if self.pk:
+                qs = qs.exclude(pk=self.pk)
+
+            try:
+                left_sibling = qs[0]
+            except IndexError:
+                pass
+            else:
+                self.insert_at(left_sibling, 'right', allow_existing_pk=True, refresh_target=False)
+
         super(ContentItem, self).save(*args, **kwargs)
 
     save.alters_data = True
