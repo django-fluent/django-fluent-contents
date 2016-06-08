@@ -96,7 +96,7 @@ class ResultTracker(object):
         self.remaining_items.extend(contentitems)
         self.output_ordering.extend(self._get_item_id(item) for item in contentitems)
 
-    def fetch_remaining_instances(self, queryset):
+    def fetch_remaining_instances(self):
         """Read the derived table data for all objects tracked as remaining (=not found in the cache)."""
         if self.remaining_items:
             self.remaining_items = ContentItem.objects.get_real_instances(self.remaining_items)
@@ -237,7 +237,7 @@ class RenderingPipe(object):
         if use_cache:
             # Phase 1: get cached output
             self._fetch_cached_output(items, result=result)
-            result.fetch_remaining_instances(queryset=items)
+            result.fetch_remaining_instances()
         else:
             # The items is either a list of manually created items, or it's a QuerySet.
             # Can't prevent reading the subclasses only, so don't bother with caching here.
