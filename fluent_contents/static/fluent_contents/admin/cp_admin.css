@@ -144,6 +144,15 @@ form .form-row.no-labels p.help {
 
 /* ---- Inline header fixes ---- */
 
+h2.cp-formset-item-title {
+  cursor: pointer;
+  cursor: grab;
+}
+
+.sortable-chosen h2.cp-formset-item-title {
+  cursor: grabbing;
+}
+
 .cp-content .inline-related h2.cp-formset-item-title {
   /* Give fieldsets inside inline a different title
      Otherwise there will be 2 levels of the same color already.

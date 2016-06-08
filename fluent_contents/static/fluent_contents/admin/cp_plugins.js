@@ -85,8 +85,8 @@ var cp_plugins = {};
     }
 
     // Do normal initialisation
-    cp_plugins.init_placeholders();
     cp_plugins.move_items_to_placeholders();
+    cp_plugins.init_placeholders();
   }
 
 
@@ -94,15 +94,50 @@ var cp_plugins = {};
    * Initialize additional event binding for the placeholders.
    */
   cp_plugins.init_placeholders = function() {
-
+    var $content_roots = $(".cp-content");
+    $content_roots.each(_init_sortable);
   }
   
   cp_plugins.init_placeholder = function($placeholder) {
-    
+    var $content_roots = $placeholder.find(".cp-content");
+    $content_roots.each(_init_sortable);
   }
   
   cp_plugins.unload_placeholders = function($all_placeholders) {
-    
+    $all_placeholders.find(".cp-content").each(function(i, element){
+      var sortable = $(element).data('sortable');
+      if(sortable) {
+        sortable.destroy();
+      }
+    })
+  }
+
+  function _init_sortable(index, element) {
+    var sortable = Sortable.create(element, {
+      animation: 150,
+      draggable: ".inline-related",
+      handle: ".cp-formset-item-title",
+      filter: ".p-item-controls",
+      //group: "",
+      onStart: function(event) {
+        // TinyMCE breaks when taken out of the DOM, so
+        var $fs_item = $(event.item);
+        cp_plugins._fixate_item_height($fs_item);
+        cp_plugins.disable_pageitem($(event.item), true);
+      },
+      onEnd: function (event) {
+        var $fs_item = $(event.item);
+        cp_plugins.enable_pageitem($fs_item, true);
+        cp_plugins._restore_item_height($fs_item);
+      },
+      onUpdate: function (event){
+        var $fs_item = $(event.item);
+        var pane = cp_data.get_placeholder_pane_for_item($fs_item);
+        cp_plugins.update_sort_order(pane);
+      }
+    });
+
+    $(this).data('sortable', sortable);
   }
 
   /**
