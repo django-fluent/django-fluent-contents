@@ -15,7 +15,7 @@ from parler.utils.context import smart_override
 from fluent_contents import appsettings
 from fluent_contents.cache import get_rendering_cache_key, get_placeholder_cache_key_for_parent
 from fluent_contents.extensions import PluginNotFound
-from fluent_contents.models import ContentItemOutput, DEFAULT_TIMEOUT, get_parent_language_code
+from fluent_contents.models import ContentItem, ContentItemOutput, DEFAULT_TIMEOUT, get_parent_language_code
 from . import markers
 from .utils import optimize_logger_level, get_placeholder_debug_name, add_media, get_render_language, is_template_updated
 
@@ -95,10 +95,10 @@ class ResultTracker(object):
         self.remaining_items.extend(contentitems)
         self.output_ordering.extend(self._get_item_id(item) for item in contentitems)
 
-    def fetch_remaining_instances(self, queryset):
+    def fetch_remaining_instances(self):
         """Read the derived table data for all objects tracked as remaining (=not found in the cache)."""
         if self.remaining_items:
-            self.remaining_items = queryset.get_real_instances(self.remaining_items)
+            self.remaining_items = ContentItem.objects.get_real_instances(self.remaining_items)
 
     def add_plugin_timeout(self, plugin):
         self.all_timeout = _min_timeout(self.all_timeout, plugin.cache_timeout)
@@ -195,7 +195,7 @@ class RenderingPipe(object):
         if is_queryset:
             # Phase 1: get cached output
             self._fetch_cached_output(items, result=result)
-            result.fetch_remaining_instances(queryset=items)
+            result.fetch_remaining_instances()
         else:
             # The items is either a list of manually created items, or it's a QuerySet.
             # Can't prevent reading the subclasses only, so don't bother with caching here.
