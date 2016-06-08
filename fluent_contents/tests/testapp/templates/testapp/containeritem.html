@@ -1,0 +1,3 @@
+{% load fluent_contents_tags %}<{{ instance.tag }}{% if instance.css_class %} class="{{ instance.css_class }}"{% endif %}>
+  {% render_content_item_children %}
+</{{ instance.tag }}>

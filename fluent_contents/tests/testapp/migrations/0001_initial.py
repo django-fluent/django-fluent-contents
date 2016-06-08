@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('fluent_contents', '0001_initial'),
+        ('fluent_contents', '0003_set_mptt_fields'),
     ]
 
     operations = [
@@ -75,6 +75,20 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Redirect test',
             },
             bases=('fluent_contents.contentitem',),
+       ),
+        migrations.CreateModel(
+            name='ContainerTestItem',
+            fields=[
+                ('contentitem_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem')),
+                ('tag', models.CharField(max_length=20)),
+                ('css_class', models.CharField(max_length=200)),
+            ],
+            options={
+                'db_table': 'contentitem_testapp_containertestitem',
+                'verbose_name': 'Container test',
+                'verbose_name_plural': 'Container test',
+            },
+            bases=('fluent_contents.containeritem',),
         ),
         migrations.CreateModel(
             name='TestPage',

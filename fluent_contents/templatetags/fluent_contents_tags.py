@@ -335,14 +335,15 @@ class RenderContentItems(BaseAssignmentOrOutputNode):
 
     @classmethod
     def validate_args(cls, tag_name, *args, **kwargs):
-        if len(args) < 1:
+        if len(args) < cls.min_args:
             raise TemplateSyntaxError("{0} tag needs at least one content item object.".format(tag_name))
 
         super(RenderContentItems, cls).validate_args(tag_name, *args, **kwargs)
 
-    def get_value(self, context, *tag_args, **tag_kwargs):
-        request = self.get_request(context)
-
+    def get_items(self, context, tag_args):
+        """
+        Determine which items should be rendered
+        """
         # Single parameter: can be a queryset or list.
         # Multiple parameters: can be multiple ContentItem objects.
         # more complex variants can be implemented later if needed.
@@ -356,6 +357,15 @@ class RenderContentItems(BaseAssignmentOrOutputNode):
                     raise TemplateSyntaxError("{0} tag expects ContentItem objects only when receiving multiple arguments".format(
                         self.tag_name
                     ))
+
+        return items
+
+    def get_value(self, context, *tag_args, **tag_kwargs):
+        """
+        Return the HTML of the tag.
+        """
+        request = self.get_request(context)
+        items = self.get_items(context, tag_args)
 
         # Parse arguments
         template_name = tag_kwargs.get('template', None)
@@ -384,6 +394,46 @@ class RenderContentItems(BaseAssignmentOrOutputNode):
                 raise RuntimeError("A Plugin should pass **kwargs to get_context()")
 
         return output.html
+
+
+@register.tag
+def render_content_item_children(parser, token):
+    """
+    Render the children of a placeholder.
+    Syntax:
+
+    .. code-block:: html+django
+
+        {% render_content_item_children %}
+
+    This is essentially a shortcut for:
+
+    .. code-block:: html+django
+
+        {% render_content_items instance.children %}
+    """
+    return RenderContentItemChildren.parse(parser, token)
+
+
+class RenderContentItemChildren(RenderContentItems):
+    """
+    The template node of the ``render_instance_children`` tag.
+    It renders the ``instance`` object.
+    """
+    min_args = 0
+    max_args = 1
+
+    def get_items(self, context, tag_args):
+        if tag_args:
+            instance = tag_args[0]
+        else:
+            if not context.get('_inside_contentplugin', False):
+                raise TemplateSyntaxError("{0} tag can only be used inside the template of an ContentPlugin rendering".format(
+                    self.tag_name
+                ))
+            instance = context['instance']
+
+        return instance.children
 
 
 @register.tag

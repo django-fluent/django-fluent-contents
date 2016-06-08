@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.utils.safestring import mark_safe
-from fluent_contents.extensions import ContentPlugin, plugin_pool
-from fluent_contents.tests.testapp.models import RawHtmlTestItem, TimeoutTestItem, MediaTestItem, RedirectTestItem
+from fluent_contents.extensions import ContentPlugin, ContainerPlugin, plugin_pool
+from fluent_contents.tests.testapp.models import RawHtmlTestItem, TimeoutTestItem, MediaTestItem, RedirectTestItem, ContainerTestItem
 
 
 @plugin_pool.register
@@ -60,3 +60,12 @@ class RedirectTestPlugin(ContentPlugin):
         # Since this call happens inside a template render, the code flow
         # is interrupted by an exception that is handled in middleware.
         return HttpResponseRedirect('/contact/success/')
+
+
+@plugin_pool.register
+class ContainerTestPlugin(ContainerPlugin):
+    """
+    Testing a plugin timeout.
+    """
+    model = ContainerTestItem
+    render_template = "testapp/containeritem.html"
