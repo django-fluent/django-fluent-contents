@@ -203,7 +203,7 @@ class RenderingPipe(object):
         The main rendering sequence.
 
         :type placeholder: fluent_contents.models.Placeholder
-        :type items: Union[list, fluent_contents.models.managers.ContentItemQuerySet]
+        :type items: Union[list, fluent_contents.models.managers.ContentItemQuerySet, fluent_contents.models.ContentItemTree]
         :rtype: fluent_contents.models.ContentItemOutput
         """
         # Unless it was done before, disable polymorphic effects.
@@ -458,7 +458,6 @@ class PlaceholderRenderingPipe(RenderingPipe):
         if output is None:
             # Get the items, and render them
             items, is_fallback = self._get_placeholder_items(placeholder, parent_object, limit_parent_language, fallback_language, try_cache)
-            items = ContentItemTree.from_list(items, placeholder=placeholder)
             output = self.render_items(placeholder, items, parent_object, template_name, cachable)
 
             if is_fallback:
@@ -489,9 +488,11 @@ class PlaceholderRenderingPipe(RenderingPipe):
             language_code = appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE if fallback_language is True else fallback_language
             logger.debug("- reading fallback language %s, try_cache=%s", language_code, try_cache)
             items = placeholder.get_content_items(parent_object, limit_parent_language=False).translated(language_code).non_polymorphic()
-            return items, True
+            is_fallback = True
         else:
-            return items, False
+            is_fallback = False
+
+        return ContentItemTree.from_list(items, placeholder=placeholder), is_fallback
 
     @classmethod
     def may_cache_placeholders(cls):
