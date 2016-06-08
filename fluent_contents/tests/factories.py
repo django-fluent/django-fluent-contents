@@ -19,7 +19,7 @@ def create_placeholder(page=None, slot=None):
     return Placeholder.objects.create_for_object(page, slot=slot or 'field_slot1')
 
 
-def create_content_item(ContentItemModel, placeholder=None, sort_order=1, language_code=None, **item_kwargs):
+def create_content_item(ContentItemModel, placeholder=None, parent_item=None, sort_order=1, language_code=None, **item_kwargs):
     """
     Create an Content Item to render
     """
@@ -28,6 +28,7 @@ def create_content_item(ContentItemModel, placeholder=None, sort_order=1, langua
 
     return ContentItemModel.objects.create_for_placeholder(
         placeholder,
+        parent_item=parent_item,
         sort_order=sort_order,
         language_code=language_code,
         **item_kwargs
