@@ -205,14 +205,16 @@ class RenderingPipe(object):
         :type items: Union[list, fluent_contents.models.managers.ContentItemQuerySet, fluent_contents.models.ContentItemTree]
         :rtype: fluent_contents.models.ContentItemOutput
         """
-        # Unless it was done before, disable polymorphic effects.
-        is_base_set = False
         if hasattr(items, "non_polymorphic"):
-            is_base_set = True
+            use_cache = True
+
+            # Unless it was done before, disable polymorphic effects.
             if not items.polymorphic_disabled and items._result_cache is None:
                 items = items.non_polymorphic()
         elif isinstance(items, ContentItemTree):
-            is_base_set = True
+            use_cache = True
+        else:
+            use_cache = False
 
         # See if the queryset contained anything.
         # This test is moved here, to prevent earlier query execution.
@@ -231,7 +233,7 @@ class RenderingPipe(object):
         if self.edit_mode:
             result.set_uncachable()
 
-        if is_base_set:
+        if use_cache:
             # Phase 1: get cached output
             self._fetch_cached_output(items, result=result)
             result.fetch_remaining_instances()
