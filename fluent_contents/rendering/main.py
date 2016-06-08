@@ -91,6 +91,10 @@ def render_content_items(request, items, template_name=None, cachable=None):
         placeholder = None
         if isinstance(items, ContentItemTree):
             placeholder = items.placeholder
+        else:
+            # This makes sure a flat list of items (e.g. from a queryset)
+            # is properly structured to be displayed in nested format.
+            items = ContentItemTree.from_list(items)
 
         output = RenderingPipe(request).render_items(
             placeholder=placeholder,
