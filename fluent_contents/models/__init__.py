@@ -191,9 +191,14 @@ class ContentItemTree(list):
         for parent_id, children in six.iteritems(parents):
             if parent_id is not None and parent_id != top_parent_id:
                 sub_parent_item = lookup[parent_id]
+                # Quick fix for the ordering for the items according to the `sort_order` field.
+                # The MPTT model is used for the hierarchy, but updating `lft` and `tree_id`
+                # on save in BaseContentItemFormSet for `sort_order` changes turns out to be really hard.
+                children.sort(key=lambda item: item.sort_order)
                 sub_parent_item._set_children(ContentItemTree(children, placeholder=placeholder, parent_item=sub_parent_item))
 
         root_items = parents[top_parent_id]
+        root_items.sort(key=lambda item: item.sort_order)
         return ContentItemTree(root_items, flat_items=items, placeholder=placeholder, parent_item=parent_item)
 
     def get_ancestors(self, ascending=False):
