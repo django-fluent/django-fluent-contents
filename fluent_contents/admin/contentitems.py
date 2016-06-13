@@ -6,11 +6,11 @@ from fluent_contents import extensions, appsettings
 from fluent_contents.extensions import plugin_pool
 from fluent_contents.forms import ContentItemForm
 from fluent_contents.models import Placeholder, ContentItem, get_parent_language_code
-from fluent_contents.polymorphic.admin import (
+from polymorphic.admin import (
     PolymorphicParentGenericInlineModelAdmin,
     PolymorphicChildGenericInlineModelAdmin
 )
-from fluent_contents.polymorphic.formsets import BasePolymorphicGenericInlineFormSet
+from polymorphic.formsets import BasePolymorphicGenericInlineFormSet
 from fluent_contents.rendering.utils import add_media
 
 # base fields in ContentItemForm

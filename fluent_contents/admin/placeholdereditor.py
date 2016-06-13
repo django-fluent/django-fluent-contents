@@ -18,7 +18,7 @@ from fluent_utils.ajax import JsonResponse
 from fluent_contents import extensions
 from fluent_contents.admin.contentitems import get_content_item_inlines, BaseContentItemFormSet
 from fluent_contents.admin.genericextensions import BaseInitialGenericInlineFormSet
-from fluent_contents.polymorphic.admin import PolymorphicInlineSupportMixin
+from polymorphic.admin import PolymorphicInlineSupportMixin
 from fluent_contents.models import Placeholder
 from fluent_contents.models.managers import get_parent_active_language_choices
 
