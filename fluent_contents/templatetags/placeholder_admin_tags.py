@@ -1,7 +1,7 @@
 from future.builtins import str
 from django.template import Library, Node
 from django.template.base import TemplateSyntaxError
-from fluent_contents.admin.contentitems import BaseContentItemParentInline
+from fluent_contents.admin.contentitems import BaseContentItemInline
 from tag_parser import template_tag, parse_as_var, parse_token_kwargs
 
 register = Library()
@@ -11,7 +11,7 @@ register = Library()
 def get_content_item_formset(inline_admin_formsets):
     for inline_admin_formset in inline_admin_formsets:
         # .opts points to the inline in the admin helper wrapper.
-        if isinstance(inline_admin_formset.opts, BaseContentItemParentInline):  # will be just one.
+        if isinstance(inline_admin_formset.opts, BaseContentItemInline):  # will be just one.
             return inline_admin_formset.formset
 
 
@@ -22,7 +22,7 @@ def all_content_item_child_inlines(inline_admin_formsets):
     """
     child_admin_inlines = []
     for inline_admin_formset in inline_admin_formsets:
-        if isinstance(inline_admin_formset.opts, BaseContentItemParentInline):  # will be just one.
+        if isinstance(inline_admin_formset.opts, BaseContentItemInline):  # will be just one.
             child_admin_inlines.extend(inline_admin_formset.opts.child_inline_instances)
 
     return child_admin_inlines
