@@ -84,5 +84,5 @@ Indices and tables
 * :ref:`search`
 
 
-.. _django-polymorphic: https://github.com/chrisglass/django_polymorphic
+.. _django-polymorphic: https://github.com/django-polymorphic/django-polymorphic
 .. _django.contrib.contenttypes: https://docs.djangoproject.com/en/dev/ref/contrib/contenttypes/

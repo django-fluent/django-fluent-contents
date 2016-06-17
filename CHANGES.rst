@@ -258,7 +258,7 @@ so it's time to show this module to the public.
 .. _django-any-imagefield: https://github.com/edoburu/django-any-imagefield
 .. _django-flat-theme: https://github.com/elky/django-flat-theme
 .. _django-parler: https://github.com/edoburu/django-parler
-.. _django-polymorphic: https://github.com/chrisglass/django_polymorphic
+.. _django-polymorphic: https://github.com/django-polymorphic/django-polymorphic
 .. _django-multisite: https://github.com/ecometrica/django-multisite
 .. _django-tag-parser: https://github.com/edoburu/django-tag-parser
 .. _django-taggit-autosuggest: https://bitbucket.org/fabian/django-taggit-autosuggest

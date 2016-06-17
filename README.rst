@@ -266,6 +266,6 @@ Pull requests are welcome too. :-)
 .. _django-fluent-comments: https://github.com/edoburu/django-fluent-comments
 .. _django-fluent-pages: https://github.com/edoburu/django-fluent-pages
 .. _django-form-designer: https://github.com/philomat/django-form-designer.git
-.. _django-polymorphic: https://github.com/chrisglass/django_polymorphic
+.. _django-polymorphic: https://github.com/django-polymorphic/django-polymorphic
 .. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg
 

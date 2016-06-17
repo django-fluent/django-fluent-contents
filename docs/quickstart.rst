@@ -214,6 +214,6 @@ This improves the performance of the :ref:`template tags<templatetags>`.
 .. _django.contrib.comments: https://docs.djangoproject.com/en/dev/ref/contrib/comments/
 .. _django-disqus: https://github.com/arthurk/django-disqus
 .. _django-form-designer: https://github.com/philomat/django-form-designer
-.. _django-polymorphic: https://github.com/chrisglass/django_polymorphic
+.. _django-polymorphic: https://github.com/django-polymorphic/django-polymorphic
 .. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg/
 .. _Pygments: http://pygments.org/

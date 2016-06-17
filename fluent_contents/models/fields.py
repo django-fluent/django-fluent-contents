@@ -65,7 +65,7 @@ class ContentItemRelation(GenericRelation):
             object_id_field='parent_id', content_type_field='parent_type', **kwargs)
 
     def bulk_related_objects(self, objs, using=DEFAULT_DB_ALIAS):
-        # Fix delete screen. Workaround for https://github.com/chrisglass/django_polymorphic/issues/34
+        # Fix delete screen. Workaround for https://github.com/django-polymorphic/django-polymorphic/issues/34
         return super(ContentItemRelation, self).bulk_related_objects(objs).non_polymorphic()
 
 
