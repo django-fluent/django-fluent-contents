@@ -15,5 +15,6 @@ class ModelTests(AppTestCase):
         This would break the admin delete screen otherwise.
         """
         c = ContentType()
+        c.save()
         a = ContentItem(polymorphic_ctype=c)
         self.assertEqual(str(a), "'(type deleted) 0' in 'None None'")
