@@ -1,8 +1,8 @@
 django-fluent-contents
 ======================
 
-.. image:: https://img.shields.io/travis/edoburu/django-fluent-contents/master.svg?branch=master
-    :target: http://travis-ci.org/edoburu/django-fluent-contents
+.. image:: https://img.shields.io/travis/django-fluent/django-fluent-contents/master.svg?branch=master
+    :target: http://travis-ci.org/django-fluent/django-fluent-contents
 .. image:: https://img.shields.io/pypi/v/django-fluent-contents.svg
     :target: https://pypi.python.org/pypi/django-fluent-contents/
 .. image:: https://img.shields.io/pypi/dm/django-fluent-contents.svg
@@ -11,8 +11,8 @@ django-fluent-contents
     :target: https://pypi.python.org/pypi/django-fluent-contents/
 .. image:: https://img.shields.io/pypi/l/django-fluent-contents.svg
     :target: https://pypi.python.org/pypi/django-fluent-contents/
-.. image:: https://img.shields.io/codecov/c/github/edoburu/django-fluent-contents/master.svg
-    :target: https://codecov.io/github/edoburu/django-fluent-contents?branch=master
+.. image:: https://img.shields.io/codecov/c/github/django-fluent/django-fluent-contents/master.svg
+    :target: https://codecov.io/github/django-fluent/django-fluent-contents?branch=master
 
 The *fluent_contents* module offers a widget engine to display various content on a Django page.
 
@@ -66,7 +66,7 @@ Screenshot
 
 The ``PlaceholderField`` is nicely integrated in the Django admin interface:
 
-.. image:: https://github.com/edoburu/django-fluent-contents/raw/master/docs/images/admin/placeholderfieldadmin2.png
+.. image:: https://github.com/django-fluent/django-fluent-contents/raw/master/docs/images/admin/placeholderfieldadmin2.png
    :width: 770px
    :height: 562px
    :alt: django-fluent-contents placeholder field preview
@@ -74,7 +74,7 @@ The ``PlaceholderField`` is nicely integrated in the Django admin interface:
 Secondly, it's possible to build a CMS Page interface with the ``PlaceholderEditorAdmin``,
 which displays each content placeholder in a tab:
 
-.. image:: https://github.com/edoburu/django-fluent-contents/raw/master/docs/images/admin/placeholdereditoradmin1.png
+.. image:: https://github.com/django-fluent/django-fluent-contents/raw/master/docs/images/admin/placeholdereditoradmin1.png
    :width: 770px
    :height: 362px
    :alt: django-fluent-contents placeholder editor preview
@@ -263,8 +263,8 @@ Pull requests are welcome too. :-)
 
 .. _django.contrib.comments: https://docs.djangoproject.com/en/dev/ref/contrib/comments/
 .. _django-disqus: https://github.com/arthurk/django-disqus
-.. _django-fluent-comments: https://github.com/edoburu/django-fluent-comments
-.. _django-fluent-pages: https://github.com/edoburu/django-fluent-pages
+.. _django-fluent-comments: https://github.com/django-fluent/django-fluent-comments
+.. _django-fluent-pages: https://github.com/django-fluent/django-fluent-pages
 .. _django-form-designer: https://github.com/philomat/django-form-designer.git
 .. _django-polymorphic: https://github.com/django-polymorphic/django-polymorphic
 .. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg

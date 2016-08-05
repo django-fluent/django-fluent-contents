@@ -172,5 +172,5 @@ These modules can enhance the commentsarea even further.
 
 .. _Akismet: http://akismet.com/
 .. _django.contrib.comments: https://docs.djangoproject.com/en/dev/ref/contrib/comments/
-.. _django-fluent-comments: https://github.com/edoburu/django-fluent-comments/
+.. _django-fluent-comments: https://github.com/django-fluent/django-fluent-comments/
 .. _django-contrib-comments: http://django-contrib-comments.readthedocs.org/
