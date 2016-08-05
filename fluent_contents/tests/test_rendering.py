@@ -61,10 +61,10 @@ class RenderingTests(AppTestCase):
         Rendered plugins should have access to the CSRF token
         """
         request = RequestFactory().get('/')
-        request.META['CSRF_COOKIE'] = 'TEST1TEST2'
+        request.META['CSRF_COOKIE'] = 'TEST1TEST2'  # Not literally used as of Django 1.10
 
         template = Template('{% csrf_token %}')
         context = PluginContext(request)
         self.assertTrue(context.get('csrf_token', None), 'csrf_token not found in context')
         self.assertNotEqual(str(context['csrf_token']), 'NOTPROVIDED', 'csrf_token is NOTPROVIDED')
-        self.assertTrue('TEST1TEST2' in template.render(context), 'csrf_token not found in template')
+        self.assertTrue('csrfmiddlewaretoken' in template.render(context), 'csrf_token not found in template')
