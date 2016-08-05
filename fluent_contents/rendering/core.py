@@ -1,5 +1,8 @@
 import logging
+
+import django
 import six
+from fluent_contents.extensions import PluginContext
 from future.builtins import str
 from django.core.cache import cache
 from django.conf import settings
@@ -347,7 +350,13 @@ class RenderingPipe(object):
                 'parent_object': result.parent_object,  # Can be None
                 'edit_mode': self.edit_mode,
             }
-            merged_html = render_to_string(template_name, context, context_instance=RequestContext(self.request))
+
+            if django.VERSION >= (1, 8):
+                # Avoid RemovedInDjango110Warning
+                context = PluginContext(self.request, context)
+                merged_html = render_to_string(template_name, context)
+            else:
+                merged_html = render_to_string(template_name, context, context_instance=PluginContext(self.request))
 
         return ContentItemOutput(merged_html, media, cacheable=result.all_cacheable, cache_timeout=result.all_timeout)
 
