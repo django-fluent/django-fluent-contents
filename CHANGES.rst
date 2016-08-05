@@ -1,6 +1,18 @@
 Changelog
 =========
 
+Changes in 1.1.5 (2016-08-05)
+-----------------------------
+
+* Fixed usage of deprecated ``context_instance`` for Django 1.10 compatibility.
+* Fixed delete dialog in the Django admin when the page has stale context items.
+
+**BACKWARDS INCOMPATIBLE:** the custom merging template that's used in ``{% page_placeholder  .. template=".." %}``
+no longer receives any custom context processor data defined in ``context_processors`` / ``TEMPLATE_CONTEXT_PROCESSORS``.
+Only the standard Django context processors are included (via the ``PluginContext``).
+The standard template values like ``{{ request }}``, ``{{ STATIC_URL }}`` and ``{% csrf_token %}`` still work.
+
+
 Changes in 1.1.4 (2016-05-16)
 -----------------------------
 
