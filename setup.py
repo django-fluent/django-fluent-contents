@@ -39,7 +39,7 @@ setup(
     license='Apache 2.0',
 
     install_requires=[
-        'django-fluent-utils>=1.2.3',      # DRY utility code
+        'django-fluent-utils>=1.2.4',      # DRY utility code
         'django-parler>=1.6.1',            # Needed for Django 1.9 compatibility
         'django-polymorphic>=0.9.1',       # Needed for Django 1.9 compatibility
         'django-tag-parser>=2.1',          # Needed for Django 1.8 compatibility
