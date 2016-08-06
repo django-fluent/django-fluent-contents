@@ -93,12 +93,8 @@ class PluginHtmlField(MigrationMixin, models.TextField):
 
     def to_python(self, html):
         # Make well-formed if requested
-        if appsettings.FLUENT_TEXT_CLEAN_HTML:
-            html = clean_html(html)
-
-        # Remove unwanted tags if requested
-        if appsettings.FLUENT_TEXT_SANITIZE_HTML:
-            html = sanitize_html(html)
+        if appsettings.FLUENT_TEXT_CLEAN_HTML or appsettings.FLUENT_TEXT_SANITIZE_HTML:
+            html = clean_html(html, sanitize=appsettings.FLUENT_TEXT_SANITIZE_HTML)
 
         return mark_safe(html)
 

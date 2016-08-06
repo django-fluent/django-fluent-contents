@@ -1,7 +1,7 @@
 from __future__ import print_function
 import html5lib
 from unittest import TestCase
-from django_wysiwyg.utils import clean_html, sanitize_html
+from fluent_contents.utils.html import clean_html
 
 
 class TextPluginTests(TestCase):
@@ -31,7 +31,7 @@ class TextPluginTests(TestCase):
         """
         Test whether the sanitize feature doesn't completely break pages.
         """
-        sanitized = sanitize_html(self.HTML1_ORIGINAL)
+        sanitized = clean_html(self.HTML1_ORIGINAL, sanitize=True)
         self.assertTrue('460' in sanitized, u"Missing elements in {0}".format(sanitized))
         self.assertTrue('float: left' in sanitized, u"Missing elements in {0}".format(sanitized))
         self.assertTrue('/media/image.jpg' in sanitized, u"Missing elements in {0}".format(sanitized))
