@@ -1,11 +1,12 @@
 Changelog
 =========
 
-Changes in 1.1.5 (2016-08-05)
+Changes in 1.1.5 (2016-08-06)
 -----------------------------
 
 * Fixed usage of deprecated ``context_instance`` for Django 1.10 compatibility.
 * Fixed delete dialog in the Django admin when the page has stale context items.
+* Fixed compatibility with html5lib 0.99999999/1.0b9
 
 **BACKWARDS INCOMPATIBLE:** the custom merging template that's used in ``{% page_placeholder  .. template=".." %}``
 no longer receives any custom context processor data defined in ``context_processors`` / ``TEMPLATE_CONTEXT_PROCESSORS``.
