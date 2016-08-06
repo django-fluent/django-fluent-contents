@@ -4,6 +4,7 @@ from django.contrib.admin import AdminSite
 from django.contrib.auth.models import User
 from django.contrib.messages.middleware import MessageMiddleware
 from django.core.urlresolvers import reverse
+from django.middleware.csrf import get_token, CsrfViewMiddleware
 from django.test import RequestFactory
 from fluent_contents.models import Placeholder
 from fluent_contents.tests.testapp.admin import PlaceholderFieldTestPageAdmin
@@ -92,11 +93,9 @@ class AdminTest(AppTestCase):
         url = reverse('admin:{0}_{1}_add'.format(*_get_url_format(opts)))
 
         # Build request
-        formdata['csrfmiddlewaretoken'] = 'foo'
-        request = self.factory.post(url, data=formdata)
-        request.COOKIES[settings.CSRF_COOKIE_NAME] = 'foo'
-
         # Add properties which middleware would typically do
+        request = self.factory.post(url, data=formdata)
+        request.csrf_processing_done = True
         request.session = {}
         request.user = self.admin_user
         MessageMiddleware().process_request(request)
