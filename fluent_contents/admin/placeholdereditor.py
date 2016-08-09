@@ -323,7 +323,7 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, PolymorphicInlineSuppor
         # That ID did exist at the beginning of the transaction, but won't be when all forms are saved.
         # Pass the knowledge of deleted placeholders to the ContentItem formset, so it can deal with it.
         if isinstance(formset, BaseContentItemFormSet):
-            formset._deleted_placeholders = getattr(request, '_deleted_placeholders', ())
+            formset.set_deleted_placeholders(getattr(request, '_deleted_placeholders', ()))
 
         saved_instances = super(PlaceholderEditorAdmin, self).save_formset(request, form, formset, change)
 
