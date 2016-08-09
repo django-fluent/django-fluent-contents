@@ -39,6 +39,8 @@ class BaseContentItemFormSet(BaseGenericPolymorphicInlineFormSet):
         self._deleted_placeholders = ()  # internal property, set by PlaceholderEditorAdmin
         self._placeholders_by_slot = {}
 
+        self._current_placeholders = dict((p.id, p) for p in Placeholder.objects.parent(self.instance))
+
     def get_form_class(self, model):
         form = super(BaseContentItemFormSet, self).get_form_class(model)
         # Make sure that the automatically generated form does have all our common fields first.
@@ -52,6 +54,27 @@ class BaseContentItemFormSet(BaseGenericPolymorphicInlineFormSet):
         base_fields = form.base_fields
         form.base_fields = base_fields.__class__((k, base_fields[k]) for k in field_order)
         return form
+
+    def _construct_form(self, i, **kwargs):
+        form = super(BaseContentItemFormSet, self)._construct_form(i, **kwargs)
+        self.fill_caches(form)
+        return form
+
+    def fill_caches(self, form):
+        """
+        Optimize the formset processing, by sharing objects between different forms.
+        This is a workaround for the
+        """
+        contentitems = getattr(self, '_object_dict', None)
+        form.fill_caches(placeholders=self._current_placeholders, contentitems=contentitems)
+
+    def set_deleted_placeholders(self, deleted_placeholders):
+        """
+        Internal feature - make this formset aware of deleted placeholders.
+        This makes sure ContentItems are not assigned to a Placeholder that is about to be deleted.
+        (which would cause a cascade delete of the content too).
+        """
+        self._deleted_placeholders = deleted_placeholders
 
     def save_new(self, form, commit=True):
         # This is the moment to link the form 'placeholder_slot' field to a placeholder..
