@@ -6,11 +6,8 @@ from fluent_contents import extensions, appsettings
 from fluent_contents.extensions import plugin_pool
 from fluent_contents.forms import ContentItemForm
 from fluent_contents.models import Placeholder, ContentItem, get_parent_language_code
-from polymorphic.admin import (
-    PolymorphicParentGenericInlineModelAdmin,
-    PolymorphicChildGenericInlineModelAdmin
-)
-from polymorphic.formsets import BasePolymorphicGenericInlineFormSet
+from polymorphic.admin import GenericStackedPolymorphicInline
+from polymorphic.formsets import BaseGenericPolymorphicInlineFormSet
 from fluent_contents.rendering.utils import add_media
 
 # base fields in ContentItemForm
@@ -24,7 +21,7 @@ BASE_FIELDS = (
 )
 
 
-class BaseContentItemFormSet(BasePolymorphicGenericInlineFormSet):
+class BaseContentItemFormSet(BaseGenericPolymorphicInlineFormSet):
     """
     Correctly save placeholder fields.
     """
@@ -157,7 +154,7 @@ class BaseContentItemAdminOptions(object):
         return super(BaseContentItemAdminOptions, self).formfield_for_dbfield(db_field, **kwargs)
 
 
-class BaseContentItemParentInline(PolymorphicParentGenericInlineModelAdmin):
+class BaseContentItemInline(GenericStackedPolymorphicInline):
     """
     The ``InlineModelAdmin`` class used for all content items.
     """
@@ -175,13 +172,13 @@ class BaseContentItemParentInline(PolymorphicParentGenericInlineModelAdmin):
     plugins = []
 
     def __init__(self, parent_model, admin_site):
-        super(BaseContentItemParentInline, self).__init__(parent_model, admin_site)
+        super(BaseContentItemInline, self).__init__(parent_model, admin_site)
         self.verbose_name_plural = u'---- ContentItem Inline: %s' % (self.verbose_name_plural,)
 
     @property
     def media(self):
         # All admin media (e.g. for filter_horizontal)
-        media = super(BaseContentItemParentInline, self).media
+        media = super(BaseContentItemInline, self).media
 
         # Plugin media is included afterwards
         for plugin in self.plugins:
@@ -189,28 +186,28 @@ class BaseContentItemParentInline(PolymorphicParentGenericInlineModelAdmin):
 
         return media
 
+    class Child(BaseContentItemAdminOptions, GenericStackedPolymorphicInline.Child):
+        """
+        The inline for each child model.
+        Most settings are placed here by the :func:`create_inline_for_plugin` function.
+        """
+        media = BaseContentItemAdminOptions.media  # optimize MediaDefiningClass
+        exclude = ('contentitem_ptr',)  # Fix django-polymorphic
 
-class BaseContentItemChildInline(BaseContentItemAdminOptions, PolymorphicChildGenericInlineModelAdmin):
-    """
-    The inline for each child model.
-    Most settings are placed here by the :func:`create_inline_for_plugin` function.
-    """
-    media = BaseContentItemAdminOptions.media  # optimize MediaDefiningClass
-    exclude = ('contentitem_ptr',)  # Fix django-polymorphic
-
-    # for completeness, because parent admin handles it all.
-    ct_field = "parent_type"
-    ct_fk_field = "parent_id"
-    extra = 1
+        # for completeness, because parent admin handles it all.
+        ct_field = "parent_type"
+        ct_fk_field = "parent_id"
 
 
-def get_content_item_inlines(plugins=None, parent_base=BaseContentItemParentInline, child_base=BaseContentItemChildInline):
+def get_content_item_inlines(plugins=None, parent_base=BaseContentItemInline, child_base=None):
     """
     Dynamically generate genuine django inlines for all registered content item types.
     When the `plugins` parameter is ``None``, all plugin inlines are returned.
     """
     if plugins is None:
         plugins = extensions.plugin_pool.get_plugins()
+    if child_base is None:
+        child_base = parent_base.Child
 
     child_inlines = []
     for plugin in plugins:
@@ -264,7 +261,7 @@ def get_content_item_admin_options(plugin):
 
 
 @lru_cache()
-def create_inline_for_plugin(plugin, base=BaseContentItemParentInline):
+def create_inline_for_plugin(plugin, base=BaseContentItemInline.Child):
     """
     Create the admin inline for a ContentItem plugin.
     """

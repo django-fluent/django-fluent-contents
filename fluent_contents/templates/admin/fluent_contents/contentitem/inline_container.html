@@ -12,7 +12,7 @@
       For all child inline types, display the `cp_admin_init_template.
 
       inline_admin_formset = InlinePolymorphicAdminFormSet
-      inline_admin_formset.opts = ContentItemInline (BaseContentItemParentInline)
+      inline_admin_formset.opts = ContentItemInline (BaseContentItemInline)
 
     {% endcomment %}
     {% for child_inline in inline_admin_formset.opts.child_inline_instances %}
