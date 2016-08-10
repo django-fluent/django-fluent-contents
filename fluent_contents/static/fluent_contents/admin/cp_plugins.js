@@ -99,17 +99,20 @@ var cp_plugins = {};
   /**
    * Initialize additional event binding for the placeholders.
    */
-  cp_plugins.init_placeholders = function() {
+  cp_plugins.init_placeholders = function()
+  {
     var $content_roots = $(".cp-content");
     $content_roots.each(_init_sortable);
   }
   
-  cp_plugins.init_placeholder = function($placeholder) {
+  cp_plugins.init_placeholder = function($placeholder)
+  {
     var $content_roots = $placeholder.find(".cp-content");
     $content_roots.each(_init_sortable);
   }
   
-  cp_plugins.unload_placeholders = function($all_placeholders) {
+  cp_plugins.unload_placeholders = function($all_placeholders)
+  {
     $all_placeholders.find(".cp-content").each(function(i, element){
       var sortable = $(element).data('sortable');
       if(sortable) {
@@ -118,18 +121,20 @@ var cp_plugins = {};
     })
   }
 
-  function _init_sortable(index, element) {
+  function _init_sortable(index, element)
+  {
     var sortable = Sortable.create(element, {
       animation: FLIP_SPEED,
       draggable: ".inline-related",
       handle: ".cp-formset-item-title",
       filter: ".p-item-controls",
+      group: "global",
       scroll: true,
       scrollSensitivity: 100,
       scrollSpeed: 20,
-      //group: "",
       onStart: function(event) {
-        // TinyMCE breaks when taken out of the DOM, so
+        // TinyMCE breaks when taken out of the DOM,
+        // so disable it and enforce a height for more fluid animations.
         var $fs_item = $(event.item);
         cp_plugins._fixate_item_height($fs_item);
         cp_plugins.disable_pageitem($fs_item, true);
