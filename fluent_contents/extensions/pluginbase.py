@@ -600,6 +600,8 @@ class ContainerPlugin(ContentPlugin):
 
     can_have_children = True
 
+    empty_children_message = _("Add a new element, or drag elements here.")
+
 
 class HttpRedirectRequest(Exception):
     """
