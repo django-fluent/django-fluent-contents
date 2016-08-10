@@ -4,7 +4,9 @@ Panels for django-debug-toolbar
 from datetime import timedelta
 from debug_toolbar.utils import ThreadCollector
 from debug_toolbar.panels import Panel
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
+from fluent_contents.extensions import PluginNotFound
 
 from fluent_contents.models import ContentItem
 from fluent_contents.rendering.core import RenderingPipe, ResultTracker
@@ -60,53 +62,75 @@ class ContentPluginPanel(Panel):
             rendered_items = []
             retreived_items = set(item.pk for item in resulttracker.remaining_items)
             for contentitem, output in resulttracker.get_output(include_exceptions=True):
-                plugin = contentitem.plugin
                 is_cached = contentitem.pk not in retreived_items
 
-                if contentitem.__class__ is ContentItem:
-                    # Need to real item for get_render_template() but don't want to perform queries for this!
-                    #contentitem = plugin.model.objects.get(pk=contentitem.pk)
-                    templates = plugin.render_template
-                    template_dummy = True
-                else:
-                    templates = plugin.get_render_template(request, contentitem)
-                    template_dummy = False
+                try:
+                    plugin = contentitem.plugin
+                except PluginNotFound:
+                    try:
+                        content_type = ContentType.objects.get_for_id(contentitem.polymorphic_ctype_id)
+                    except ContentType.DoesNotExist:
+                        content_type = None
 
-                if templates is not None and not isinstance(templates, (list,tuple)):
-                    templates = [templates]
+                    # ContentItem is stale, can't be rendered.
+                    rendered_items.append({
+                        'model': content_type.model if content_type is not None else '<ContentType unknown>',
+                        'model_path': "{0}.{1}".format(content_type.app_label, content_type.model) if content_type is not None else '???',
+                        'plugin': '???',
+                        'plugin_path': '???',
+                        'pk': contentitem.pk,
+                        'templates': None,
+                        'templates_dummy': False,
+                        'status': 'stale',
+                        'cached': False,
+                        'cache_output': False,
+                    })
 
-                cache_timeout = None
-                if output is ResultTracker.MISSING:
-                    status = 'missing'
-                elif output is ResultTracker.SKIPPED:
-                    status = 'skipped'
                 else:
-                    if not is_cached:
-                        status = 'fetched'
-                        cache_timeout = output.cache_timeout
+                    if contentitem.__class__ is ContentItem:
+                        # Need to real item for get_render_template() but don't want to perform queries for this!
+                        #contentitem = plugin.model.objects.get(pk=contentitem.pk)
+                        templates = plugin.render_template
+                        template_dummy = True
                     else:
-                        status = 'cached'
-                        cache_timeout = plugin.cache_timeout
+                        templates = plugin.get_render_template(request, contentitem)
+                        template_dummy = False
 
-                    cache_timeout = None if isinstance(cache_timeout, object) else int(cache_timeout)
+                    if templates is not None and not isinstance(templates, (list,tuple)):
+                        templates = [templates]
 
-                rendered_items.append({
-                    'model': plugin.model.__name__,
-                    'model_path': _full_python_path(contentitem.__class__),
-                    'plugin': plugin.name,
-                    'plugin_path': _full_python_path(plugin.__class__),
-                    'pk': contentitem.pk,
-                    'templates': templates,
-                    'templates_dummy': template_dummy,
-                    'status': status,
-                    'cached': is_cached,
-                    'cache_output': plugin.cache_output,
-                    'cache_output_per_language': plugin.cache_output_per_language,
-                    'cache_output_per_site': plugin.cache_output_per_site,
-                    'cache_timeout': cache_timeout,
-                    'cache_timeout_str': str(timedelta(seconds=cache_timeout)) if cache_timeout else None,
-                })
-                self.num_items += 1
+                    cache_timeout = None
+                    if output is ResultTracker.MISSING:
+                        status = 'missing'
+                    elif output is ResultTracker.SKIPPED:
+                        status = 'skipped'
+                    else:
+                        if not is_cached:
+                            status = 'fetched'
+                            cache_timeout = output.cache_timeout
+                        else:
+                            status = 'cached'
+                            cache_timeout = plugin.cache_timeout
+
+                        cache_timeout = None if isinstance(cache_timeout, object) else int(cache_timeout)
+
+                    rendered_items.append({
+                        'model': plugin.model.__name__,
+                        'model_path': _full_python_path(contentitem.__class__),
+                        'plugin': plugin.name,
+                        'plugin_path': _full_python_path(plugin.__class__),
+                        'pk': contentitem.pk,
+                        'templates': templates,
+                        'templates_dummy': template_dummy,
+                        'status': status,
+                        'cached': is_cached,
+                        'cache_output': plugin.cache_output,
+                        'cache_output_per_language': plugin.cache_output_per_language,
+                        'cache_output_per_site': plugin.cache_output_per_site,
+                        'cache_timeout': cache_timeout,
+                        'cache_timeout_str': str(timedelta(seconds=cache_timeout)) if cache_timeout else None,
+                    })
+                    self.num_items += 1
 
             all_timeout = None if isinstance(resulttracker.all_timeout, object) else int(resulttracker.all_timeout)
             parent_object = resulttracker.parent_object

@@ -30,6 +30,8 @@
             <strong>{% trans "(skipped!)" %}</strong>
           {% elif item.status == 'missing' %}
             <strong>{% trans "(missing!)" %}</strong>
+          {% elif item.status == 'stale' %}
+            <em>{% trans "(unavailable!)" %}</em>
           {% else %}
             <strong>{% trans "(fetched!)" %}</strong>
           {% endif %}
