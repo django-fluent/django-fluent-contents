@@ -378,7 +378,7 @@ class RenderingPipe(object):
                 html_output.append(mark_safe(u"<!-- Missing derived model for ContentItem #{id}: {cls}. -->\n".format(id=contentitem.pk, cls=class_name)))
                 logger.warning("Missing derived model for ContentItem #{id}: {cls}.".format(id=contentitem.pk, cls=class_name))
             elif isinstance(output, Exception):
-                html_output.append(u'<!-- error: {0} -->\n'.format(str(output)))
+                html_output.append(mark_safe(u'<!-- error: {0} -->\n'.format(str(output))))
             else:
                 html_output.append(output.html)
                 add_media(merged_media, output.media)
