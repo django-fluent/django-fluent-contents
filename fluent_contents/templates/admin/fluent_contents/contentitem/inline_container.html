@@ -28,7 +28,7 @@
       The `inline_admin_form.model_admin` returns the BaseContentItemChildInline.
     {% endcomment %}
     {% for inline_admin_form in inline_admin_formset %}
-      <div data-inline-type="{{ inline_admin_form.model_admin.type_name }}" class="inline-related inline-{{ inline_admin_form.model_admin.type_name }}{% if not inline_admin_form.original.pk %} empty-form{% endif %}" id="{{ inline_admin_formset.formset.prefix }}-{% if inline_admin_form.original.pk %}{{ forloop.counter0 }}{% else %}empty{% endif %}">
+      <div data-inline-type="{{ inline_admin_form.model_admin.type_name }}" class="inline-related inline-{{ inline_admin_form.model_admin.type_name }}{% if inline_admin_form.is_empty %} empty-form{% endif %}" id="{{ inline_admin_formset.formset.prefix }}-{% if inline_admin_form.original.pk %}{{ forloop.counter0 }}{% else %}empty{% endif %}">
         <h2 class="cp-formset-item-title cp-clearfix">
           <span class="title">{{ inline_admin_form.model_admin.name }}</span>
           <span class="cp-item-controls">
