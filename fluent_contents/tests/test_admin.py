@@ -1,15 +1,13 @@
 from pprint import pformat
-from django.conf import settings
 from django.contrib.admin import AdminSite
 from django.contrib.auth.models import User
 from django.contrib.messages.middleware import MessageMiddleware
 from django.core.urlresolvers import reverse
-from django.middleware.csrf import get_token, CsrfViewMiddleware
-from django.test import RequestFactory
+from django.test import RequestFactory, override_settings
 from fluent_contents.models import Placeholder
 from fluent_contents.tests.testapp.admin import PlaceholderFieldTestPageAdmin
 from fluent_contents.tests.testapp.models import PlaceholderFieldTestPage, RawHtmlTestItem
-from fluent_contents.tests.utils import AppTestCase, override_settings
+from fluent_contents.tests.utils import AppTestCase
 
 
 class AdminTest(AppTestCase):
