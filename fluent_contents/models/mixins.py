@@ -5,11 +5,12 @@ class CachedModelMixin(object):
     """
     Mixin to add cache expiration to a model.
     """
+    clear_cache_on_add = False
 
     def save(self, *args, **kwargs):
         is_new = not self.pk or self._state.adding
         super(CachedModelMixin, self).save(*args, **kwargs)
-        if not is_new:
+        if not is_new or self.clear_cache_on_add:
             self.clear_cache()
 
     save.alters_data = True

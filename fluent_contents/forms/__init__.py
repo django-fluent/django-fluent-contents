@@ -20,7 +20,3 @@ class ContentItemForm(forms.ModelForm):
     # Instead, the frontend fills in the placeholder_slot, and the BaseContentItemFormSet
     # will link the placeholder_id afterwards when the placeholder was also created.
     placeholder_slot = forms.CharField(widget=forms.HiddenInput(), required=False)
-
-    def save(self, commit=True):
-        self.instance.clear_cache()   # Make sure the cache is cleared. No matter what instance.save() does.
-        return super(ContentItemForm, self).save(commit)

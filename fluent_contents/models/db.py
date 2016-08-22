@@ -254,6 +254,10 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
     The rendering of a `ContentItem` class happens in the associate :class:`~fluent_contents.extensions.ContentPlugin` class.
     To render content items outside the template code, use the :mod:`fluent_contents.rendering` module to render the items.
     """
+
+    # When adding objects, the placeholder cache should still be emptied
+    clear_cache_on_add = True
+
     objects = ContentItemManager()
 
     # Note the validation settings defined here are not reflected automatically
