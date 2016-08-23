@@ -3,7 +3,8 @@ from django.contrib.admin import AdminSite
 from django.contrib.auth.models import User
 from django.contrib.messages.middleware import MessageMiddleware
 from django.core.urlresolvers import reverse
-from django.test import RequestFactory, override_settings
+from django.test import RequestFactory
+from django.test.utils import override_settings  # import location for Django 1.6-
 from fluent_contents.models import Placeholder
 from fluent_contents.tests.testapp.admin import PlaceholderFieldTestPageAdmin
 from fluent_contents.tests.testapp.models import PlaceholderFieldTestPage, RawHtmlTestItem
