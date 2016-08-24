@@ -13,6 +13,9 @@ django-fluent-contents
     :target: https://pypi.python.org/pypi/django-fluent-contents/
 .. image:: https://img.shields.io/codecov/c/github/django-fluent/django-fluent-contents/master.svg
     :target: https://codecov.io/github/django-fluent/django-fluent-contents?branch=master
+.. image:: https://readthedocs.org/projects/django-fluent-contents/badge/?version=latest
+    :target: https://django-fluent-contents.readthedocs.io/en/latest/
+
 
 The *fluent_contents* module offers a widget engine to display various content on a Django page.
 
