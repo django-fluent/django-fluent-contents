@@ -4,6 +4,7 @@ Changelog
 Changes in git
 --------------
 
+* Added ``start_content_plugin`` management command.
 * Fix running `clear_cache()` too early on a new model; it executed before saving/retrieving a primary key.
 * Fix unwanted HTML escaping for output comments that report stale models.
 * Fix Python errors during debugging when the debug toolbar panel finds stale models.
