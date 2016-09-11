@@ -485,7 +485,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         if django.VERSION >= (1, 8):
             # Avoid RemovedInDjango110Warning
             content_instance.update(context)
-            return render_to_string(template, content_instance)
+            return render_to_string(template, content_instance.flatten())
         else:
             return render_to_string(template, context, context_instance=content_instance)
 
