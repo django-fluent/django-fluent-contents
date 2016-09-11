@@ -1,13 +1,14 @@
 Changelog
 =========
 
-Changes in git
---------------
+Changes in 1.1.6 (2016-09-11)
+-----------------------------
 
 * Added ``start_content_plugin`` management command.
-* Fix running `clear_cache()` too early on a new model; it executed before saving/retrieving a primary key.
-* Fix unwanted HTML escaping for output comments that report stale models.
-* Fix Python errors during debugging when the debug toolbar panel finds stale models.
+* Fixed running `clear_cache()` too early on a new model; it executed before saving/retrieving a primary key.
+* Fixed unwanted HTML escaping for output comments that report stale models.
+* Fixed Python errors during debugging when the debug toolbar panel finds stale models.
+* Fixed errors by ``context.flatten()`` on plugin rendering (e.g. when using *django-crispy-forms*).
 * Fixed ``ContentPlugin.ADMIN_TEMPLATE_WITHOUT_LABELS`` template when displaying multiple fields on a single line.
 
 
