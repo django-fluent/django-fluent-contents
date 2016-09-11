@@ -10,6 +10,6 @@
         <div class="description">{{ fieldset.description|safe }}</div>
     {% endif %}
     {% for line in fieldset %}
-        {% include "admin/fluent_contents/fieldset_line.html" %}
+        {% block line %}{% include "admin/fluent_contents/fieldset_line.html" %}{% endblock %}
     {% endfor %}
 </fieldset>

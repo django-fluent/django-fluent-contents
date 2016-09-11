@@ -8,6 +8,7 @@ Changes in git
 * Fix running `clear_cache()` too early on a new model; it executed before saving/retrieving a primary key.
 * Fix unwanted HTML escaping for output comments that report stale models.
 * Fix Python errors during debugging when the debug toolbar panel finds stale models.
+* Fixed ``ContentPlugin.ADMIN_TEMPLATE_WITHOUT_LABELS`` template when displaying multiple fields on a single line.
 
 
 Changes in 1.1.5 (2016-08-06)
