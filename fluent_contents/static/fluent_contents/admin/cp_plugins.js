@@ -431,7 +431,24 @@ var cp_plugins = {};
     if(!relative.length) return;
 
     cp_plugins._fixate_item_height($fs_item);
-    $fs_item = cp_plugins._move_item_to( $fs_item, function _moveUpDown(fs_item) { fs_item[isUp ? 'insertBefore' : 'insertAfter'](relative); } );
+
+    var _moveUpDown = function(fs_item) {
+      // animate swapping the items;
+      var fs_height = fs_item.height();
+      var relative_height = relative.height();
+      var fs_move_dist = isUp? -relative_height : relative_height;
+      var relative_move_dist = isUp? fs_height : -fs_height;
+
+      fs_item.css({"z-index": 1000});
+      fs_item.animate({top: fs_move_dist+"px"}, 200);
+      relative.animate({top: relative_move_dist+"px"}, 200, function(){
+        fs_item.css({'top': '0px', 'z-index': 'auto'});
+        relative.css('top', '0px');
+        fs_item[isUp ? 'insertBefore' : 'insertAfter'](relative);
+      });
+    }
+
+    $fs_item = cp_plugins._move_item_to( $fs_item, _moveUpDown);
     cp_plugins._restore_item_height($fs_item);
     cp_plugins.update_sort_order(pane);
   }
