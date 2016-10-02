@@ -234,7 +234,7 @@ var cp_plugins = {};
   /**
    * Move an item to a new place.
    */
-  cp_plugins._move_item_to = function( $fs_item, add_action )
+  cp_plugins._move_item_to = function( $fs_item, add_action, fixate_height )
   {
     var itemId = $fs_item.attr("id");
 
@@ -243,17 +243,34 @@ var cp_plugins = {};
     var ignoreFields = ['placeholder', 'placeholder_slot', 'sort_order', 'DELETE'];
     var ignoreTest = function(name) { return $.inArray(name.substring(name.lastIndexOf('-')+1), ignoreFields) != -1; };
 
-    // Remove the item.
+    // Prepare for moving/removing
+    if(fixate_height) {
+      cp_plugins._fixate_item_height($fs_item);
+    }
     cp_plugins.disable_pageitem($fs_item);   // needed for WYSIWYG editors!
     var values = cp_plugins._get_input_values($fs_item, ignoreTest);
-    add_action( $fs_item );
 
-    // Fetch the node reference as it was added to the DOM.
-    $fs_item = $("#" + itemId);
+    function onDone() {
+      // Fetch the node reference as it was added to the DOM.
+      $fs_item = $("#" + itemId);
 
-    // Re-enable the item
-    cp_plugins._set_input_values($fs_item, values, ignoreTest);
-    cp_plugins.enable_pageitem($fs_item);
+      // Re-enable the item
+      cp_plugins._set_input_values($fs_item, values, ignoreTest);
+      cp_plugins.enable_pageitem($fs_item);
+      if(fixate_height) {
+        cp_plugins._restore_item_height($fs_item);
+      }
+    }
+
+    // Perform the callback action.
+    // It may return a promise when there is an animation running.
+    var promise = add_action( $fs_item );
+    if(promise != null) {
+      promise.done(onDone);
+    }
+    else {
+      onDone();
+    }
 
     // Return to allow updating the administration
     return $fs_item;
@@ -430,27 +447,26 @@ var cp_plugins = {};
     var relative = $fs_item[isUp ? 'prev' : 'next']("div");
     if(!relative.length) return;
 
-    cp_plugins._fixate_item_height($fs_item);
+    // Calculate animation
+    var fs_height = $fs_item.height();
+    var relative_height = relative.height();
+    var fs_move_dist = isUp? -relative_height : relative_height;
+    var relative_move_dist = isUp? fs_height : -fs_height;
+
+    $fs_item.css({"z-index": 1000});
 
     var _moveUpDown = function(fs_item) {
-      // animate swapping the items;
-      var fs_height = fs_item.height();
-      var relative_height = relative.height();
-      var fs_move_dist = isUp? -relative_height : relative_height;
-      var relative_move_dist = isUp? fs_height : -fs_height;
+      var anim1 = fs_item.animate({top: fs_move_dist+"px"}, 200);
+      var anim2 = relative.animate({top: relative_move_dist+"px"}, 200);
 
-      fs_item.css({"z-index": 1000});
-      fs_item.animate({top: fs_move_dist+"px"}, 200);
-      relative.animate({top: relative_move_dist+"px"}, 200, function(){
+      return $.when(anim1, anim2).done(function() {
+        fs_item[isUp ? 'insertBefore' : 'insertAfter'](relative);
         fs_item.css({'top': '0px', 'z-index': 'auto'});
         relative.css('top', '0px');
-        fs_item[isUp ? 'insertBefore' : 'insertAfter'](relative);
       });
-    }
+    };
 
-    $fs_item = cp_plugins._move_item_to( $fs_item, _moveUpDown);
-    cp_plugins._restore_item_height($fs_item);
-    cp_plugins.update_sort_order(pane);
+    $fs_item = cp_plugins._move_item_to( $fs_item, _moveUpDown, true );
   }
 
 
