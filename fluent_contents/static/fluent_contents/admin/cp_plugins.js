@@ -234,42 +234,34 @@ var cp_plugins = {};
   /**
    * Move an item to a new place.
    */
-  cp_plugins._move_item_to = function( $fs_item, add_action, fixate_height )
+  cp_plugins._move_item_to = function( $fs_item, add_action, uses_promise )
   {
     var itemId = $fs_item.attr("id");
-
-    // Don't restore the special fields,
-    // The add_action could move the formset item, and this update it.
-    var ignoreFields = ['placeholder', 'placeholder_slot', 'sort_order', 'DELETE'];
-    var ignoreTest = function(name) { return $.inArray(name.substring(name.lastIndexOf('-')+1), ignoreFields) != -1; };
+    var values;
 
     // Prepare for moving/removing
-    if(fixate_height) {
-      cp_plugins._fixate_item_height($fs_item);
-    }
-    cp_plugins.disable_pageitem($fs_item);   // needed for WYSIWYG editors!
-    var values = cp_plugins._get_input_values($fs_item, ignoreTest);
+    var beforeMove = function() {
+      cp_plugins.disable_pageitem($fs_item);   // needed for WYSIWYG editors!
+      values = cp_plugins._get_input_values($fs_item);
+    };
 
-    function onDone() {
+    var afterMove = function() {
       // Fetch the node reference as it was added to the DOM.
       $fs_item = $("#" + itemId);
 
       // Re-enable the item
-      cp_plugins._set_input_values($fs_item, values, ignoreTest);
+      cp_plugins._set_input_values($fs_item, values);
       cp_plugins.enable_pageitem($fs_item);
-      if(fixate_height) {
-        cp_plugins._restore_item_height($fs_item);
-      }
-    }
+      return $fs_item;
+    };
 
-    // Perform the callback action.
-    // It may return a promise when there is an animation running.
-    var promise = add_action( $fs_item );
-    if(promise != null) {
-      promise.done(onDone);
+    if(! uses_promise) {
+      beforeMove();
+      add_action( $fs_item );
+      $fs_item = afterMove();
     }
     else {
-      onDone();
+      add_action($fs_item, beforeMove, afterMove);
     }
 
     // Return to allow updating the administration
@@ -277,8 +269,13 @@ var cp_plugins = {};
   }
 
 
-  cp_plugins._get_input_values = function($root, ignoreTestFunc)
+  cp_plugins._get_input_values = function($root)
   {
+    // Don't restore the special fields,
+    // The add_action could move the formset item, and this update it.
+    var ignoreFields = ['placeholder', 'placeholder_slot', 'sort_order', 'DELETE'];
+    var isIgnoredField = function(name) { return $.inArray(name.substring(name.lastIndexOf('-')+1), ignoreFields) != -1; };
+
     var $inputs = $root.find(":input");
     var values = {};
     for(var i = 0; i < $inputs.length; i++)
@@ -289,7 +286,7 @@ var cp_plugins = {};
       if((input_type == 'radio' || input_type == 'checkbox') && !$input[0].checked)
         continue;
 
-      if( !ignoreTestFunc || !ignoreTestFunc(name) )
+      if( !isIgnoredField(name) )
         values[id] = $input.val();
     }
 
@@ -297,16 +294,20 @@ var cp_plugins = {};
   }
 
 
-  cp_plugins._set_input_values = function($root, values, ignoreTestFunc)
+  cp_plugins._set_input_values = function($root, values)
   {
+    // Don't restore the special fields,
+    // The add_action could move the formset item, and this update it.
+    var ignoreFields = ['placeholder', 'placeholder_slot', 'sort_order', 'DELETE'];
+    var isIgnoredField = function(name) { return $.inArray(name.substring(name.lastIndexOf('-')+1), ignoreFields) != -1; };
+
     var $inputs = $root.find(":input");
     for(var i = 0; i < $inputs.length; i++)
     {
       var $input = $inputs.eq(i)
         , id = $input.attr("id") || $input.attr("name");
 
-      if( values.hasOwnProperty(id)
-       && (!ignoreTestFunc || !ignoreTestFunc(id)) )
+      if( values.hasOwnProperty(id) && !isIgnoredField(id) )
       {
         var value = values[id];
         cp_plugins._set_input_value($input, value);
@@ -441,7 +442,6 @@ var cp_plugins = {};
   {
     var current_item = cp_data.get_inline_formset_item_info(child_node);
     var $fs_item = current_item.fs_item;
-    var pane = cp_data.get_placeholder_pane_for_item($fs_item);
 
     // Get next/previous item
     var relative = $fs_item[isUp ? 'prev' : 'next']("div");
@@ -455,12 +455,19 @@ var cp_plugins = {};
 
     $fs_item.css({"z-index": 1000});
 
-    var _moveUpDown = function(fs_item) {
+    var _moveUpDown = function(fs_item, beforeMove, afterMove) {
       var anim1 = fs_item.animate({top: fs_move_dist+"px"}, 200);
       var anim2 = relative.animate({top: relative_move_dist+"px"}, 200);
 
       return $.when(anim1, anim2).done(function() {
+        // Only at the moment supreme, disable editor, swap DOM elements and restore editor.
+        cp_plugins._fixate_item_height($fs_item);
+        beforeMove();
         fs_item[isUp ? 'insertBefore' : 'insertAfter'](relative);
+        afterMove();
+        cp_plugins._restore_item_height($fs_item);
+
+        // Reset DOM positions
         fs_item.css({'top': '0px', 'z-index': 'auto'});
         relative.css('top', '0px');
       });
