@@ -6,6 +6,9 @@ var cp_plugins = {};
 
 (function($){
 
+  var MOVE_SPEED = 200;
+  var FLIP_SPEED = 200;
+
   // Global state
   var has_load_error = false;
   var restore_timer = null;
@@ -114,16 +117,19 @@ var cp_plugins = {};
 
   function _init_sortable(index, element) {
     var sortable = Sortable.create(element, {
-      animation: 150,
+      animation: FLIP_SPEED,
       draggable: ".inline-related",
       handle: ".cp-formset-item-title",
       filter: ".p-item-controls",
+      scroll: true,
+      scrollSensitivity: 100,
+      scrollSpeed: 20,
       //group: "",
       onStart: function(event) {
         // TinyMCE breaks when taken out of the DOM, so
         var $fs_item = $(event.item);
         cp_plugins._fixate_item_height($fs_item);
-        cp_plugins.disable_pageitem($(event.item), true);
+        cp_plugins.disable_pageitem($fs_item, true);
       },
       onEnd: function (event) {
         var $fs_item = $(event.item);
@@ -508,8 +514,8 @@ var cp_plugins = {};
     $fs_item.css({"z-index": 1000});
 
     var _moveUpDown = function(fs_item, beforeMove, afterMove) {
-      var anim1 = fs_item.animate({top: fs_move_dist+"px"}, 200);
-      var anim2 = relative.animate({top: relative_move_dist+"px"}, 200);
+      var anim1 = fs_item.animate({top: fs_move_dist+"px"}, MOVE_SPEED);
+      var anim2 = relative.animate({top: relative_move_dist+"px"}, MOVE_SPEED);
 
       return $.when(anim1, anim2).done(function() {
         // Only at the moment supreme, disable editor, swap DOM elements and restore editor.
