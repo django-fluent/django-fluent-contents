@@ -1,6 +1,16 @@
 Changelog
 =========
 
+Changes in 1.1.7 (2016-10-05)
+-----------------------------
+
+* Added animations when moving content items, using the up/down buttons.
+* Added drag&drop support on the title bar for reordering content items.
+
+Although new feature additions usually mandate a new point release ("1.2'), these two
+improvements are too wonderful to delay further. Hence they are backported from development.
+
+
 Changes in 1.1.6 (2016-09-11)
 -----------------------------
 
