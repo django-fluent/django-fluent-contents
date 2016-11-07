@@ -18,6 +18,8 @@ try:
 except ImportError:
     TemplateAdapter = None
 
+logger = logging.getLogger(__name__)
+
 _log_functions = {
     logging.DEBUG: 'debug',
 }
@@ -102,6 +104,10 @@ def is_template_updated(request, contentitem, cachekey):
     template = select_template(template_names)
     if TemplateAdapter is not None and isinstance(template, TemplateAdapter):
         # Django 1.8 template wrapper
+        if template.origin is None:
+            logger.warning('Unable to detect changes in template "%s" for developer cache purge (origin is not set)', template.template.name)
+            return False
+
         template_filename = template.origin.name
     else:
         node0 = template.nodelist[0]
