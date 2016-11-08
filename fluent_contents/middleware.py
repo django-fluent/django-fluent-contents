@@ -1,8 +1,14 @@
+import django
 from django.http import HttpResponseRedirect
 from fluent_contents.extensions import HttpRedirectRequest
 
+if django.VERSION >= (1, 10):
+    from django.utils.deprecation import MiddlewareMixin
+else:
+    MiddlewareMixin = object
 
-class HttpRedirectRequestMiddleware(object):
+
+class HttpRedirectRequestMiddleware(MiddlewareMixin):
     """
     .. versionadded:: 1.0
     Middleware that handles requests redirects, requested by plugins using :func:`ContentPlugin.redirect() <fluent_contents.extensions.ContentPlugin.redirect>`.
