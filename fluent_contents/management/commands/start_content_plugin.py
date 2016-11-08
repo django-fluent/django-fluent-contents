@@ -19,7 +19,7 @@ class Command(TemplateCommand):
     )
     missing_args_message = "You must provide an application name."
 
-    if TemplateCommand.add_arguments:  # Django 1.8+
+    if getattr(TemplateCommand, 'add_arguments', None):  # Django 1.8+
         def add_arguments(self, parser):
             super(Command, self).add_arguments(parser)
             parser.add_argument(
