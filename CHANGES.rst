@@ -1,6 +1,16 @@
 Changelog
 =========
 
+Changes in 1.1.8 (2016-11-09)
+-----------------------------
+
+* Add ``remove_stale_contentitems`` command for cleaning unused ``ContentItem`` objects.
+  This also allows the migrations to remove the stale ``ContentType`` models afterwards.
+* Fix ``start_content_plugin`` command for Django 1.7
+* Use ``MiddlewareMixin`` for Django 1.10 middleware support
+* Fix ``is_template_updated()`` check for some Django 1.8 template setups.
+
+
 Changes in 1.1.7 (2016-10-05)
 -----------------------------
 
