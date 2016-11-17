@@ -428,10 +428,26 @@ var cp_plugins = {};
     // Clone the item.
     var new_index = total.value;
     var item_id   = inline_meta.prefix + "-" + new_index;
-    var newhtml   = options.get_html
-                  ? options.get_html(inline_meta, new_index)   // hook
-                  : inline_meta.item_template.get_outerHtml().replace(/__prefix__/g, new_index);
-    var $newitem  = $(newhtml).removeClass("empty-form").attr("id", item_id);
+    if (options.get_html) {
+        var newhtml = options.get_html(inline_meta, new_index);   // hook
+        var $newitem = $(newhtml);
+    } else {
+        // Clone template with `true` arg to include event listeners and use
+        // Django admin's `django.jQuery` on which events were defined.
+        var $newitem = django.jQuery(inline_meta.item_template).clone(true);
+    }
+    $newitem.removeClass("empty-form").attr("id", item_id);
+
+    // Replace "__prefix__" variable placeholder in all attrs with new index
+    // Based on http://stackoverflow.com/a/14645827/4970
+    $newitem.find("*").each(function() {
+        var $elem = $(this);
+        $.each(this.attributes, function() {
+            if (this.specified) {
+                $elem.attr(this.name, this.value.replace(/__prefix__/, new_index));
+            }
+        });
+    });
 
     // Add it
     pane.content.append($newitem);
