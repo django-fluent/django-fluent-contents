@@ -95,7 +95,8 @@ class Command(BaseCommand):
             for field in file_fields:
                 value = getattr(object, field.name)
                 if value:
-                    urls.append(unquote_utf8(value.url))
+                    value = unquote_utf8(value.url)
+                    urls.append(value)
                     self.show_match(object, value)
 
             # URL fields can be read directly.
@@ -103,14 +104,17 @@ class Command(BaseCommand):
                 value = getattr(object, field.name)
                 if value:
                     if isinstance(value, six.text_type):
-                        urls.append(force_text(value))
+                        value = force_text(value)
                     else:
-                        urls.append(value.to_db_value())  # AnyUrlValue
+                        value = value.to_db_value()  # AnyUrlValue
+
+                    urls.append(value)
+                    self.show_match(object, value)
         return urls
 
     def show_match(self, object, value):
         if self.verbosity >= 2:
-            self.stdout.write("{0}#{1}: \t{2}".format(object.__class__.__name__, object.pk, value))
+            self.stdout.write(u"{0}#{1}: \t{2}".format(object.__class__.__name__, object.pk, value))
 
     def extract_html_urls(self, html):
         """
