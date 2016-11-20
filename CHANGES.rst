@@ -1,14 +1,25 @@
 Changelog
 =========
 
+Changes in 1.1.9 (in development)
+---------------------------------
+
+* Added ``find_contentitem_urls`` management command to index URL usage.
+* Added ``remove_stale_contentitems --remove-unreferenced`` option to remove
+  content items that no longer point to an existing page.
+* Make sure the OEmbed plugin generates links with ``https://`` when
+  ``SECURE_SSL_REDIRECT`` is set, or ``FLUENT_OEMBED_FORCE_HTTPS`` is enabled.
+* Fixed loosing jQuery event bindings in the admin.
+
+
 Changes in 1.1.8 (2016-11-09)
 -----------------------------
 
-* Add ``remove_stale_contentitems`` command for cleaning unused ``ContentItem`` objects.
+* Added ``remove_stale_contentitems`` command for cleaning unused ``ContentItem`` objects.
   This also allows the migrations to remove the stale ``ContentType`` models afterwards.
-* Fix ``start_content_plugin`` command for Django 1.7
-* Use ``MiddlewareMixin`` for Django 1.10 middleware support
-* Fix ``is_template_updated()`` check for some Django 1.8 template setups.
+* Fixed ``start_content_plugin`` command for Django 1.7
+* Fixed ``MiddlewareMixin`` usage for Django 1.10 middleware support
+* Fixed ``is_template_updated()`` check for some Django 1.8 template setups.
 
 
 Changes in 1.1.7 (2016-10-05)
