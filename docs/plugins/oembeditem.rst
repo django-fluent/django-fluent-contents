@@ -1,7 +1,7 @@
 .. _oembeditem:
 
 The oembeditem plugin
-===========================
+=====================
 
 The `oembeditem` plugin allows inserting an embedded online content in the page,
 such as a YouTube video, SlideShare presentation, Twitter status, Flickr photo, etc..
@@ -78,8 +78,9 @@ The following settings are available:
         (r'http://\S+.wp\.me/\S*',          'http://public-api.wordpress.com/oembed/?for=my-domain-name'),
     )
 
-    MICAWBER_EMBEDLY_KEY = ''
+    FLUENT_OEMBED_FORCE_HTTPS = False
 
+    MICAWBER_EMBEDLY_KEY = ''
 
     FLUENT_OEMBED_PROVIDER_LIST = (
         (r'https?://(www\.)?youtube\.com/watch\S*',  'http://www.youtube.com/oembed'),
@@ -112,6 +113,15 @@ FLUENT_OEMBED_EXTRA_PROVIDERS
 
 The OEmbed providers in this setting will be added to the existing set that ``FLUENT_OEMBED_SOURCE`` contains.
 Each item is a tuple with the regular expression and endpoint URL.
+
+
+FLUENT_OEMBED_FORCE_HTTPS
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. versionadded:: 1.1.9
+
+Enforce that the generated embed URLs are served over secure HTTP.
+This flag is enabled by default when :django:setting:`SECURE_SSL_REDIRECT` is set.
 
 
 MICAWBER_EMBEDLY_KEY

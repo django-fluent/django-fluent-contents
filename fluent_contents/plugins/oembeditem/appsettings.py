@@ -8,6 +8,9 @@ FLUENT_OEMBED_SOURCE = getattr(settings, 'FLUENT_OEMBED_SOURCE', 'basic')   # ba
 # Allow to extend any source, whether it's basic/embedly/noembed/list
 FLUENT_OEMBED_EXTRA_PROVIDERS = tuple(getattr(settings, 'FLUENT_OEMBED_EXTRA_PROVIDERS', ()))
 
+# Make sure embed are https, when the site is hosted via https.
+FLUENT_OEMBED_FORCE_HTTPS = getattr(settings, 'FLUENT_OEMBED_FORCE_HTTPS', getattr(settings, 'SECURE_SSL_REDIRECT', False))
+
 # Before micawber 0.2.6 the default source was "list".
 # However, micawber contains a more up-to-date list nowadays, so it doesn't make sense to keep a list here.
 FLUENT_OEMBED_PROVIDER_LIST = getattr(settings, 'FLUENT_OEMBED_PROVIDER_LIST', ())

@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from micawber import ProviderException
 from fluent_contents.models.db import ContentItem
 from fluent_contents.plugins.oembeditem.fields import OEmbedUrlField
-from fluent_contents.plugins.oembeditem import backend
+from fluent_contents.plugins.oembeditem import backend, appsettings
 
 
 @python_2_unicode_compatible
@@ -77,6 +77,9 @@ class AbstractOEmbedItem(ContentItem):
 
         .. versionadded:: 1.0 Added force and backend_params parameters.
         """
+        if appsettings.FLUENT_OEMBED_FORCE_HTTPS and self.embed_url.startswith('http://'):
+            self.embed_url = 'https://' + self.embed_url[7:]
+
         if force or self._input_changed():
             # Fetch new embed code
             params = self.get_oembed_params(self.embed_url)
