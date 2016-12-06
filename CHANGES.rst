@@ -1,8 +1,8 @@
 Changelog
 =========
 
-Changes in 1.1.9 (in development)
----------------------------------
+Changes in 1.1.9 (2016-12-06)
+-----------------------------
 
 * Added ``find_contentitem_urls`` management command to index URL usage.
 * Added ``remove_stale_contentitems --remove-unreferenced`` option to remove
