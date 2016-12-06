@@ -95,8 +95,15 @@ class Command(BaseCommand):
             parent_ct = ContentType.objects.get_for_id(ct_id)
             unreferenced_items = (ContentItem.objects
                                   .filter(parent_type=ct_id)
-                                  .exclude(parent_id__in=parent_ct.get_all_objects_for_this_type())
                                   .order_by('polymorphic_ctype', 'pk'))
+
+            if parent_ct.model_class() is not None:
+                # Only select the items that are part of removed pages,
+                # unless the parent type was removed - then removing all is correct.
+                unreferenced_items = unreferenced_items.exclude(
+                    parent_id__in=parent_ct.get_all_objects_for_this_type()
+                )
+
             if unreferenced_items:
                 for item in unreferenced_items:
                     self.stdout.write(
