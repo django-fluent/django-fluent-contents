@@ -35,7 +35,7 @@ install:
 - pip install -U pip wheel setuptools
 - pip install -q $DJANGO -r test-requirements.txt -e .
 script:
-- coverage run --source=fluent_contents runtests.py
+- coverage run --rcfile=.coveragerc runtests.py
 after_success:
 - codecov
 branches:

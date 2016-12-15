@@ -1,0 +1,5 @@
+[run]
+source = fluent_contents/
+omit =
+    */south_migrations/*
+    */migrations/*
