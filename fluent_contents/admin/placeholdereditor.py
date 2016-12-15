@@ -300,7 +300,7 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
 
             # exactly what admin/fluent_contents/contentitem/inline_container.html does:
             template_name = inline_admin_formset.opts.cp_admin_form_template
-            form_html = render_to_string(template_name, {
+            context = {
                 'inline_admin_form': inline_admin_form,
                 'inline_admin_formset': inline_admin_formset,
                 'original': obj,
@@ -308,7 +308,12 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
                 'add': False,
                 'change': True,
                 'has_change_permission': True,
-            }, context_instance=RequestContext(request))
+            }
+            if django.VERSION >= (1, 8):
+                context = RequestContext(request, context)
+                form_html = render_to_string(template_name, context)
+            else:
+                form_html = render_to_string(template_name, context, context_instance=RequestContext(request))
 
             # Append to list with metadata included
             contentitem = inline_admin_form.original
