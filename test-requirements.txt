@@ -1,0 +1,9 @@
+django-wysiwyg
+html5lib==1.0b10
+Pillow
+micawber
+docutils
+textile
+# Lower MarkDown version is needed for Python 2.6 only
+MarkDown==2.4.1
+pygments
