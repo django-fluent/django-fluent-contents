@@ -1,12 +1,16 @@
-from django.middleware.csrf import get_token
+from django.core.cache import cache
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 from django.template import Template
 from django.test import RequestFactory
+
 from fluent_contents import rendering
 from fluent_contents.extensions import PluginContext
 from fluent_contents.models import Placeholder, DEFAULT_TIMEOUT
 from fluent_contents.rendering import utils as rendering_utils
 from fluent_contents.tests import factories
-from fluent_contents.tests.testapp.models import TestPage, RawHtmlTestItem, TimeoutTestItem, OverrideBase, MediaTestItem
+from fluent_contents.tests.testapp.models import TestPage, RawHtmlTestItem, TimeoutTestItem, OverrideBase, MediaTestItem, \
+    RedirectTestItem
 from fluent_contents.tests.utils import AppTestCase
 
 
@@ -51,6 +55,17 @@ class RenderingTests(AppTestCase):
         self.assertEqual(output.html.strip(), 'MEDIA_TEST')
         self.assertEqual(output.media._js, ['testapp/media_item.js'])
         self.assertEqual(output.media._css, {'screen': ['testapp/media_item.css']})
+
+    def test_render_redirect(self):
+        cache.clear()
+        page = factories.create_page()
+        placeholder = factories.create_placeholder(page=page)
+        factories.create_content_item(RedirectTestItem, placeholder=placeholder, html='MEDIA_TEST')
+
+        response = self.client.get(reverse('testpage', args=(page.pk,)))
+        self.assertTrue(response.status_code, 301)
+        self.assertIsInstance(response, HttpResponseRedirect)
+        self.assertEqual(response.url, 'http://testserver/contact/success/')
 
     def test_debug_is_method_overwritten(self):
         """

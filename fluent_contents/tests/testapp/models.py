@@ -92,3 +92,19 @@ class MediaTestItem(ContentItem):
 
     def __str__(self):
         return self.html
+
+
+@python_2_unicode_compatible
+class RedirectTestItem(ContentItem):
+    """
+    The most basic "media HTML" content item, for testing.
+    """
+    html = models.TextField("HTML code")
+
+    class Meta:
+        app_label = 'testapp'
+        verbose_name = 'Redirect test'
+        verbose_name_plural = 'Redirect test'
+
+    def __str__(self):
+        return self.html
