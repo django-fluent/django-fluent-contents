@@ -16,7 +16,7 @@ def create_placeholder(page=None, slot=None):
     if page is None:
         page = create_page()
 
-    return Placeholder.objects.create_for_object(page, slot='field_slot1')
+    return Placeholder.objects.create_for_object(page, slot=slot or 'field_slot1')
 
 
 def create_content_item(ContentItemModel, placeholder=None, sort_order=1, language_code=None, **item_kwargs):
