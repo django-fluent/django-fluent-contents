@@ -76,7 +76,7 @@ if not settings.configured:
             'fluent_contents.plugins.rawhtml',
             'fluent_contents.plugins.sharedcontent',
             'fluent_contents.plugins.text',
-            #'fluent_contents.plugins.twitterfeed',
+            'fluent_contents.plugins.twitterfeed',
             #'disqus',
             'django_wysiwyg',
             #'form_designer',
