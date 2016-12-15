@@ -8,4 +8,4 @@ textile
 MarkDown==2.4.1
 pygments
 disqus
-twitter-text-py
+#twitter-text-py
