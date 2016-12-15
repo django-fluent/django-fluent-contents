@@ -65,7 +65,7 @@ if not settings.configured:
             'fluent_contents',
             'fluent_contents.plugins.code',
             'fluent_contents.plugins.commentsarea',
-            'fluent_contents.plugins.disquswidgets',
+            #'fluent_contents.plugins.disquswidgets',
             #'fluent_contents.plugins.formdesignerlink',
             'fluent_contents.plugins.gist',
             'fluent_contents.plugins.googledocsviewer',
