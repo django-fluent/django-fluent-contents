@@ -256,7 +256,13 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
         placeholder_slots = dict(Placeholder.objects.parent(obj).values_list('id', 'slot'))
         all_forms = []
 
-        for FormSet, inline in zip(self.get_formsets(request, obj), inline_instances):
+        if django.VERSION >= (1,7):
+            formsets_with_inlines = self.get_formsets_with_inlines(request, obj=obj)
+        else:
+            # Removed in Django 1.9:
+            formsets_with_inlines = zip(self.get_formsets(request, obj), inline_instances)
+
+        for FormSet, inline in formsets_with_inlines:
             # Only ContentItem inlines
             if isinstance(inline, PlaceholderEditorInline) \
             or not getattr(inline, 'is_fluent_editor_inline', False):
