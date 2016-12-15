@@ -5,7 +5,8 @@ from fluent_contents import rendering
 from fluent_contents.extensions import PluginContext
 from fluent_contents.models import Placeholder, DEFAULT_TIMEOUT
 from fluent_contents.rendering import utils as rendering_utils
-from fluent_contents.tests.testapp.models import TestPage, RawHtmlTestItem, TimeoutTestItem, OverrideBase
+from fluent_contents.tests import factories
+from fluent_contents.tests.testapp.models import TestPage, RawHtmlTestItem, TimeoutTestItem, OverrideBase, MediaTestItem
 from fluent_contents.tests.utils import AppTestCase
 
 
@@ -38,6 +39,18 @@ class RenderingTests(AppTestCase):
         output = rendering.render_placeholder(self.dummy_request, placeholder2, parent_object=page2, cachable=False)
         self.assertEqual(output.html, '<b>Item1!</b><b>Item2!</b>')
         self.assertEqual(output.cache_timeout, 60)  # this is that timeout that should be used for the placeholder cache item.
+
+    def test_render_media(self):
+        """
+        Test that 'class FrontendMedia' works.
+        """
+        placeholder = factories.create_placeholder()
+        factories.create_content_item(MediaTestItem, placeholder=placeholder, html='MEDIA_TEST')
+
+        output = rendering.render_placeholder(self.dummy_request, placeholder)
+        self.assertEqual(output.html.strip(), 'MEDIA_TEST')
+        self.assertEqual(output.media._js, ['testapp/media_item.js'])
+        self.assertEqual(output.media._css, {'screen': ['testapp/media_item.css']})
 
     def test_debug_is_method_overwritten(self):
         """

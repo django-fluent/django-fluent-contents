@@ -50,6 +50,19 @@ class Migration(migrations.Migration):
             bases=('fluent_contents.contentitem',),
         ),
         migrations.CreateModel(
+            name='MediaTestItem',
+            fields=[
+                ('contentitem_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem')),
+                ('html', models.TextField(verbose_name=b'HTML code')),
+            ],
+            options={
+                'db_table': 'contentitem_testapp_mediatestitem',
+                'verbose_name': 'Timeout test',
+                'verbose_name_plural': 'Timeout test',
+            },
+            bases=('fluent_contents.contentitem',),
+        ),
+        migrations.CreateModel(
             name='TestPage',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),

@@ -76,3 +76,19 @@ class TimeoutTestItem(ContentItem):
 
     def __str__(self):
         return self.html
+
+
+@python_2_unicode_compatible
+class MediaTestItem(ContentItem):
+    """
+    The most basic "media HTML" content item, for testing.
+    """
+    html = models.TextField("HTML code")
+
+    class Meta:
+        app_label = 'testapp'
+        verbose_name = 'Media test'
+        verbose_name_plural = 'Media test'
+
+    def __str__(self):
+        return self.html
