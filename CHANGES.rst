@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Changes in 1.1.10 (2016-12-15)
+------------------------------
+
+* Fixed "Copy language" button for Django 1.9+
+
+
 Changes in 1.1.9 (2016-12-06)
 -----------------------------
 
