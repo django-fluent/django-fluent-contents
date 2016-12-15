@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.utils.safestring import mark_safe
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.tests.testapp.models import RawHtmlTestItem, TimeoutTestItem, MediaTestItem, RedirectTestItem
@@ -58,4 +59,4 @@ class RedirectTestPlugin(ContentPlugin):
         # Plugins can issue redirects, for example a contact form plugin.
         # Since this call happens inside a template render, the code flow
         # is interrupted by an exception that is handled in middleware.
-        self.redirect('/contact/success/', status=301)
+        return HttpResponseRedirect('/contact/success/')
