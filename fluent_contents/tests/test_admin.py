@@ -111,7 +111,7 @@ class AdminTest(AppTestCase):
         self.assertTrue('AA' in data['formset_forms'][0]['html'])
 
     def _get_request(self, url, data=None):
-        request = self.factory.post(url, data=data)
+        request = self.factory.post(url, data=data or {})
         request.csrf_processing_done = True
         request.session = {}
         request.user = self.admin_user
