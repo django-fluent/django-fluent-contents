@@ -65,7 +65,7 @@ class RenderingTests(AppTestCase):
         response = self.client.get(reverse('testpage', args=(page.pk,)))
         self.assertTrue(response.status_code, 301)
         self.assertIsInstance(response, HttpResponseRedirect)
-        self.assertEqual(response.url, 'http://testserver/contact/success/')
+        self.assertEqual(response['Location'], 'http://testserver/contact/success/')
 
     def test_debug_is_method_overwritten(self):
         """
