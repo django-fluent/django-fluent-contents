@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Changes in 1.1.11 (2016-12-21)
+------------------------------
+
+* Fixed "Copy language" button for Django 1.10+
+* Fix slot parameter for tests ``fluent_contents.tests.factories.create_placeholder()``
+
+
 Changes in 1.1.10 (2016-12-15)
 ------------------------------
 
