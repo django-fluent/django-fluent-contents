@@ -43,7 +43,7 @@ setup(
         'django-fluent-utils>=1.2.3',      # DRY utility code
         'django-mptt>=0.7.0',
         'django-parler>=1.6.1',            # Needed for Django 1.9 compatibility
-        'django-polymorphic>=1.0b1',       # Needed for Django 1.9 compatibility
+        'django-polymorphic>=1.0',         # Needed for Django 1.9 compatibility
         'django-polymorphic-tree>=1.2.3',
         'django-tag-parser>=2.1',          # Needed for Django 1.8 compatibility
         'django-template-analyzer>=1.6.1', # Needed for Django 1.9 compatibility + bugfixes
