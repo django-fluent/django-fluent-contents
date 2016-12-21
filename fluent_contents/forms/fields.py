@@ -36,7 +36,7 @@ class OptimizableModelChoiceField(forms.ModelChoiceField):
         super(OptimizableModelChoiceField, self).__init__(*args, **kwargs)
 
     def to_python(self, value):
-        if value is None:
+        if value in self.empty_values:
             return None
         try:
             # Instead of performing a queryset.get() for every form,
