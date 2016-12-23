@@ -9,11 +9,10 @@ var cp_data = {};
 (function($)
 {
   // Stored data
-  // FIXME: make dom_placeholders private.
-  cp_data.dom_placeholders = {};  // the formset items by placeholder; { 'placeholder_slot': { id: 8, slot: 'main, items: [ item1, item2 ], role: 'm', domnode: 'someid' }, ... }
+  cp_data.placeholders = {};  // the formset items by placeholder;
 
   // Public data (also for debugging)
-  cp_data.placeholders = null;  // [ { slot: 'main', title: 'Main', role: 'm', domnode: 'someid' }, { slot: 'sidebar', ...} ]
+  cp_data.placeholder_metadata = null;  // [ { slot: 'main', title: 'Main', role: 'm', domnode: 'someid' }, { slot: 'sidebar', ...} ]
   cp_data.initial_placeholders = null;
   cp_data.contentitem_metadata = null;
 
@@ -21,7 +20,7 @@ var cp_data = {};
   // Public initialisation functions
   cp_data.set_placeholders = function(data)
   {
-    cp_data.placeholders = data;
+    cp_data.placeholder_metadata = data;
     if( ! cp_data.initial_placeholders )
     {
       cp_data.initial_placeholders = data;
@@ -29,7 +28,7 @@ var cp_data = {};
     else
     {
       // Allow move icon to be shown/hidden.
-      if( cp_data.placeholders.length == 1 )
+      if( cp_data.placeholder_metadata.length == 1 )
         $("body").addClass('cp-single-placeholder');
       else
         $("body").removeClass('cp-single-placeholder');
@@ -37,14 +36,14 @@ var cp_data = {};
   };
 
   cp_data.set_contentitem_metadata = function(data) { cp_data.contentitem_metadata = data; };
-  cp_data.get_placeholders = function() { return cp_data.placeholders; };
+  cp_data.get_placeholder_metadata = function() { return cp_data.placeholder_metadata; };
   cp_data.get_initial_placeholders = function() { return cp_data.initial_placeholders; };
 
 
   /**
    * Object to describe the metadata of a ContentItem in the formset.
    */
-  function ContentItemInfo($fs_item)
+  cp_data.ContentItemInfo = function ContentItemInfo($fs_item)
   {
     // NOTE: assumes the ContentItem was already moved outside it's inline-group.
     // The parsing only happens with the
@@ -56,6 +55,7 @@ var cp_data = {};
 
     // The metadata, overwritten by the externally provided `child_inlines` info.
     this.type = $fs_item.data('inlineType');  // data-inline-type
+    this.field_prefix = cp_data.get_group_prefix() + "-" + this.index;
     this.plugin = null;
     this.name = null;
     this.contenttype_id = null;
@@ -67,6 +67,29 @@ var cp_data = {};
       $.extend(this, contentitem_metadata);
   }
 
+  cp_data.ContentItemInfo.prototype = {
+    _field: function(field_name) {
+      return this.fs_item.find("#" + this.field_prefix + "-" + field_name);
+    },
+
+    get_placeholder_slot: function() {
+      return this._field('placeholder_slot').val();
+    },
+
+    get_pane: function() {
+      return cp_data.get_placeholder_pane_for_item(this.fs_item);  // TODO: make that function obsolete.
+    },
+
+    set_placeholder: function(placeholder) {
+      this._field('placeholder').val(placeholder.id);
+      this._field('placeholder_slot').val(placeholder.slot);
+    },
+
+    set_sort_order: function(sort_order) {
+      this._field('sort_order').val(sort_order);
+    }
+  };
+
   function PlaceholderPane($pane, placeholder)
   {
     this.root = $pane;  // mainly for debugging
@@ -76,7 +99,7 @@ var cp_data = {};
     this.is_orphaned = $pane.attr('data-tab-region') == '__orphaned__';
   }
 
-  function DomPlaceholder(placeholder, is_fallback)
+  function PlaceholderInfo(placeholder, is_fallback)
   {
     this.slot = placeholder.slot;
     this.role = placeholder.role;
@@ -88,7 +111,7 @@ var cp_data = {};
   /**
    * Initialize the data collection by reading the DOM.
    *
-   * Read all the DOM formsets into the "dom_placeholders" variable.
+   * Read all the DOM formsets into the "placeholders" variable.
    * This information is used in this library to lookup formsets.
    */
   cp_data.init = function()
@@ -100,7 +123,7 @@ var cp_data = {};
 
     // Group all formset items by the placeholder they belong to.
     // This administration is used as quick lookup, to avoid unneeded DOM querying.
-    if( cp_data.placeholders )
+    if( cp_data.placeholder_metadata )
     {
       for(var i = 0; i < $fs_items.length; i++)
       {
@@ -123,16 +146,16 @@ var cp_data = {};
         {
           placeholder = cp_data.get_placeholder_by_slot(placeholder_slot)
         }
-        var dom_placeholder = cp_data.get_or_create_dom_placeholder(placeholder, placeholder_id, placeholder_slot);
-        dom_placeholder.items.push($fs_item);
+        var placeholder_info = cp_data.get_or_create_placeholder_info(placeholder, placeholder_id, placeholder_slot);
+        placeholder_info.items.push($fs_item);
 
         // Reset placeholder ID field if the item already
         // doesn't fit in any placeholder.
-        if( dom_placeholder.is_fallback )
+        if( placeholder_info.is_fallback )
           $placeholder_input.val('');
       }
 
-      if( cp_data.placeholders.length == 1 )
+      if( cp_data.placeholder_metadata.length == 1 )
         $("body").addClass('cp-single-placeholder');
     }
 
@@ -156,7 +179,10 @@ var cp_data = {};
   }
 
 
-  cp_data.get_or_create_dom_placeholder = function(placeholder, fallback_id, fallback_slot)
+  /**
+   * @returns {PlaceholderInfo}
+   */
+  cp_data.get_or_create_placeholder_info = function(placeholder, fallback_id, fallback_slot)
   {
     // If the ID references to a placeholder which was removed from the template,
     // make sure the item is indexed somehow.
@@ -168,21 +194,21 @@ var cp_data = {};
       is_fallback = !fallback_slot;  // slot == __orphaned__
     }
 
-    var dom_placeholder = cp_data.dom_placeholders[placeholder.slot];
-    if( ! dom_placeholder )
+    var placeholder_info = cp_data.placeholders[placeholder.slot];
+    if( ! placeholder_info )
     {
       // Create the structure for the placeholder.
-      dom_placeholder = new DomPlaceholder(placeholder, is_fallback);
-      cp_data.dom_placeholders[placeholder.slot] = dom_placeholder;
+      placeholder_info = new PlaceholderInfo(placeholder, is_fallback);
+      cp_data.placeholders[placeholder.slot] = placeholder_info;
     }
 
-    return dom_placeholder;
+    return placeholder_info;
   }
 
 
-  cp_data.get_dom_placeholders = function()
+  cp_data.get_placeholders = function()
   {
-    return cp_data.dom_placeholders;
+    return cp_data.placeholders;
   }
 
 
@@ -191,14 +217,14 @@ var cp_data = {};
    */
   cp_data.get_placeholder_for_role = function(role, preferredNr)
   {
-    if( cp_data.placeholders == null )
+    if( cp_data.placeholder_metadata == null )
       throw new Error("cp_data.set_placeholders() was never called");
 
     var candidate = null;
     var itemNr = 0;
-    for(var i = 0; i < cp_data.placeholders.length; i++)
+    for(var i = 0; i < cp_data.placeholder_metadata.length; i++)
     {
-      var placeholder = cp_data.placeholders[i];
+      var placeholder = cp_data.placeholder_metadata[i];
       if(placeholder.role == role)
       {
         candidate = placeholder;
@@ -218,11 +244,11 @@ var cp_data = {};
    */
   cp_data.get_single_placeholder = function()
   {
-    if( cp_data.placeholders == null )
+    if( cp_data.placeholder_metadata == null )
       throw new Error("cp_data.set_placeholders() was never called");
 
-    if( cp_data.placeholders.length == 1 ) {
-      return cp_data.placeholders[0];
+    if( cp_data.placeholder_metadata.length == 1 ) {
+      return cp_data.placeholder_metadata[0];
     }
 
     return null;
@@ -251,21 +277,24 @@ var cp_data = {};
   }
 
 
+  /**
+   * @returns {Object} The JSON data provided by the HTML template.
+   */
   function _get_placeholder_by_property(prop, value)
   {
-    if( cp_data.placeholders == null )
+    if( cp_data.placeholder_metadata == null )
       throw new Error("cp_data.set_placeholders() was never called");
 
     // Special case: if there is only a single placeholder,
     // skip the whole support for multiple placeholders per page.
-    if( cp_data.placeholders.length == 1 && cp_data.placeholders[0].id == -1 )
-      return cp_data.placeholders[0];
+    if( cp_data.placeholder_metadata.length == 1 && cp_data.placeholder_metadata[0].id == -1 )
+      return cp_data.placeholder_metadata[0];
 
     // Find the item based on the property.
     // The placeholders are not a loopup object, but array to keep sort_order correct.
-    for(var i = 0; i < cp_data.placeholders.length; i++)
-      if( cp_data.placeholders[i][prop] == value )
-        return cp_data.placeholders[i];
+    for(var i = 0; i < cp_data.placeholder_metadata.length; i++)
+      if( cp_data.placeholder_metadata[i][prop] == value )
+        return cp_data.placeholder_metadata[i];
 
     if( window.console )
       window.console.warn("cp_data.get_placeholder_by_" + prop + ": no object for '" + value + "'");
@@ -299,9 +328,9 @@ var cp_data = {};
   {
     // Wrap in objects too, for consistent API usage.
     var pane_objects = [];
-    for(var i = 0; i < cp_data.placeholders.length; i++)
+    for(var i = 0; i < cp_data.placeholder_metadata.length; i++)
     {
-      var placeholder = cp_data.placeholders[i];
+      var placeholder = cp_data.placeholder_metadata[i];
       pane_objects.push(cp_data.get_placeholder_pane(placeholder));
     }
 
@@ -378,7 +407,7 @@ var cp_data = {};
       return child_node;   // already parsed
 
     var fs_item = $(child_node).closest(".inline-related");
-    return new ContentItemInfo(fs_item);
+    return new cp_data.ContentItemInfo(fs_item);
   }
 
 
@@ -426,26 +455,26 @@ var cp_data = {};
 
   cp_data.cleanup_empty_placeholders = function()
   {
-    for(var i = 0; i < cp_data.dom_placeholders.length; i++)
-      if(cp_data.dom_placeholders[i].items.length == 0)
-        delete cp_data.dom_placeholders[i];
+    for(var i = 0; i < cp_data.placeholders.length; i++)
+      if(cp_data.placeholders[i].items.length == 0)
+        delete cp_data.placeholders[i];
   }
 
 
-  cp_data.remove_dom_item = function(placeholder_slot, item_data)
+  cp_data.remove_dom_item = function(placeholder_slot, content_item)
   {
-    var dom_placeholder = cp_data.dom_placeholders[placeholder_slot];
-    var raw_node        = item_data.fs_item[0];
-    for( i = 0; i < dom_placeholder.items.length; i++ )
+    var placeholder_info = cp_data.placeholders[placeholder_slot];
+    var raw_node = content_item.fs_item[0];
+    for( i = 0; i < placeholder_info.items.length; i++ )
     {
-      if( dom_placeholder.items[i][0] == raw_node)
+      if( placeholder_info.items[i][0] == raw_node)
       {
-        dom_placeholder.items.splice(i, 1);
+        placeholder_info.items.splice(i, 1);
         break;
       }
     }
 
-    return dom_placeholder.items.length == 0;
+    return placeholder_info.items.length == 0;
   }
 
 })(window.jQuery || django.jQuery);

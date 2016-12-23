@@ -49,7 +49,7 @@ var cp_tabs = {};
     cp_tabs._select_previous_or_first_tab();
 
     // Hide empty message
-    if( cp_data.get_placeholders().length )
+    if( cp_data.get_placeholder_metadata().length )
       $("#cp-tabs-empty").hide();
   }
 
@@ -97,7 +97,7 @@ var cp_tabs = {};
     // Each time a load_layout() occurs, a different set of placeholders may be removed or recreated.
     // This way, one consistent update is sent to the server when the page is saved.
 
-    console.log("Received placeholders: ", layout.placeholders, "dom_regions=", cp_data.dom_placeholders );
+    console.log("Received placeholders: ", layout.placeholders, "current state:", cp_data.placeholders );
     var dbplaceholders = cp_data.get_initial_placeholders();
     var newplaceholders = layout.placeholders;
 
@@ -328,7 +328,7 @@ var cp_tabs = {};
 
   cp_tabs.update_empty_message = function()
   {
-    var no_tabs = cp_data.get_placeholders().length == 0 && $tabs_root.find(".inline-related").length == 0;
+    var no_tabs = cp_data.get_placeholder_metadata().length == 0 && $tabs_root.find(".inline-related").length == 0;
     $("#cp-tabs-empty")[no_tabs ? "show" : "hide"]();
   }
 

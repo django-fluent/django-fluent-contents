@@ -163,37 +163,37 @@ var cp_plugins = {};
   {
     // Count number of seen tabs per role.
     var roles_seen = {};
-    var placeholders = cp_data.get_placeholders();
-    if(placeholders == null) {
+    var placeholder_metadata = cp_data.get_placeholder_metadata();
+    if(placeholder_metadata == null) {
       console.error("Placeholders are not defined. Is the proper PlaceholderFieldAdmin/PlaceholderEditorAdmin class used?")
       return;
     }
-    for(var i = 0; i < placeholders.length; i++)
-      roles_seen[placeholders[i].role] = 0;
+    for(var i = 0; i < placeholder_metadata.length; i++)
+      roles_seen[placeholder_metadata[i].role] = 0;
 
     // Move all items to the tabs.
-    // TODO: direct access to dom_placeholder data, should be cleaned up.
     // The DOM placeholders holds the desired layout of all items.
     // Depending on the current layout, it placeholder pane can be found, or needs to be migrated.
-    for(var placeholder_slot in cp_data.dom_placeholders)
+    var placeholders = cp_data.get_placeholders();
+    for(var placeholder_slot in placeholders)
     {
-      if(! cp_data.dom_placeholders.hasOwnProperty(placeholder_slot))
+      if(! placeholders.hasOwnProperty(placeholder_slot))
         continue;
 
-      var dom_placeholder = cp_data.dom_placeholders[placeholder_slot];
-      var last_role_occurance =  ++roles_seen[dom_placeholder.role];
-      if( dom_placeholder.items.length == 0)
+      var placeholder_info = placeholders[placeholder_slot];
+      var last_role_occurance =  ++roles_seen[placeholder_info.role];
+      if( placeholder_info.items.length == 0)
         continue;
 
       // Fill the tab
-      var pane = cp_plugins.get_new_placeholder_pane(dom_placeholder, last_role_occurance);
-      cp_plugins.move_items_to_pane(dom_placeholder, pane);
+      var pane = cp_plugins.get_new_placeholder_pane(placeholder_info, last_role_occurance);
+      cp_plugins.move_items_to_pane(placeholder_info, pane);
     }
 
     // Initialisation completed!
     if( is_first_layout )
     {
-      console.log("Initialized editor, placeholders=", cp_data.get_placeholders(), " contentitems=", cp_data.contentitem_metadata.child_inlines);
+      console.log("Initialized editor, placeholders=", cp_data.placeholder_metadata, " contentitems=", cp_data.contentitem_metadata.child_inlines);
       is_first_layout = false;
     }
   }
@@ -202,13 +202,13 @@ var cp_plugins = {};
   /**
    * Find the new placeholder where the contents can be displayed.
    */
-  cp_plugins.get_new_placeholder_pane = function(dom_placeholder, last_known_nr)
+  cp_plugins.get_new_placeholder_pane = function(placeholder_info, last_known_nr)
   {
     var pane;
     var isExpiredTab = window.cp_tabs ? cp_tabs.is_expired_tab : function(node) { return false; };
 
     // Option 1. Find identical placeholder by slot name.
-    var placeholder = cp_data.get_placeholder_by_slot(dom_placeholder.slot);
+    var placeholder = cp_data.get_placeholder_by_slot(placeholder_info.slot);
     if( placeholder )
     {
       // Option 1. Find by slot name,
@@ -218,13 +218,13 @@ var cp_plugins = {};
     }
 
     // Option 2. Find a good substitude candidate, the last placeholder which was used for the same role.
-    var altplaceholder = cp_data.get_placeholder_for_role(dom_placeholder.role, last_known_nr);
+    var altplaceholder = cp_data.get_placeholder_for_role(placeholder_info.role, last_known_nr);
     if( altplaceholder )
     {
       pane = cp_data.get_placeholder_pane(altplaceholder);
       if( pane && ! isExpiredTab(pane.root) )
       {
-        console.log("Using placeholder '" + altplaceholder.slot + "' as fallback for item from placeholder '" + dom_placeholder.slot + "'.");
+        console.log("Using placeholder '" + altplaceholder.slot + "' as fallback for item from placeholder '" + placeholder_info.slot + "'.");
         return pane;
       }
     }
@@ -237,7 +237,7 @@ var cp_plugins = {};
       pane = cp_data.get_placeholder_pane(single_placeholder);
       if( pane && ! isExpiredTab(pane.root) )
       {
-        console.log("Using single placeholder '" + single_placeholder.slot + "' as fallback for item from placeholder '" + dom_placeholder.slot + "'.");
+        console.log("Using single placeholder '" + single_placeholder.slot + "' as fallback for item from placeholder '" + placeholder_info.slot + "'.");
         return pane;
       }
     }
@@ -249,19 +249,19 @@ var cp_plugins = {};
       pane = cp_tabs.get_fallback_pane();
       if( pane )
       {
-        console.log("Using orphaned tab as fallback for item from placeholder '" + dom_placeholder.slot + "'.");
+        console.log("Using orphaned tab as fallback for item from placeholder '" + placeholder_info.slot + "'.");
         return pane;
       }
     }
 
-    throw new Error("No placeholder pane for placeholder: " + dom_placeholder.slot + " (role: " + dom_placeholder.role + ")");
+    throw new Error("No placeholder pane for placeholder: " + placeholder_info.slot + " (role: " + placeholder_info.role + ")");
   }
 
 
   /**
    * Move the items of one placeholder to the given tab.
    */
-  cp_plugins.move_items_to_pane = function(dom_placeholder, pane)
+  cp_plugins.move_items_to_pane = function(placeholder_info, pane)
   {
     if( !pane || pane.content.length == 0)
     {
@@ -270,29 +270,30 @@ var cp_plugins = {};
       return;
     }
 
-    console.log("move_items_to_pane:", dom_placeholder, pane);
+    console.log("move_items_to_pane:", placeholder_info, pane);
 
     // Reorder in accordance to the sorting order.
-    cp_plugins._sort_items( dom_placeholder.items );
+    cp_plugins._sort_items( placeholder_info.items );
 
     // Move all items to that tab.
     // Restore item values upon restoring fields.
-    for(var i = 0; i < dom_placeholder.items.length; i++)
+    for(var i = 0; i < placeholder_info.items.length; i++)
     {
-      var $fs_item = dom_placeholder.items[i];
-      dom_placeholder.items[i] = cp_plugins._move_item_to( $fs_item, function _move_to_pane($fs_item)
+      var $fs_item = placeholder_info.items[i];
+      placeholder_info.items[i] = cp_plugins._move_item_to( $fs_item, function _move_to_pane($fs_item)
       {
         pane.content.append($fs_item);
 
         // Update the placeholder-id.
-        // Note this will not update the dom_placeholders,
+        // Note this will not update the placeholder_info,
         // hence the item will move back when the original layout is restored.
-        if( pane.placeholder )
+        if( pane.placeholder ) {
           cp_plugins._set_pageitem_data($fs_item, pane.placeholder, i);
+        }
       });
     }
 
-    if( dom_placeholder.items.length )
+    if( placeholder_info.items.length )
       pane.empty_message.hide();
   }
 
@@ -407,9 +408,9 @@ var cp_plugins = {};
   cp_plugins.onAddButtonClick = function(event)
   {
     var $add_button = $(event.target);
-    var placeholder_key = $add_button.attr("data-placeholder-slot");  // TODO: use ID?
+    var placeholder_slot = $add_button.attr("data-placeholder-slot");
     var model_name = $add_button.siblings("select").val();
-    cp_plugins.add_formset_item( placeholder_key, model_name );
+    cp_plugins.add_formset_item( placeholder_slot, model_name );
   }
 
 
@@ -427,7 +428,7 @@ var cp_plugins = {};
     var inline_meta = cp_data.get_contentitem_metadata_by_type(model_name);
     var group_prefix = cp_data.get_group_prefix();
     var placeholder = cp_data.get_placeholder_by_slot(placeholder_slot);
-    var dom_placeholder = cp_data.get_or_create_dom_placeholder(placeholder);
+    var placeholder_info = cp_data.get_or_create_placeholder_info(placeholder);
 
     // Get DOM items
     var pane  = cp_data.get_placeholder_pane(placeholder);
@@ -466,7 +467,7 @@ var cp_plugins = {};
       throw new Error("New FormSetItem not found: #" + item_id);
 
     // Update administration
-    dom_placeholder.items.push($fs_item);
+    placeholder_info.items.push($fs_item);  // TOOD: use ContentItemInfo instead?
     total.value++;
 
     // Configure it
@@ -479,19 +480,10 @@ var cp_plugins = {};
 
   cp_plugins._set_pageitem_data = function($fs_item, placeholder, new_sort_index)
   {
-    var field_prefix = cp_plugins._get_field_prefix($fs_item);
-    $("#" + field_prefix + "-placeholder").val(placeholder.id);
-    $("#" + field_prefix + "-placeholder_slot").val(placeholder.slot);
-    $("#" + field_prefix + "-sort_order").val(new_sort_index);
-  }
+    var content_item = new cp_data.ContentItemInfo($fs_item);
+    content_item.set_placeholder(placeholder);
+    content_item.set_sort_order(new_sort_index);
 
-
-  cp_plugins._get_field_prefix = function($fs_item)
-  {
-    // Currently redetermining group_prefix, avoid letting fs_item to go out of sync with different call paths.
-    var current_item = cp_data.get_inline_formset_item_info($fs_item);
-    var group_prefix = cp_data.get_group_prefix();
-    return group_prefix + "-" + current_item.index;
   }
 
 
@@ -562,14 +554,14 @@ var cp_plugins = {};
   cp_plugins.move_item_to_placeholder = function(child_node, slot)
   {
     var dominfo = cp_data.get_formset_dom_info(child_node);
-    var current_item = cp_data.get_inline_formset_item_info(child_node);  // childnode is likely already a current_item object.
-    var $fs_item = current_item.fs_item;
+    var content_item = cp_data.get_inline_formset_item_info(child_node);  // childnode is likely already a current_item object.
+    var $fs_item = content_item.fs_item;
 
-    var old_pane = cp_data.get_placeholder_pane_for_item($fs_item);
+    var old_pane = content_item.get_pane();
     var old_slot = old_pane.is_orphaned ? '__orphaned__' : dominfo.placeholder_slot;
     var old_placeholder = cp_data.get_placeholder_by_slot(old_slot);
     var new_placeholder = cp_data.get_placeholder_by_slot(slot);
-    var dom_placeholder = cp_data.get_or_create_dom_placeholder(new_placeholder);
+    var placeholder_info = cp_data.get_or_create_placeholder_info(new_placeholder);
     var new_pane = cp_data.get_placeholder_pane(new_placeholder);
 
     // Move formset item
@@ -578,9 +570,9 @@ var cp_plugins = {};
     cp_plugins._set_pageitem_data($fs_item, new_placeholder, last_index);
 
     // Move to proper dom placeholder list.
-    // dom_placeholder is currently not accurate, behaves more like "desired placeholder".
-    if( old_placeholder ) cp_data.remove_dom_item(old_placeholder.slot, current_item);
-    dom_placeholder.items.push($fs_item);
+    // old_placeholder is currently not accurate, behaves more like "desired placeholder".
+    if( old_placeholder ) cp_data.remove_dom_item(old_placeholder.slot, content_item);
+    placeholder_info.items.push($fs_item);
 
     // Update placeholders + hide popup
     new_pane.empty_message.hide();
@@ -593,7 +585,7 @@ var cp_plugins = {};
   {
     var current_item = cp_data.get_inline_formset_item_info(child_node);
     var dominfo      = cp_data.get_formset_dom_info(current_item);
-    var placeholders = cp_data.get_placeholders();
+    var placeholders = cp_data.get_placeholder_metadata();
 
     // Build popup HTML
     var html = '<p>Move to</p><ul>';
@@ -687,10 +679,10 @@ var cp_plugins = {};
   }
 
 
-  cp_plugins.update_sort_order = function(tab)
+  cp_plugins.update_sort_order = function(tab_pane)
   {
     // Can just assign the order in which it exists in the DOM.
-    var sort_order = tab.content.find("input[id$=-sort_order]");
+    var sort_order = tab_pane.content.find("input[id$=-sort_order]");
     for(var i = 0; i < sort_order.length; i++)
     {
       sort_order[i].value = i;
@@ -699,11 +691,11 @@ var cp_plugins = {};
   }
 
 
-  cp_plugins.validate_placeholder_forms = function(tab)
+  cp_plugins.validate_placeholder_forms = function(tab_pane)
   {
-    var desired_id = tab.placeholder.id;
-    var desired_slot = tab.placeholder.slot;
-    var $inputs = tab.content.find('input[type=hidden]');
+    var desired_id = tab_pane.placeholder.id;
+    var desired_slot = tab_pane.placeholder.slot;
+    var $inputs = tab_pane.content.find('input[type=hidden]');
     var $ids = $inputs.filter('[id$=-placeholder]');
     var $slots = $inputs.filter('[id$=-placeholder_slot]');
     if( $ids.length != $slots.length )
@@ -815,9 +807,9 @@ var cp_plugins = {};
   cp_plugins.remove_formset_item = function(child_node)
   {
     // Get dom info
-    var current_item = cp_data.get_inline_formset_item_info(child_node);
-    var dominfo      = cp_data.get_formset_dom_info(current_item);
-    var pane         = cp_data.get_placeholder_pane_for_item(current_item.fs_item);
+    var content_item = cp_data.get_inline_formset_item_info(child_node);
+    var dominfo      = cp_data.get_formset_dom_info(content_item);
+    var pane         = content_item.get_pane();
 
     // Get administration
     // dominfo slot is always filled in, id may be unknown yet.
@@ -831,8 +823,8 @@ var cp_plugins = {};
       throw new Error("ID field not found for deleting objects!");
 
     // Disable item, wysiwyg, etc..
-    current_item.fs_item.css("height", current_item.fs_item.height() + "px");  // Fixate height, less redrawing.
-    cp_plugins.disable_pageitem(current_item.fs_item, false);
+    content_item.fs_item.css("height", content_item.fs_item.height() + "px");  // Fixate height, less redrawing.
+    cp_plugins.disable_pageitem(content_item.fs_item, false);
 
     // In case there is a delete checkbox, save it.
     if( dominfo.delete_checkbox.length )
@@ -843,24 +835,24 @@ var cp_plugins = {};
     else
     {
       // Newly added item, renumber in reverse order
-      for( var i = current_item.index + 1; i < total_count; i++ )
+      for( var i = content_item.index + 1; i < total_count; i++ )
       {
-        var $fs_item = $("#" + current_item.prefix + "-" + i);
-        cp_admin.renumber_formset_item($fs_item, current_item.prefix, i - 1);
+        var $fs_item = $("#" + content_item.prefix + "-" + i);
+        cp_admin.renumber_formset_item($fs_item, content_item.prefix, i - 1);
       }
 
       dominfo.total_forms.value--;
     }
 
     // And remove item
-    current_item.fs_item.remove();
+    content_item.fs_item.remove();
 
     // Remove from node list, if all removed
     if( placeholder )
     {
-      // TODO: currently ignoring return value. dom_placeholder is currently not accurate, behaves more like "desired placeholder".
-      // TODO: deal with orphaned items, might exist somewhere in the dom_placeholder administration.
-      cp_data.remove_dom_item(placeholder.slot, current_item);
+      // TODO: currently ignoring return value. placeholder is currently not accurate, behaves more like "desired placeholder".
+      // TODO: deal with orphaned items, might exist somewhere in the placeholder administration.
+      cp_data.remove_dom_item(placeholder.slot, content_item);
     }
 
     // Show empty tab message
