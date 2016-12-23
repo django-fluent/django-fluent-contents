@@ -8,6 +8,7 @@ var cp_plugins = {};
 
   var MOVE_SPEED = 200;
   var FLIP_SPEED = 200;
+  var REMOVE_SPEED = 200;
 
   // Global state
   var has_load_error = false;
@@ -822,9 +823,8 @@ var cp_plugins = {};
     if( dominfo.id_field.length == 0 )
       throw new Error("ID field not found for deleting objects!");
 
-    // Disable item, wysiwyg, etc..
-    content_item.fs_item.css("height", content_item.fs_item.height() + "px");  // Fixate height, less redrawing.
-    cp_plugins.disable_pageitem(content_item.fs_item, false);
+    // Fixate height, less redrawing.
+    content_item.fs_item.css("height", content_item.fs_item.height() + "px");
 
     // In case there is a delete checkbox, save it.
     if( dominfo.delete_checkbox.length )
@@ -844,21 +844,26 @@ var cp_plugins = {};
       dominfo.total_forms.value--;
     }
 
-    // And remove item
-    content_item.fs_item.remove();
+    // Perform remove animation
+    content_item.fs_item.slideUp(REMOVE_SPEED, function(){
+      // Disable item, wysiwyg, etc..
+      // And remove item
+      cp_plugins.disable_pageitem(content_item.fs_item, false);
+      content_item.fs_item.remove();
 
-    // Remove from node list, if all removed
-    if( placeholder )
-    {
-      // TODO: currently ignoring return value. placeholder is currently not accurate, behaves more like "desired placeholder".
-      // TODO: deal with orphaned items, might exist somewhere in the placeholder administration.
-      cp_data.remove_dom_item(placeholder.slot, content_item);
-    }
+      // Remove from node list, if all removed
+      if( placeholder )
+      {
+        // TODO: currently ignoring return value. placeholder is currently not accurate, behaves more like "desired placeholder".
+        // TODO: deal with orphaned items, might exist somewhere in the placeholder administration.
+        cp_data.remove_dom_item(placeholder.slot, content_item);
+      }
 
-    // Show empty tab message
-    cp_plugins._check_empty_pane(pane);
-    if( window.cp_tabs )
-      cp_tabs.update_empty_message();
+      // Show empty tab message
+      cp_plugins._check_empty_pane(pane);
+      if( window.cp_tabs )
+        cp_tabs.update_empty_message();
+    });
   }
 
 
