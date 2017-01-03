@@ -1,6 +1,19 @@
 Changelog
 =========
 
+Changes in git
+--------------
+
+* (in progress) Added support for container elements; items can now be nested.
+  This allows to create features like:
+
+ * wrapping content items in grids (such as Bootstrap layouts).
+ * wrapping elements in an "section", "panel" or "jumbotron" as children.
+ * creating child elements to simulate the effect of inlines.
+
+* Optimized admin saving, it needs less queries now.
+
+
 Changes in 2.0.4 (2018-08-27)
 -----------------------------
 
