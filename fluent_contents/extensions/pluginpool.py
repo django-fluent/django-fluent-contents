@@ -142,7 +142,7 @@ class PluginPool(object):
                     plugin_instances.append(self.plugins[name.lower()])
                 except KeyError:
                     raise PluginNotFound("No plugin named '{0}'.".format(name))
-            elif issubclass(name, ContentPlugin):
+            elif isinstance(name, type) and issubclass(name, ContentPlugin):
                 # Will also allow classes instead of strings.
                 plugin_instances.append(self.plugins[self._name_for_model[name.model]])
             else:
