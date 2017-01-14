@@ -7,6 +7,7 @@ from future.builtins import str
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import get_language
+from parler import appsettings as parler_appsettings
 from parler.utils import get_language_title
 from polymorphic.managers import PolymorphicManager
 from polymorphic.query import PolymorphicQuerySet
@@ -263,12 +264,32 @@ def get_parent_active_language_choices(parent_object, exclude_current=False):
 
     if exclude_current:
         parent_lang = get_parent_language_code(parent_object)
+        languages.discard(parent_lang)
+
+    if parler_appsettings.PARLER_LANGUAGES and not parler_appsettings.PARLER_SHOW_EXCLUDED_LANGUAGE_TABS:
+        site_id = get_parent_site_id(parent_object)
         try:
-            languages.remove(parent_lang)
+            lang_dict = parler_appsettings.PARLER_LANGUAGES[site_id]
         except KeyError:
-            pass
+            lang_dict = ()
+
+        allowed_languages = set(item['code'] for item in lang_dict)
+        languages &= allowed_languages
 
     # No multithreading issue here, object is instantiated for this user only.
     choices = [(lang, str(get_language_title(lang))) for lang in languages if lang]
     choices.sort(key=lambda tup: tup[1])
     return choices
+
+
+def get_parent_site_id(parent_object):
+    """
+    Get the site identifier of the given object.
+    It returns ``SITE_ID`` by default, which is overwritten when
+    a ``site`` or ``parent_site`` field is defined by the model.
+    """
+    return (
+        getattr(parent_object, 'parent_site_id', None) or
+        getattr(parent_object, 'site_id', None) or
+        getattr(settings, 'SITE_ID', None)
+    )
