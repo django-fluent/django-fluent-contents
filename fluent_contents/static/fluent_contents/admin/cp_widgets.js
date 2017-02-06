@@ -36,7 +36,7 @@ var cp_widgets = {};
     selector = selector || 'textarea.cp-wysiwyg-widget';
     var textareas = root.find(selector + ":not([id~=__prefix__])");
 
-    if( ! django_wysiwyg.is_loaded() )
+    if( typeof django_wysiwyg === "undefined" || ! django_wysiwyg.is_loaded() )
     {
       textareas.show();
 
