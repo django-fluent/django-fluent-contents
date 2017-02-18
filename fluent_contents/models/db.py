@@ -503,6 +503,7 @@ class ContainerItem(ContentItem):
     can_have_children = True
 
     class Meta:
+        app_label = 'fluent_contents'  # required for models subfolder
         proxy = True
         verbose_name = _('Content Container')
         verbose_name_plural = _('Content Containers')
