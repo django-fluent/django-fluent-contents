@@ -4,7 +4,7 @@
 
   inline_admin_formset = generated InlineAdminFormSet of the PlaceholderEditorInline. Each form holds a placeholder.
   inline_admin_formset.opts = PlaceholderEditorInline object
-  inline_admin_formset.original = Placeholder object
+  inline_admin_formset.form.instance = Placeholder object
   inline_admin_formset.form.'field'.value = value!
 
   inline_admin_formset.__iter__ gives all forms + a template form
@@ -15,7 +15,7 @@
 <script type="text/javascript">
   // Pass database data to the cp_admin.js file.
   // Each tab hosts a placeholder pane.
-  var placeholder_metadata = {% block js_placeholders %}[ {% for inline_admin_form in inline_admin_formset %}{% with form=inline_admin_form.form placeholder=inline_admin_form.original %}{% if not forloop.last %}{% if not forloop.first %}, {% endif %}{
+  var placeholder_metadata = {% block js_placeholders %}[ {% for inline_admin_form in inline_admin_formset %}{% with form=inline_admin_form.form placeholder=inline_admin_form.form.instance %}{% if not forloop.last %}{% if not forloop.first %}, {% endif %}{
       id: {% if placeholder and placeholder.id %}{{ placeholder.id }}{% else %}''{% endif %},{# if test added to support TEMPLATE_STRING_IF_INVALID #}
       slot: '{{ form.slot.value|default:forloop.counter0|escapejs }}',
       title: '{{ form.title.value|default:"?"|escapejs }}',
@@ -69,8 +69,8 @@
             <input type="checkbox" class="cp-placeholder-delete" name="{{ placeholder_form.DELETE.name }}" checked="checked" />
             <input type="hidden" class="cp-placeholder-delete" name="{{ placeholder_form.id.name }}" value="{{ placeholder_form.id.value|default_if_none:'' }}" />
           {% else %}
-            {% getfirstof inline_admin_form.original.get_allowed_plugins inline_admin_formset.opts.get_all_allowed_plugins as cp_plugin_list %}
-            {% getfirstof inline_admin_form.original.id '' as placeholder_id %}{# used by pane.html / controls.html #}
+            {% getfirstof inline_admin_form.form.instance.get_allowed_plugins inline_admin_formset.opts.get_all_allowed_plugins as cp_plugin_list %}
+            {% getfirstof inline_admin_form.form.instance.id '' as placeholder_id %}{# used by pane.html / controls.html #}
             {% getfirstof placeholder_form.slot.value '__EMPTY__' as placeholder_slot %}
             <div id="{{ inline_admin_formset.formset.prefix }}-{% if forloop.last %}empty{% else %}{{ forloop.counter0 }}{% endif %}" data-tab-region="{{ placeholder_slot|slugify }}" class="inline-placeholder cp-tab{% if forloop.last %} empty-form{% else %} cp-region-tab{% endif %}{% if forloop.first %} cp-tab-active{% endif %}">
 
