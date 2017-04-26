@@ -9,14 +9,21 @@ class TwitterRecentEntriesItem(ContentItem):
     """
     Content item to display recent entries of a twitter user.
     """
-    title = models.CharField(_('Title'), max_length=200, blank=True, help_text=_('You may use Twitter markup here, such as a #hashtag or @username.'))
+    title = models.CharField(_('Title'), max_length=200, blank=True,
+        help_text=_('You may use Twitter markup here, such as a #hashtag or @username.'))
 
     twitter_user = models.CharField(_('Twitter user'), max_length=75)
     amount = models.PositiveSmallIntegerField(_('Number of results'), default=5)
 
-    footer_text = models.CharField(_('Footer text'), max_length=200, blank=True, help_text=_('You may use Twitter markup here, such as a #hashtag or @username.'))
-    include_retweets = models.BooleanField(_("Include retweets"), default=False)
-    include_replies = models.BooleanField(_("Include replies"), default=False)
+    widget_id = models.CharField(_('widget id'), max_length=75,
+        help_text=_(u'See <a href="https://twitter.com/settings/widgets" target="_blank">https://twitter.com/settings/widgets</a> on how to obtain one'))
+
+    footer_text = models.CharField(_('Footer text'), max_length=200, blank=True, editable=False,
+        help_text=_('Deprecated: no longer used by Twitter widgets.'))
+    include_retweets = models.BooleanField(_("Include retweets"), default=False, editable=False,
+        help_text=_('Deprecated: no longer used by Twitter widgets.'))
+    include_replies = models.BooleanField(_("Include replies"), default=False, editable=False,
+        help_text=_('Deprecated: no longer used by Twitter widgets.'))
 
     def __str__(self):
         return self.title or self.twitter_user
@@ -31,14 +38,22 @@ class TwitterSearchItem(ContentItem):
     """
     Content item to display recent entries of a twitter user.
     """
-    title = models.CharField(_('Title'), max_length=200, blank=True, help_text=_('You may use Twitter markup here, such as a #hashtag or @username.'))
+    title = models.CharField(_('Title'), max_length=200, blank=True,
+        help_text=_('You may use Twitter markup here, such as a #hashtag or @username.'))
 
-    query = models.CharField(_('Search for'), max_length=200, default='', help_text=_('<a href="https://support.twitter.com/articles/71577" target="_blank">Twitter search syntax</a> is allowed.'))
+    query = models.CharField(_('Search for'), max_length=200, default='',
+        help_text=_('Deprecated: no longer used by Twitter widgets. Define one when creating widgets.'))
     amount = models.PositiveSmallIntegerField(_('Number of results'), default=5)
 
-    footer_text = models.CharField(_('Footer text'), max_length=200, blank=True, help_text=_('You may use Twitter markup here, such as a #hashtag or @username.'))
-    include_retweets = models.BooleanField(_("Include retweets"), default=False)
-    include_replies = models.BooleanField(_("Include replies"), default=False)
+    widget_id = models.CharField(_('widget id'), max_length=75,
+        help_text=_(u'See <a href="https://twitter.com/settings/widgets" target="_blank">https://twitter.com/settings/widgets</a> on how to obtain one'))
+    
+    footer_text = models.CharField(_('Footer text'), max_length=200, blank=True, editable=False,
+        help_text=_('Deprecated: no longer used by Twitter widgets.'))
+    include_retweets = models.BooleanField(_("Include retweets"), default=False, editable=False,
+        help_text=_('Deprecated: no longer used by Twitter widgets.'))
+    include_replies = models.BooleanField(_("Include replies"), default=False, editable=False,
+        help_text=_('Deprecated: no longer used by Twitter widgets.'))
 
     def __str__(self):
         return self.title or self.query

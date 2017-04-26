@@ -1,8 +1,7 @@
 {% extends "plugins/twitterfeed/base.html" %}
 
-{% block jsoptions %}
-      username: '{{ instance.twitter_user }}',
-      {% if not instance.include_retweets %}retweets: false,{% endif %}
-      {% if not instance.include_replies %}filter: function(t){ return t.tweet_raw_text.substring(0,1) != '@'; },{% endif %}
-      {% if not instance.include_retweets or not include_replies %}fetch: Math.max(20, {{ instance.amount }} * 4),{% endif %}
+{% load i18n %}
+
+{% block htmlcontainer %}
+  <a class="twitter-timeline" href="https://twitter.com/{{ instance.twitter_user }}" data-widget-id="{{ instance.widget_id }}" data-screen-name="{{ instance.twitter_user }}" data-show-replies="false" data-tweet-limit="{{ instance.amount }}">{% blocktrans with instance.twitter_user as username %}Tweets by @{{ username }}{% endblocktrans %}</a>
 {% endblock %}
