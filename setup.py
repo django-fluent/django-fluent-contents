@@ -60,6 +60,7 @@ setup(
         'oembeditem': ['micawber>=0.3.1', 'beautifulsoup4>=4.3.2'],
         'text': ['django-wysiwyg>=0.7.1'],
         'twitterfeed': ['twitter-text-py>=1.0.3'],
+        'picture': ['django-any-urlfield>=2.1.0', 'django-any-imagefield']
     },
     tests_require = [
         'docutils',
