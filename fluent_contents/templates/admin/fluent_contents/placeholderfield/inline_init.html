@@ -8,7 +8,7 @@
 <script type="text/javascript">
   // Pass database data to the cp_admin.js file.
   // Each tab hosts a placeholder pane.
-  var placeholder_metadata = {% block js_placeholders %}[ {% for inline_admin_form in inline_admin_formset %}{% with form=inline_admin_form.form placeholder=inline_admin_form.original %}{% if not forloop.last %}{% if not forloop.first %}, {% endif %}{
+  var placeholder_metadata = {% block js_placeholders %}[ {% for inline_admin_form in inline_admin_formset %}{% with form=inline_admin_form.form placeholder=inline_admin_form.form.instance %}{% if not forloop.last %}{% if not forloop.first %}, {% endif %}{
     id: {% if placeholder and placeholder.id %}{{ placeholder.id }}{% else %}''{% endif %},{# if test added to support TEMPLATE_STRING_IF_INVALID #}
     slot: '{{ form.slot.value|default:forloop.counter0|escapejs }}',
     title: '{{ form.title.value|default:"?"|escapejs }}',
