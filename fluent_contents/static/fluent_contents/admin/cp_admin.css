@@ -61,6 +61,11 @@ html.cp-jsenabled .inline-contentitem-group {
 .cp-item-up   { background-image: url(img/admin/arrow_up.gif); }
 .cp-item-down { background-image: url(img/admin/arrow_down.gif); }
 .cp-item-move { background-image: url(img/admin/arrow-move.png); }
+.cp-item-drag { background-image: url(img/admin/arrow-move-ns.png); }
+
+.ui-draggable-dragging {
+  z-index: 9999;
+}
 
 #cp-tabmain .cp-item-move { background-image: url(img/admin/arrow-move-we.png); }
 /* .cp-placeholderfield .cp-item-move { background-image: url(img/admin/arrow-move-ns.png); } */
