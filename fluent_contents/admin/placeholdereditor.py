@@ -311,7 +311,7 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
             }
             if django.VERSION >= (1, 8):
                 context = RequestContext(request, context)
-                form_html = render_to_string(template_name, context)
+                form_html = render_to_string(template_name, context.flatten())
             else:
                 form_html = render_to_string(template_name, context, context_instance=RequestContext(request))
 

@@ -354,7 +354,7 @@ class RenderingPipe(object):
             if django.VERSION >= (1, 8):
                 # Avoid RemovedInDjango110Warning
                 context = PluginContext(self.request, context)
-                merged_html = render_to_string(template_name, context)
+                merged_html = render_to_string(template_name, context.flatten())
             else:
                 merged_html = render_to_string(template_name, context, context_instance=PluginContext(self.request))
 
