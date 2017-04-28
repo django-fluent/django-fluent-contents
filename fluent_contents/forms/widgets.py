@@ -85,7 +85,8 @@ class WysiwygWidget(AdminTextareaWidget):
 
     def render(self, name, value, attrs=None):
         value = smart_text(value or u'')
-        final_attrs = self.build_attrs(attrs, name=name)
+        final_attrs = self.build_attrs(attrs)  # signature changed in Django 1.11
+        final_attrs['name'] = name
 
         if 'class' in final_attrs:
             final_attrs['class'] += ' cp-wysiwyg-widget'
