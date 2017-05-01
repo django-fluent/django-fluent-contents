@@ -4,8 +4,7 @@ from django.contrib.admin.templatetags.admin_urls import admin_urlname
 from django.contrib.auth.models import User
 from django.contrib.messages.middleware import MessageMiddleware
 from django.core.urlresolvers import reverse
-from django.test import RequestFactory
-from django.test.utils import override_settings  # import location for Django 1.6-
+from django.test import RequestFactory, override_settings
 from fluent_contents.models import Placeholder
 from fluent_contents.tests import factories
 from fluent_contents.tests.testapp.admin import PlaceholderFieldTestPageAdmin
@@ -52,8 +51,6 @@ class AdminTest(AppTestCase):
         formdata.update({
             'title': 'TEST1',
             'placeholder-fs-TOTAL_FORMS': '1',
-            'placeholder-fs-MAX_NUM_FORMS': '',   # Needed for Django <= 1.4.3
-            'placeholder-fs-INITIAL_FORMS': '0',  # Needed for Django 1.3
             'placeholder-fs-0-slot': contents_slot,
             'placeholder-fs-0-role': Placeholder.MAIN,
             'rawhtmltestitem-TOTAL_FORMS': '1',
@@ -120,7 +117,7 @@ class AdminTest(AppTestCase):
 
     def _post_add(self, modeladmin, formdata):
         opts = modeladmin.opts
-        url = reverse('admin:{0}_{1}_add'.format(*_get_url_format(opts)))
+        url = reverse('admin:{0}_{1}_add'.format(opts.app_label, opts.model_name))
 
         # Build request
         # Add properties which middleware would typically do
@@ -134,14 +131,11 @@ class AdminTest(AppTestCase):
         Return the formdata that the management forms need.
         """
         opts = modeladmin.opts
-        url = reverse('admin:{0}_{1}_add'.format(*_get_url_format(opts)))
+        url = reverse('admin:{0}_{1}_add'.format(opts.app_label, opts.model_name))
         request = self.factory.get(url)
         request.user = self.admin_user
 
-        if hasattr(modeladmin, 'get_inline_instances'):
-            inline_instances = modeladmin.get_inline_instances(request)  # Django 1.4
-        else:
-            inline_instances = [inline_class(modeladmin.model, self.admin_site) for inline_class in modeladmin.inlines]
+        inline_instances = modeladmin.get_inline_instances(request)
 
         forms = []
         for inline_instance in inline_instances:
@@ -164,10 +158,3 @@ class AdminTest(AppTestCase):
             return u"== Context ==\n{0}\n\n== Response ==\n{1}".format(pformat(response.context_data), response.render().content)
         else:
             return response.content
-
-
-def _get_url_format(opts):
-    try:
-        return opts.app_label, opts.model_name  # Django 1.7 format
-    except AttributeError:
-        return opts.app_label, opts.module_name

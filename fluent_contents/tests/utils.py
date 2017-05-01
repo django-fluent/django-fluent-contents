@@ -2,6 +2,7 @@
 Utils for internal tests, and utils for testing third party plugins.
 """
 from __future__ import print_function
+from importlib import import_module
 import django
 from future.builtins import str
 from django.conf import settings
@@ -13,11 +14,6 @@ import os
 
 from fluent_contents import rendering
 from fluent_contents.rendering.utils import get_dummy_request
-
-try:
-    from importlib import import_module
-except ImportError:
-    from django.utils.importlib import import_module  # Python 2.6
 
 
 __all__ = (
@@ -84,10 +80,7 @@ class AppTestCase(TestCase):
                         get_app_template_dirs.cache_clear()
 
             if run_syncdb:
-                if django.VERSION < (1, 7):
-                    call_command('syncdb', verbosity=0)  # may run south's overlaid version
-                else:
-                    call_command('migrate', verbosity=0)
+                call_command('migrate', verbosity=0)
 
         # Create basic objects
         # 1.4 does not create site automatically with the defined SITE_ID, 1.3 does.

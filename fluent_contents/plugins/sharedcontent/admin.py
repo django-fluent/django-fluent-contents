@@ -26,8 +26,7 @@ class SharedContentAdmin(MultiSiteAdminMixin, TranslatableAdmin, PlaceholderFiel
                 'slug': ('title',)
             }
 
-    # Using declared_fieldsets for Django 1.4, otherwise fieldsets= would work too.
-    declared_fieldsets = (
+    fieldsets = (
         (None, {
             'fields': ('title', 'contents')
         }),
@@ -38,7 +37,7 @@ class SharedContentAdmin(MultiSiteAdminMixin, TranslatableAdmin, PlaceholderFiel
     )
 
     if sharedcontent_appsettings.FLUENT_SHARED_CONTENT_ENABLE_CROSS_SITE:
-        declared_fieldsets[1][1]['fields'] += ('is_cross_site',)
+        fieldsets[1][1]['fields'] += ('is_cross_site',)
 
 
 admin.site.register(SharedContent, SharedContentAdmin)

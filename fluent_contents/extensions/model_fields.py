@@ -34,14 +34,6 @@ def _get_path(cls):
 
 class MigrationMixin(object):
 
-    def south_field_triple(self):
-        # Undo the softdep feature
-        # Show as Plugin..Field in the migrations.
-        from south.modelsinspector import introspector
-        path = _get_path(self.__class__)
-        args, kwargs = introspector(self)
-        return (path, args, kwargs)
-
     def deconstruct(self):
         # Don't masquerade as optional field like fluent-utils does,
         # Show as Plugin..Field in the migrations.

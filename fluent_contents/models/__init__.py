@@ -15,6 +15,7 @@ which mirrors the relevant fields of the :class:`Placeholder` model.
 """
 from future.builtins import str
 from future.utils import python_2_unicode_compatible
+from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.forms import Media
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe, SafeData
@@ -30,14 +31,6 @@ __all__ = (
 )
 
 _ALLOWED_ROLES = list(dict(Placeholder.ROLES).keys())
-
-try:
-    # Django 1.6 started using a sentinel value to indicate the default.
-    # The values 0 and None became allowed values which mean set+forget and indefinitely.
-    from django.core.cache.backends.base import DEFAULT_TIMEOUT
-except ImportError:
-    # Provide the value for older Django versions in a compatible way.
-    DEFAULT_TIMEOUT = object()
 
 
 class PlaceholderData(object):

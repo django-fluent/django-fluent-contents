@@ -4,6 +4,7 @@ from django.conf import settings
 from django.conf.urls import url
 from django.contrib.admin import ModelAdmin
 from django.contrib.admin.helpers import InlineAdminFormSet
+from django.contrib.contenttypes.admin import GenericInlineModelAdmin
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import signals
 from django.dispatch import receiver
@@ -17,11 +18,6 @@ from fluent_contents.admin.genericextensions import BaseInitialGenericInlineForm
 from fluent_contents.models import Placeholder
 from fluent_contents.models.managers import get_parent_active_language_choices
 from fluent_utils.ajax import JsonResponse
-
-try:
-    from django.contrib.contenttypes.admin import GenericInlineModelAdmin  # Django 1.7
-except ImportError:
-    from django.contrib.contenttypes.generic import GenericInlineModelAdmin
 
 
 class PlaceholderInlineFormSet(BaseInitialGenericInlineFormSet):
@@ -192,9 +188,6 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
         """
         Create the inlines for the admin, including the placeholder and contentitem inlines.
         """
-        # Django 1.3: inlines were created once in self.inline_instances (not supported anymore)
-        # Django 1.4: inlines are created per request
-        # Django 1.5: 'obj' parameter was added so it can be passed to 'has_change_permission' and friends.
         inlines = super(PlaceholderEditorAdmin, self).get_inline_instances(request, *args, **kwargs)
 
         extra_inline_instances = []
@@ -214,7 +207,8 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
 
     def get_urls(self):
         urls = super(PlaceholderEditorAdmin, self).get_urls()
-        info = _get_url_format(self.model._meta)
+        opts = self.model._meta
+        info = opts.app_label, opts.model_name
         return [
             url(
                 r'^(?P<object_id>\d+)/api/get_placeholder_data/',
@@ -256,12 +250,7 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
         placeholder_slots = dict(Placeholder.objects.parent(obj).values_list('id', 'slot'))
         all_forms = []
 
-        if django.VERSION >= (1,7):
-            formsets_with_inlines = self.get_formsets_with_inlines(request, obj=obj)
-        else:
-            # Removed in Django 1.9:
-            formsets_with_inlines = zip(self.get_formsets(request, obj), inline_instances)
-
+        formsets_with_inlines = self.get_formsets_with_inlines(request, obj=obj)
         for FormSet, inline in formsets_with_inlines:
             # Only ContentItem inlines
             if isinstance(inline, PlaceholderEditorInline) \
@@ -281,11 +270,7 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
         # as some form fields (e.g. picture field or MultiValueField) have a different representation.
         # The only way to pass a form copy to the client is by actually rendering it.
         # Hence, emulating change_view code here:
-        if django.VERSION >= (1, 6):
-            queryset = inline.get_queryset(request)
-        else:
-            queryset = inline.queryset(request)
-
+        queryset = inline.get_queryset(request)
         formset = FormSet(instance=obj, prefix='', queryset=queryset)
         fieldsets = list(inline.get_fieldsets(request, obj))
         readonly = list(inline.get_readonly_fields(request, obj))
@@ -349,10 +334,3 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
 def _get_pk_on_placeholder_delete(instance, **kwargs):
     # Make sure the old PK can still be tracked
     instance._old_pk = instance.pk
-
-
-def _get_url_format(opts):
-    try:
-        return opts.app_label, opts.model_name  # Django 1.7 format
-    except AttributeError:
-        return opts.app_label, opts.module_name

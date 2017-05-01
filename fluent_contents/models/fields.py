@@ -83,19 +83,12 @@ class PlaceholderRel(GenericRel):
         )
 
         # TODO: make sure reverse queries work properly
-        if django.VERSION >= (1, 6, 0):
-            super(PlaceholderRel, self).__init__(
-                field=field,
-                to=Placeholder,
-                related_name=None,  # NOTE: must be unique for app/model/slot.
-                limit_choices_to=limit_choices_to
-            )
-        else:
-            super(PlaceholderRel, self).__init__(
-                to=Placeholder,
-                related_name=None,  # NOTE: must be unique for app/model/slot.
-                limit_choices_to=limit_choices_to
-            )
+        super(PlaceholderRel, self).__init__(
+            field=field,
+            to=Placeholder,
+            related_name=None,  # NOTE: must be unique for app/model/slot.
+            limit_choices_to=limit_choices_to
+        )
 
 
 class PlaceholderFieldDescriptor(object):
@@ -250,19 +243,3 @@ class PlaceholderField(PlaceholderRelation):
             return None   # Still allow ModelForm / admin to open and create a new Placeholder if the table was truncated.
 
         return placeholder.id if placeholder else None  # Be consistent with other fields, like ForeignKey
-
-
-if django.VERSION < (1, 7):
-    try:
-        from south.modelsinspector import add_ignored_fields
-    except ImportError:
-        pass
-    else:
-        # South 0.7.x ignores GenericRelation fields but doesn't ignore subclasses.
-        # Taking the same fix as applied in http://south.aeracode.org/ticket/414
-        _name_re = "^" + __name__.replace(".", "\.")
-        add_ignored_fields((
-            _name_re + "\.PlaceholderField",
-            _name_re + "\.PlaceholderRelation",
-            _name_re + "\.ContentItemRelation",
-        ))

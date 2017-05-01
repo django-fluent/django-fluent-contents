@@ -151,8 +151,8 @@ class Placeholder(models.Model):
             return None
 
     def delete(self, using=None):
-        # Workaround for the fact that South 0.7.4 does not support on_delete=SET_NULL yet
-        # It doesn't add that attribute to the foreign key, causing a DatabaseError instead.
+        # Some databases may not have a proper ON DELETE rule set, causing a DatabaseError on delete.
+        # This happened because South 0.7.4 didn't support on_delete=SET_NULL.
         ContentItem.objects.filter(placeholder=self).update(placeholder=None)
         super(Placeholder, self).delete(using)
 
@@ -177,7 +177,7 @@ class ContentItemMetaClass(PolymorphicModelBase):
                 model_name = db_table[len(app_label) + 1:]
                 new_class._meta.db_table = truncate_name("contentitem_%s_%s" % (app_label, model_name), connection.ops.max_name_length())
                 if hasattr(new_class._meta, 'original_attrs'):
-                    # Make sure that the Django 1.7 migrations also pick up this change!
+                    # Make sure that the Django migrations also pick up this change!
                     # Changing the db_table beforehand might be cleaner,
                     # but also requires duplicating the whole algorithm that Django uses.
                     new_class._meta.original_attrs['db_table'] = new_class._meta.db_table
