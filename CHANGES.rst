@@ -1,6 +1,15 @@
 Changelog
 =========
 
+Changes in 1.2 (2017-05-01)
+---------------------------
+
+* Django 1.11 support.
+* Fixd garbled placeholder data in admin forms submitted with errors
+* Fixed JavaScript ``django_wysiwyg`` error when text plugin is not included.
+* Dropped Django 1.5, 1.6 and Python 2.6 support.
+
+
 Changes in 1.1.11 (2016-12-21)
 ------------------------------
 
