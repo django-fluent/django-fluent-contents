@@ -150,11 +150,11 @@ class Placeholder(models.Model):
         except AttributeError:
             return None
 
-    def delete(self, using=None):
+    def delete(self, *args, **kwargs):
         # Some databases may not have a proper ON DELETE rule set, causing a DatabaseError on delete.
         # This happened because South 0.7.4 didn't support on_delete=SET_NULL.
         ContentItem.objects.filter(placeholder=self).update(placeholder=None)
-        super(Placeholder, self).delete(using)
+        super(Placeholder, self).delete(*args, **kwargs)
 
     delete.alters_data = True
 
