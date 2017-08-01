@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Changes in 1.2.1 (2017-08-10)
+-----------------------------
+
+* Fixed Django 1.10+ wanting to create new migrations.
+* Fixed inconsistent ordering of "markup item" language choices.
+* Fixed str/bytes differences in migrations between Python 2 and 3.
+
+
 Changes in 1.2 (2017-05-01)
 ---------------------------
 
