@@ -1,8 +1,10 @@
+from __future__ import unicode_literals
 from future.builtins import str
 from future.utils import python_2_unicode_compatible
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import PluginImageField, PluginUrlField
+from fluent_contents.models import ContentItemManager
 from fluent_contents.models.db import ContentItem
 from . import appsettings
 
@@ -26,6 +28,8 @@ class PictureItem(ContentItem):
     align = models.CharField(_("Align"), max_length=10, choices=ALIGN_CHOICES, blank=True)
     url = PluginUrlField(_("URL"), blank=True)
     in_new_window = models.BooleanField(_("Open in a new window"), default=False, blank=True)
+
+    objects = ContentItemManager()  # Avoid Django 1.10 migrations
 
     class Meta:
         verbose_name = _("Picture")

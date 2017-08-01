@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from future.utils import python_2_unicode_compatible
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -38,6 +39,8 @@ class MarkupItem(ContentItem):
 
     # Store the language to keep rendering intact while switching settings.
     language = models.CharField(_('Language'), max_length=30, editable=False, db_index=True, choices=backend.LANGUAGE_CHOICES)
+
+    objects = ContentItemManager()  # Avoid Django 1.10 migrations
 
     class Meta:
         verbose_name = _('Markup code')
@@ -84,7 +87,7 @@ def _create_markup_model(fixed_language):
 
     classname = "{0}MarkupItem".format(fixed_language.capitalize())
 
-    new_class = type(classname, (MarkupItem,), {
+    new_class = type(str(classname), (MarkupItem,), {
         '__module__': MarkupItem.__module__,
         'objects': objects,
         'save': save,

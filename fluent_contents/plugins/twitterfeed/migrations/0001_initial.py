@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('contentitem_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem')),
                 ('title', models.CharField(help_text='You may use Twitter markup here, such as a #hashtag or @username.', max_length=200, verbose_name='Title', blank=True)),
-                ('query', models.CharField(default=b'', help_text='<a href="https://support.twitter.com/articles/71577" target="_blank">Twitter search syntax</a> is allowed.', max_length=200, verbose_name='Search for')),
+                ('query', models.CharField(default='', help_text='<a href="https://support.twitter.com/articles/71577" target="_blank">Twitter search syntax</a> is allowed.', max_length=200, verbose_name='Search for')),
                 ('amount', models.PositiveSmallIntegerField(default=5, verbose_name='Number of results')),
                 ('footer_text', models.CharField(help_text='You may use Twitter markup here, such as a #hashtag or @username.', max_length=200, verbose_name='Footer text', blank=True)),
                 ('include_retweets', models.BooleanField(default=False, verbose_name='Include retweets')),

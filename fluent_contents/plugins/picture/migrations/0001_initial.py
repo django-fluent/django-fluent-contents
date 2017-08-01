@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
                 ('contentitem_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem')),
                 ('image', fluent_contents.extensions.PluginImageField(max_length=100, verbose_name='Image')),
                 ('caption', models.TextField(verbose_name='Caption', blank=True)),
-                ('align', models.CharField(blank=True, max_length=10, verbose_name='Align', choices=[(b'left', 'Left'), (b'center', 'Center'), (b'right', 'Right')])),
+                ('align', models.CharField(blank=True, max_length=10, verbose_name='Align', choices=[('left', 'Left'), ('center', 'Center'), ('right', 'Right')])),
                 ('url', fluent_contents.extensions.PluginUrlField(max_length=300, verbose_name='URL', blank=True)),
                 ('in_new_window', models.BooleanField(default=False, verbose_name='Open in a new window')),
             ],

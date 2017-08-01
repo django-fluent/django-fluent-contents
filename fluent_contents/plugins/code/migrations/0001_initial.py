@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
             name='CodeItem',
             fields=[
                 ('contentitem_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem')),
-                ('language', models.CharField(default=b'html', max_length=50, verbose_name='Language')),
+                ('language', models.CharField(default='html', max_length=50, verbose_name='Language')),
                 ('code', models.TextField(verbose_name='Code')),
                 ('linenumbers', models.BooleanField(default=False, verbose_name='Show line numbers')),
             ],

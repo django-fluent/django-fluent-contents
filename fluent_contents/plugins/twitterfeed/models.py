@@ -1,6 +1,9 @@
+from __future__ import unicode_literals
 from future.utils import python_2_unicode_compatible
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+
+from fluent_contents.models import ContentItemManager
 from fluent_contents.models.db import ContentItem
 
 
@@ -17,6 +20,8 @@ class TwitterRecentEntriesItem(ContentItem):
     footer_text = models.CharField(_('Footer text'), max_length=200, blank=True, help_text=_('You may use Twitter markup here, such as a #hashtag or @username.'))
     include_retweets = models.BooleanField(_("Include retweets"), default=False)
     include_replies = models.BooleanField(_("Include replies"), default=False)
+
+    objects = ContentItemManager()  # Avoid Django 1.10 migrations
 
     def __str__(self):
         return self.title or self.twitter_user
@@ -39,6 +44,8 @@ class TwitterSearchItem(ContentItem):
     footer_text = models.CharField(_('Footer text'), max_length=200, blank=True, help_text=_('You may use Twitter markup here, such as a #hashtag or @username.'))
     include_retweets = models.BooleanField(_("Include retweets"), default=False)
     include_replies = models.BooleanField(_("Include replies"), default=False)
+
+    objects = ContentItemManager()  # Avoid Django 1.10 migrations
 
     def __str__(self):
         return self.title or self.query

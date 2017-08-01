@@ -1,6 +1,10 @@
 from __future__ import print_function
 import html5lib
 from unittest import TestCase
+
+from fluent_contents.models import ContentItemManager
+from fluent_contents.models.managers import ContentItemQuerySet
+from fluent_contents.plugins.text.models import TextItem
 from fluent_contents.utils.html import clean_html
 
 
@@ -9,6 +13,13 @@ class TextPluginTests(TestCase):
     Test whether the sanitation works as expected.
     """
     HTML1_ORIGINAL  = u'<p><img src="/media/image.jpg" alt="" width="460" height="300" />&nbsp;&nbsp;<img style="float: left;" src="/media/image2.jpg" alt="" width="460" height="130" /></p><p>&nbsp;</p>'
+
+    def test_default_manager(self):
+        """
+        Test that the default manager is correct.
+        """
+        self.assertIsInstance(TextItem.objects, ContentItemManager)
+        self.assertIsInstance(TextItem.objects.all(), ContentItemQuerySet)
 
     def test_broken_html5lib(self):
         """

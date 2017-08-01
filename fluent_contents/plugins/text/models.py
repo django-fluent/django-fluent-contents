@@ -4,7 +4,7 @@ from django.utils.html import strip_tags
 from django.utils.text import Truncator
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents.extensions import PluginHtmlField
-from fluent_contents.models import ContentItem
+from fluent_contents.models import ContentItem, ContentItemManager
 from fluent_contents.utils.filters import apply_filters
 
 
@@ -15,6 +15,8 @@ class TextItem(ContentItem):
     """
     text = PluginHtmlField(_('text'), blank=True)
     text_final = models.TextField(editable=False, blank=True, null=True)
+
+    objects = ContentItemManager()  # Avoid Django 1.10 migrations
 
     class Meta:
         verbose_name = _('Text')

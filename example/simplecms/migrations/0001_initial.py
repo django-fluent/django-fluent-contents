@@ -19,10 +19,10 @@ class Migration(migrations.Migration):
             name='Page',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200, verbose_name=b'Title')),
-                ('slug', models.SlugField(verbose_name=b'Slug')),
-                ('_cached_url', models.CharField(blank=True, db_index=True, default=b'', editable=False, max_length=300)),
-                ('template_name', models.CharField(choices=[(b'theme1/pages/standard.html', b'Standard'), (b'theme1/pages/standard-twocols.html', b'Two columns')], default=b'theme1/pages/standard.html', max_length=255, verbose_name=b'Layout')),
+                ('title', models.CharField(max_length=200, verbose_name='Title')),
+                ('slug', models.SlugField(verbose_name='Slug')),
+                ('_cached_url', models.CharField(blank=True, db_index=True, default='', editable=False, max_length=300)),
+                ('template_name', models.CharField(choices=[('theme1/pages/standard.html', 'Standard'), ('theme1/pages/standard-twocols.html', 'Two columns')], default='theme1/pages/standard.html', max_length=255, verbose_name='Layout')),
                 ('lft', models.PositiveIntegerField(db_index=True, editable=False)),
                 ('rght', models.PositiveIntegerField(db_index=True, editable=False)),
                 ('tree_id', models.PositiveIntegerField(db_index=True, editable=False)),
@@ -33,8 +33,5 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Page',
                 'verbose_name_plural': 'Pages',
             },
-            managers=[
-                ('_default_manager', django.db.models.manager.Manager()),
-            ],
         ),
     ]

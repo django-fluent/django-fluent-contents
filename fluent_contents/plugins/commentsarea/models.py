@@ -3,7 +3,7 @@ from django.db import models
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import signals
-from fluent_contents.models import ContentItem
+from fluent_contents.models import ContentItem, ContentItemManager
 from fluent_utils.softdeps.comments import get_model as get_comment_model
 from fluent_utils.softdeps.comments import signals as comments_signals
 
@@ -13,6 +13,8 @@ CommentModel = get_comment_model()
 @python_2_unicode_compatible
 class CommentsAreaItem(ContentItem):
     allow_new = models.BooleanField(_("Allow posting new comments"), default=True)
+
+    objects = ContentItemManager()  # Avoid Django 1.10 migrations
 
     class Meta:
         verbose_name = _('Comments area')

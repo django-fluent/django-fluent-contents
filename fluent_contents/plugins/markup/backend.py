@@ -3,6 +3,7 @@ The rendering support of the markup plugin.
 
 This uses the backends from the actual text processing libraries.
 """
+from __future__ import unicode_literals
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.safestring import mark_safe
 from fluent_contents.plugins.markup import appsettings
@@ -53,6 +54,7 @@ if appsettings.FLUENT_MARKUP_USE_DJANGO_MARKUP:
 
 # Format as choices
 LANGUAGE_CHOICES = [(n, _languageNames.get(n, n.capitalize())) for n in list(SUPPORTED_LANGUAGES.keys())]
+LANGUAGE_CHOICES = sorted(LANGUAGE_CHOICES)
 LANGUAGE_NAMES = dict(LANGUAGE_CHOICES)
 
 

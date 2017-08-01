@@ -19,8 +19,8 @@ class Migration(migrations.Migration):
             name='Article',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200, verbose_name=b'Title')),
-                ('slug', models.SlugField(unique=True, verbose_name=b'Slug')),
+                ('title', models.CharField(max_length=200, verbose_name='Title')),
+                ('slug', models.SlugField(unique=True, verbose_name='Slug')),
             ],
             options={
                 'verbose_name': 'Article',
@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
             name='ArticleTextItem',
             fields=[
                 ('contentitem_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem')),
-                ('text', models.TextField(verbose_name=b'Text')),
+                ('text', models.TextField(verbose_name='Text')),
             ],
             options={
                 'db_table': 'contentitem_article_articletextitem',

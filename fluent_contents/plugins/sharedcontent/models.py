@@ -5,7 +5,7 @@ from django.contrib.sites.models import Site
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from fluent_contents.models.mixins import CachedModelMixin
-from fluent_contents.models import ContentItem, PlaceholderField, ContentItemRelation
+from fluent_contents.models import ContentItem, PlaceholderField, ContentItemRelation, ContentItemManager
 from fluent_contents.plugins.sharedcontent.cache import get_shared_content_cache_key_ptr
 from parler.models import TranslatableModel, TranslatedFields
 from .managers import SharedContentManager
@@ -75,6 +75,8 @@ class SharedContentItem(ContentItem):
     The contentitem to include in a page.
     """
     shared_content = models.ForeignKey(SharedContent, verbose_name=_('Shared content'), related_name='shared_content_items')
+
+    objects = ContentItemManager()  # Avoid Django 1.10 migrations
 
     class Meta:
         verbose_name = _('Shared content')

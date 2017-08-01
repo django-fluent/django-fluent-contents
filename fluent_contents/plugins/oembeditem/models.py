@@ -4,6 +4,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from micawber import ProviderException
+
+from fluent_contents.models import ContentItemManager
 from fluent_contents.models.db import ContentItem
 from fluent_contents.plugins.oembeditem.fields import OEmbedUrlField
 from fluent_contents.plugins.oembeditem import backend, appsettings
@@ -45,6 +47,8 @@ class AbstractOEmbedItem(ContentItem):
     height = models.IntegerField(editable=False, null=True, blank=True)
     width = models.IntegerField(editable=False, null=True, blank=True)
     html = models.TextField(editable=False, null=True, blank=True)
+
+    objects = ContentItemManager()  # Avoid Django 1.10 migrations
 
     class Meta:
         abstract = True
@@ -129,6 +133,8 @@ class OEmbedItem(AbstractOEmbedItem):
     """
     Embedded media via OEmbed
     """
+
+    objects = ContentItemManager()  # Avoid Django 1.10 migrations
 
     class Meta:
         verbose_name = _("Online media")

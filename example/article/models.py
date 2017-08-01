@@ -1,8 +1,9 @@
+from __future__ import unicode_literals
 from future.utils import python_2_unicode_compatible
 from django.core.urlresolvers import reverse
 from django.db import models
 from fluent_contents.models.fields import PlaceholderField, PlaceholderRelation, ContentItemRelation
-from fluent_contents.models import ContentItem
+from fluent_contents.models import ContentItem, ContentItemManager
 
 
 class Article(models.Model):
@@ -30,6 +31,8 @@ class ArticleTextItem(ContentItem):
     This model can be placed on every placeholder field / page.
     """
     text = models.TextField("Text")
+
+    objects = ContentItemManager()  # Avoid Django 1.10 migrations
 
     class Meta:
         verbose_name = "Article text item"

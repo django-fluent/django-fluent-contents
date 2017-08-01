@@ -39,6 +39,7 @@ class MigrationMixin(object):
         # Show as Plugin..Field in the migrations.
         name, path, args, kwargs = super(MigrationMixin, self).deconstruct()
         path = _get_path(self.__class__)
+        kwargs.pop('upload_to', None)
         return name, path, args, kwargs
 
 
