@@ -1,6 +1,10 @@
 from django.template import Library
 from django.utils.safestring import mark_safe
-from twitter_text import TwitterText
+
+try:
+    from twitter_text import TwitterText
+except ImportError:
+    raise ImportError("The 'twitter-text-py' package is required to use the 'twitterfeed' plugin.")
 
 register = Library()
 
