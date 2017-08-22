@@ -1,4 +1,7 @@
+from collections import deque
+
 from django.contrib.contenttypes.admin import BaseGenericInlineFormSet, GenericInlineModelAdmin
+from django.core.exceptions import ValidationError
 from django.utils.lru_cache import lru_cache
 from polymorphic_tree.admin import PolymorphicMPTTParentModelAdmin, PolymorphicMPTTChildModelAdmin
 
@@ -18,6 +21,7 @@ BASE_FIELDS = (
     'parent_item',
     'parent_item_uid',
     'sort_order',
+    'item_uid',
 )
 
 
@@ -77,6 +81,54 @@ class BaseContentItemFormSet(BaseGenericPolymorphicInlineFormSet):
         """
         self._deleted_placeholders = deleted_placeholders
 
+    def save(self, commit=True):
+        # Trouble in paradise: the objects can't be saved directly,
+        # as their saving order depends on the parents being saved first.
+        changed_objects = super(BaseContentItemFormSet, self).save(commit=False)
+        changed_objects = self._order_by_parent(changed_objects)
+
+        if commit:
+            for contentitem in changed_objects:
+                contentitem.save()
+            self.save_m2m()
+        return changed_objects
+
+    def _order_by_parent(self, contentitems):
+        """
+        Order the list of items by their parent.
+        This uses the temporary ``_item_uid`` fields that _save_uuid_fields() added.
+        """
+        item_by_uuid = {item._item_uid: item for item in contentitems if item._item_uid}
+        queue = deque(contentitems)
+        seen = set()  # fast 'in' lookup
+        result = []
+        loops = 0
+
+        while queue:
+            # Avoid recursion over incomplete parent/child relationships.
+            loops += 1
+            if loops > len(queue):
+                raise RuntimeError("Unable to restore tree structure of new items: {}".format(
+                    ", ".join("<ContentItem {}/{} -> {}>".format(
+                        item.pk, item._item_uid, item._parent_item_uid
+                    ) for item in queue)
+                ))
+
+            item = queue.popleft()
+            if not item._parent_item_uid or item._parent_item_uid in seen:
+                # Place in result list
+                result.append(item)
+                seen.add(item._item_uid)
+                loops = 0
+
+                # Relink to the parent since both are known now.
+                if not item.parent_item_id and item._parent_item_uid:
+                    item.parent = item_by_uuid[item._parent_item_uid]
+            else:
+                queue.append(item)
+
+        return result
+
     def save_new(self, form, commit=True):
         # This is the moment to link the form 'placeholder_slot' field to a placeholder..
         # Notice that the PlaceholderEditorInline needs to be included before any ContentItemInline,
@@ -87,6 +139,7 @@ class BaseContentItemFormSet(BaseGenericPolymorphicInlineFormSet):
         # This allows it to insert the parent relation (ct_field / ct_fk_field) since they don't exist in the form.
         # It then calls form.cleaned_data to get all values, and use Field.save_form_data() to store them in the model instance.
         self._set_placeholder_id(form)
+        self._save_uuid_fields(form)
 
         # As save_new() completely circumvents form.save(), have to insert the language code here.
         instance = super(BaseContentItemFormSet, self).save_new(form, commit=False)
@@ -101,6 +154,7 @@ class BaseContentItemFormSet(BaseGenericPolymorphicInlineFormSet):
     def save_existing(self, form, instance, commit=True):
         if commit:
             self._set_placeholder_id(form)
+        self._save_uuid_fields(form)
         return form.save(commit=commit)
 
     def _set_placeholder_id(self, form):
@@ -124,6 +178,12 @@ class BaseContentItemFormSet(BaseGenericPolymorphicInlineFormSet):
                 # ContentItem was in a deleted placeholder, and gets orphaned.
                 form.cleaned_data['placeholder'] = None
                 form.instance.placeholder = None
+
+    def _save_uuid_fields(self, form):
+        # Make sure the uuid fields are temporary stored
+        # so they can be linked once all objects are constructed.
+        form.instance._item_uid = form.cleaned_data.get('item_uid', None)
+        form.instance._parent_item_uid = form.cleaned_data.get('parent_item_uid', None)
 
     @classmethod
     def get_default_prefix(cls):

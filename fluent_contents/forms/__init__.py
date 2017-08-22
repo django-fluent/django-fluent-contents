@@ -20,6 +20,7 @@ class ContentItemForm(PolymorpicMPTTAdminForm):
     parent_item = OptimizableModelChoiceField(widget=forms.HiddenInput(), required=False, queryset=ContentItem.objects.none())
     parent_item_uid = forms.CharField(widget=forms.HiddenInput(), required=False)  # to link items before saving
     sort_order = forms.IntegerField(widget=forms.HiddenInput(), initial=1)
+    item_uid = forms.CharField(widget=forms.HiddenInput(), required=False)
 
     # The placeholder_slot is an extra field that does not exist in the model.
     # When a page is created, the placeholder_id cannot be filled in yet.
@@ -48,5 +49,6 @@ class ContentItemForm(PolymorpicMPTTAdminForm):
         self.fields['parent_item'].fill_cache(contentitems)
 
     def save(self, commit=True):
-        self.instance.clear_cache()   # Make sure the cache is cleared. No matter what instance.save() does.
+        if commit:
+            self.instance.clear_cache()   # Make sure the cache is cleared. No matter what instance.save() does.
         return super(ContentItemForm, self).save(commit)

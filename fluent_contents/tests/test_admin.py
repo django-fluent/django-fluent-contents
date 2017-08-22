@@ -17,6 +17,7 @@ class AdminTest(AdminTestCase):
     """
     model = PlaceholderFieldTestPage
     admin_class = PlaceholderFieldTestPageAdmin
+    maxDiff = 1000
 
     def setUp(self):
         self.settings = override_settings(
@@ -128,11 +129,12 @@ class AdminTest(AdminTestCase):
             'contentitem-0-html': u'<b>foo</b>',
             'contentitem-0-id': item1.pk,
             'contentitem-0-parent_item': None,
-            'contentitem-0-parent_item_uid': 1,
+            'contentitem-0-parent_item_uid': None,
             'contentitem-0-placeholder': 1,
             'contentitem-0-placeholder_slot': None,
             'contentitem-0-polymorphic_ctype': item1.polymorphic_ctype_id,
             'contentitem-0-sort_order': 1,
+            'contentitem-0-item_uid': None,
         })
 
         # Update the items, adding a new one
@@ -141,11 +143,12 @@ class AdminTest(AdminTestCase):
             'contentitem-1-html': u'<b>bar</b>',
             'contentitem-1-id': None,
             'contentitem-1-parent_item': None,
-            'contentitem-1-parent_item_uid': 1,
+            'contentitem-1-parent_item_uid': None,
             'contentitem-1-placeholder': None,
             'contentitem-1-placeholder_slot': slot,
             'contentitem-1-polymorphic_ctype': ContentType.objects.get_for_model(TimeoutTestItem).pk,
             'contentitem-1-sort_order': 2,
+            'contentitem-1-item_uid': None,
         })
 
         for key, value in six.iteritems(formdata):
