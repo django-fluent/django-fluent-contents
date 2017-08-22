@@ -8,6 +8,21 @@ var cp_data = {};
 
 (function($)
 {
+  // Fast UUID generator, based on MIT licensed
+  // http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
+  var hex = []; for (var i=0; i<256; i++) { hex[i] = (i<16?'0':'')+(i).toString(16); }
+  function generateUUID() {
+    var d0 = Math.random()*0x100000000>>>0;
+    var d1 = Math.random()*0x100000000>>>0;
+    var d2 = Math.random()*0x100000000>>>0;
+    var d3 = Math.random()*0x100000000>>>0;
+    return hex[d0&0xff]+hex[d0>>8&0xff]+hex[d0>>16&0xff]+hex[d0>>24&0xff]+'-'+
+      hex[d1&0xff]+hex[d1>>8&0xff]+'-'+hex[d1>>16&0x0f|0x40]+hex[d1>>24&0xff]+'-'+
+      hex[d2&0x3f|0x80]+hex[d2>>8&0xff]+'-'+hex[d2>>16&0xff]+hex[d2>>24&0xff]+
+      hex[d3&0xff]+hex[d3>>8&0xff]+hex[d3>>16&0xff]+hex[d3>>24&0xff];
+  }
+
+
   // Stored data
   cp_data.placeholders = {};  // the formset items by placeholder;
 
@@ -76,6 +91,14 @@ var cp_data = {};
       return this._field('placeholder_slot').val();
     },
 
+    get_id: function() {
+      return parseInt(this._field('id').val());
+    },
+
+    get_uid: function() {
+      return this._field('item_uid').val();
+    },
+
     get_pane: function() {
       return cp_data.get_placeholder_pane_for_item(this.fs_item);  // TODO: make that function obsolete.
     },
@@ -83,6 +106,26 @@ var cp_data = {};
     set_placeholder: function(placeholder) {
       this._field('placeholder').val(placeholder.id);
       this._field('placeholder_slot').val(placeholder.slot);
+    },
+
+    set_uid: function() {
+      var $uuid_field = this._field('item_uid');
+      if(! $uuid_field.val()) {
+        $uuid_field.val(generateUUID());
+      }
+    },
+
+    set_parent_item: function(item) {
+      var id = item.get_id();
+      if( id ) {
+        this._field('parent_item').val(id);
+        this._field('parent_item_uid').val('');
+      }
+      else {
+        var uid = item.get_uid();
+        this._field('parent_item').val('');
+        this._field('parent_item_uid').val(uid);
+      }
     },
 
     set_sort_order: function(sort_order) {

@@ -16,6 +16,7 @@ class AdminTest(AdminTestCase):
     """
     model = PlaceholderFieldTestPage
     admin_class = PlaceholderFieldTestPageAdmin
+    maxDiff = 2000
 
     def setUp(self):
         self.settings = override_settings(
@@ -127,11 +128,12 @@ class AdminTest(AdminTestCase):
             'contentitem-0-html': u'<b>foo</b>',
             'contentitem-0-id': item1.pk,
             'contentitem-0-parent_item': None,
-            'contentitem-0-parent_item_uid': 1,
-            'contentitem-0-placeholder': 1,
+            'contentitem-0-parent_item_uid': None,
+            'contentitem-0-placeholder': placeholder.pk,
             'contentitem-0-placeholder_slot': None,
             'contentitem-0-polymorphic_ctype': item1.polymorphic_ctype_id,
             'contentitem-0-sort_order': 1,
+            'contentitem-0-item_uid': None,
         })
 
         # Update the items, adding a new one
@@ -140,11 +142,12 @@ class AdminTest(AdminTestCase):
             'contentitem-1-html': u'<b>bar</b>',
             'contentitem-1-id': None,
             'contentitem-1-parent_item': None,
-            'contentitem-1-parent_item_uid': 1,
+            'contentitem-1-parent_item_uid': None,
             'contentitem-1-placeholder': None,
             'contentitem-1-placeholder_slot': slot,
             'contentitem-1-polymorphic_ctype': ContentType.objects.get_for_model(TimeoutTestItem).pk,
             'contentitem-1-sort_order': 2,
+            'contentitem-1-item_uid': None,
         })
 
         for key, value in six.iteritems(formdata):
@@ -159,6 +162,95 @@ class AdminTest(AdminTestCase):
         self.assertEqual(item2.placeholder, placeholder)
         self.assertEqual(item2.parent, page)
         self.assertEqual(item2.html, u'<b>bar</b>')
+
+    def test_delete_item(self):
+        """
+        Testing how the change page works
+        """
+        # Create item outside Django admin
+        slot = PlaceholderFieldTestPage.contents.slot
+        page = PlaceholderFieldTestPage.objects.create(title='TEST2', language_code='nl')
+        placeholder = Placeholder.objects.create_for_object(page, slot, role='m')
+        item1 = RawHtmlTestItem.objects.create_for_placeholder(placeholder, html='<b>foo</b>', sort_order=1)
+        item2 = TimeoutTestItem.objects.create_for_placeholder(placeholder, html='<b>bar</b>', sort_order=2)
+
+        # Fetch the page
+        response = self.admin_get_change(page.pk)
+
+        # Collect all existing inputs
+        formdata = {}
+        formdata.update(response.context_data['adminform'].form.initial)
+        for inline_admin_formset in response.context_data['inline_admin_formsets']:
+            for boundfield in inline_admin_formset.formset.management_form:
+                formdata[boundfield.html_name] = boundfield.value()
+
+            for form in inline_admin_formset.formset.forms:
+                for boundfield in form:
+                    formdata[boundfield.html_name] = boundfield.value()
+
+        self.assertEqual(formdata, {
+            'title': u'TEST2',
+            'contents': 1,
+            'language_code': 'nl',
+            'placeholder-fs-INITIAL_FORMS': 1,
+            'placeholder-fs-MIN_NUM_FORMS': 0,
+            'placeholder-fs-MAX_NUM_FORMS': 1000,
+            'placeholder-fs-TOTAL_FORMS': 1,
+            'placeholder-fs-0-DELETE': None,
+            'placeholder-fs-0-id': placeholder.pk,
+            'placeholder-fs-0-role': u'm',
+            'placeholder-fs-0-slot': u'field_slot1',
+            'placeholder-fs-0-title': u'Field Slot1',
+            'contentitem-INITIAL_FORMS': 2,
+            'contentitem-TOTAL_FORMS': 2,
+            'contentitem-MIN_NUM_FORMS': 0,
+            'contentitem-MAX_NUM_FORMS': 1000,
+            'contentitem-0-DELETE': None,
+            'contentitem-0-html': u'<b>foo</b>',
+            'contentitem-0-id': item1.pk,
+            'contentitem-0-parent_item': None,
+            'contentitem-0-parent_item_uid': None,
+            'contentitem-0-placeholder': placeholder.pk,
+            'contentitem-0-placeholder_slot': None,
+            'contentitem-0-polymorphic_ctype': item1.polymorphic_ctype_id,
+            'contentitem-0-sort_order': 1,
+            'contentitem-0-item_uid': None,
+            'contentitem-1-DELETE': None,
+            'contentitem-1-html': u'<b>bar</b>',
+            'contentitem-1-id': item2.pk,
+            'contentitem-1-parent_item': None,
+            'contentitem-1-parent_item_uid': None,
+            'contentitem-1-placeholder': placeholder.pk,
+            'contentitem-1-placeholder_slot': None,
+            'contentitem-1-polymorphic_ctype': item2.polymorphic_ctype_id,
+            'contentitem-1-sort_order': 2,
+            'contentitem-1-item_uid': None,
+        })
+
+        # Simulate how the client removes the item
+        formdata.update({
+            'contentitem-1-DELETE': 'on',
+        })
+        for x in (
+                'contentitem-1-parent_item',
+                'contentitem-1-parent_item_uid',
+                'contentitem-1-placeholder',
+                'contentitem-1-placeholder_slot',
+                'contentitem-1-polymorphic_ctype',
+                'contentitem-1-sort_order',
+                'contentitem-1-item_uid'):
+            del formdata[x]
+
+        for key, value in six.iteritems(formdata):
+            if value is None:
+                formdata[key] = ''
+
+        self.admin_post_change(page.pk, formdata)
+
+        # Must have created two items
+        self.assertEqual([item.html for item in placeholder.contentitems.all()], [u'<b>foo</b>'])
+        with self.assertRaises(TimeoutTestItem.DoesNotExist):
+            item2.refresh_from_db()
 
     def test_copy_language_backend(self):
         """

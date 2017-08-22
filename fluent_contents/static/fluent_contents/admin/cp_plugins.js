@@ -288,7 +288,7 @@ var cp_plugins = {};
         // Note this will not update the placeholder_info,
         // hence the item will move back when the original layout is restored.
         if( pane.placeholder ) {
-          cp_plugins._set_pageitem_data($fs_item, pane.placeholder, i);
+          cp_plugins._set_pageitem_data($fs_item, pane.placeholder, i, false);
         }
       });
     }
@@ -471,19 +471,21 @@ var cp_plugins = {};
     total.value++;
 
     // Configure it
-    cp_plugins._set_pageitem_data($fs_item, placeholder, new_index);
+    cp_plugins._set_pageitem_data($fs_item, placeholder, new_index, true);
     cp_plugins.enable_pageitem($fs_item, false);
     cp_plugins.update_sort_order(pane);  // Not required, but keep the form state consistent all the time.
     if(options.on_post_add) options.on_post_add($fs_item);
   }
 
 
-  cp_plugins._set_pageitem_data = function($fs_item, placeholder, new_sort_index)
+  cp_plugins._set_pageitem_data = function($fs_item, placeholder, new_sort_index, is_add)
   {
     var content_item = new cp_data.ContentItemInfo($fs_item);
     content_item.set_placeholder(placeholder);
     content_item.set_sort_order(new_sort_index);
 
+    if (is_add)
+      content_item.set_uid();
   }
 
 
@@ -567,7 +569,7 @@ var cp_plugins = {};
     // Move formset item
     $fs_item = cp_plugins._move_item_to( $fs_item, function(fs_item) { new_pane.content.append(fs_item); } );
     var last_index = cp_plugins.update_sort_order(new_pane);
-    cp_plugins._set_pageitem_data($fs_item, new_placeholder, last_index);
+    cp_plugins._set_pageitem_data($fs_item, new_placeholder, last_index, false);
 
     // Move to proper dom placeholder list.
     // old_placeholder is currently not accurate, behaves more like "desired placeholder".
