@@ -478,7 +478,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
             content_instance = PluginContext(request)
 
         content_instance.update(context)
-        return render_to_string(template, content_instance.flatten())
+        return render_to_string(template, content_instance.flatten(), request=request)
 
     def render_error(self, error):
         """
