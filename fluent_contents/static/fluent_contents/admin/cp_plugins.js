@@ -48,11 +48,11 @@ var cp_plugins = {};
 
   cp_plugins.init = function()
   {
-    $("#content-main > form").submit( cp_plugins.onFormSubmit );
+    $("form").submit( cp_plugins.onFormSubmit );
 
     if($.fn.on) {
       // jQuery 1.7+
-      $("#content-main")
+      $("body")
         .on('click', ".cp-plugin-add-button", cp_plugins.onAddButtonClick )
         .on('click', ".cp-copy-language-controls .cp-copy-button", cp_plugins.onCopyLanguageButtonClick )
         .on('click', ".cp-item-controls .cp-item-up", cp_plugins.onItemUpClick )
