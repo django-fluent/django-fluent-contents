@@ -20,7 +20,7 @@ class AdminTest(AdminTestCase):
 
     def setUp(self):
         self.settings = override_settings(
-            MIDDLEWARE_CLASSES = (
+            MIDDLEWARE_CLASSES=(
                 'django.middleware.common.CommonMiddleware',
                 'django.contrib.sessions.middleware.SessionMiddleware',
                 'django.middleware.csrf.CsrfViewMiddleware',

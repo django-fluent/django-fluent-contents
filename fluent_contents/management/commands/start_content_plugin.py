@@ -1,5 +1,6 @@
 import fluent_contents
-import os, re
+import os
+import re
 from importlib import import_module
 
 from django.core.management import CommandError

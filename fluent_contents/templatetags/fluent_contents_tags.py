@@ -202,8 +202,8 @@ class PagePlaceholderNode(BaseAssignmentOrOutputNode):
             raise TemplateSyntaxError("{0} tag does not allow 'cachable' for variable template names!".format(self.tag_name))
 
         if appsettings.FLUENT_CONTENTS_CACHE_OUTPUT \
-        and appsettings.FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT \
-        and cachable:
+                and appsettings.FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT \
+                and cachable:
             # See if the entire placeholder output is cached,
             # if so, no database queries have to be performed.
             # This will be omitted when an template is used,
@@ -217,7 +217,8 @@ class PagePlaceholderNode(BaseAssignmentOrOutputNode):
             except Placeholder.DoesNotExist:
                 return "<!-- placeholder '{0}' does not yet exist -->".format(slot)
 
-            output = rendering.render_placeholder(request, placeholder, parent,
+            output = rendering.render_placeholder(
+                request, placeholder, parent,
                 template_name=template_name,
                 cachable=cachable,
                 limit_parent_language=True,
@@ -276,7 +277,8 @@ class RenderPlaceholderNode(BaseAssignmentOrOutputNode):
 
         # Fetching placeholder.parent should not cause queries if fetched via PlaceholderFieldDescriptor.
         # See render_placeholder() for more details
-        output = rendering.render_placeholder(request, placeholder, placeholder.parent,
+        output = rendering.render_placeholder(
+            request, placeholder, placeholder.parent,
             template_name=template_name,
             cachable=cachable,
             limit_parent_language=True,

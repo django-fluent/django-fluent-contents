@@ -25,6 +25,7 @@ def render_textile(text):
     from textile import textile
     return textile(text)
 
+
 # Copy, and allow adding more options.
 # Previously, this used django.contrib.markup.templatetags.markup,
 # but since that's gone, the languages are defined here.

@@ -49,6 +49,7 @@ class PlaceholderFieldTestPage(models.Model):
     def __str__(self):
         return self.title
 
+
 assert get_parent_language_code(PlaceholderFieldTestPage(language_code='nl')) == 'nl'
 
 

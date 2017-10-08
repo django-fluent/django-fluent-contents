@@ -4,7 +4,6 @@ from django.core.exceptions import ValidationError
 from django.forms.formsets import ManagementForm
 
 
-
 class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
     """
     A formset that can take initial values, and pass those to the generated forms.
@@ -32,7 +31,7 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
                     u' form: {0}, model: {1}, errors: \n{2}'.format(
                         self.__class__.__name__, self.model.__name__,
                         form.errors.as_text()
-                ))
+                    ))
             else:
                 raise
 

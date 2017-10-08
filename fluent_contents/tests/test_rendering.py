@@ -108,7 +108,7 @@ class RenderingTests(AppTestCase):
         item = factories.create_content_item(RawHtmlTestItem, placeholder=placeholder, parent_item=col1, html='AAA')
 
         # Auto fetch contents
-        #with self.assertNumQueries(5):  # 2 extra due to polymorphic bug now.
+        # with self.assertNumQueries(5):  # 2 extra due to polymorphic bug now.
         self.assertHTMLEqual(
             render_content_items([root]).html,
             '<section><div class="col1">AAA</div><div class="col2"></div></section>'

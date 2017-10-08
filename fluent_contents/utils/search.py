@@ -42,7 +42,3 @@ def clean_join(separator, iterable):
     Filters out iterable to only join non empty items.
     """
     return separator.join(filter(None, iterable))
-
-
-#def get_cleaned_bits(data):
-#    return smart_split(get_cleaned_bits(data))

@@ -98,10 +98,10 @@ class Placeholder(models.Model):
         # If there is no translation for a current language, avoid trying to fetch items.
         # This speeds up sites where all content exists in fallback languages only.
         if OPTIMIZE_TRANSLATED_MODEL \
-        and parent is not None \
-        and limit_parent_language \
-        and isinstance(parent, TranslatableModel) \
-        and not parent.has_translation():
+                and parent is not None \
+                and limit_parent_language \
+                and isinstance(parent, TranslatableModel) \
+                and not parent.has_translation():
             return ContentItem.objects.none()
 
         item_qs = self.contentitems.all()   # django-polymorphic FTW!
@@ -167,7 +167,7 @@ class ContentItemMetaClass(PolymorphicMPTTModelBase):
 
     def __new__(mcs, name, bases, attrs):
         new_class = super(ContentItemMetaClass, mcs).__new__(mcs, name, bases, attrs)
-        db_table  = new_class._meta.db_table
+        db_table = new_class._meta.db_table
         app_label = new_class._meta.app_label
 
         if app_label != 'fluent_contents' and name not in ('ContentItem', 'ContainerItem'):

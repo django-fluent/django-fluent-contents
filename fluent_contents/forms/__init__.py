@@ -36,7 +36,7 @@ class ContentItemForm(PolymorpicMPTTAdminForm):
                 parent_id=self.instance.parent_id,
             ).exclude_descendants(self.instance, include_self=True)
             self.initial['parent_item_uid'] = self.instance.parent_id
-        #else:
+        # else:
         #    self.fields['parent_item'].queryset = ContentItem.objects.can_have_children()
 
     def fill_caches(self, placeholders, contentitems):

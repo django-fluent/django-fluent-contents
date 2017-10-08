@@ -12,7 +12,7 @@ class TextPluginTests(TestCase):
     """
     Test whether the sanitation works as expected.
     """
-    HTML1_ORIGINAL  = u'<p><img src="/media/image.jpg" alt="" width="460" height="300" />&nbsp;&nbsp;<img style="float: left;" src="/media/image2.jpg" alt="" width="460" height="130" /></p><p>&nbsp;</p>'
+    HTML1_ORIGINAL = u'<p><img src="/media/image.jpg" alt="" width="460" height="300" />&nbsp;&nbsp;<img style="float: left;" src="/media/image2.jpg" alt="" width="460" height="130" /></p><p>&nbsp;</p>'
 
     def test_default_manager(self):
         """

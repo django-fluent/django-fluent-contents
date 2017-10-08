@@ -42,8 +42,12 @@ class PlaceholderRelation(GenericRelation):
             )
         }
         defaults.update(kwargs)
-        super(PlaceholderRelation, self).__init__(to=Placeholder,
-            object_id_field='parent_id', content_type_field='parent_type', **defaults)
+        super(PlaceholderRelation, self).__init__(
+            to=Placeholder,
+            object_id_field='parent_id',
+            content_type_field='parent_type',
+            **defaults
+        )
 
 
 class ContentItemRelation(GenericRelation):
@@ -61,8 +65,12 @@ class ContentItemRelation(GenericRelation):
     """
 
     def __init__(self, **kwargs):
-        super(ContentItemRelation, self).__init__(to=ContentItem,
-            object_id_field='parent_id', content_type_field='parent_type', **kwargs)
+        super(ContentItemRelation, self).__init__(
+            to=ContentItem,
+            object_id_field='parent_id',
+            content_type_field='parent_type',
+            **kwargs
+        )
 
     def bulk_related_objects(self, objs, using=DEFAULT_DB_ALIAS):
         # Fix delete screen. Workaround for https://github.com/django-polymorphic/django-polymorphic/issues/34

@@ -75,7 +75,7 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Redirect test',
             },
             bases=('fluent_contents.contentitem',),
-       ),
+        ),
         migrations.CreateModel(
             name='ContainerTestItem',
             fields=[

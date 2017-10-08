@@ -77,7 +77,7 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
             'fluent_contents/admin/cp_widgets.js',
             'fluent_contents/admin/fluent_contents.js',
         )
-        #if 'grapelli' in settings.INSTALLED_APPS:
+        # if 'grapelli' in settings.INSTALLED_APPS:
         # ...
         if 'flat' in settings.INSTALLED_APPS or django.VERSION >= (1, 9):
             css = {
@@ -225,7 +225,7 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, PolymorphicInlineSuppor
         Return the placeholder data as dictionary.
         This is used in the client for the "copy" functionality.
         """
-        language = 'en'  #request.POST['language']
+        language = 'en'  # request.POST['language']
         with translation.override(language):  # Use generic solution here, don't assume django-parler is used now.
             obj = self.get_object(request, object_id)
 
@@ -257,7 +257,7 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, PolymorphicInlineSuppor
         for FormSet, inline in formsets_with_inlines:
             # Only ContentItem inlines
             if isinstance(inline, PlaceholderEditorInline) \
-            or not getattr(inline, 'is_fluent_editor_inline', False):
+                    or not getattr(inline, 'is_fluent_editor_inline', False):
                 continue
 
             formset_forms = self._get_contentitem_formset_html(request, obj, FormSet, inline, placeholder_slots)

@@ -354,9 +354,9 @@ class RenderingPipe(object):
                 logger.debug("- item #%s is NOT cachable! Prevented by %r", contentitem.pk, contentitem.plugin)
 
     def _can_cache_output(self, plugin, output):
-         return appsettings.FLUENT_CONTENTS_CACHE_OUTPUT \
-                and plugin.cache_output \
-                and output.cacheable
+        return appsettings.FLUENT_CONTENTS_CACHE_OUTPUT \
+            and plugin.cache_output \
+            and output.cacheable
 
     def _can_cache_merged_output(self, template_name, cachable=None):
         """
@@ -485,7 +485,7 @@ class PlaceholderRenderingPipe(RenderingPipe):
             logging.debug("- skipping regular language, parent object has no translation for it.")
 
         if fallback_language \
-        and not items:  # NOTES: performs query, so hence the .non_polymorphic() above
+                and not items:  # NOTES: performs query, so hence the .non_polymorphic() above
             # There are no items, but there is a fallback option. Try it.
             language_code = appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE if fallback_language is True else fallback_language
             logger.debug("- reading fallback language %s, try_cache=%s", language_code, try_cache)
@@ -499,7 +499,7 @@ class PlaceholderRenderingPipe(RenderingPipe):
     @classmethod
     def may_cache_placeholders(cls):
         return appsettings.FLUENT_CONTENTS_CACHE_OUTPUT \
-           and appsettings.FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT
+            and appsettings.FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT
 
 
 class SkipItem(RuntimeError):
