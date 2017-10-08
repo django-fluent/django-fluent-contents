@@ -196,7 +196,7 @@ class AdminTestCase(AppTestCase):
 
             # Add the management form fields if needed.
             #base_data = self._get_management_form_data(dummy_request)
-            #base_data.update(data)
+            # base_data.update(data)
             #data = base_data
 
         request = factory_method(url, data=data, **extra)

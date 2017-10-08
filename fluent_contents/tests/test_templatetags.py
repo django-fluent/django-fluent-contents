@@ -159,20 +159,20 @@ class TemplateTagTests(AppTestCase):
         # - fetch RawHtmlTestItem
         with self.assertNumQueries(2) as ctx:
             self._render("""{% load fluent_contents_tags %}{% render_placeholder placeholder1 %}""", {'placeholder1': placeholder1})
-            #pprint(ctx.captured_queries)
+            # pprint(ctx.captured_queries)
 
         # Second time
         # - fetch ContentItem
         with self.assertNumQueries(1) as ctx:
             self._render("""{% load fluent_contents_tags %}{% render_placeholder placeholder1 %}""", {'placeholder1': placeholder1})
-            #pprint(ctx.captured_queries)
+            # pprint(ctx.captured_queries)
 
         # Using page_placeholder
         # - fetch Placeholder
         # - fetch ContentItem
         with self.assertNumQueries(2) as ctx:
             self._render("""{% load fluent_contents_tags %}{% page_placeholder 'field_slot1' %}""", {'page': page3})
-            #pprint(ctx.captured_queries)
+            # pprint(ctx.captured_queries)
 
         # Using page_placeholder, use fallback
         # - fetch Placeholder
@@ -180,7 +180,7 @@ class TemplateTagTests(AppTestCase):
         # - fetch ContentItem fallback
         with self.assertNumQueries(2) as ctx:
             self._render("""{% load fluent_contents_tags %}{% page_placeholder 'field_slot1' fallback=True %}""", {'page': page3})
-            #pprint(ctx.captured_queries)
+            # pprint(ctx.captured_queries)
 
     def test_num_placeholder_queries(self):
         page3 = PlaceholderFieldTestPage.objects.create()
@@ -197,22 +197,22 @@ class TemplateTagTests(AppTestCase):
         # - fetch RawHtmlTestItem
         with self.assertNumQueries(2) as ctx:
             self._render("""{% load fluent_contents_tags %}{% render_placeholder placeholder1 %}""", {'placeholder1': placeholder1})
-            #pprint(ctx.captured_queries)
+            # pprint(ctx.captured_queries)
 
         # Second time
         with self.assertNumQueries(0) as ctx:
             self._render("""{% load fluent_contents_tags %}{% render_placeholder placeholder1 %}""", {'placeholder1': placeholder1})
-            #pprint(ctx.captured_queries)
+            # pprint(ctx.captured_queries)
 
         # Using page_placeholder
         with self.assertNumQueries(0) as ctx:
             self._render("""{% load fluent_contents_tags %}{% page_placeholder 'field_slot1' %}""", {'page': page3})
-            #pprint(ctx.captured_queries)
+            # pprint(ctx.captured_queries)
 
         # Using page_placeholder, use fallback
         with self.assertNumQueries(0) as ctx:
             self._render("""{% load fluent_contents_tags %}{% page_placeholder 'field_slot1' fallback=True %}""", {'page': page3})
-            #pprint(ctx.captured_queries)
+            # pprint(ctx.captured_queries)
 
     def _render(self, template_code, context_data):
         """

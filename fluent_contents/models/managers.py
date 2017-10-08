@@ -256,7 +256,6 @@ class ContentItemManager(PolymorphicMPTTModelManager):
         return results
 
 
-
 # This low-level function is used for both ContentItem and Placeholder objects.
 # Only the first has language_code support, the second one not.
 def get_parent_lookup_kwargs(parent_object):

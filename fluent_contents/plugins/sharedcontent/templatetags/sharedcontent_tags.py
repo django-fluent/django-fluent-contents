@@ -74,8 +74,8 @@ class SharedContentNode(BaseAssignmentOrOutputNode):
         # Caching will not happen when rendering via a template,
         # because there is no way to tell whether that can be expired/invalidated.
         try_cache = appsettings.FLUENT_CONTENTS_CACHE_OUTPUT \
-                and appsettings.FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT \
-                and cachable
+            and appsettings.FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT \
+            and cachable
 
         if isinstance(slot, SharedContent):
             # Allow passing a sharedcontent, just like 'render_placeholder' does.
@@ -117,7 +117,8 @@ class SharedContentNode(BaseAssignmentOrOutputNode):
     def render_shared_content(self, request, sharedcontent, template_name=None, cachable=None):
         # All parsing done, perform the actual rendering
         placeholder = sharedcontent.contents  # Another DB query
-        return rendering.render_placeholder(request, placeholder, sharedcontent,
+        return rendering.render_placeholder(
+            request, placeholder, sharedcontent,
             template_name=template_name,
             cachable=cachable,
             fallback_language=True

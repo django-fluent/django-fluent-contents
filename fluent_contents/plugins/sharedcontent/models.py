@@ -18,12 +18,13 @@ class SharedContent(CachedModelMixin, TranslatableModel):
     The parent hosting object for shared content
     """
     translations = TranslatedFields(
-        title = models.CharField(_("Title"), max_length=200)
+        title=models.CharField(_("Title"), max_length=200)
     )
 
     parent_site = models.ForeignKey(Site, on_delete=models.CASCADE, editable=False, default=get_current_site_id)
     slug = models.SlugField(_("Template code"), help_text=_("This unique name can be used refer to this content in in templates."))
-    is_cross_site = models.BooleanField(_("Share between all sites"), blank=True, default=False,
+    is_cross_site = models.BooleanField(
+        _("Share between all sites"), blank=True, default=False,
         help_text=_("This allows contents can be shared between multiple sites in this project.<br>\n"
                     "Make sure that any URLs in the content work with all sites where the content is displayed."))
 

@@ -18,6 +18,7 @@ class DebugResultTracker(ResultTracker):
     """
     Hook into the rendering pipeline to receive updates
     """
+
     def __init__(self, *args, **kwargs):
         super(DebugResultTracker, self).__init__(*args, **kwargs)
         # Reference this result in the data collector.
@@ -113,7 +114,7 @@ class ContentPluginPanel(Panel):
                         templates = plugin.get_render_template(request, contentitem)
                         template_dummy = False
 
-                    if templates is not None and not isinstance(templates, (list,tuple)):
+                    if templates is not None and not isinstance(templates, (list, tuple)):
                         templates = [templates]
 
                     cache_timeout = None

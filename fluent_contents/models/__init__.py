@@ -164,6 +164,7 @@ class ContentItemTree(list):
     Note that when a queryset is passed, it will be processed to determine the structure;
     hence any polymorphic processing may also happen when passing an item list to this class.
     """
+
     def __init__(self, items, flat_items=None, placeholder=None, parent_item=None):
         list.__init__(self, items)
         self.flat_items = flat_items

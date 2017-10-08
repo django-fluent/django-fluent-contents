@@ -19,5 +19,5 @@ class DisqusCommentsPlugin(ContentPlugin):
             'disqus_identifier': parent_url.strip('/'),  # URL is expected to be relative.
             'disqus_url': parent_url,
             'disqus_developer': 0,
-            #disqus_title
+            # disqus_title
         }

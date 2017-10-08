@@ -75,7 +75,7 @@ def get_render_language(contentitem):
     plugin = contentitem.plugin
 
     if plugin.render_ignore_item_language \
-    or (plugin.cache_output and plugin.cache_output_per_language):
+            or (plugin.cache_output and plugin.cache_output_per_language):
         # Render the template in the current language.
         # The cache also stores the output under the current language code.
         #
