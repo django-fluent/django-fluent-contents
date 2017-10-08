@@ -111,7 +111,7 @@ class PlaceholderFieldDescriptor(object):
         except Placeholder.DoesNotExist:
             raise Placeholder.DoesNotExist("Placeholder does not exist for parent {0} (type_id: {1}, parent_id: {2}), slot: '{3}'".format(
                 repr(instance),
-                ContentType.objects.get_for_model(instance).pk,
+                ContentType.objects.get_for_model(instance, for_concrete_model=False).pk,
                 instance.pk,
                 self.slot
             ))
