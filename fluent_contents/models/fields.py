@@ -1,10 +1,10 @@
 import django
+from django.contrib.contenttypes.fields import GenericRelation, GenericRel
 from django.contrib.contenttypes.models import ContentType
 from django.db import DEFAULT_DB_ALIAS
 from django.db.models.query_utils import Q
 from django.utils.functional import lazy
 from django.utils.text import capfirst
-from fluent_utils.django_compat.moves.contenttypes import GenericRelation, GenericRel
 from fluent_contents import appsettings
 from fluent_contents.forms.fields import PlaceholderFormField
 from fluent_contents.models import Placeholder, ContentItem

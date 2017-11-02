@@ -4,12 +4,12 @@ Utils for internal tests, and utils for testing third party plugins.
 from __future__ import print_function
 from importlib import import_module
 import django
+from django.contrib.auth import get_user_model
 from future.builtins import str
 from django.conf import settings
 from django.core.management import call_command
 from django.contrib.sites.models import Site
 from django.test import TestCase
-from fluent_utils.django_compat import get_user_model
 import os
 
 from fluent_contents import rendering

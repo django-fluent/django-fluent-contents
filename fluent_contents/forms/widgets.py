@@ -2,11 +2,11 @@ from django.contrib.admin.widgets import AdminTextareaWidget
 from django.forms.utils import flatatt
 from django.forms.widgets import Widget
 from django.template.loader import render_to_string
+from django.utils.encoding import smart_text
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
 from fluent_contents.models import get_parent_language_code
 from fluent_contents.models.managers import get_parent_active_language_choices
-from fluent_utils.django_compat import smart_text
 
 
 class PlaceholderFieldWidget(Widget):

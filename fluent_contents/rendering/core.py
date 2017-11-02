@@ -2,17 +2,17 @@ import logging
 
 import django
 import six
+from django.db.models.query import EmptyQuerySet
+
 from fluent_contents.extensions import PluginContext
 from future.builtins import str
 from django.core.cache import cache
 from django.conf import settings
 from django.forms import Media
-from django.template.context import RequestContext
 from django.template.loader import render_to_string
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from parler.utils.context import smart_override
-from fluent_utils.django_compat import is_queryset_empty
 from fluent_contents import appsettings
 from fluent_contents.cache import get_rendering_cache_key, get_placeholder_cache_key_for_parent
 from fluent_contents.extensions import PluginNotFound
@@ -443,7 +443,7 @@ class PlaceholderRenderingPipe(RenderingPipe):
     def _get_placeholder_items(self, placeholder, parent_object, limit_parent_language, fallback_language, try_cache):
         # No full-placeholder cache. Get the items
         items = placeholder.get_content_items(parent_object, limit_parent_language=limit_parent_language).non_polymorphic()
-        if is_queryset_empty(items):  # Detect qs.none() was applied
+        if isinstance(items, EmptyQuerySet):  # Detect qs.none() was applied
             logging.debug("- skipping regular language, parent object has no translation for it.")
 
         if fallback_language \
