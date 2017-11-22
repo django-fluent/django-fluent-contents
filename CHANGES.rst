@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Changes in 1.2.2 (2017-11-22)
+-----------------------------
+
+* Fixed compatibility with upcoming django-polymorphic_ release.
+* Delayed twittertext plugin checks.
+* Removed unneeded ``fluent_utils.django_compat`` imports.
+
+
 Changes in 1.2.1 (2017-08-10)
 -----------------------------
 
