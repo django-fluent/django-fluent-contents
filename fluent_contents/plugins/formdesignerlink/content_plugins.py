@@ -9,21 +9,11 @@ For example, use:
  * ``FORM_DESIGNER_FIELD_CLASSES`` to define which field types are allowed.
  * ``FORM_DESIGNER_WIDGET_CLASSES`` to define which widgets are allowed.
 """
-from inspect import getargspec
 from django.contrib.messages.api import get_messages
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.formdesignerlink.models import FormDesignerLink
 from form_designer import settings as form_designer_settings
 from form_designer.views import process_form
-
-
-# Find out which version of process_form is available.
-# The 'is_cms_plugin' was renamed to 'disable_redirection' at some revision.
-_keywords = getargspec(process_form).args
-_disable_redirection = 'disable_redirection'
-for _name in ('disable_redirection', 'is_cms_plugin'):
-    if _name in _keywords:
-        _disable_redirection = _name
 
 
 @plugin_pool.register
@@ -42,7 +32,7 @@ class FormDesignerLinkPlugin(ContentPlugin):
 
         # The process_form() function is designed with Django CMS in mind,
         # and responds to both the GET and POST request.
-        context = process_form(request, instance.form_definition, {}, **{_disable_redirection: True})
+        context = process_form(request, instance.form_definition, {}, disable_redirection=True)
         context['messages'] = get_messages(request)  # No matter what, because the template needs it.
 
         # Render the plugin
