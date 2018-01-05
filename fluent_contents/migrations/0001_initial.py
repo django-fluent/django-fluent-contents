@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('parent_id', models.IntegerField(null=True)),
                 ('language_code', models.CharField(default='', max_length=15, editable=False, db_index=True)),
                 ('sort_order', models.IntegerField(default=1, db_index=True)),
-                ('parent_type', models.ForeignKey(to='contenttypes.ContentType')),
+                ('parent_type', models.ForeignKey(to='contenttypes.ContentType', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('placeholder', 'sort_order'),
@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
                 ('role', models.CharField(default='m', help_text='This defines where the object is used.', max_length=1, verbose_name='Role', choices=[('m', 'Main content'), ('s', 'Sidebar content'), ('r', 'Related content')])),
                 ('parent_id', models.IntegerField(null=True)),
                 ('title', models.CharField(max_length=255, verbose_name='Admin title', blank=True)),
-                ('parent_type', models.ForeignKey(blank=True, to='contenttypes.ContentType', null=True)),
+                ('parent_type', models.ForeignKey(blank=True, to='contenttypes.ContentType', null=True, on_delete=models.PROTECT)),
             ],
             options={
                 'verbose_name': 'Placeholder',
@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='contentitem',
             name='polymorphic_ctype',
-            field=models.ForeignKey(related_name='polymorphic_fluent_contents.contentitem_set+', editable=False, to='contenttypes.ContentType', null=True),
+            field=models.ForeignKey(related_name='polymorphic_fluent_contents.contentitem_set+', editable=False, to='contenttypes.ContentType', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]
