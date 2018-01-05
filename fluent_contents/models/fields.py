@@ -204,7 +204,7 @@ class PlaceholderField(PlaceholderRelation):
 
         # Configure the revere relation if possible.
         # TODO: make sure reverse queries work properly
-        if self.rel.related_name is None:
+        if hasattr(self, 'rel') and self.rel.related_name is None:
             # Make unique for model (multiple models can use same slotnane)
             self.rel.related_name = '{app}_{model}_{slot}_FIXME'.format(
                 app=cls._meta.app_label,
