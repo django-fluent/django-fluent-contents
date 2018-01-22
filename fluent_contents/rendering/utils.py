@@ -12,13 +12,9 @@ from django.test import RequestFactory
 from django.conf import settings
 from django.utils.translation import get_language
 from django.core.cache import cache
+from django.template.backends.django import Template as TemplateAdapter
 from django.template.loader import select_template
 from fluent_contents.extensions import ContentPlugin
-
-try:
-    from django.template.backends.django import Template as TemplateAdapter
-except ImportError:
-    TemplateAdapter = None
 
 logger = logging.getLogger(__name__)
 
@@ -109,8 +105,8 @@ def is_template_updated(request, contentitem, cachekey):
 
     # With TEMPLATE_DEBUG = True, each node tracks it's origin.
     template = select_template(template_names)
-    if TemplateAdapter is not None and isinstance(template, TemplateAdapter):
-        # Django 1.8 template wrapper
+    if isinstance(template, TemplateAdapter):
+        # Django template wrapper
         if template.origin is None:
             logger.warning('Unable to detect changes in template "%s" for developer cache purge (origin is not set)', template.template.name)
             return False

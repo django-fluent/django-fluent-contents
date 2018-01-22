@@ -15,6 +15,7 @@ from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.db import DatabaseError
 from django.forms import Media, MediaDefiningClass
+from django.template import context_processors
 from django.template.context import Context
 from django.template.loader import render_to_string
 from django.utils.html import linebreaks, escape
@@ -23,11 +24,6 @@ from fluent_contents.cache import get_rendering_cache_key, get_placeholder_cache
 from fluent_contents.forms import ContentItemForm
 from fluent_contents.models import ContentItemOutput, ImmutableMedia, DEFAULT_TIMEOUT
 from fluent_contents.utils.search import get_search_field_values, clean_join
-
-try:
-    from django.template import context_processors  # Django 1.8+
-except ImportError:
-    from django.core import context_processors
 
 
 # Some standard request processors to use in the plugins,

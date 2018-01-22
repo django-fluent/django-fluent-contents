@@ -8,28 +8,15 @@ from fluent_contents.models import ContentItem
 class Command(BaseCommand):
     help = "Remove ContentItems which are stale, because their model is removed."
 
-    if getattr(BaseCommand, 'add_arguments', None):  # Django 1.8+
-        def add_arguments(self, parser):
-            super(Command, self).add_arguments(parser)
-            parser.add_argument(
-                '-p', '--dry-run', action='store_true', dest='dry_run',
-                help="Only list what will change, don't make the actual changes."
-            )
-            parser.add_argument(
-                '-u', '--remove-unreferenced', action='store_true', dest='remove_unreferenced',
-                help="Also remove unreferenced items."
-            )
-    else:
-        from optparse import make_option
-        option_list = BaseCommand.option_list + (
-            make_option(
-                '-p', '--dry-run', action='store_true', dest='dry_run', default=False,
-                help="Only list what will change, don't make the actual changes."
-            ),
-            make_option(
-                '-u', '--remove-unreferenced', action='store_true', dest='remove_unreferenced', default=False,
-                help="Also remove unreferenced items."
-            ),
+    def add_arguments(self, parser):
+        super(Command, self).add_arguments(parser)
+        parser.add_argument(
+            '-p', '--dry-run', action='store_true', dest='dry_run',
+            help="Only list what will change, don't make the actual changes."
+        )
+        parser.add_argument(
+            '-u', '--remove-unreferenced', action='store_true', dest='remove_unreferenced',
+            help="Also remove unreferenced items."
         )
 
     def handle(self, *args, **options):

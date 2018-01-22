@@ -19,28 +19,15 @@ class Command(TemplateCommand):
     )
     missing_args_message = "You must provide an application name."
 
-    if getattr(TemplateCommand, 'add_arguments', None):  # Django 1.8+
-        def add_arguments(self, parser):
-            super(Command, self).add_arguments(parser)
-            parser.add_argument(
-                '--plugin', '-p', dest='plugin',
-                help='The name of the ContentPlugin subclass to render.'
-            )
-            parser.add_argument(
-                '--model', '-m', dest='model',
-                help='The name of the ContentItem model subclass to render.'
-            )
-    else:
-        from optparse import make_option
-        option_list = TemplateCommand.option_list + (
-            make_option(
-                '-p', '--plugin', action='store', dest='plugin', default=None,
-                help='The name of the ContentPlugin subclass to render.'
-            ),
-            make_option(
-                '-m', '--model', action='store', dest='model', default=None,
-                help='The name of the ContentItem model subclass to render.'
-            ),
+    def add_arguments(self, parser):
+        super(Command, self).add_arguments(parser)
+        parser.add_argument(
+            '--plugin', '-p', dest='plugin',
+            help='The name of the ContentPlugin subclass to render.'
+        )
+        parser.add_argument(
+            '--model', '-m', dest='model',
+            help='The name of the ContentItem model subclass to render.'
         )
 
     def handle(self, *args, **options):

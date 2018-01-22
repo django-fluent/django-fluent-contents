@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Changes in git
+--------------
+
+* Added Django 2.0 support.
+* Removed compatibility with very old django-form-designer_ versions.
+* Dropped Django 1.7 support.
+
+
 Changes in 1.2.2 (2017-11-22)
 -----------------------------
 
