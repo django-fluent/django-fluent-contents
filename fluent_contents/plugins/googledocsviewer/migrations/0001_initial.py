@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='GoogleDocsViewerItem',
             fields=[
-                ('contentitem_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem')),
+                ('contentitem_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem', on_delete=models.CASCADE)),
                 ('url', models.URLField(help_text='Specify the URL of an online document, for example a PDF or DOCX file.', verbose_name='File URL')),
                 ('width', models.CharField(default='100%', help_text='Specify the size in pixels, or a percentage of the container area size.', max_length=10, verbose_name='Width', validators=[fluent_contents.utils.validators.validate_html_size])),
                 ('height', models.CharField(default='600', help_text='Specify the size in pixels.', max_length=10, verbose_name='Height', validators=[fluent_contents.utils.validators.validate_html_size])),

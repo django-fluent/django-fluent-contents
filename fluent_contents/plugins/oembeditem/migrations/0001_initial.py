@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='OEmbedItem',
             fields=[
-                ('contentitem_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem')),
+                ('contentitem_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem', on_delete=models.CASCADE)),
                 ('embed_url', fluent_contents.plugins.oembeditem.fields.OEmbedUrlField(help_text='Enter the URL of the online content to embed (e.g. a YouTube or Vimeo video, SlideShare presentation, etc..)', verbose_name='URL to embed')),
                 ('embed_max_width', models.PositiveIntegerField(null=True, verbose_name='Max width', blank=True)),
                 ('embed_max_height', models.PositiveIntegerField(null=True, verbose_name='Max height', blank=True)),
