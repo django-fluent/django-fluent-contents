@@ -82,6 +82,13 @@ if not settings.configured:
             #'form_designer',
             'fluent_contents.tests.testapp',
         ),
+        MIDDLEWARE = (  # Django 2.0
+            'django.middleware.common.CommonMiddleware',
+            'django.contrib.sessions.middleware.SessionMiddleware',
+            'django.middleware.csrf.CsrfViewMiddleware',
+            'django.contrib.auth.middleware.AuthenticationMiddleware',
+            'fluent_contents.middleware.HttpRedirectRequestMiddleware',
+        ),
         MIDDLEWARE_CLASSES = (
             'django.middleware.common.CommonMiddleware',
             'django.contrib.sessions.middleware.SessionMiddleware',
