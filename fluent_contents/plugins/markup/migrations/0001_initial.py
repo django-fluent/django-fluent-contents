@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='MarkupItem',
             fields=[
-                ('contentitem_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem')),
+                ('contentitem_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem', on_delete=models.CASCADE)),
                 ('text', models.TextField(verbose_name='markup')),
                 ('language', models.CharField(db_index=True, verbose_name='Language', max_length=30, editable=False, choices=[('markdown', 'Markdown'), ('restructuredtext', 'reStructuredText'), ('textile', 'Textile')])),
             ],

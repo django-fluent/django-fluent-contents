@@ -62,7 +62,7 @@ class Placeholder(models.Model):
     role = models.CharField(_('Role'), max_length=1, choices=ROLES, default=MAIN, help_text=_("This defines where the object is used."))
 
     # Track relation to parent (e.g. page or article)
-    parent_type = models.ForeignKey(ContentType, null=True, blank=True)  # Used to be null for global placeholders, but the 'sharedcontent' plugin solves this issue.
+    parent_type = models.ForeignKey(ContentType, null=True, blank=True, on_delete=models.CASCADE)  # Used to be null for global placeholders, but the 'sharedcontent' plugin solves this issue.
     parent_id = models.IntegerField(null=True)    # Need to allow Null, because Placeholder is created before parent is saved.
     parent = GenericForeignKey('parent_type', 'parent_id')
 
@@ -267,7 +267,7 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
 
     # Track relation to parent
     # This makes it much easier to use it as inline.
-    parent_type = models.ForeignKey(ContentType)
+    parent_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     parent_id = models.IntegerField(null=True)    # Need to allow Null, because Placeholder is created before parent is saved.
     parent = GenericForeignKey('parent_type', 'parent_id')
     language_code = models.CharField(max_length=15, db_index=True, editable=False, default='')

@@ -14,8 +14,25 @@ sys.stderr.write('Using Django version {0} from {1}\n'.format(
 )
 
 if not settings.configured:
+    version_related_settings = dict()
+    middlewares = (
+        'django.middleware.common.CommonMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'fluent_contents.middleware.HttpRedirectRequestMiddleware',
+    )
+    if django.VERSION >= (1, 10):
+        version_related_settings.update(dict(
+            MIDDLEWARE=middlewares
+        ))
+    else:
+        version_related_settings.update(dict(
+            MIDDLEWARE_CLASSES=middlewares
+        ))
+
     if django.VERSION >= (1, 8):
-        template_settings = dict(
+        version_related_settings.update(dict(
             TEMPLATES = [
                 {
                     'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -36,9 +53,9 @@ if not settings.configured:
                     },
                 },
             ]
-        )
+        ))
     else:
-        template_settings = dict(
+        version_related_settings.update(dict(
             TEMPLATE_LOADERS = (
                 'django.template.loaders.app_directories.Loader',
                 'django.template.loaders.filesystem.Loader',
@@ -46,8 +63,7 @@ if not settings.configured:
             TEMPLATE_CONTEXT_PROCESSORS = list(default_settings.TEMPLATE_CONTEXT_PROCESSORS) + [
                 'django.core.context_processors.request',
             ],
-        )
-
+        ))
     settings.configure(
         DATABASES = {
             'default': {
@@ -82,13 +98,6 @@ if not settings.configured:
             #'form_designer',
             'fluent_contents.tests.testapp',
         ),
-        MIDDLEWARE_CLASSES = (
-            'django.middleware.common.CommonMiddleware',
-            'django.contrib.sessions.middleware.SessionMiddleware',
-            'django.middleware.csrf.CsrfViewMiddleware',
-            'django.contrib.auth.middleware.AuthenticationMiddleware',
-            'fluent_contents.middleware.HttpRedirectRequestMiddleware',
-        ),
         ROOT_URLCONF = 'fluent_contents.tests.testapp.urls',
         TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner' if django.VERSION < (1,6) else 'django.test.runner.DiscoverRunner',
         SITE_ID = 3,
@@ -100,7 +109,7 @@ if not settings.configured:
         SILENCED_SYSTEM_CHECKS = (
             'fields.E210',   # ImageField needs to have PIL/Pillow installed
         ),
-        **template_settings
+        **version_related_settings
     )
 
 if django.VERSION < (1,6):

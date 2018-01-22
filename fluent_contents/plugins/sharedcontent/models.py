@@ -21,7 +21,7 @@ class SharedContent(CachedModelMixin, TranslatableModel):
         title = models.CharField(_("Title"), max_length=200)
     )
 
-    parent_site = models.ForeignKey(Site, editable=False, default=get_current_site_id)
+    parent_site = models.ForeignKey(Site, editable=False, default=get_current_site_id, on_delete=models.CASCADE)
     slug = models.SlugField(_("Template code"), help_text=_("This unique name can be used refer to this content in in templates."))
     is_cross_site = models.BooleanField(_("Share between all sites"), blank=True, default=False,
         help_text=_("This allows contents can be shared between multiple sites in this project.<br>\n"
@@ -74,7 +74,7 @@ class SharedContentItem(ContentItem):
     """
     The contentitem to include in a page.
     """
-    shared_content = models.ForeignKey(SharedContent, verbose_name=_('Shared content'), related_name='shared_content_items')
+    shared_content = models.ForeignKey(SharedContent, verbose_name=_('Shared content'), related_name='shared_content_items', on_delete=models.CASCADE)
 
     objects = ContentItemManager()  # Avoid Django 1.10 migrations
 

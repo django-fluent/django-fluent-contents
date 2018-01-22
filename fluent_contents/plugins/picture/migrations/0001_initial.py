@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='PictureItem',
             fields=[
-                ('contentitem_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem')),
+                ('contentitem_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem', on_delete=models.CASCADE)),
                 ('image', fluent_contents.extensions.PluginImageField(max_length=100, verbose_name='Image')),
                 ('caption', models.TextField(verbose_name='Caption', blank=True)),
                 ('align', models.CharField(blank=True, max_length=10, verbose_name='Align', choices=[('left', 'Left'), ('center', 'Center'), ('right', 'Right')])),

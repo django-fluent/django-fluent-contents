@@ -1,5 +1,8 @@
 from django.core.cache import cache
-from django.core.urlresolvers import reverse
+try:
+    from django.core.urlresolvers import reverse
+except ImportError:
+    from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.template import Template
 from django.test import RequestFactory
