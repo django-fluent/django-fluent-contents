@@ -1,11 +1,6 @@
-import django
+from django.utils.deprecation import MiddlewareMixin
 from django.http import HttpResponseRedirect
 from fluent_contents.extensions import HttpRedirectRequest
-
-if django.VERSION >= (1, 10):
-    from django.utils.deprecation import MiddlewareMixin
-else:
-    MiddlewareMixin = object
 
 
 class HttpRedirectRequestMiddleware(MiddlewareMixin):

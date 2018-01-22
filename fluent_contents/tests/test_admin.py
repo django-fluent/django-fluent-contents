@@ -4,7 +4,7 @@ from django.contrib.admin.templatetags.admin_urls import admin_urlname
 from django.contrib.auth.models import User
 from django.contrib.messages.middleware import MessageMiddleware
 from django.test import RequestFactory, override_settings
-from fluent_utils.django_compat import reverse  # Django 1.9-
+from django.urls import reverse
 from fluent_contents.models import Placeholder
 from fluent_contents.tests import factories
 from fluent_contents.tests.testapp.admin import PlaceholderFieldTestPageAdmin

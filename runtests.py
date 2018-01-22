@@ -14,40 +14,6 @@ sys.stderr.write('Using Django version {0} from {1}\n'.format(
 )
 
 if not settings.configured:
-    if django.VERSION >= (1, 8):
-        template_settings = dict(
-            TEMPLATES = [
-                {
-                    'BACKEND': 'django.template.backends.django.DjangoTemplates',
-                    'DIRS': (),
-                    'OPTIONS': {
-                        'loaders': (
-                            'django.template.loaders.filesystem.Loader',
-                            'django.template.loaders.app_directories.Loader',
-                        ),
-                        'context_processors': (
-                            'django.template.context_processors.debug',
-                            'django.template.context_processors.i18n',
-                            'django.template.context_processors.media',
-                            'django.template.context_processors.request',
-                            'django.template.context_processors.static',
-                            'django.contrib.auth.context_processors.auth',
-                        ),
-                    },
-                },
-            ]
-        )
-    else:
-        template_settings = dict(
-            TEMPLATE_LOADERS = (
-                'django.template.loaders.app_directories.Loader',
-                'django.template.loaders.filesystem.Loader',
-            ),
-            TEMPLATE_CONTEXT_PROCESSORS = list(default_settings.TEMPLATE_CONTEXT_PROCESSORS) + [
-                'django.core.context_processors.request',
-            ],
-        )
-
     settings.configure(
         DATABASES = {
             'default': {
@@ -82,22 +48,35 @@ if not settings.configured:
             #'form_designer',
             'fluent_contents.tests.testapp',
         ),
-        MIDDLEWARE = (  # Django 2.0
+        MIDDLEWARE = (
             'django.middleware.common.CommonMiddleware',
             'django.contrib.sessions.middleware.SessionMiddleware',
             'django.middleware.csrf.CsrfViewMiddleware',
             'django.contrib.auth.middleware.AuthenticationMiddleware',
             'fluent_contents.middleware.HttpRedirectRequestMiddleware',
         ),
-        MIDDLEWARE_CLASSES = (
-            'django.middleware.common.CommonMiddleware',
-            'django.contrib.sessions.middleware.SessionMiddleware',
-            'django.middleware.csrf.CsrfViewMiddleware',
-            'django.contrib.auth.middleware.AuthenticationMiddleware',
-            'fluent_contents.middleware.HttpRedirectRequestMiddleware',
-        ),
+        TEMPLATES = [
+            {
+                'BACKEND': 'django.template.backends.django.DjangoTemplates',
+                'DIRS': (),
+                'OPTIONS': {
+                    'loaders': (
+                        'django.template.loaders.filesystem.Loader',
+                        'django.template.loaders.app_directories.Loader',
+                    ),
+                    'context_processors': (
+                        'django.template.context_processors.debug',
+                        'django.template.context_processors.i18n',
+                        'django.template.context_processors.media',
+                        'django.template.context_processors.request',
+                        'django.template.context_processors.static',
+                        'django.contrib.auth.context_processors.auth',
+                    ),
+                },
+            },
+        ],
         ROOT_URLCONF = 'fluent_contents.tests.testapp.urls',
-        TEST_RUNNER = 'django.test.simple.DjangoTestSuiteRunner' if django.VERSION < (1,6) else 'django.test.runner.DiscoverRunner',
+        TEST_RUNNER = 'django.test.runner.DiscoverRunner',
         SITE_ID = 3,
         FLUENT_CONTENTS_CACHE_OUTPUT = True,
         FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT = True,
@@ -107,20 +86,11 @@ if not settings.configured:
         SILENCED_SYSTEM_CHECKS = (
             'fields.E210',   # ImageField needs to have PIL/Pillow installed
         ),
-        **template_settings
     )
 
-if django.VERSION < (1,6):
-    # Different test runner, needs to name all apps,
-    # it doesn't locate a tests*.py in each subfolder.
-    DEFAULT_TEST_APPS = [
-        'fluent_contents',
-        'text',
-    ]
-else:
-    DEFAULT_TEST_APPS = [
-        'fluent_contents',
-    ]
+DEFAULT_TEST_APPS = [
+    'fluent_contents',
+]
 
 
 def runtests():

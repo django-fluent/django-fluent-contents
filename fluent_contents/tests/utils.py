@@ -3,7 +3,6 @@ Utils for internal tests, and utils for testing third party plugins.
 """
 from __future__ import print_function
 from importlib import import_module
-import django
 from django.contrib.auth import get_user_model
 from future.builtins import str
 from django.conf import settings
@@ -67,17 +66,8 @@ class AppTestCase(TestCase):
                     testapp = import_module(appname)
 
                     # Flush caches
-                    if django.VERSION < (1, 9):
-                        from django.template.loaders import app_directories
-                        from django.db.models import loading
-                        loading.cache.loaded = False
-
-                        app_directories.app_template_dirs += (
-                            os.path.join(os.path.dirname(testapp.__file__), 'templates'),
-                        )
-                    else:
-                        from django.template.utils import get_app_template_dirs
-                        get_app_template_dirs.cache_clear()
+                    from django.template.utils import get_app_template_dirs
+                    get_app_template_dirs.cache_clear()
 
             if run_syncdb:
                 call_command('migrate', verbosity=0)

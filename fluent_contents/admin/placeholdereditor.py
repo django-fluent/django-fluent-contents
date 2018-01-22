@@ -1,5 +1,4 @@
 from abc import abstractmethod
-import django
 from django.conf import settings
 from django.conf.urls import url
 from django.contrib.admin import ModelAdmin
@@ -76,18 +75,18 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
         )
         #if 'grapelli' in settings.INSTALLED_APPS:
         # ...
-        if 'flat' in settings.INSTALLED_APPS or django.VERSION >= (1, 9):
+        if 'classic_theme' in settings.INSTALLED_APPS:
             css = {
                 'screen': (
                     'fluent_contents/admin/cp_admin.css',
-                    'fluent_contents/admin/cp_admin_flat.css',
+                    'fluent_contents/admin/cp_admin_classic.css',
                 ),
             }
         else:
             css = {
                 'screen': (
                     'fluent_contents/admin/cp_admin.css',
-                    'fluent_contents/admin/cp_admin_classic.css',
+                    'fluent_contents/admin/cp_admin_flat.css',
                 ),
             }
 
@@ -294,11 +293,8 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
                 'change': True,
                 'has_change_permission': True,
             }
-            if django.VERSION >= (1, 8):
-                context = RequestContext(request, context)
-                form_html = render_to_string(template_name, context.flatten())
-            else:
-                form_html = render_to_string(template_name, context, context_instance=RequestContext(request))
+            context = RequestContext(request, context)
+            form_html = render_to_string(template_name, context.flatten())
 
             # Append to list with metadata included
             contentitem = inline_admin_form.original

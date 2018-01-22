@@ -2,7 +2,6 @@
 Automatically mention all model fields as parameters in the model construction.
 Based on http://djangosnippets.org/snippets/2533/
 """
-import django
 from django.utils.html import strip_tags
 from django.utils.encoding import force_text
 import inspect
@@ -12,12 +11,7 @@ def improve_model_docstring(app, what, name, obj, options, lines):
     from django.db import models  # must be inside the function, to allow settings initialization first.
 
     if inspect.isclass(obj) and issubclass(obj, models.Model):
-        if django.VERSION >= (1,8):
-            model_fields = obj._meta.get_fields()
-        elif django.VERSION >= (1,6):
-            model_fields = obj._meta.fields
-        else:
-            model_fields = obj._meta._fields()
+        model_fields = obj._meta.get_fields()
 
         for field in model_fields:
             help_text = strip_tags(force_text(field.help_text))

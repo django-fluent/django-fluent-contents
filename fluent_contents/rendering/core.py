@@ -1,6 +1,5 @@
 import logging
 
-import django
 import six
 from django.db.models.query import EmptyQuerySet
 
@@ -351,12 +350,8 @@ class RenderingPipe(object):
                 'edit_mode': self.edit_mode,
             }
 
-            if django.VERSION >= (1, 8):
-                # Avoid RemovedInDjango110Warning
-                context = PluginContext(self.request, context)
-                merged_html = render_to_string(template_name, context.flatten())
-            else:
-                merged_html = render_to_string(template_name, context, context_instance=PluginContext(self.request))
+            context = PluginContext(self.request, context)
+            merged_html = render_to_string(template_name, context.flatten())
 
         return ContentItemOutput(merged_html, media, cacheable=result.all_cacheable, cache_timeout=result.all_timeout)
 

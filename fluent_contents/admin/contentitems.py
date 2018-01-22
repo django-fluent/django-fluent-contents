@@ -1,4 +1,3 @@
-import django
 from django.contrib.contenttypes.admin import BaseGenericInlineFormSet, GenericInlineModelAdmin
 
 from fluent_contents import extensions, appsettings
@@ -125,13 +124,10 @@ class BaseContentItemInline(GenericInlineModelAdmin):
         form = FormSet.form
         first_fields = list(ContentItemForm.base_fields.keys())
         field_order = first_fields + [f for f in form.base_fields.keys() if f not in first_fields]
-        if django.VERSION >= (1, 7):
-            # Recreate collections.OrderedDict object
-            base_fields = form.base_fields
-            form.base_fields = base_fields.__class__((k, base_fields[k]) for k in field_order)
-        else:
-            # Update Django's SortedDict
-            form.base_fields.keyOrder = field_order
+
+        # Recreate collections.OrderedDict object
+        base_fields = form.base_fields
+        form.base_fields = base_fields.__class__((k, base_fields[k]) for k in field_order)
         return FormSet
 
     def get_fieldsets(self, request, obj=None):

@@ -172,9 +172,6 @@ class PlaceholderField(PlaceholderRelation):
         self.editable = True
         self.blank = True                     # TODO: support blank: False to enforce adding at least one plugin.
 
-        if django.VERSION < (1, 9):
-            self.rel = PlaceholderRel(self, Placeholder)       # This support queries
-
     def formfield(self, **kwargs):
         """
         Returns a :class:`PlaceholderFormField` instance for this database Field.

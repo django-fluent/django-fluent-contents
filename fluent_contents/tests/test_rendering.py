@@ -2,8 +2,8 @@ from django.core.cache import cache
 from django.http import HttpResponseRedirect
 from django.template import Template
 from django.test import RequestFactory
+from django.urls import reverse
 
-from fluent_utils.django_compat import reverse  # Django 1.9-
 from fluent_contents import rendering
 from fluent_contents.extensions import PluginContext
 from fluent_contents.models import Placeholder, DEFAULT_TIMEOUT

@@ -2,7 +2,6 @@
 Internal module for the plugin system,
 the API is exposed via __init__.py
 """
-import django
 import django.contrib.auth.context_processors
 import django.contrib.messages.context_processors
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
@@ -478,12 +477,8 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         if not content_instance:
             content_instance = PluginContext(request)
 
-        if django.VERSION >= (1, 8):
-            # Avoid RemovedInDjango110Warning
-            content_instance.update(context)
-            return render_to_string(template, content_instance.flatten())
-        else:
-            return render_to_string(template, context, context_instance=content_instance)
+        content_instance.update(context)
+        return render_to_string(template, content_instance.flatten())
 
     def render_error(self, error):
         """

@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models, transaction
+from django.urls import reverse
 from fluent_contents.models import PlaceholderRelation, ContentItemRelation
-from fluent_utils.django_compat import reverse  # Django 1.9-
 from mptt.models import MPTTModel
 from simplecms import appconfig
 
