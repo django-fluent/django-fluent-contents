@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from future.utils import python_2_unicode_compatible
-from django.core.urlresolvers import reverse
 from django.db import models
+from fluent_utils.django_compat import reverse  # Django 1.9-
 from fluent_contents.models.fields import PlaceholderField, PlaceholderRelation, ContentItemRelation
 from fluent_contents.models import ContentItem, ContentItemManager
 

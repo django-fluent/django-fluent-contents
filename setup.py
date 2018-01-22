@@ -39,11 +39,11 @@ setup(
     license='Apache 2.0',
 
     install_requires=[
-        'django-fluent-utils>=1.2.4',      # DRY utility code
-        'django-parler>=1.6.1',            # Needed for Django 1.9 compatibility
-        'django-polymorphic>=0.9.1',       # Needed for Django 1.9 compatibility
-        'django-tag-parser>=2.1',          # Needed for Django 1.8 compatibility
-        'django-template-analyzer>=1.6.1', # Needed for Django 1.9 compatibility + bugfixes
+        'django-fluent-utils>=2.0',        # DRY utility code
+        'django-parler>=1.9.1',
+        'django-polymorphic>=2.0',
+        'django-tag-parser>=2.1',
+        'django-template-analyzer>=1.6.1',
         'future>=0.12.2',
         'six>=1.5.2',
         # Work around https://github.com/html5lib/html5lib-python/issues/189
@@ -57,7 +57,7 @@ setup(
         'disquscommentsarea': ['django-disqus'],
         'formdesignerlink': ['django-form-designer'],
         'markup': ['docutils', 'textile', 'Markdown>=1.7'],
-        'oembeditem': ['micawber>=0.3.1', 'beautifulsoup4>=4.3.2'],
+        'oembeditem': ['micawber>=0.3.3', 'beautifulsoup4>=4.3.2'],
         'text': ['django-wysiwyg>=0.7.1'],
         'twitterfeed': ['twitter-text-py>=1.0.3'],
     },
@@ -85,7 +85,7 @@ setup(
     test_suite = 'runtests',
     zip_safe=False,
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Django',
         'Intended Audience :: Developers',
@@ -94,7 +94,6 @@ setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
@@ -104,6 +103,7 @@ setup(
         'Framework :: Django :: 1.9',
         'Framework :: Django :: 1.10',
         'Framework :: Django :: 1.11',
+        'Framework :: Django :: 2.0',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Application Frameworks',

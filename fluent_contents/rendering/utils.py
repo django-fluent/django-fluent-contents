@@ -3,6 +3,8 @@ Internal - util functions for this 'rendering' package.
 """
 import logging
 import os
+
+import django
 import six
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.sites.models import Site
@@ -27,10 +29,15 @@ _log_functions = {
 
 def add_media(dest, media):
     """
-    Do what django.forms.Media.__add__() does without creating a new object.
+    Optimized version of django.forms.Media.__add__() that doesn't create new objects.
     """
-    dest.add_css(media._css)
-    dest.add_js(media._js)
+    if django.VERSION >= (2, 0):
+        combined = dest + media
+        dest._css = combined._css
+        dest._js = combined._js
+    else:
+        dest.add_css(media._css)
+        dest.add_js(media._js)
 
 
 def get_placeholder_debug_name(placeholder):

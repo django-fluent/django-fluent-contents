@@ -187,11 +187,11 @@ class PlaceholderField(PlaceholderRelation):
         defaults.update(kwargs)
         return PlaceholderFormField(slot=self.slot, plugins=self._plugins, **defaults)
 
-    def contribute_to_class(self, cls, name):
+    def contribute_to_class(self, cls, name, **kwargs):
         """
         Internal Django method to associate the field with the Model; it assigns the descriptor.
         """
-        super(PlaceholderField, self).contribute_to_class(cls, name)
+        super(PlaceholderField, self).contribute_to_class(cls, name, **kwargs)
 
         # overwrites what instance.<colname> returns; give direct access to the placeholder
         setattr(cls, name, PlaceholderFieldDescriptor(self.slot))
@@ -204,9 +204,14 @@ class PlaceholderField(PlaceholderRelation):
 
         # Configure the revere relation if possible.
         # TODO: make sure reverse queries work properly
-        if self.rel.related_name is None:
+        if django.VERSION >= (2, 0):
+            rel = self.remote_field
+        else:
+            rel = self.rel
+
+        if rel.related_name is None:
             # Make unique for model (multiple models can use same slotnane)
-            self.rel.related_name = '{app}_{model}_{slot}_FIXME'.format(
+            rel.related_name = '{app}_{model}_{slot}_FIXME'.format(
                 app=cls._meta.app_label,
                 model=cls._meta.object_name.lower(),
                 slot=self.slot
@@ -216,7 +221,7 @@ class PlaceholderField(PlaceholderRelation):
             # The regular ForeignKey assigns a ForeignRelatedObjectsDescriptor to it for example.
             # In this case, the PlaceholderRelation is already the reverse relation.
             # Being able to move forward from the Placeholder to the derived models does not have that much value.
-            setattr(self.rel.to, self.rel.related_name, None)
+            setattr(rel.to, self.rel.related_name, None)
 
     @property
     def plugins(self):
