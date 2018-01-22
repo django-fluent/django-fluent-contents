@@ -50,7 +50,7 @@ setup(
         'html5lib >= 0.999, != 0.9999, != 1.0b5, != 0.99999, != 1.0b6',
     ],
     requires=[
-        'Django (>=1.5)',
+        'Django (>=1.10)',
     ],
     extras_require = {
         'code': ['Pygments'],
@@ -98,9 +98,6 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Framework :: Django',
-        'Framework :: Django :: 1.7',
-        'Framework :: Django :: 1.8',
-        'Framework :: Django :: 1.9',
         'Framework :: Django :: 1.10',
         'Framework :: Django :: 1.11',
         'Framework :: Django :: 2.0',
