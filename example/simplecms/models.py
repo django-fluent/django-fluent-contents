@@ -1,17 +1,19 @@
 from __future__ import unicode_literals
 from django.db import models, transaction
 from django.urls import reverse
+from django.utils.encoding import python_2_unicode_compatible
 from fluent_contents.models import PlaceholderRelation, ContentItemRelation
 from mptt.models import MPTTModel
 from simplecms import appconfig
 
 
+@python_2_unicode_compatible
 class Page(MPTTModel):
     title = models.CharField("Title", max_length=200)
 
     # The basic fields to make the url structure work:
     slug = models.SlugField("Slug")
-    parent = models.ForeignKey('self', related_name='children', blank=True, null=True)
+    parent = models.ForeignKey('self', related_name='children', blank=True, null=True, on_delete=models.CASCADE)
     _cached_url = models.CharField(max_length=300, blank=True, editable=False, default='', db_index=True)
 
     # Allow different layouts
@@ -25,7 +27,7 @@ class Page(MPTTModel):
         verbose_name = "Page"
         verbose_name_plural = "Pages"
 
-    def __unicode__(self):
+    def __str__(self):
         return self.title
 
     def get_absolute_url(self):

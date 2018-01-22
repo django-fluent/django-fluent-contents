@@ -1,14 +1,14 @@
 # Install the mandatory dependencies of the library
 django-parler>=1.6.2
-django-polymorphic>=0.9.1
-django-tag-parser>=2.1
+django-polymorphic>=1.3
+django-tag-parser>=3.1
 django-template-analyzer>=1.6.1
-django-contrib-comments >= 1.6.2
-django-fluent-utils>=1.3.2
+django-contrib-comments >= 1.8
+django-fluent-utils>=2.0
 future>=0.12.2
 
 # Optional for HTML cleanup and post-filters.
-html5lib >= 1.0b8
+html5lib >= 1.0
 smartypants >= 1.8.6
 
 # The django-fluent-contents package has some optional dependencies,
@@ -16,8 +16,8 @@ smartypants >= 1.8.6
 # Instead, this requirements file contains all required elements for the demo:
 
 # For simplecms
-Django>=1.4.6
-django-mptt>=0.5.4
+Django>=1.11
+django-mptt>=0.9
 Pillow>=4.0
 
 # For code plugin
@@ -35,7 +35,7 @@ Markdown>=2.1.0
 textile>=2.1.5
 
 # For oembeditem plugin
-micawber>=0.3.1
+micawber>=0.3.3
 
 # For text plugin
 django-wysiwyg>=0.7.1
