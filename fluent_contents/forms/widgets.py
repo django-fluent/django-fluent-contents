@@ -19,6 +19,7 @@ class PlaceholderFieldWidget(Widget):
 
     class Media:
         js = (
+            'admin/js/jquery.init.js',
             'fluent_contents/admin/cp_admin.js',
             'fluent_contents/admin/cp_data.js',
             'fluent_contents/admin/cp_plugins.js',

@@ -64,6 +64,7 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
         # to display the placeholder panes in a tabbar format.
         # The remaining scripts should just operate the same without it.
         js = (
+            'admin/js/jquery.init.js',
             'fluent_contents/admin/vendor/Sortable.js',
             'fluent_contents/admin/jquery.cookie.js',
             'fluent_contents/admin/cp_admin.js',
