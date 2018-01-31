@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python -Wd
 import sys
 import django
 from django.conf import settings, global_settings as default_settings
