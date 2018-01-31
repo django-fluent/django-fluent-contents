@@ -40,7 +40,7 @@ class PlaceholderFieldWidget(Widget):
         # Currently returns a dummy value, so the PlaceholderFieldDescriptor() can detect it.
         return "-DUMMY-"
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         """
         Render the placeholder field.
         """
@@ -83,7 +83,7 @@ class WysiwygWidget(AdminTextareaWidget):
             defaults.update(attrs)
         super(WysiwygWidget, self).__init__(attrs)
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         value = smart_text(value or u'')
         final_attrs = self.build_attrs(attrs)  # signature changed in Django 1.11
         final_attrs['name'] = name
