@@ -201,7 +201,7 @@ class PlaceholderField(PlaceholderRelation):
 
         # Configure the revere relation if possible.
         # TODO: make sure reverse queries work properly
-        if django.VERSION >= (2, 0):
+        if django.VERSION >= (1, 11):
             rel = self.remote_field
         else:
             rel = self.rel
