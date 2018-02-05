@@ -1,6 +1,16 @@
 Changelog
 =========
 
+Changes in 2.0.1 (2018-02-05)
+-----------------------------
+
+* Added ``Meta.manager_inheritance_from_future = True`` to all ``ContentItem`` subclasses that
+  define a ``Meta`` class. This avoids warnings in the latest django-polymorphic_ 2.0.1 release.
+  It also makes sure all sub-sub classes are correctly fetched (an unlikely use-case though).
+* Fixed deprecation warnings for Django 2.1
+* Fixed setup classifiers
+
+
 Changes in 2.0 (2018-01-22)
 ---------------------------
 
