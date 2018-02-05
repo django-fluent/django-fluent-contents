@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from copy import deepcopy
 
+import django
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.utils.functional import cached_property
 from future.utils import with_metaclass, python_2_unicode_compatible, PY3
@@ -170,6 +171,14 @@ class ContentItemMetaClass(PolymorphicModelBase):
     # Inspired by from Django-CMS, (c) , BSD licensed.
 
     def __new__(mcs, name, bases, attrs):
+        if django.VERSION < (2, 0):
+            # Silence polymorphic messages for wrong manager inheritance,
+            # let everything work just like before.
+            try:
+                attrs['Meta'].manager_inheritance_from_future = True
+            except KeyError:
+                pass
+
         new_class = super(ContentItemMetaClass, mcs).__new__(mcs, name, bases, attrs)
         db_table  = new_class._meta.db_table
         app_label = new_class._meta.app_label
