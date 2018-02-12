@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.admin.widgets import AdminTextareaWidget
 from django.forms.utils import flatatt
 from django.forms.widgets import Widget
@@ -19,6 +20,8 @@ class PlaceholderFieldWidget(Widget):
 
     class Media:
         js = (
+            'admin/js/vendor/jquery/jquery{}.js'.format('' if settings.DEBUG else '.min'),
+            'admin/js/jquery.init.js',
             'fluent_contents/admin/cp_admin.js',
             'fluent_contents/admin/cp_data.js',
             'fluent_contents/admin/cp_plugins.js',
