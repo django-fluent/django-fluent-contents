@@ -1,6 +1,13 @@
 Changelog
 =========
 
+Changes in 2.0.3 (2018-05-14)
+-----------------------------
+
+* Fixed twitter-text extra requires dependency for Python 3 support
+  Use ``twitter-text`` instead of the outdated ``twitter-text-py``.
+
+
 Changes in 2.0.2 (2018-02-12)
 -----------------------------
 
