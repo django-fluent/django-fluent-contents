@@ -59,7 +59,7 @@ setup(
         'markup': ['docutils', 'textile', 'Markdown>=1.7'],
         'oembeditem': ['micawber>=0.3.3', 'beautifulsoup4>=4.3.2'],
         'text': ['django-wysiwyg>=0.7.1'],
-        'twitterfeed': ['twitter-text-py>=1.0.3'],
+        'twitterfeed': ['twitter-text>=3.0'],
     },
     tests_require = [
         'docutils',
