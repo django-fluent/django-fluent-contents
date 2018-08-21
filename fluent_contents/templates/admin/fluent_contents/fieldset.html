@@ -1,8 +1,8 @@
 {# this is essentially admin/includes/fieldset.html, with detection of hidden fields. #}
 {# context structure: InlineFieldset -> Fieldline -> AdminField -> form field (BoundField instance) #}
-{# The hidden field handling is made in advance of https://code.djangoproject.com/ticket/11277 getting merged to trunk #}
+{# render all hidden fields top level, compacter and easier to debug - and allows CSS like .form-row:last-child #}
 {% for line in fieldset %}{% for adminfield in line %}{% if adminfield.field.is_hidden %}
-  {{ adminfield.field }}{# render all hidden fields top level, compacter and easier to debug #}
+  {{ adminfield.field }}
 {% endif %}{% endfor %}{% endfor %}
 <fieldset class="module aligned {{ fieldset.classes }}">
     {% if fieldset.name %}<h2>{{ fieldset.name }}</h2>{% endif %}
@@ -10,6 +10,8 @@
         <div class="description">{{ fieldset.description|safe }}</div>
     {% endif %}
     {% for line in fieldset %}
+      {% if line.has_visible_field %}
         {% block line %}{% include "admin/fluent_contents/fieldset_line.html" %}{% endblock %}
+      {% endif %}
     {% endfor %}
 </fieldset>
