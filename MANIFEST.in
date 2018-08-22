@@ -1,6 +1,7 @@
 include AUTHORS
 include README.rst
 include LICENSE
+recursive-include fluent_contents/conf/plugin_template *.py
 recursive-include fluent_contents/locale *
 recursive-include fluent_contents/templates *.html
 recursive-include fluent_contents/static *
