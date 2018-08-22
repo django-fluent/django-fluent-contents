@@ -7,7 +7,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.utils.functional import cached_property
 from future.utils import with_metaclass, python_2_unicode_compatible, PY3
 from django.contrib.contenttypes.models import ContentType
-from django.db import connection, models
+from django.db import connection, models, transaction
 from django.db.backends.utils import truncate_name
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
@@ -393,12 +393,26 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
         # replace the @cached_property
         self._children = items
 
-    def move_to_placeholder(self, placeholder, sort_order=None):
+    def _is_parent_item_change(self, parent_item):
+        """Check whether the item should be moved"""
+        new_parent_item_id = None if parent_item is None else parent_item.pk
+        return self.parent_item_id != new_parent_item_id
+
+    @transaction.atomic
+    def move_to_placeholder(self, placeholder, parent_item=None, sort_order=None):
         """
         .. versionadded: 1.0.2 Move this content item to a new placeholder.
 
         The object is saved afterwards.
         """
+        if parent_item is not None and parent_item.placeholder_id != placeholder.id:
+            raise ValueError("Placeholder and parent item don't match")
+
+        # When moving the parent, validate first!
+        parent_item_changed = self._is_parent_item_change(parent_item)
+        if parent_item_changed:
+            self.validate_move(parent_item)
+
         # Transfer parent
         self.placeholder = placeholder
         self.parent_type = placeholder.parent_type
@@ -414,15 +428,69 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
             self.sort_order = sort_order
         self.save()
 
+        if self.can_have_children:
+            # Update denormalized values
+            self.get_descendants().update(
+                placeholder=placeholder,
+                parent_type=placeholder.parent_type,
+                parent_id=placeholder.parent_id
+            )
+
+        # Perform the actual MPTT move
+        if parent_item_changed:
+            self.__class__.objects.move_node(self, parent_item)
+
     move_to_placeholder.alters_data = True
 
-    def copy_to_placeholder(self, placeholder, sort_order=None, in_place=False):
+    def move_to_parent_item(self, parent_item, sort_order=None):
+        """
+        .. versionadded:: 2.1 Move this item to a new parent.
+
+        The parent may exist in a different placeholder,
+        which means the item would also move to there.
+        """
+        if parent_item.placeholder_id != self.placeholder_id:
+            self.move_to_placeholder(
+                parent_item.placeholder,
+                parent_item=parent_item,
+                sort_order=sort_order
+            )
+        elif self._is_parent_item_change(parent_item):
+            self.validate_move(parent_item)
+            self.parent_item = parent_item
+            self.__class__.objects.move_node(self, parent_item)
+
+    move_to_parent_item.alters_data = True
+
+    def copy_to_parent_item(self, parent_item, sort_order=None):
+        """
+        .. versionadded:: 2.1 Move this item to a new parent.
+        """
+        if self.can_have_children:
+            raise NotImplementedError("Can't copy items with children yet")
+
+        # This is a convenience method, since the implementation is already
+        # covered by the existing logic.
+        self.copy_to_placeholder(
+            parent_item.placeholder,
+            parent_item=parent_item,
+            sort_order=sort_order
+        )
+
+    copy_to_parent_item.alters_data = True
+
+    def copy_to_placeholder(self, placeholder, parent_item=None, sort_order=None, in_place=False):
         """
         .. versionadded: 1.0 Copy this content item to a new placeholder.
 
         Note: if you have M2M relations on the model,
         override this method to transfer those values.
         """
+        if self.can_have_children:
+            raise NotImplementedError("Can't copy items with children yet")
+        if parent_item is not None and parent_item.placeholder_id != placeholder.id:
+            raise ValueError("Placeholder and parent item don't match")
+
         if in_place:
             copy = self
         else:
@@ -431,9 +499,10 @@ class ContentItem(with_metaclass(ContentItemMetaClass, CachedModelMixin, Polymor
         # Reset Django cache
         copy.pk = None  # reset contentitem_ptr_id
         copy.id = None  # reset this base class.
+        copy.parent_item = parent_item
         copy._state.adding = True
 
-        copy.move_to_placeholder(placeholder, sort_order=sort_order)
+        copy.move_to_placeholder(placeholder, parent_item=parent_item, sort_order=sort_order)
         return copy
 
     copy_to_placeholder.alters_data = True
