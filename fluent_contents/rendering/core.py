@@ -16,6 +16,7 @@ from fluent_contents import appsettings
 from fluent_contents.cache import get_rendering_cache_key, get_placeholder_cache_key_for_parent
 from fluent_contents.extensions import PluginNotFound
 from fluent_contents.models import ContentItem, ContentItemOutput, ContentItemTree, DEFAULT_TIMEOUT, get_parent_language_code
+from fluent_utils.softdeps.any_urlfield import AnyUrlField
 from . import markers
 from .utils import optimize_logger_level, get_placeholder_debug_name, add_media, get_render_language, is_template_updated
 
@@ -99,6 +100,17 @@ class ResultTracker(object):
         """Read the derived table data for all objects tracked as remaining (=not found in the cache)."""
         if self.remaining_items:
             self.remaining_items = ContentItem.objects.get_real_instances(self.remaining_items)
+
+    def prefetch_related_objects(self):
+        """Read any additional prefetch data."""
+        if self.remaining_items:
+            # Prefetching foreign key fields would be better handled in get_real_instances(),
+            # so the list doesn't get reiterated over and over. However, this can still
+            # take advantage of the extra resolve feature in django-any-urlfield 2.5.
+            # When that object (and not the softdep stub) is available, fetch the data
+            # at once - avoiding to perform a SELECT .. WHERE id=? query per item.
+            if hasattr(AnyUrlField, 'resolve_objects'):
+                AnyUrlField.resolve_objects(self.remaining_items, skip_cached_urls=True)
 
     def add_plugin_cache_settings(self, plugin, contentitem):
         """
@@ -241,10 +253,12 @@ class RenderingPipe(object):
             # Phase 1: get cached output
             self._fetch_cached_output(items, result=result)
             result.fetch_remaining_instances()
+            result.prefetch_related_objects()
         else:
             # The items is either a list of manually created items, or it's a QuerySet.
             # Can't prevent reading the subclasses only, so don't bother with caching here.
             result.add_remaining_list(items)
+            result.prefetch_related_objects()
 
         # Start the actual rendering of remaining items.
         if result.remaining_items:
