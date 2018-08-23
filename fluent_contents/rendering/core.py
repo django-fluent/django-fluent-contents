@@ -150,7 +150,11 @@ class ResultTracker(object):
         # The derived tables could be truncated/reset or store_output() could be omitted.
         ordered_output = []
         for item_id in self.output_ordering:
-            contentitem = self.item_source[item_id]
+            try:
+                contentitem = self.item_source[item_id]
+            except KeyError:
+                continue
+
             try:
                 output = self.item_output[item_id]
             except KeyError:
