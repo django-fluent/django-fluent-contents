@@ -11,7 +11,7 @@ from django.dispatch import receiver
 from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils import translation
-from django.utils.functional import curry
+from django.utils.functional import cached_property, curry
 from fluent_utils.ajax import JsonResponse
 from polymorphic.admin import PolymorphicInlineSupportMixin, PolymorphicInlineAdminFormSet
 
@@ -35,7 +35,7 @@ class PlaceholderInlineFormSet(BaseInitialGenericInlineFormSet):
         # Make output less verbose, easier to read, and less kB to transmit.
         return 'placeholder-fs'
 
-    @property
+    @cached_property
     def other_instance_languages(self):
         return get_parent_active_language_choices(self.instance, exclude_current=True)
 
