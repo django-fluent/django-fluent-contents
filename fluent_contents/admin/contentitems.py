@@ -1,6 +1,8 @@
 from collections import deque
 
+from django.utils.functional import cached_property
 from django.utils.lru_cache import lru_cache
+from fluent_utils.softdeps.any_urlfield import AnyUrlField
 from polymorphic.admin import GenericStackedPolymorphicInline
 from polymorphic.formsets import BaseGenericPolymorphicInlineFormSet
 from polymorphic_tree.admin import PolymorphicMPTTChildModelAdmin, PolymorphicMPTTParentModelAdmin
@@ -42,7 +44,23 @@ class BaseContentItemFormSet(BaseGenericPolymorphicInlineFormSet):
         self._deleted_placeholders = ()  # internal property, set by PlaceholderEditorAdmin
         self._placeholders_by_slot = {}
 
-        self._current_placeholders = dict((p.id, p) for p in Placeholder.objects.parent(self.instance))
+        self._current_placeholders = Placeholder.objects.parent(self.instance).in_bulk()
+
+    @cached_property
+    def forms(self):
+        forms = super(BaseContentItemFormSet, self).forms
+        instances = [form.instance for form in forms if form.instance.pk]
+        self._prefetch_relations(instances)
+        return forms
+
+    def _prefetch_relations(self, instances):
+        """
+        Make sure the displayed related objects are fetched in a single call.
+        This avoids having many N-queries for related data in the formset.
+        """
+        # Allow django-any-urlfield 2.6 to resolve it's data.
+        if hasattr(AnyUrlField, 'resolve_objects'):
+            AnyUrlField.resolve_objects(instances)
 
     def get_form_class(self, model):
         form = super(BaseContentItemFormSet, self).get_form_class(model)
