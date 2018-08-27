@@ -1,6 +1,22 @@
 Changelog
 =========
 
+Changes in 2.0.4 (2018-08-27)
+-----------------------------
+
+* Fixed showing languages in the copy button which are not part of ``PARLER_LANGUAGES``.
+* Fixed storing ``MarkupItem`` under it's proxy class type ID.
+* Fixed missing return value from ``CachedModelMixin.delete()``.
+* Fixed reading ``context.request`` for content plugin templates.
+* Fixed including ``cp_tabs.js`` in ``PlaceholderFieldAdmin``.
+* Fixed HTML comment output escaping for missing database tables.
+* Fixed errors in ``get_plugins_by_name()`` when object instances are passed.
+* Fixed ``Placeholder.DoesNotExist`` warning to display proper ContentType ID for proxy models.
+* Fixed leaving empty ``.form-row`` elements in the admin page.
+* Fixed ``start_content_plugin`` command, template was missing in ``MANIFEST``.
+* Fixed Python 3 support for ``Placeholder.__repr__()``.
+
+
 Changes in 2.0.3 (2018-05-14)
 -----------------------------
 
