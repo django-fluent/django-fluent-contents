@@ -14,8 +14,8 @@ class SharedContentQuerySet(TranslatableQuerySet):
         super(SharedContentQuerySet, self).__init__(*args, **kwargs)
         self._parent_site = None
 
-    def _clone(self, klass=None, setup=False, **kw):
-        c = super(SharedContentQuerySet, self)._clone(klass, setup, **kw)
+    def _clone(self):
+        c = super(SharedContentQuerySet, self)._clone()
         c._parent_site = self._parent_site
         return c
 
