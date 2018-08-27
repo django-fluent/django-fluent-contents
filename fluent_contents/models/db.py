@@ -81,7 +81,7 @@ class Placeholder(models.Model):
         return self.title or self.slot
 
     def __repr__(self):
-        return '<{0}: {1}; slot: {2}>'.format(self.__class__.__name__, unicode(self), self.slot)
+        return '<{0}: {1}; slot: {2}>'.format(self.__class__.__name__, self, self.slot)
 
     def get_allowed_plugins(self):
         """
