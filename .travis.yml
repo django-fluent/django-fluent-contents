@@ -3,16 +3,18 @@ sudo: false
 cache: pip
 python:
 - '3.6'
-- '3.4'
+- '3.5'
 - '2.7'
 env:
-- PACKAGES="django>=1.10,<1.11 django-polymorphic<2.0"
 - PACKAGES="django>=1.11,<1.12"
 - PACKAGES="django>=2.0,<2.1"
+- PACKAGES="django>=2.1,<2.2"
 matrix:
   exclude:
   - python: '2.7'
     env: PACKAGES="django>=2.0,<2.1"
+  - python: '2.7'
+    env: PACKAGES="django>=2.1,<2.2"
 before_install:
 - pip install codecov
 install:
