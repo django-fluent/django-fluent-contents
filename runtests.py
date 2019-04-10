@@ -57,6 +57,7 @@ if not settings.configured:
             'django.contrib.sessions.middleware.SessionMiddleware',
             'django.middleware.csrf.CsrfViewMiddleware',
             'django.contrib.auth.middleware.AuthenticationMiddleware',
+            'django.contrib.messages.middleware.MessageMiddleware',
             'fluent_contents.middleware.HttpRedirectRequestMiddleware',
         ),
         TEMPLATES = [
@@ -74,6 +75,7 @@ if not settings.configured:
                         'django.template.context_processors.media',
                         'django.template.context_processors.request',
                         'django.template.context_processors.static',
+                        'django.contrib.messages.context_processors.messages',
                         'django.contrib.auth.context_processors.auth',
                     ),
                 },
