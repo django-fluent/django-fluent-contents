@@ -1,3 +1,4 @@
+distro: xenial
 language: python
 sudo: false
 cache: pip
