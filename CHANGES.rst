@@ -1,6 +1,12 @@
 Changelog
 =========
 
+Changes in 2.0.5 (2019-04-12)
+-----------------------------
+
+* Fixed compatibility with Django 2.2
+
+
 Changes in 2.0.4 (2018-08-27)
 -----------------------------
 
