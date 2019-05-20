@@ -4,6 +4,7 @@ The manager classes are accessed via ``Placeholder.objects``.
 import six
 
 from future.builtins import str
+from django.conf import settings
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import get_language
