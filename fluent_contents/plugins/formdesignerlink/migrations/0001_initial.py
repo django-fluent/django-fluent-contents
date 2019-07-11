@@ -15,8 +15,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='FormDesignerLink',
             fields=[
-                ('contentitem_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem')),
-                ('form_definition', models.ForeignKey(verbose_name='Form', to='form_designer.FormDefinition')),
+                ('contentitem_ptr', models.OneToOneField(parent_link=True, on_delete=models.CASCADE, auto_created=True, primary_key=True, serialize=False, to='fluent_contents.ContentItem')),
+                ('form_definition', models.ForeignKey(verbose_name='Form', on_delete=models.PROTECT, to='form_designer.FormDefinition')),
             ],
             options={
                 'db_table': 'contentitem_formdesignerlink_formdesignerlink',

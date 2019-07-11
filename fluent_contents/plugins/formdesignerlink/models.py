@@ -7,7 +7,7 @@ from form_designer.models import FormDefinition
 
 @python_2_unicode_compatible
 class FormDesignerLink(ContentItem):
-    form_definition = models.ForeignKey(FormDefinition, verbose_name=_('Form'))
+    form_definition = models.ForeignKey(FormDefinition, on_delete=models.PROTECT, verbose_name=_('Form'))
 
     objects = ContentItemManager()  # Avoid Django 1.10 migrations
 
