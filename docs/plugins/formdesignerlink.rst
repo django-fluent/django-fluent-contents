@@ -3,7 +3,7 @@
 The formdesignerlink plugin
 ===========================
 
-The `formdesignerlink` plugin displays a form, created by the django-form-designer_ module.
+The `formdesignerlink` plugin displays a form, created by the django-form-designer-ai_ module.
 
   .. image:: /images/plugins/formdesignerlink-admin.*
      :width: 732px
@@ -27,7 +27,7 @@ Install the dependencies via *pip*::
 
     pip install django-fluent-contents[formdesignerlink]
 
-This installs django-form-designer_.
+This installs django-form-designer-ai_.
 
 Add the following settings to ``settings.py``:
 
@@ -52,7 +52,7 @@ Each page can now be enriched with a form, that was created by the `form_designe
 Configuration
 -------------
 
-To customize the output, configure the ``django-form-designer`` application via the settings file.
+To customize the output, configure the ``django-form-designer-ai`` application via the settings file.
 Some relevant settings are:
 
 ``FORM_DESIGNER_DEFAULT_FORM_TEMPLATE``
@@ -72,6 +72,6 @@ It is also highly recommended to overwrite the ``form_designer/templates/html/fo
 which is used to provide previews for the form in the admin interface.
 
 Further information can be found in the source code of `django-formdesigner`.
-(`e.g. settings.py <https://github.com/philomat/django-form-designer/blob/master/form_designer/settings.py>`_).
+(`e.g. settings.py <https://github.com/andersinno/django-form-designer-ai/blob/master/form_designer/settings.py>`_).
 
-.. _django-form-designer: https://github.com/philomat/django-form-designer/
+.. _django-form-designer-ai: https://github.com/andersinno/django-form-designer-ai

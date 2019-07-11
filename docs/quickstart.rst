@@ -156,7 +156,7 @@ To add even more plugins, use::
 
         'fluent_contents.plugins.commentsarea',        # requires django.contrib.comments + templates
         'fluent_contents.plugins.disquswidgets',       # requires django-disqus + DISQUS_API_KEY
-        'fluent_contents.plugins.formdesignerlink',    # requires django-form-designer from github.
+        'fluent_contents.plugins.formdesignerlink',    # requires django-form-designer-ai
     )
 
     DISQUS_API_KEY = '...'
@@ -171,7 +171,7 @@ hence these packages need to be installed:
 * Pygments_ (for the :ref:`code <code>` plugin)
 * docutils_ (for the :ref:`markup <markup>` plugin)
 * django-disqus_ (for the :ref:`disquscommentsarea <disquscommentsarea>` plugin)
-* `django-form-designer`_ (for the :ref:`formdesignerlink <formdesignerlink>` plugin)
+* `django-form-designer-ai`_ (for the :ref:`formdesignerlink <formdesignerlink>` plugin)
 
 They can be installed using::
 
@@ -213,7 +213,7 @@ This improves the performance of the :ref:`template tags<templatetags>`.
 .. _docutils: http://docutils.sourceforge.net/
 .. _django.contrib.comments: https://docs.djangoproject.com/en/dev/ref/contrib/comments/
 .. _django-disqus: https://github.com/arthurk/django-disqus
-.. _django-form-designer: https://github.com/philomat/django-form-designer
+.. _django-form-designer-ai: https://github.com/andersinno/django-form-designer-ai
 .. _django-polymorphic: https://github.com/django-polymorphic/django-polymorphic
 .. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg/
 .. _Pygments: http://pygments.org/

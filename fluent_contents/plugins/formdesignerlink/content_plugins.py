@@ -2,7 +2,7 @@
 Form designer link plugin.
 
 This plugin displays a form at the page, that was created with form_designer.
-To customize the output, configure the ``django-form-designer`` application via the settings file.
+To customize the output, configure the ``django-form-designer-ai`` application via the settings file.
 For example, use:
 
  * ``FORM_DESIGNER_DEFAULT_FORM_TEMPLATE`` or ``FORM_TEMPLATES`` to control the form output (e.g. render it with ``django-uni-form``).

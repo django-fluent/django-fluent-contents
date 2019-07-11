@@ -55,7 +55,7 @@ setup(
     extras_require = {
         'code': ['Pygments'],
         'disquscommentsarea': ['django-disqus'],
-        'formdesignerlink': ['django-form-designer'],
+        'formdesignerlink': ['django-form-designer-ai>=1.0.1'],
         'markup': ['docutils', 'textile', 'Markdown>=1.7'],
         'oembeditem': ['micawber>=0.3.3', 'beautifulsoup4>=4.3.2'],
         'text': ['django-wysiwyg>=0.7.1'],
@@ -65,9 +65,6 @@ setup(
         'docutils',
         'textile',
         'Markdown>=1.7',
-    ],
-    dependency_links = [
-        'git+https://github.com/philomat/django-form-designer.git#egg=django-form-designer',
     ],
 
     description='A widget engine to display various content on Django pages',

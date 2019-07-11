@@ -37,7 +37,7 @@ By default, the following content items are available:
 
 * Text content - write rich text in a WYSIWYG editor (provided by django-wysiwyg_).
 * Markup - write content with reStructuredText, Markdown or Textile (provided by *docutils*, *Markdown* or *textile*).
-* Forms - display forms created with django-form-designer_.
+* Forms - display forms created with django-form-designer-ai_.
 
 **Online content:**
 
@@ -57,7 +57,7 @@ By default, the following content items are available:
 
 * Commentsarea - display comments on a page (provided by django.contrib.comments_).
 * Disqusarea - display DISQUS comments on a page (provided by django-disqus_).
-* Form-designer link - display a django-form-designer_ form on a page.
+* Form-designer link - display a django-form-designer-ai_ form on a page.
 
 For more details, see the documentation_ at Read The Docs.
 
@@ -266,7 +266,7 @@ Pull requests are welcome too. :-)
 .. _django-disqus: https://github.com/arthurk/django-disqus
 .. _django-fluent-comments: https://github.com/django-fluent/django-fluent-comments
 .. _django-fluent-pages: https://github.com/django-fluent/django-fluent-pages
-.. _django-form-designer: https://github.com/philomat/django-form-designer.git
+.. _django-form-designer-ai: https://github.com/andersinno/django-form-designer-ai
 .. _django-polymorphic: https://github.com/django-polymorphic/django-polymorphic
 .. _django-wysiwyg: https://github.com/pydanny/django-wysiwyg
 
