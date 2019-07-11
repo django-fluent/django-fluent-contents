@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Changes in 2.0.6 (2019-06-11)
+-----------------------------
+
+* Fix Django 2.x compatibility with ``disquswidgets`` and ``formdesignerlink`` migrations.
+* Fix Python error when adding a ``ContentItem`` on a parent model that doesn't have a ``parent_site`` field.
+* Replace *django-form-designer* GitHub dependency with updated django-form-designer-ai_ PyPI release.
+
+
 Changes in 2.0.5 (2019-04-12)
 -----------------------------
 
@@ -50,7 +58,7 @@ Changes in 2.0 (2018-01-22)
 ---------------------------
 
 * Added Django 2.0 support.
-* Removed compatibility with very old django-form-designer_ versions.
+* Removed compatibility with very old ``django-form-designer`` versions.
 * Dropped Django 1.7, 1.8, 1.9 support.
 
 
@@ -403,6 +411,7 @@ so it's time to show this module to the public.
 .. _django-any-urlfield: https://github.com/edoburu/django-any-urlfield
 .. _django-any-imagefield: https://github.com/edoburu/django-any-imagefield
 .. _django-flat-theme: https://github.com/elky/django-flat-theme
+.. _django-form-designer-ai: https://github.com/andersinno/django-form-designer-ai
 .. _django-parler: https://github.com/edoburu/django-parler
 .. _django-polymorphic: https://github.com/django-polymorphic/django-polymorphic
 .. _django-multisite: https://github.com/ecometrica/django-multisite
