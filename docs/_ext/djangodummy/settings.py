@@ -3,9 +3,40 @@
 #
 # This file is placed in a subdirectory,
 # so the docs root won't be detected by find_packages()
+import os
 
 # Display sane URLs in the docs:
 STATIC_URL = "/static/"
 
-# Avoid error for missing the secret key
-SECRET_KEY = "docs"
+# Required by Django
+SECRET_KEY = "foo"
+SITE_ID = 1
+
+INSTALLED_APPS = [
+    "fluent_contents",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sites",
+    "mptt",
+    "polymorphic",
+]
+
+MIDDLEWARE = [
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+]
+
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": (),
+        "OPTIONS": {
+            "loaders": (
+                "django.template.loaders.filesystem.Loader",
+                "django.template.loaders.app_directories.Loader",
+            )
+        },
+    }
+]
