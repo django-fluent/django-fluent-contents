@@ -4,11 +4,13 @@ This is exposed via __init__.py
 """
 from django.core.cache import cache
 from django.utils.safestring import mark_safe
+
 from fluent_contents.cache import get_placeholder_cache_key_for_parent
 from fluent_contents.models import ContentItemOutput, get_parent_language_code
-from .core import RenderingPipe, PlaceholderRenderingPipe
-from .search import SearchRenderingPipe
+
 from . import markers
+from .core import PlaceholderRenderingPipe, RenderingPipe
+from .search import SearchRenderingPipe
 
 
 def get_cached_placeholder_output(parent_object, placeholder_name):
@@ -20,11 +22,21 @@ def get_cached_placeholder_output(parent_object, placeholder_name):
         return None
 
     language_code = get_parent_language_code(parent_object)
-    cache_key = get_placeholder_cache_key_for_parent(parent_object, placeholder_name, language_code)
+    cache_key = get_placeholder_cache_key_for_parent(
+        parent_object, placeholder_name, language_code
+    )
     return cache.get(cache_key)
 
 
-def render_placeholder(request, placeholder, parent_object=None, template_name=None, cachable=None, limit_parent_language=True, fallback_language=None):
+def render_placeholder(
+    request,
+    placeholder,
+    parent_object=None,
+    template_name=None,
+    cachable=None,
+    limit_parent_language=True,
+    fallback_language=None,
+):
     """
     Render a :class:`~fluent_contents.models.Placeholder` object.
     Returns a :class:`~fluent_contents.models.ContentItemOutput` object
@@ -55,7 +67,7 @@ def render_placeholder(request, placeholder, parent_object=None, template_name=N
         template_name=template_name,
         cachable=cachable,
         limit_parent_language=limit_parent_language,
-        fallback_language=fallback_language
+        fallback_language=fallback_language,
     )
 
     # Wrap the result after it's stored in the cache.
@@ -93,7 +105,7 @@ def render_content_items(request, items, template_name=None, cachable=None):
             items=items,
             parent_object=None,
             template_name=template_name,
-            cachable=cachable
+            cachable=cachable,
         )
 
     # Wrap the result after it's stored in the cache.
@@ -115,11 +127,12 @@ def render_placeholder_search_text(placeholder, fallback_language=None):
     :type fallback_language: bool|str
     :rtype: str
     """
-    parent_object = placeholder.parent   # this is a cached lookup thanks to PlaceholderFieldDescriptor
+    # placeholder.parent is a cached lookup thanks to PlaceholderFieldDescriptor
+    parent_object = placeholder.parent
     language = get_parent_language_code(parent_object)
     output = SearchRenderingPipe(language).render_placeholder(
         placeholder=placeholder,
         parent_object=parent_object,
-        fallback_language=fallback_language
+        fallback_language=fallback_language,
     )
-    return output.html   # Tags already stripped.
+    return output.html  # Tags already stripped.

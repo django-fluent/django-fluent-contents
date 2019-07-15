@@ -1,14 +1,16 @@
+import json
+
 from django.conf.urls import url
 from django.contrib import admin
 from django.http import HttpResponse
 from django.template.loader import get_template
 from django.utils.safestring import mark_safe
 from mptt.admin import MPTTModelAdmin
+
 from fluent_contents.admin import PlaceholderEditorAdmin
 from fluent_contents.analyzer import get_template_placeholder_data
 from simplecms import appconfig
 from simplecms.models import Page
-import json
 
 
 class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
@@ -19,11 +21,13 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
     # Some decoration for the list/edit changes
     # This is all quite standard stuff.
 
-    list_display = ('title', 'slug', 'cached_url')
-    prepopulated_fields = { 'slug': ('title',), }
+    list_display = ("title", "slug", "cached_url")
+    prepopulated_fields = {"slug": ("title",)}
 
     def cached_url(self, page):
-        return mark_safe('<a href="{0}">{1}</a>'.format(page.get_absolute_url(), page._cached_url))
+        return mark_safe(
+            '<a href="{0}">{1}</a>'.format(page.get_absolute_url(), page._cached_url)
+        )
 
     cached_url.allow_tags = True
 
@@ -40,7 +44,9 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
             return get_template(appconfig.SIMPLECMS_DEFAULT_TEMPLATE)
         else:
             # Change page, honor template of object.
-            return get_template(obj.template_name or appconfig.SIMPLECMS_DEFAULT_TEMPLATE)
+            return get_template(
+                obj.template_name or appconfig.SIMPLECMS_DEFAULT_TEMPLATE
+            )
 
     # Allow template layout changes in the client,
     # showing more power of the JavaScript engine.
@@ -48,7 +54,7 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
     change_form_template = "admin/simplecms/page/change_form.html"
 
     class Media:
-        js = ('simplecms/admin/simplecms_layouts.js',)
+        js = ("simplecms/admin/simplecms_layouts.js",)
 
     def get_urls(self):
         """
@@ -56,7 +62,7 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
         """
         urls = super(PageAdmin, self).get_urls()
         my_urls = [
-            url(r'^get_layout/$', self.admin_site.admin_view(self.get_layout_view))
+            url(r"^get_layout/$", self.admin_site.admin_view(self.get_layout_view))
         ]
         return my_urls + urls
 
@@ -64,25 +70,23 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
         """
         Return the metadata about a layout
         """
-        template_name = request.GET['name']
+        template_name = request.GET["name"]
 
         # Check if template is allowed, avoid parsing random templates
         templates = dict(appconfig.SIMPLECMS_TEMPLATE_CHOICES)
         if template_name not in templates:
-            jsondata = {'success': False, 'error': 'Template not found'}
+            jsondata = {"success": False, "error": "Template not found"}
             status = 404
         else:
             # Extract placeholders from the template, and pass to the client.
             template = get_template(template_name)
             placeholders = get_template_placeholder_data(template)
 
-            jsondata = {
-                'placeholders': [p.as_dict() for p in placeholders],
-            }
+            jsondata = {"placeholders": [p.as_dict() for p in placeholders]}
             status = 200
 
         jsonstr = json.dumps(jsondata)
-        return HttpResponse(jsonstr, content_type='application/json', status=status)
+        return HttpResponse(jsonstr, content_type="application/json", status=status)
 
 
 admin.site.register(Page, PageAdmin)

@@ -1,4 +1,5 @@
-from fluent_contents.extensions import plugin_pool, ContentPlugin
+from fluent_contents.extensions import ContentPlugin, plugin_pool
+
 from .models import {{ model }}
 
 

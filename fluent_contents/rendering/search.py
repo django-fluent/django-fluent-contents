@@ -1,12 +1,13 @@
 from django.utils.safestring import mark_safe
+
 from fluent_contents.models import ContentItemOutput
 from fluent_contents.utils.search import get_cleaned_string
-from .core import PlaceholderRenderingPipe, SkipItem, ResultTracker
+
+from .core import PlaceholderRenderingPipe, ResultTracker, SkipItem
 from .utils import get_dummy_request
 
 
 class SearchResultTracker(ResultTracker):
-
     def store_output(self, contentitem, output):
         # Strip all output from HTML tags while collecting
         # (the output is already cached at this point)
@@ -19,6 +20,7 @@ class SearchRenderingPipe(PlaceholderRenderingPipe):
     """
     Variation of the rendering, suitable for search indexers.
     """
+
     result_class = SearchResultTracker
 
     def __init__(self, language):
@@ -29,8 +31,11 @@ class SearchRenderingPipe(PlaceholderRenderingPipe):
         """
         Read the cached output - only when search needs it.
         """
-        return contentitem.plugin.search_output and not contentitem.plugin.search_fields \
-           and super(SearchRenderingPipe, self).can_use_cached_output(contentitem)
+        return (
+            contentitem.plugin.search_output
+            and not contentitem.plugin.search_fields
+            and super(SearchRenderingPipe, self).can_use_cached_output(contentitem)
+        )
 
     def render_item(self, contentitem):
         """
@@ -42,7 +47,7 @@ class SearchRenderingPipe(PlaceholderRenderingPipe):
             raise SkipItem
 
         if not plugin.search_output:
-            output = ContentItemOutput('', cacheable=False)
+            output = ContentItemOutput("", cacheable=False)
         else:
             output = super(SearchRenderingPipe, self).render_item(contentitem)
 
@@ -64,5 +69,6 @@ class SearchRenderingPipe(PlaceholderRenderingPipe):
         for contentitem, output in result.get_output():
             html_output.append(output.html)
 
-        merged_html = mark_safe(u''.join(html_output))
-        return ContentItemOutput(merged_html, cacheable=False)   # since media is not included, don't cache this
+        # since media is not included, cachable is false
+        merged_html = mark_safe(u"".join(html_output))
+        return ContentItemOutput(merged_html, cacheable=False)

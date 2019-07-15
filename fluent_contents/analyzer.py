@@ -2,10 +2,11 @@
 Analyze the templates for placeholders of this module.
 """
 from template_analyzer.djangoanalyzer import get_node_instances
+
 from fluent_contents.models import PlaceholderData
 from fluent_contents.templatetags.fluent_contents_tags import PagePlaceholderNode
 
-__all__ = ('get_template_placeholder_data',)
+__all__ = ("get_template_placeholder_data",)
 
 
 def get_template_placeholder_data(template):

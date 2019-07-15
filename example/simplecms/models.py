@@ -1,9 +1,11 @@
 from __future__ import unicode_literals
+
 from django.db import models, transaction
 from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
-from fluent_contents.models import PlaceholderRelation, ContentItemRelation
 from mptt.models import MPTTModel
+
+from fluent_contents.models import ContentItemRelation, PlaceholderRelation
 from simplecms import appconfig
 
 
@@ -13,11 +15,20 @@ class Page(MPTTModel):
 
     # The basic fields to make the url structure work:
     slug = models.SlugField("Slug")
-    parent = models.ForeignKey('self', related_name='children', blank=True, null=True, on_delete=models.CASCADE)
-    _cached_url = models.CharField(max_length=300, blank=True, editable=False, default='', db_index=True)
+    parent = models.ForeignKey(
+        "self", related_name="children", blank=True, null=True, on_delete=models.CASCADE
+    )
+    _cached_url = models.CharField(
+        max_length=300, blank=True, editable=False, default="", db_index=True
+    )
 
     # Allow different layouts
-    template_name = models.CharField("Layout", max_length=255, choices=appconfig.SIMPLECMS_TEMPLATE_CHOICES, default=appconfig.SIMPLECMS_DEFAULT_TEMPLATE)
+    template_name = models.CharField(
+        "Layout",
+        max_length=255,
+        choices=appconfig.SIMPLECMS_TEMPLATE_CHOICES,
+        default=appconfig.SIMPLECMS_DEFAULT_TEMPLATE,
+    )
 
     # Accessing the data of django-fluent-contents
     placeholder_set = PlaceholderRelation()
@@ -34,7 +45,7 @@ class Page(MPTTModel):
         # cached_url always points to the URL within the URL config root.
         # when the application is mounted at a subfolder, or the 'cms.urls' config
         # is included at a sublevel, it needs to be prepended.
-        root = reverse('simplecms-page').rstrip('/')
+        root = reverse("simplecms-page").rstrip("/")
         return root + self._cached_url
 
     # ---- updating _cached_url:
@@ -88,9 +99,9 @@ class Page(MPTTModel):
         """
         # determine own URL
         if self.is_root_node():
-            self._cached_url = u'/%s/' % self.slug
+            self._cached_url = "/%s/" % self.slug
         else:
-            self._cached_url = u'%s%s/' % (self.parent._cached_url, self.slug)
+            self._cached_url = "%s%s/" % (self.parent._cached_url, self.slug)
 
     def _update_decendant_urls(self):
         """
@@ -105,10 +116,13 @@ class Page(MPTTModel):
         cached_page_urls = {self.id: self._cached_url}
 
         # Update all sub objects
-        subobjects = self.get_descendants().order_by('lft')
+        subobjects = self.get_descendants().order_by("lft")
         for subobject in subobjects:
             # Set URL, using cache for parent URL.
-            subobject._cached_url = u'%s%s/' % (cached_page_urls[subobject.parent_id], subobject.slug)
+            subobject._cached_url = "%s%s/" % (
+                cached_page_urls[subobject.parent_id],
+                subobject.slug,
+            )
             cached_page_urls[subobject.id] = subobject._cached_url
 
             # call base class, do not recurse

@@ -3,14 +3,18 @@ import sys
 from functools import reduce
 
 from django.core.management.base import BaseCommand
-from django.db import models, ProgrammingError
+from django.db import ProgrammingError, models
 from django.db.models import Q
-from django.utils import six
-from django.utils import translation
+from django.utils import six, translation
 from django.utils.encoding import force_text
-from fluent_contents.extensions import PluginHtmlField, PluginImageField, PluginUrlField
-from fluent_contents.extensions import plugin_pool
-from html5lib import treebuilders, HTMLParser
+from html5lib import HTMLParser, treebuilders
+
+from fluent_contents.extensions import (
+    PluginHtmlField,
+    PluginImageField,
+    PluginUrlField,
+    plugin_pool,
+)
 
 try:
     from urllib.parse import unquote  # Python 3
@@ -27,21 +31,20 @@ class Command(BaseCommand):
     Add a prefix to the name of content items.
     This makes content items easier to spot in the permissions list.
     """
+
     help = "Find all link and image URLs in all content items."
-    exclude = (
-        'KVStore',
-        'LogEntry',
-        'Session',
-    )
+    exclude = ("KVStore", "LogEntry", "Session")
 
     def handle(self, *args, **options):
-        translation.activate('en')  # just in case
+        translation.activate("en")  # just in case
 
-        self.verbosity = options['verbosity']
+        self.verbosity = options["verbosity"]
         urls = []
 
         # Look through all registered models.
-        for model in sorted(self.get_models(), key=lambda model: model._meta.model_name):
+        for model in sorted(
+            self.get_models(), key=lambda model: model._meta.model_name
+        ):
             try:
                 urls += self.inspect_model(model)
             except ProgrammingError as e:
@@ -63,21 +66,39 @@ class Command(BaseCommand):
         Inspect a single model
         """
         # See which interesting fields the model holds.
-        url_fields = sorted(f for f in model._meta.fields if isinstance(f, (PluginUrlField, models.URLField)))
-        file_fields = sorted(f for f in model._meta.fields if isinstance(f, (PluginImageField, models.FileField)))
-        html_fields = sorted(f for f in model._meta.fields if isinstance(f, (models.TextField, PluginHtmlField)))
+        url_fields = sorted(
+            f
+            for f in model._meta.fields
+            if isinstance(f, (PluginUrlField, models.URLField))
+        )
+        file_fields = sorted(
+            f
+            for f in model._meta.fields
+            if isinstance(f, (PluginImageField, models.FileField))
+        )
+        html_fields = sorted(
+            f
+            for f in model._meta.fields
+            if isinstance(f, (models.TextField, PluginHtmlField))
+        )
         all_fields = [f.name for f in (file_fields + html_fields + url_fields)]
         if not all_fields:
             return []
 
         if model.__name__ in self.exclude:
-            self.stderr.write("Skipping {0} ({1})\n".format(model.__name__, ", ".join(all_fields)))
+            self.stderr.write(
+                "Skipping {0} ({1})\n".format(model.__name__, ", ".join(all_fields))
+            )
             return []
 
-        sys.stderr.write("Inspecting {0} ({1})\n".format(model.__name__, ", ".join(all_fields)))
+        sys.stderr.write(
+            "Inspecting {0} ({1})\n".format(model.__name__, ", ".join(all_fields))
+        )
 
-        q_notnull = reduce(operator.or_, (Q(**{"{0}__isnull".format(f): False}) for f in all_fields))
-        qs = model.objects.filter(q_notnull).order_by('pk')
+        q_notnull = reduce(
+            operator.or_, (Q(**{"{0}__isnull".format(f): False}) for f in all_fields)
+        )
+        qs = model.objects.filter(q_notnull).order_by("pk")
 
         urls = []
         for object in qs:
@@ -114,7 +135,9 @@ class Command(BaseCommand):
 
     def show_match(self, object, value):
         if self.verbosity >= 2:
-            self.stdout.write(u"{0}#{1}: \t{2}".format(object.__class__.__name__, object.pk, value))
+            self.stdout.write(
+                u"{0}#{1}: \t{2}".format(object.__class__.__name__, object.pk, value)
+            )
 
     def extract_html_urls(self, html):
         """
@@ -124,22 +147,22 @@ class Command(BaseCommand):
         dom = p.parse(html)
         urls = []
 
-        for img in dom.getElementsByTagName('img'):
-            src = img.getAttribute('src')
+        for img in dom.getElementsByTagName("img"):
+            src = img.getAttribute("src")
             if src:
                 urls.append(unquote_utf8(src))
 
-            srcset = img.getAttribute('srcset')
+            srcset = img.getAttribute("srcset")
             if srcset:
                 urls += self.extract_srcset(srcset)
 
-        for source in dom.getElementsByTagName('source'):
-            srcset = source.getAttribute('srcset')
+        for source in dom.getElementsByTagName("source"):
+            srcset = source.getAttribute("srcset")
             if srcset:
                 urls += self.extract_srcset(srcset)
 
-        for source in dom.getElementsByTagName('a'):
-            href = source.getAttribute('href')
+        for source in dom.getElementsByTagName("a"):
+            href = source.getAttribute("href")
             if href:
                 urls.append(unquote_utf8(href))
 
@@ -150,7 +173,7 @@ class Command(BaseCommand):
         Handle ``srcset="image.png 1x, image@2x.jpg 2x"``
         """
         urls = []
-        for item in srcset.split(','):
+        for item in srcset.split(","):
             if item:
-                urls.append(unquote_utf8(item.rsplit(' ', 1)[0]))
+                urls.append(unquote_utf8(item.rsplit(" ", 1)[0]))
         return urls

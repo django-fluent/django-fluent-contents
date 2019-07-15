@@ -4,10 +4,6 @@ the API is exposed via __init__.py
 """
 import django.contrib.auth.context_processors
 import django.contrib.messages.context_processors
-from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
-from django.utils.functional import cached_property
-from future.builtins import str
-from future.utils import with_metaclass
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.contenttypes.models import ContentType
@@ -15,21 +11,27 @@ from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.db import DatabaseError
 from django.forms import Media, MediaDefiningClass
+from django.http import HttpResponsePermanentRedirect, HttpResponseRedirect
 from django.template import context_processors
 from django.template.context import Context
 from django.template.loader import render_to_string
-from django.utils.html import linebreaks, escape
-from django.utils.translation import ugettext_lazy as _, get_language
-from fluent_contents.cache import get_rendering_cache_key, get_placeholder_cache_key
+from django.utils.functional import cached_property
+from django.utils.html import escape, linebreaks
+from django.utils.translation import get_language
+from django.utils.translation import ugettext_lazy as _
+from future.builtins import str
+from future.utils import with_metaclass
+
+from fluent_contents.cache import get_placeholder_cache_key, get_rendering_cache_key
 from fluent_contents.forms import ContentItemForm
-from fluent_contents.models import ContentItemOutput, ImmutableMedia, DEFAULT_TIMEOUT
-from fluent_contents.utils.search import get_search_field_values, clean_join
+from fluent_contents.models import DEFAULT_TIMEOUT, ContentItemOutput, ImmutableMedia
+from fluent_contents.utils.search import clean_join, get_search_field_values
 
 
 # Some standard request processors to use in the plugins,
 # Naturally, you want STATIC_URL to be available in plugins.
 def _add_debug(request):
-    return {'debug': settings.DEBUG}
+    return {"debug": settings.DEBUG}
 
 
 _STANDARD_REQUEST_CONTEXT_PROCESSORS = (
@@ -77,25 +79,32 @@ def frontend_media_property(cls):
             base = ImmutableMedia.empty_instance
 
         # Get the media definition for this class
-        definition = getattr(cls, 'FrontendMedia', None)
+        definition = getattr(cls, "FrontendMedia", None)
         if definition:
             media = Media(definition)
 
             # Not supporting extend=('js',) here, not documented in Django either.
-            if getattr(definition, 'extend', True) and base is not ImmutableMedia.empty_instance:
+            if (
+                getattr(definition, "extend", True)
+                and base is not ImmutableMedia.empty_instance
+            ):
                 return base + media
 
             return media
         else:
             return base
+
     return property(_media)
 
 
 class PluginMediaDefiningClass(MediaDefiningClass):
     "Metaclass for classes that can have media definitions"
+
     def __new__(cls, name, bases, attrs):
-        new_class = super(PluginMediaDefiningClass, cls).__new__(cls, name, bases, attrs)
-        if 'frontend_media' not in attrs and 'FrontendMedia' in attrs:
+        new_class = super(PluginMediaDefiningClass, cls).__new__(
+            cls, name, bases, attrs
+        )
+        if "frontend_media" not in attrs and "FrontendMedia" in attrs:
             new_class.frontend_media = frontend_media_property(new_class)
         return new_class
 
@@ -143,6 +152,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     This also avoids extra database queries to retrieve the model objects.
     In case the plugin needs to output content dynamically, include ``cache_output = False`` in the plugin definition.
     """
+
     #: .. versionadded:: 1.1
     #:    Category for media
     MEDIA = _("Media")
@@ -219,7 +229,9 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     render_ignore_item_language = False
 
     #: Alternative template for the view.
-    ADMIN_TEMPLATE_WITHOUT_LABELS = "admin/fluent_contents/contentitem/admin_form_without_labels.html"
+    ADMIN_TEMPLATE_WITHOUT_LABELS = (
+        "admin/fluent_contents/contentitem/admin_form_without_labels.html"
+    )
 
     #: .. versionadded:: 0.8.5
     #:    The ``HORIZONTAL`` constant for the :attr:`radio_fields`.
@@ -263,7 +275,9 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     search_output = None
 
     def __repr__(self):
-        return '<{0} for {1} model>'.format(self.__class__.__name__, self.model.__name__)
+        return "<{0} for {1} model>".format(
+            self.__class__.__name__, self.model.__name__
+        )
 
     @property
     def verbose_name(self):
@@ -293,9 +307,15 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         Shortcut to retrieving the ContentType id of the model.
         """
         try:
-            return ContentType.objects.get_for_model(self.model, for_concrete_model=False).id
+            return ContentType.objects.get_for_model(
+                self.model, for_concrete_model=False
+            ).id
         except DatabaseError as e:
-            raise DatabaseError("Unable to fetch ContentType object, is a plugin being registered before the initial syncdb? (original error: {0})".format(str(e)))
+            raise DatabaseError(
+                "Unable to fetch ContentType object, is a plugin being registered before the initial syncdb? (original error: {0})".format(
+                    str(e)
+                )
+            )
 
     def get_model_instances(self):
         """
@@ -321,12 +341,17 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         elif isinstance(result, (HttpResponseRedirect, HttpResponsePermanentRedirect)):
             # Can't return a HTTP response from a plugin that is rendered as a string in a template.
             # However, this response can be translated into our custom exception-based redirect mechanism.
-            return self.redirect(result['Location'], result.status_code)
+            return self.redirect(result["Location"], result.status_code)
         else:
             # Old 0.9 syntax, wrap it.
             # The 'cacheable' is implied in the rendering already, but this is just for completeness.
             media = self.get_frontend_media(instance)
-            return ContentItemOutput(result, media, cacheable=self.cache_output, cache_timeout=self.cache_timeout)
+            return ContentItemOutput(
+                result,
+                media,
+                cacheable=self.cache_output,
+                cache_timeout=self.cache_timeout,
+            )
 
     def get_output_cache_base_key(self, placeholder_name, instance):
         """
@@ -353,7 +378,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
             #       The render_placeholder() code can switch the language if needed.
             user_language = get_language()
             if user_language not in self.cache_supported_language_codes:
-                user_language = 'unsupported'
+                user_language = "unsupported"
             cachekey = "{0}.{1}".format(cachekey, user_language)
 
         return cachekey
@@ -368,12 +393,10 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
            By default, this function generates the cache key using :func:`get_output_cache_base_key`.
         """
         base_key = self.get_output_cache_base_key(placeholder_name, instance)
-        cachekeys = [
-            base_key,
-        ]
+        cachekeys = [base_key]
 
         if self.cache_output_per_site:
-            site_ids = list(Site.objects.values_list('pk', flat=True))
+            site_ids = list(Site.objects.values_list("pk", flat=True))
             if settings.SITE_ID not in site_ids:
                 site_ids.append(settings.SITE_ID)
 
@@ -386,15 +409,22 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
             # Also added "None" suffix, since get_parent_language_code() may return that.
             # TODO: ideally for render_ignore_item_language, only invalidate all when the fallback language changed.
             total_list = []
-            cache_languages = list(self.cache_supported_language_codes) + ['unsupported', 'None']
+            cache_languages = list(self.cache_supported_language_codes) + [
+                "unsupported",
+                "None",
+            ]
 
             # All variants of the Placeholder (for full page caching)
             placeholder = instance.placeholder
-            total_list.extend(get_placeholder_cache_key(placeholder, lc) for lc in cache_languages)
+            total_list.extend(
+                get_placeholder_cache_key(placeholder, lc) for lc in cache_languages
+            )
 
             # All variants of the ContentItem in different languages
             for user_language in cache_languages:
-                total_list.extend("{0}.{1}".format(base, user_language) for base in cachekeys)
+                total_list.extend(
+                    "{0}.{1}".format(base, user_language) for base in cachekeys
+                )
             cachekeys = total_list
 
         return cachekeys
@@ -460,7 +490,9 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         """
         render_template = self.get_render_template(request, instance, **kwargs)
         if not render_template:
-            return str(_(u"{No rendering defined for class '%s'}" % self.__class__.__name__))
+            return str(
+                _(u"{No rendering defined for class '%s'}" % self.__class__.__name__)
+            )
 
         context = self.get_context(request, instance, **kwargs)
         return self.render_to_string(request, render_template, context)
@@ -479,8 +511,11 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         """
         A default implementation to render an exception.
         """
-        return '<div style="color: red; border: 1px solid red; padding: 5px;">' \
-               '<p><strong>%s</strong></p>%s</div>' % (_('Error:'), linebreaks(escape(str(error))))
+        return (
+            '<div style="color: red; border: 1px solid red; padding: 5px;">'
+            "<p><strong>%s</strong></p>%s</div>"
+            % (_("Error:"), linebreaks(escape(str(error))))
+        )
 
     def redirect(self, url, status=302):
         """
@@ -520,9 +555,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         Return the context to use in the template defined by ``render_template`` (or :func:`get_render_template`).
         By default, it returns the model instance as ``instance`` field in the template.
         """
-        return {
-            'instance': instance,
-        }
+        return {"instance": instance}
 
     @property
     def frontend_media(self):

@@ -1,4 +1,5 @@
 from django import forms
+
 from fluent_contents.forms.widgets import PlaceholderFieldWidget
 
 
@@ -14,8 +15,9 @@ class PlaceholderFormField(forms.Field):
         self._plugins = plugins
 
         defaults = {
-            'widget': PlaceholderFieldWidget(
-                slot=slot, plugins=plugins, parent_object=parent_object),
+            "widget": PlaceholderFieldWidget(
+                slot=slot, plugins=plugins, parent_object=parent_object
+            )
         }
         defaults.update(kwargs)
         super(PlaceholderFormField, self).__init__(**defaults)

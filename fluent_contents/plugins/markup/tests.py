@@ -12,13 +12,16 @@ class MarkupPluginTests(TestCase):
     """
 
     def test_markup(self):
-        RstItem = LANGUAGE_MODEL_CLASSES['restructuredtext']
+        RstItem = LANGUAGE_MODEL_CLASSES["restructuredtext"]
 
-        item = create_content_item(RstItem, text="""
+        item = create_content_item(
+            RstItem,
+            text="""
 RST
 ----
 
-* Markup!""")
+* Markup!""",
+        )
 
-        expected = '''<div class="markup"><h1 class="title">RST</h1><ul class="simple"><li>Markup!</li></ul></div>'''
+        expected = """<div class="markup"><h1 class="title">RST</h1><ul class="simple"><li>Markup!</li></ul></div>"""
         self.assertHTMLEqual(force_text(render_content_items([item])), expected)

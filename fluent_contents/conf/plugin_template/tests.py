@@ -1,6 +1,8 @@
 from django.test import TestCase
+
 from fluent_contents.tests.factories import create_content_item
 from fluent_contents.tests.utils import render_content_items
+
 from .models import {{ model }}
 
 

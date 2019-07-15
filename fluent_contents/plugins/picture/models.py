@@ -1,11 +1,14 @@
 from __future__ import unicode_literals
-from future.builtins import str
-from future.utils import python_2_unicode_compatible
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from future.builtins import str
+from future.utils import python_2_unicode_compatible
+
 from fluent_contents.extensions import PluginImageField, PluginUrlField
 from fluent_contents.models import ContentItemManager
 from fluent_contents.models.db import ContentItem
+
 from . import appsettings
 
 
@@ -14,9 +17,10 @@ class PictureItem(ContentItem):
     """
     Display a picture
     """
-    ALIGN_LEFT = 'left'
-    ALIGN_CENTER = 'center'
-    ALIGN_RIGHT = 'right'
+
+    ALIGN_LEFT = "left"
+    ALIGN_CENTER = "center"
+    ALIGN_RIGHT = "right"
     ALIGN_CHOICES = (
         (ALIGN_LEFT, _("Left")),
         (ALIGN_CENTER, _("Center")),
@@ -25,9 +29,13 @@ class PictureItem(ContentItem):
 
     image = PluginImageField(_("Image"), upload_to=appsettings.FLUENT_PICTURE_UPLOAD_TO)
     caption = models.TextField(_("Caption"), blank=True)
-    align = models.CharField(_("Align"), max_length=10, choices=ALIGN_CHOICES, blank=True)
+    align = models.CharField(
+        _("Align"), max_length=10, choices=ALIGN_CHOICES, blank=True
+    )
     url = PluginUrlField(_("URL"), blank=True)
-    in_new_window = models.BooleanField(_("Open in a new window"), default=False, blank=True)
+    in_new_window = models.BooleanField(
+        _("Open in a new window"), default=False, blank=True
+    )
 
     objects = ContentItemManager()  # Avoid Django 1.10 migrations
 
@@ -44,10 +52,10 @@ class PictureItem(ContentItem):
         The CSS class for alignment.
         """
         if self.align == self.ALIGN_LEFT:
-            return 'align-left'
+            return "align-left"
         elif self.align == self.ALIGN_CENTER:
-            return 'align-center'
+            return "align-center"
         elif self.align == self.ALIGN_RIGHT:
-            return 'align-right'
+            return "align-right"
         else:
-            return ''
+            return ""

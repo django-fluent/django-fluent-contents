@@ -1,6 +1,7 @@
 from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
 from django.db.models import Model
+
 from fluent_contents.extensions import PluginNotFound
 from fluent_contents.models import ContentItem
 
@@ -11,18 +12,24 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         super(Command, self).add_arguments(parser)
         parser.add_argument(
-            '-p', '--dry-run', action='store_true', dest='dry_run',
-            help="Only list what will change, don't make the actual changes."
+            "-p",
+            "--dry-run",
+            action="store_true",
+            dest="dry_run",
+            help="Only list what will change, don't make the actual changes.",
         )
         parser.add_argument(
-            '-u', '--remove-unreferenced', action='store_true', dest='remove_unreferenced',
-            help="Also remove unreferenced items."
+            "-u",
+            "--remove-unreferenced",
+            action="store_true",
+            dest="remove_unreferenced",
+            help="Also remove unreferenced items.",
         )
 
     def handle(self, *args, **options):
-        self.dry_run = options['dry_run']
-        self.remove_unreferenced = options['remove_unreferenced']
-        #verbosity = options['verbosity']
+        self.dry_run = options["dry_run"]
+        self.remove_unreferenced = options["remove_unreferenced"]
+        # verbosity = options['verbosity']
 
         stale_cts = self.get_stale_content_types()
 
@@ -41,11 +48,11 @@ class Command(BaseCommand):
         See if there are items that point to a removed model.
         """
         stale_ct_ids = list(stale_cts.keys())
-        items = (ContentItem.objects
-                 .non_polymorphic()  # very important, or polymorphic skips them on fetching derived data
-                 .filter(polymorphic_ctype__in=stale_ct_ids)
-                 .order_by('polymorphic_ctype', 'pk')
-                 )
+        items = (
+            ContentItem.objects.non_polymorphic()  # very important, or polymorphic skips them on fetching derived data
+            .filter(polymorphic_ctype__in=stale_ct_ids)
+            .order_by("polymorphic_ctype", "pk")
+        )
         if not items:
             self.stdout.write("No stale items found.")
             return
@@ -57,9 +64,11 @@ class Command(BaseCommand):
 
         for item in items:
             ct = stale_cts[item.polymorphic_ctype_id]
-            self.stdout.write("- #{id} points to removed {app_label}.{model}".format(
-                id=item.pk, app_label=ct.app_label, model=ct.model
-            ))
+            self.stdout.write(
+                "- #{id} points to removed {app_label}.{model}".format(
+                    id=item.pk, app_label=ct.app_label, model=ct.model
+                )
+            )
 
             if not self.dry_run:
                 try:
@@ -72,17 +81,20 @@ class Command(BaseCommand):
         See if there are items that no longer point to an existing parent.
         """
         stale_ct_ids = list(stale_cts.keys())
-        parent_types = (ContentItem.objects.order_by()
-                        .exclude(polymorphic_ctype__in=stale_ct_ids)
-                        .values_list('parent_type', flat=True).distinct())
+        parent_types = (
+            ContentItem.objects.order_by()
+            .exclude(polymorphic_ctype__in=stale_ct_ids)
+            .values_list("parent_type", flat=True)
+            .distinct()
+        )
 
         num_unreferenced = 0
 
         for ct_id in parent_types:
             parent_ct = ContentType.objects.get_for_id(ct_id)
-            unreferenced_items = (ContentItem.objects
-                                  .filter(parent_type=ct_id)
-                                  .order_by('polymorphic_ctype', 'pk'))
+            unreferenced_items = ContentItem.objects.filter(parent_type=ct_id).order_by(
+                "polymorphic_ctype", "pk"
+            )
 
             if parent_ct.model_class() is not None:
                 # Only select the items that are part of removed pages,
@@ -95,9 +107,12 @@ class Command(BaseCommand):
                 for item in unreferenced_items:
                     self.stdout.write(
                         "- {cls}#{id} points to nonexisting {app_label}.{model}".format(
-                            cls=item.__class__.__name__, id=item.pk,
-                            app_label=parent_ct.app_label, model=parent_ct.model
-                        ))
+                            cls=item.__class__.__name__,
+                            id=item.pk,
+                            app_label=parent_ct.app_label,
+                            model=parent_ct.model,
+                        )
+                    )
                     num_unreferenced += 1
                     if not self.dry_run and self.remove_unreferenced:
                         item.delete()
@@ -107,4 +122,6 @@ class Command(BaseCommand):
         else:
             self.stdout.write("{0} unreferenced items found.".format(num_unreferenced))
             if not self.remove_unreferenced:
-                self.stdout.write("Re-run this command with --remove-unreferenced to remove these items")
+                self.stdout.write(
+                    "Re-run this command with --remove-unreferenced to remove these items"
+                )

@@ -11,15 +11,16 @@ Each project can use their preferred file browser/image browser/URL selector for
 Using *django-any-urlfield* or *django-any-imagefield* is completely optional, yet highly recommended.
 When those apps are installed, they are used by the plugins.
 """
+# Tell the Django admin it shouldn't override the widget because it's a TextField
+from django.contrib.admin import options
 from django.db import models
 from django.utils.safestring import mark_safe
-from fluent_utils.softdeps.any_urlfield import AnyUrlField
 from fluent_utils.softdeps.any_imagefield import AnyFileField, AnyImageField
+from fluent_utils.softdeps.any_urlfield import AnyUrlField
 
 from fluent_contents import appsettings
 from fluent_contents.forms.widgets import WysiwygWidget
 from fluent_contents.utils.html import clean_html, sanitize_html
-
 
 _this_module_name = __name__
 
@@ -28,18 +29,17 @@ def _get_path(cls):
     module = cls.__module__
     # Hide ".model_fields" unless the field is overwritten.
     if module == _this_module_name:
-        module = 'fluent_contents.extensions'
+        module = "fluent_contents.extensions"
     return "{0}.{1}".format(module, cls.__name__)
 
 
 class MigrationMixin(object):
-
     def deconstruct(self):
         # Don't masquerade as optional field like fluent-utils does,
         # Show as Plugin..Field in the migrations.
         name, path, args, kwargs = super(MigrationMixin, self).deconstruct()
         path = _get_path(self.__class__)
-        kwargs.pop('upload_to', None)
+        kwargs.pop("upload_to", None)
         return name, path, args, kwargs
 
 
@@ -79,7 +79,7 @@ class PluginHtmlField(MigrationMixin, models.TextField):
         super(PluginHtmlField, self).__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):
-        defaults = {'widget': WysiwygWidget}
+        defaults = {"widget": WysiwygWidget}
         defaults.update(kwargs)
 
         return super(PluginHtmlField, self).formfield(**defaults)
@@ -92,6 +92,4 @@ class PluginHtmlField(MigrationMixin, models.TextField):
         return mark_safe(html)
 
 
-# Tell the Django admin it shouldn't override the widget because it's a TextField
-from django.contrib.admin import options
-options.FORMFIELD_FOR_DBFIELD_DEFAULTS[PluginHtmlField] = {'widget': WysiwygWidget}
+options.FORMFIELD_FOR_DBFIELD_DEFAULTS[PluginHtmlField] = {"widget": WysiwygWidget}

@@ -8,7 +8,7 @@ It simplifies the dependencies a bit; html5lib can be directly mentioned as depe
 """
 import warnings
 
-from html5lib import treebuilders, treewalkers, HTMLParser
+from html5lib import HTMLParser, treebuilders, treewalkers
 from html5lib.serializer import HTMLSerializer
 
 try:
@@ -35,9 +35,9 @@ def clean_html(input, sanitize=False):
     if sanitize:
         if HTMLSanitizer is None:
             # new syntax as of 0.99999999/1.0b9 (Released on July 14, 2016)
-            serializer_kwargs['sanitize'] = True
+            serializer_kwargs["sanitize"] = True
         else:
-            parser_kwargs['tokenizer'] = HTMLSanitizer
+            parser_kwargs["tokenizer"] = HTMLSanitizer
 
     p = HTMLParser(tree=treebuilders.getTreeBuilder("dom"), **parser_kwargs)
     dom_tree = p.parseFragment(input)
@@ -61,5 +61,7 @@ def sanitize_html(input):
     >>> sanitize_html('foobar<p style="color:red; remove:me; background-image: url(http://example.com/test.php?query_string=bad);">adf<script>alert("Uhoh!")</script><i></p>abc</i>')
     u'foobar<p style="color: red;">adf&lt;script&gt;alert("Uhoh!")&lt;/script&gt;<i></i></p><i>abc</i>'
     """
-    warnings.warn("Please use clean_html(input, sanitize=True) instead", DeprecationWarning)
+    warnings.warn(
+        "Please use clean_html(input, sanitize=True) instead", DeprecationWarning
+    )
     return clean_html(input, sanitize=True)

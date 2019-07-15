@@ -11,11 +11,19 @@ To assist in configuring the admin interface properly, there are a few base clas
 Both classes ensure the placeholders and inlines are properly setup.
 """
 from django.contrib import admin
-from fluent_contents.admin.placeholdereditor import PlaceholderEditorAdmin, PlaceholderEditorInline, PlaceholderEditorBaseMixin
-from fluent_contents.admin.placeholderfield import PlaceholderFieldAdmin
+
 from fluent_contents.admin.contentitems import get_content_item_inlines
+from fluent_contents.admin.placeholdereditor import (
+    PlaceholderEditorAdmin,
+    PlaceholderEditorBaseMixin,
+    PlaceholderEditorInline,
+)
+from fluent_contents.admin.placeholderfield import PlaceholderFieldAdmin
 
 __all__ = (
-    'PlaceholderEditorAdmin', 'PlaceholderEditorInline', 'PlaceholderEditorBaseMixin', 'PlaceholderFieldAdmin',
-    'get_content_item_inlines',
+    "PlaceholderEditorAdmin",
+    "PlaceholderEditorInline",
+    "PlaceholderEditorBaseMixin",
+    "PlaceholderFieldAdmin",
+    "get_content_item_inlines",
 )

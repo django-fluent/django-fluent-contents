@@ -1,18 +1,16 @@
 import django
-from django.contrib.contenttypes.fields import GenericRelation, GenericRel
+from django.contrib.contenttypes.fields import GenericRel, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import DEFAULT_DB_ALIAS
 from django.db.models.query_utils import Q
 from django.utils.functional import lazy
 from django.utils.text import capfirst
+
 from fluent_contents import appsettings
 from fluent_contents.forms.fields import PlaceholderFormField
-from fluent_contents.models import Placeholder, ContentItem
+from .db import ContentItem, Placeholder
 
-__all__ = (
-    'PlaceholderRelation', 'ContentItemRelation',
-    'PlaceholderField',
-)
+__all__ = ("PlaceholderRelation", "ContentItemRelation", "PlaceholderField")
 
 # The PlaceholderField is inspired by Django CMS
 # Yet uses a different methology to access the fields.
@@ -37,13 +35,19 @@ class PlaceholderRelation(GenericRelation):
 
     def __init__(self, **kwargs):
         defaults = {
-            'limit_choices_to': Q(
-                parent_type=lazy(lambda: ContentType.objects.get_for_model(Placeholder), ContentType)()
+            "limit_choices_to": Q(
+                parent_type=lazy(
+                    lambda: ContentType.objects.get_for_model(Placeholder), ContentType
+                )()
             )
         }
         defaults.update(kwargs)
-        super(PlaceholderRelation, self).__init__(to=Placeholder,
-            object_id_field='parent_id', content_type_field='parent_type', **defaults)
+        super(PlaceholderRelation, self).__init__(
+            to=Placeholder,
+            object_id_field="parent_id",
+            content_type_field="parent_type",
+            **defaults
+        )
 
 
 class ContentItemRelation(GenericRelation):
@@ -61,12 +65,20 @@ class ContentItemRelation(GenericRelation):
     """
 
     def __init__(self, **kwargs):
-        super(ContentItemRelation, self).__init__(to=ContentItem,
-            object_id_field='parent_id', content_type_field='parent_type', **kwargs)
+        super(ContentItemRelation, self).__init__(
+            to=ContentItem,
+            object_id_field="parent_id",
+            content_type_field="parent_type",
+            **kwargs
+        )
 
     def bulk_related_objects(self, objs, using=DEFAULT_DB_ALIAS):
         # Fix delete screen. Workaround for https://github.com/django-polymorphic/django-polymorphic/issues/34
-        return super(ContentItemRelation, self).bulk_related_objects(objs).non_polymorphic()
+        return (
+            super(ContentItemRelation, self)
+            .bulk_related_objects(objs)
+            .non_polymorphic()
+        )
 
 
 class PlaceholderRel(GenericRel):
@@ -75,10 +87,19 @@ class PlaceholderRel(GenericRel):
     that is used by the :class:`PlaceholderField` to support queries.
     """
 
-    def __init__(self, field, to, related_name=None, related_query_name=None, limit_choices_to=None):
+    def __init__(
+        self,
+        field,
+        to,
+        related_name=None,
+        related_query_name=None,
+        limit_choices_to=None,
+    ):
         # Note: all other args are provided for Django 1.9 compatibility
         limit_choices_to = Q(
-            parent_type=lazy(lambda: ContentType.objects.get_for_model(Placeholder), ContentType)(),
+            parent_type=lazy(
+                lambda: ContentType.objects.get_for_model(Placeholder), ContentType
+            )(),
             slot=field.slot,
         )
 
@@ -87,7 +108,7 @@ class PlaceholderRel(GenericRel):
             field=field,
             to=Placeholder,
             related_name=None,  # NOTE: must be unique for app/model/slot.
-            limit_choices_to=limit_choices_to
+            limit_choices_to=limit_choices_to,
         )
 
 
@@ -109,12 +130,16 @@ class PlaceholderFieldDescriptor(object):
         try:
             placeholder = Placeholder.objects.get_by_slot(instance, self.slot)
         except Placeholder.DoesNotExist:
-            raise Placeholder.DoesNotExist("Placeholder does not exist for parent {0} (type_id: {1}, parent_id: {2}), slot: '{3}'".format(
-                repr(instance),
-                ContentType.objects.get_for_model(instance, for_concrete_model=False).pk,
-                instance.pk,
-                self.slot
-            ))
+            raise Placeholder.DoesNotExist(
+                "Placeholder does not exist for parent {0} (type_id: {1}, parent_id: {2}), slot: '{3}'".format(
+                    repr(instance),
+                    ContentType.objects.get_for_model(
+                        instance, for_concrete_model=False
+                    ).pk,
+                    instance.pk,
+                    self.slot,
+                )
+            )
         else:
             placeholder.parent = instance  # fill the reverse cache
             return placeholder
@@ -126,7 +151,9 @@ class PlaceholderFieldDescriptor(object):
         if value == "-DUMMY-":
             return
 
-        raise NotImplementedError("Setting Placeholder value is not supported, use Placeholder.objects.create_for_object() instead.")
+        raise NotImplementedError(
+            "Setting Placeholder value is not supported, use Placeholder.objects.create_for_object() instead."
+        )
 
 
 class PlaceholderField(PlaceholderRelation):
@@ -155,6 +182,7 @@ class PlaceholderField(PlaceholderRelation):
        :height: 562px
        :alt: django-fluent-contents placeholder field preview
     """
+
     rel_class = PlaceholderRel  # Django 1.9
 
     def __init__(self, slot, plugins=None, **kwargs):
@@ -165,21 +193,24 @@ class PlaceholderField(PlaceholderRelation):
         super(PlaceholderField, self).__init__(**kwargs)
 
         # See if a plugin configuration is defined in the settings
-        self._slot_config = appsettings.FLUENT_CONTENTS_PLACEHOLDER_CONFIG.get(slot) or {}
-        self._plugins = plugins or self._slot_config.get('plugins') or None
+        self._slot_config = (
+            appsettings.FLUENT_CONTENTS_PLACEHOLDER_CONFIG.get(slot) or {}
+        )
+        self._plugins = plugins or self._slot_config.get("plugins") or None
 
         # Overwrite some hardcoded defaults from the base class.
+        # TODO: support blank: False to enforce adding at least one plugin.
         self.editable = True
-        self.blank = True                     # TODO: support blank: False to enforce adding at least one plugin.
+        self.blank = True
 
     def formfield(self, **kwargs):
         """
         Returns a :class:`PlaceholderFormField` instance for this database Field.
         """
         defaults = {
-            'label': capfirst(self.verbose_name),
-            'help_text': self.help_text,
-            'required': not self.blank,
+            "label": capfirst(self.verbose_name),
+            "help_text": self.help_text,
+            "required": not self.blank,
         }
         defaults.update(kwargs)
         return PlaceholderFormField(slot=self.slot, plugins=self._plugins, **defaults)
@@ -195,7 +226,7 @@ class PlaceholderField(PlaceholderRelation):
 
         # Make placeholder fields easy to find
         # Can't assign this to cls._meta because that gets overwritten by every level of model inheritance.
-        if not hasattr(cls, '_meta_placeholder_fields'):
+        if not hasattr(cls, "_meta_placeholder_fields"):
             cls._meta_placeholder_fields = {}
         cls._meta_placeholder_fields[name] = self
 
@@ -208,10 +239,10 @@ class PlaceholderField(PlaceholderRelation):
 
         if rel.related_name is None:
             # Make unique for model (multiple models can use same slotnane)
-            rel.related_name = '{app}_{model}_{slot}_FIXME'.format(
+            rel.related_name = "{app}_{model}_{slot}_FIXME".format(
                 app=cls._meta.app_label,
                 model=cls._meta.object_name.lower(),
-                slot=self.slot
+                slot=self.slot,
             )
 
             # Remove attribute must exist for the delete page. Currently it's not actively used.
@@ -226,13 +257,19 @@ class PlaceholderField(PlaceholderRelation):
         Get the set of plugins that this field may display.
         """
         from fluent_contents import extensions
+
         if self._plugins is None:
             return extensions.plugin_pool.get_plugins()
         else:
             try:
                 return extensions.plugin_pool.get_plugins_by_name(*self._plugins)
             except extensions.PluginNotFound as e:
-                raise extensions.PluginNotFound(str(e) + " Update the plugin list of '{0}.{1}' field or FLUENT_CONTENTS_PLACEHOLDER_CONFIG['{2}'] setting.".format(self.model._meta.object_name, self.name, self.slot))
+                raise extensions.PluginNotFound(
+                    str(e)
+                    + " Update the plugin list of '{0}.{1}' field or FLUENT_CONTENTS_PLACEHOLDER_CONFIG['{2}'] setting.".format(
+                        self.model._meta.object_name, self.name, self.slot
+                    )
+                )
 
     def value_from_object(self, obj):
         """
@@ -242,6 +279,8 @@ class PlaceholderField(PlaceholderRelation):
             # not using self.attname, access the descriptor instead.
             placeholder = getattr(obj, self.name)
         except Placeholder.DoesNotExist:
-            return None   # Still allow ModelForm / admin to open and create a new Placeholder if the table was truncated.
+            # Still allow ModelForm / admin to open and create a new Placeholder if the table was truncated.
+            return None
 
-        return placeholder.id if placeholder else None  # Be consistent with other fields, like ForeignKey
+        # Be consistent with other fields, like ForeignKey:
+        return placeholder.id if placeholder else None

@@ -2,6 +2,7 @@
 Definition of the plugin.
 """
 from django.utils.safestring import mark_safe
+
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.text.models import TextItem
 
@@ -11,8 +12,10 @@ class TextPlugin(ContentPlugin):
     """
     CMS plugin for WYSIWYG text items.
     """
+
     model = TextItem
-    admin_init_template = "admin/fluent_contents/plugins/text/admin_init.html"  # TODO: remove the need for this.
+    # TODO: remove the need for admin_init_template.
+    admin_init_template = "admin/fluent_contents/plugins/text/admin_init.html"
     admin_form_template = ContentPlugin.ADMIN_TEMPLATE_WITHOUT_LABELS
     search_output = True
 

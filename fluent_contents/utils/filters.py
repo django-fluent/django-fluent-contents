@@ -5,6 +5,7 @@ These filters are defined in :ref:`FLUENT_TEXT_PRE_FILTERS` and :ref:`FLUENT_TEX
 Plugins may call these functions during form input clean/validation.
 """
 from django.core.exceptions import ValidationError
+
 from fluent_contents import appsettings
 
 
@@ -32,12 +33,10 @@ def apply_filters(instance, html, field_name):
         # Perform post processing. This does not effect the original 'html'
         html_final = apply_post_filters(instance, html)
     except ValidationError as e:
-        if hasattr(e, 'error_list'):
+        if hasattr(e, "error_list"):
             # The filters can raise a "dump" ValidationError with a single error.
             # However, during post_clean it's expected that the fields are named.
-            raise ValidationError({
-                field_name: e.error_list
-            })
+            raise ValidationError({field_name: e.error_list})
         raise
 
     return html, html_final

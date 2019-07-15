@@ -1,8 +1,9 @@
-from future.builtins import str
 from django.template import Library, Node
 from django.template.base import TemplateSyntaxError
+from future.builtins import str
+from tag_parser import parse_as_var, parse_token_kwargs, template_tag
+
 from fluent_contents.admin.contentitems import BaseContentItemInline
-from tag_parser import template_tag, parse_as_var, parse_token_kwargs
 
 register = Library()
 
@@ -22,7 +23,7 @@ def has_no_visible_fields(inline_admin_form):
     # fieldset = admin Fieldset object.
 
     for name, options in inline_admin_form.fieldsets:
-        for name_slot in options.get('fields', ()):
+        for name_slot in options.get("fields", ()):
             # Lines can include (field, field)
             if not isinstance(name_slot, (list, tuple)):
                 name_slot = [name_slot]
@@ -71,7 +72,9 @@ def plugin_categories_to_choices(categories):
     choices = []
     for category, items in categories.items():
         if items:
-            plugin_tuples = tuple((plugin.type_name, plugin.verbose_name) for plugin in items)
+            plugin_tuples = tuple(
+                (plugin.type_name, plugin.verbose_name) for plugin in items
+            )
             if category:
                 choices.append((category, plugin_tuples))
             else:
@@ -81,11 +84,10 @@ def plugin_categories_to_choices(categories):
     return choices
 
 
-@template_tag(register, 'getfirstof')
+@template_tag(register, "getfirstof")
 class GetFirstOfNode(Node):
-
     def __init__(self, filters, var_name):
-        self.filters = filters    # list of FilterExpression nodes.
+        self.filters = filters  # list of FilterExpression nodes.
         self.var_name = var_name
 
     def render(self, context):
@@ -98,7 +100,7 @@ class GetFirstOfNode(Node):
                 break
 
         context[self.var_name] = value
-        return ''
+        return ""
 
     @classmethod
     def parse(cls, parser, token):
@@ -111,6 +113,8 @@ class GetFirstOfNode(Node):
         tag_name, choices, _ = parse_token_kwargs(parser, bits, allowed_kwargs=())
 
         if var_name is None:
-            raise TemplateSyntaxError("Expected syntax: {{% {0} val1 val2 as val %}}".format(tag_name))
+            raise TemplateSyntaxError(
+                "Expected syntax: {{% {0} val1 val2 as val %}}".format(tag_name)
+            )
 
         return cls(choices, var_name)

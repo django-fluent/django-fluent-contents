@@ -5,6 +5,7 @@ class CachedModelMixin(object):
     """
     Mixin to add cache expiration to a model.
     """
+
     clear_cache_on_add = False
 
     def save(self, *args, **kwargs):

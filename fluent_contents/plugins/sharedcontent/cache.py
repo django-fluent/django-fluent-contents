@@ -16,4 +16,6 @@ def get_shared_content_cache_key_ptr(site_id, slug, language_code):
 
 def get_shared_content_cache_key(sharedcontent):
     # Generate the key that render_placeholder() would use to store all output in.
-    return get_placeholder_cache_key_for_parent(sharedcontent, 'shared_content', sharedcontent.get_current_language())
+    return get_placeholder_cache_key_for_parent(
+        sharedcontent, "shared_content", sharedcontent.get_current_language()
+    )

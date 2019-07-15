@@ -19,6 +19,7 @@ from django.conf import settings
 
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.commentsarea.models import CommentsAreaItem
+
 from . import appsettings
 
 
@@ -28,11 +29,11 @@ class CommentsAreaPlugin(ContentPlugin):
     category = ContentPlugin.INTERACTIVITY
     render_template = "fluent_contents/plugins/commentsarea/commentsarea.html"
 
-    if 'fluent_comments' in settings.INSTALLED_APPS and appsettings.FLUENT_COMMENTSAREA_INCLUDE_STATIC_FILES:
+    if (
+        "fluent_comments" in settings.INSTALLED_APPS
+        and appsettings.FLUENT_COMMENTSAREA_INCLUDE_STATIC_FILES
+    ):
+
         class FrontendMedia:
-            css = {
-                'screen': ('fluent_comments/css/ajaxcomments.css',),
-            }
-            js = (
-                'fluent_comments/js/ajaxcomments.js',
-            )
+            css = {"screen": ("fluent_comments/css/ajaxcomments.css",)}
+            js = ("fluent_comments/js/ajaxcomments.js",)

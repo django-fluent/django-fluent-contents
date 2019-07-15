@@ -1,18 +1,21 @@
+from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.template import Library, TemplateSyntaxError
-from django.contrib.sites.models import Site
 from django.utils.translation import get_language
-from fluent_contents import appsettings
-from fluent_contents import rendering
-from fluent_contents.plugins.sharedcontent.cache import get_shared_content_cache_key_ptr, get_shared_content_cache_key
-from fluent_contents.plugins.sharedcontent.models import SharedContent
 from tag_parser.basetags import BaseAssignmentOrOutputNode
-from fluent_contents.utils.templatetags import is_true, extract_literal
+
+from fluent_contents import appsettings, rendering
+from fluent_contents.plugins.sharedcontent.cache import (
+    get_shared_content_cache_key,
+    get_shared_content_cache_key_ptr,
+)
+from fluent_contents.plugins.sharedcontent.models import SharedContent
+from fluent_contents.utils.templatetags import extract_literal, is_true
 
 register = Library()
 
 
-@register.tag('sharedcontent')
+@register.tag("sharedcontent")
 def sharedcontent(parser, token):
     """
     Render a shared content block. Usage:
@@ -48,12 +51,16 @@ class SharedContentNode(BaseAssignmentOrOutputNode):
 
     min_args = 1
     max_args = 1
-    allowed_kwargs = ('template', 'cachable')
+    allowed_kwargs = ("template", "cachable")
 
     @classmethod
     def validate_args(cls, tag_name, *args, **kwargs):
         if len(args) != 1:
-            raise TemplateSyntaxError("""{0} tag allows one arguments: 'slot name' and optionally: template="..".""".format(tag_name))
+            raise TemplateSyntaxError(
+                """{0} tag allows one arguments: 'slot name' and optionally: template="..".""".format(
+                    tag_name
+                )
+            )
 
         super(SharedContentNode, cls).validate_args(tag_name, *args)
 
@@ -63,19 +70,27 @@ class SharedContentNode(BaseAssignmentOrOutputNode):
 
         # Process arguments
         (slot,) = tag_args
-        template_name = tag_kwargs.get('template') or None
-        cachable = is_true(tag_kwargs.get('cachable', not bool(template_name)))  # default: True unless there is a template.
+        template_name = tag_kwargs.get("template") or None
 
-        if template_name and cachable and not extract_literal(self.kwargs['template']):
+        # cachable is default is True unless there is a template:
+        cachable = is_true(tag_kwargs.get("cachable", not bool(template_name)))
+
+        if template_name and cachable and not extract_literal(self.kwargs["template"]):
             # If the template name originates from a variable, it can change any time.
             # See PagePlaceholderNode.render_tag() why this is not allowed.
-            raise TemplateSyntaxError("{0} tag does not allow 'cachable' for variable template names!".format(self.tag_name))
+            raise TemplateSyntaxError(
+                "{0} tag does not allow 'cachable' for variable template names!".format(
+                    self.tag_name
+                )
+            )
 
         # Caching will not happen when rendering via a template,
         # because there is no way to tell whether that can be expired/invalidated.
-        try_cache = appsettings.FLUENT_CONTENTS_CACHE_OUTPUT \
-                and appsettings.FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT \
-                and cachable
+        try_cache = (
+            appsettings.FLUENT_CONTENTS_CACHE_OUTPUT
+            and appsettings.FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT
+            and cachable
+        )
 
         if isinstance(slot, SharedContent):
             # Allow passing a sharedcontent, just like 'render_placeholder' does.
@@ -90,7 +105,9 @@ class SharedContentNode(BaseAssignmentOrOutputNode):
             if try_cache:
                 # See if there is output cached, try to avoid fetching the SharedContent + Placeholder model.
                 # Have to perform 2 cache calls for this, because the placeholder output key is based on object IDs
-                cache_key_ptr = get_shared_content_cache_key_ptr(int(site.pk), slot, language_code=get_language())
+                cache_key_ptr = get_shared_content_cache_key_ptr(
+                    int(site.pk), slot, language_code=get_language()
+                )
                 cache_key = cache.get(cache_key_ptr)
                 if cache_key is not None:
                     output = cache.get(cache_key)
@@ -98,27 +115,41 @@ class SharedContentNode(BaseAssignmentOrOutputNode):
             if output is None:
                 # Get the placeholder
                 try:
-                    sharedcontent = SharedContent.objects.parent_site(site).get(slug=slot)
+                    sharedcontent = SharedContent.objects.parent_site(site).get(
+                        slug=slot
+                    )
                 except SharedContent.DoesNotExist:
-                    return "<!-- shared content '{0}' does not yet exist -->".format(slot)
+                    return "<!-- shared content '{0}' does not yet exist -->".format(
+                        slot
+                    )
 
                 # Now that we've fetched the object, the object key be generated.
                 # No real need to check for output again, render_placeholder() does that already.
                 if try_cache and not cache_key:
-                    cache.set(cache_key_ptr, get_shared_content_cache_key(sharedcontent))
+                    cache.set(
+                        cache_key_ptr, get_shared_content_cache_key(sharedcontent)
+                    )
 
         if output is None:
             # Have to fetch + render it.
-            output = self.render_shared_content(request, sharedcontent, template_name, cachable=cachable)
+            output = self.render_shared_content(
+                request, sharedcontent, template_name, cachable=cachable
+            )
 
-        rendering.register_frontend_media(request, output.media)  # Need to track frontend media here, as the template tag can't return it.
+        # Need to track frontend media here, as the template tag can't return it.
+        rendering.register_frontend_media(request, output.media)
         return output.html
 
-    def render_shared_content(self, request, sharedcontent, template_name=None, cachable=None):
+    def render_shared_content(
+        self, request, sharedcontent, template_name=None, cachable=None
+    ):
         # All parsing done, perform the actual rendering
         placeholder = sharedcontent.contents  # Another DB query
-        return rendering.render_placeholder(request, placeholder, sharedcontent,
+        return rendering.render_placeholder(
+            request,
+            placeholder,
+            sharedcontent,
             template_name=template_name,
             cachable=cachable,
-            fallback_language=True
+            fallback_language=True,
         )

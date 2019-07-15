@@ -4,11 +4,11 @@ from django.core.exceptions import ValidationError
 from django.forms.formsets import ManagementForm
 
 
-
 class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
     """
     A formset that can take initial values, and pass those to the generated forms.
     """
+
     # Based on http://stackoverflow.com/questions/442040/pre-populate-an-inline-formset/3766344#3766344
 
     def __init__(self, *args, **kwargs):
@@ -16,7 +16,7 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
         Grabs the curried initial values and stores them into a 'private' variable.
         """
         # This instance is created each time in the change_view() function.
-        self._initial = kwargs.pop('initial', [])
+        self._initial = kwargs.pop("initial", [])
         super(BaseInitialGenericInlineFormSet, self).__init__(*args, **kwargs)
 
     @property
@@ -28,11 +28,13 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
             form = ManagementForm(self.data, auto_id=self.auto_id, prefix=self.prefix)
             if not form.is_valid():
                 raise ValidationError(
-                    u'ManagementForm data is missing or has been tampered with.'
-                    u' form: {0}, model: {1}, errors: \n{2}'.format(
-                        self.__class__.__name__, self.model.__name__,
-                        form.errors.as_text()
-                ))
+                    u"ManagementForm data is missing or has been tampered with."
+                    u" form: {0}, model: {1}, errors: \n{2}".format(
+                        self.__class__.__name__,
+                        self.model.__name__,
+                        form.errors.as_text(),
+                    )
+                )
             else:
                 raise
 
@@ -49,10 +51,10 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
             return max(len(self.get_queryset()), len(self._initial)) + self.extra
 
     def _construct_form(self, i, **kwargs):
-        if self._initial and not kwargs.get('instance', None):
+        if self._initial and not kwargs.get("instance", None):
             instance = self.__get_form_instance(i)
             if instance:
-                kwargs['instance'] = instance
+                kwargs["instance"] = instance
 
         form = super(BaseInitialGenericInlineFormSet, self)._construct_form(i, **kwargs)
         return form
@@ -66,7 +68,7 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
 
         def initial_not_in_queryset(initial):
             for x in queryset:
-                if x.slot == initial['slot']:
+                if x.slot == initial["slot"]:
                     return False
 
             return True
@@ -86,7 +88,9 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
                 queryset_count = self.get_queryset().count()
                 values = self.__initial_minus_queryset()[i - queryset_count]
 
-                values[self.ct_field.name] = ContentType.objects.get_for_model(self.instance)
+                values[self.ct_field.name] = ContentType.objects.get_for_model(
+                    self.instance
+                )
                 values[self.ct_fk_field.name] = self.instance.pk
                 instance = self.model(**values)
             except IndexError:

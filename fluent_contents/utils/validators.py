@@ -1,6 +1,7 @@
+import re
+
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
-import re
 
 
 def validate_html_size(value):
@@ -9,5 +10,5 @@ def validate_html_size(value):
     The value can either be a number, or end with a percentage sign.
     Raises a :class:`~django.core.exceptions.ValidationError` if the value is invalid.
     """
-    if not re.match(r'^\d+%?$', value):
+    if not re.match(r"^\d+%?$", value):
         raise ValidationError(_("Value should be a number or percentage."))

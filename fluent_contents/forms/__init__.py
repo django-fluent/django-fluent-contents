@@ -1,7 +1,8 @@
 from django import forms
+
 from fluent_contents.models import Placeholder
 
-__all__ = ('ContentItemForm',)
+__all__ = ("ContentItemForm",)
 
 
 class ContentItemForm(forms.ModelForm):
@@ -12,7 +13,10 @@ class ContentItemForm(forms.ModelForm):
     When creating custom admin forms (e.g. to add validation for specific fields),
     use this class as base to ensure all fields are properly set up.
     """
-    placeholder = forms.ModelChoiceField(widget=forms.HiddenInput(), required=False, queryset=Placeholder.objects.all())
+
+    placeholder = forms.ModelChoiceField(
+        widget=forms.HiddenInput(), required=False, queryset=Placeholder.objects.all()
+    )
     sort_order = forms.IntegerField(widget=forms.HiddenInput(), initial=1)
 
     # The placeholder_slot is an extra field that does not exist in the model.

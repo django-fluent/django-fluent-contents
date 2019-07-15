@@ -5,7 +5,7 @@ from django.utils.safestring import SafeData
 
 
 def is_true(value):
-    return value in (1, '1', 'true', 'True', True)
+    return value in (1, "1", "true", "True", True)
 
 
 def extract_literal(templatevar):
@@ -16,7 +16,7 @@ def extract_literal(templatevar):
     :rtype: bool|None
     """
     # FilterExpression contains another 'var' that either contains a Variable or SafeData object.
-    if hasattr(templatevar, 'var'):
+    if hasattr(templatevar, "var"):
         templatevar = templatevar.var
         if isinstance(templatevar, SafeData):
             # Literal in FilterExpression, can return.
@@ -39,7 +39,7 @@ def extract_literal_bool(templatevar):
     :rtype: bool|None
     """
     # FilterExpression contains another 'var' that either contains a Variable or SafeData object.
-    if hasattr(templatevar, 'var'):
+    if hasattr(templatevar, "var"):
         templatevar = templatevar.var
         if isinstance(templatevar, SafeData):
             # Literal in FilterExpression, can return.

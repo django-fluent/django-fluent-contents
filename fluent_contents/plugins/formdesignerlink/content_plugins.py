@@ -10,6 +10,7 @@ For example, use:
  * ``FORM_DESIGNER_WIDGET_CLASSES`` to define which widgets are allowed.
 """
 from django.contrib.messages.api import get_messages
+
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.formdesignerlink.models import FormDesignerLink
 from form_designer import settings as form_designer_settings
@@ -24,7 +25,11 @@ class FormDesignerLinkPlugin(ContentPlugin):
 
     def get_render_template(self, request, instance, **kwargs):
         # Overwritten to return a template from the instance.
-        return instance.form_definition.form_template_name or self.render_template or form_designer_settings.DEFAULT_FORM_TEMPLATE
+        return (
+            instance.form_definition.form_template_name
+            or self.render_template
+            or form_designer_settings.DEFAULT_FORM_TEMPLATE
+        )
 
     def render(self, request, instance, **kwargs):
         # While overwriting get_context() would be sufficient here, this is rather easier to understand.
@@ -32,8 +37,11 @@ class FormDesignerLinkPlugin(ContentPlugin):
 
         # The process_form() function is designed with Django CMS in mind,
         # and responds to both the GET and POST request.
-        context = process_form(request, instance.form_definition, {}, disable_redirection=True)
-        context['messages'] = get_messages(request)  # No matter what, because the template needs it.
+        context = process_form(
+            request, instance.form_definition, {}, disable_redirection=True
+        )
+        # Add no matter what, because the template needs it.
+        context["messages"] = get_messages(request)
 
         # Render the plugin
         render_template = self.get_render_template(request, instance, **kwargs)

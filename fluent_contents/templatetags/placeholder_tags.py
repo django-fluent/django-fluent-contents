@@ -1,9 +1,14 @@
 import warnings
-warnings.warn("fluent_contents.templatetags.placeholder_tags is deprecated; use fluent_contents_tags instead",
-              DeprecationWarning)
 
 from .fluent_contents_tags import (
+    PagePlaceholderNode,
+    RenderPlaceholderNode,
+    page_placeholder,
     register,
-    page_placeholder, PagePlaceholderNode,
-    render_placeholder, RenderPlaceholderNode
+    render_placeholder,
+)
+
+warnings.warn(
+    "fluent_contents.templatetags.placeholder_tags is deprecated; use fluent_contents_tags instead",
+    DeprecationWarning,
 )

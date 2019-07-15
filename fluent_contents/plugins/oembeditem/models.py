@@ -1,14 +1,14 @@
-from future.builtins import str
-from future.utils import python_2_unicode_compatible
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from future.builtins import str
+from future.utils import python_2_unicode_compatible
 from micawber import ProviderException
 
 from fluent_contents.models import ContentItemManager
 from fluent_contents.models.db import ContentItem
+from fluent_contents.plugins.oembeditem import appsettings, backend
 from fluent_contents.plugins.oembeditem.fields import OEmbedUrlField
-from fluent_contents.plugins.oembeditem import backend, appsettings
 
 
 @python_2_unicode_compatible
@@ -19,15 +19,18 @@ class AbstractOEmbedItem(ContentItem):
 
     .. versionadded:: 1.0
     """
-    TYPE_PHOTO = 'photo'
-    TYPE_VIDEO = 'video'
-    TYPE_RICH = 'rich'  # HTML
-    TYPE_LINK = 'link'
+
+    TYPE_PHOTO = "photo"
+    TYPE_VIDEO = "video"
+    TYPE_RICH = "rich"  # HTML
+    TYPE_LINK = "link"
 
     # Fetch parameters
     embed_url = OEmbedUrlField(_("URL to embed"))
     embed_max_width = models.PositiveIntegerField(_("Max width"), blank=True, null=True)
-    embed_max_height = models.PositiveIntegerField(_("Max height"), blank=True, null=True)
+    embed_max_height = models.PositiveIntegerField(
+        _("Max height"), blank=True, null=True
+    )
 
     # The cached response:
     type = models.CharField(editable=False, max_length=20, null=True, blank=True)
@@ -35,9 +38,13 @@ class AbstractOEmbedItem(ContentItem):
     title = models.CharField(editable=False, max_length=512, null=True, blank=True)
     description = models.TextField(editable=False, null=True, blank=True)
 
-    author_name = models.CharField(editable=False, max_length=255, null=True, blank=True)
+    author_name = models.CharField(
+        editable=False, max_length=255, null=True, blank=True
+    )
     author_url = models.URLField(editable=False, null=True, blank=True)
-    provider_name = models.CharField(editable=False, max_length=255, null=True, blank=True)
+    provider_name = models.CharField(
+        editable=False, max_length=255, null=True, blank=True
+    )
     provider_url = models.URLField(editable=False, null=True, blank=True)
 
     thumbnail_url = models.URLField(editable=False, null=True, blank=True)
@@ -81,8 +88,10 @@ class AbstractOEmbedItem(ContentItem):
 
         .. versionadded:: 1.0 Added force and backend_params parameters.
         """
-        if appsettings.FLUENT_OEMBED_FORCE_HTTPS and self.embed_url.startswith('http://'):
-            self.embed_url = 'https://' + self.embed_url[7:]
+        if appsettings.FLUENT_OEMBED_FORCE_HTTPS and self.embed_url.startswith(
+            "http://"
+        ):
+            self.embed_url = "https://" + self.embed_url[7:]
 
         if force or self._input_changed():
             # Fetch new embed code
@@ -104,24 +113,35 @@ class AbstractOEmbedItem(ContentItem):
 
            Allow to define the parameters that are passed to the backend to fetch the current URL.
         """
-        return {
-            'max_width': self.embed_max_width,
-            'max_height': self.embed_max_height,
-        }
+        return {"max_width": self.embed_max_width, "max_height": self.embed_max_height}
 
     def _input_changed(self):
-        return not self.type \
-            or self._old_embed_url != self.embed_url \
-            or self._old_embed_max_width != self.embed_max_width \
+        return (
+            not self.type
+            or self._old_embed_url != self.embed_url
+            or self._old_embed_max_width != self.embed_max_width
             or self._old_embed_max_height != self.embed_max_height
+        )
 
     def store_response(self, response):
         # Store the OEmbed response
         # Unused: cache_age
         # Security considerations: URLs are checked by Django for http:// or ftp://
         KEYS = (
-            'type', 'title', 'description', 'author_name', 'author_url', 'provider_url', 'provider_name',
-            'thumbnail_width', 'thumbnail_height', 'thumbnail_url', 'height', 'width', 'html', 'url'
+            "type",
+            "title",
+            "description",
+            "author_name",
+            "author_url",
+            "provider_url",
+            "provider_name",
+            "thumbnail_width",
+            "thumbnail_height",
+            "thumbnail_url",
+            "height",
+            "width",
+            "html",
+            "url",
         )
 
         for key in KEYS:

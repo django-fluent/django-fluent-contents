@@ -1,11 +1,12 @@
-from future.utils import python_2_unicode_compatible
 from django.db import models
+from django.db.models import signals
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
-from django.db.models import signals
-from fluent_contents.models import ContentItem, ContentItemManager
 from fluent_utils.softdeps.comments import get_model as get_comment_model
 from fluent_utils.softdeps.comments import signals as comments_signals
+from future.utils import python_2_unicode_compatible
+
+from fluent_contents.models import ContentItem, ContentItemManager
 
 CommentModel = get_comment_model()
 
@@ -17,11 +18,11 @@ class CommentsAreaItem(ContentItem):
     objects = ContentItemManager()  # Avoid Django 1.10 migrations
 
     class Meta:
-        verbose_name = _('Comments area')
-        verbose_name_plural = _('Comments areas')
+        verbose_name = _("Comments area")
+        verbose_name_plural = _("Comments areas")
 
     def __str__(self):
-        return u''
+        return u""
 
 
 def clear_commentarea_cache(comment):

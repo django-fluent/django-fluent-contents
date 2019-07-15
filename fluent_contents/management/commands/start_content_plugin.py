@@ -1,11 +1,13 @@
-import fluent_contents
-import os, re
+import os
+import re
 from importlib import import_module
 
 from django.core.management import CommandError
 from django.core.management.templates import TemplateCommand
 
-RE_PLUGIN = re.compile('Plugin$')
+import fluent_contents
+
+RE_PLUGIN = re.compile("Plugin$")
 
 
 class Command(TemplateCommand):
@@ -13,6 +15,7 @@ class Command(TemplateCommand):
     Add a prefix to the name of content items.
     This makes content items easier to spot in the permissions list.
     """
+
     help = (
         "Creates a Django app directory structure for the given app name in "
         "the current directory or optionally in the given directory."
@@ -22,16 +25,20 @@ class Command(TemplateCommand):
     def add_arguments(self, parser):
         super(Command, self).add_arguments(parser)
         parser.add_argument(
-            '--plugin', '-p', dest='plugin',
-            help='The name of the ContentPlugin subclass to render.'
+            "--plugin",
+            "-p",
+            dest="plugin",
+            help="The name of the ContentPlugin subclass to render.",
         )
         parser.add_argument(
-            '--model', '-m', dest='model',
-            help='The name of the ContentItem model subclass to render.'
+            "--model",
+            "-m",
+            dest="model",
+            help="The name of the ContentItem model subclass to render.",
         )
 
     def handle(self, *args, **options):
-        app_name, target = options.pop('name'), options.pop('directory')
+        app_name, target = options.pop("name"), options.pop("directory")
         self.validate_name(app_name, "app")
 
         # Check that the app_name cannot be imported.
@@ -50,20 +57,22 @@ class Command(TemplateCommand):
             os.mkdir(target)
 
         # Use different base template then Django's start_app.
-        if not options.get('template'):
+        if not options.get("template"):
             root = os.path.dirname(fluent_contents.__file__)
-            options['template'] = os.path.join(root, 'conf', 'plugin_template')
+            options["template"] = os.path.join(root, "conf", "plugin_template")
 
         # Create {{ model }} and {{ plugin }} settings.
-        if not options['plugin']:
+        if not options["plugin"]:
             # default converts "app_name" -> "AppNamePlugin"
-            options['plugin'] = "{0}Plugin".format(app_name.replace('_', ' ').title().replace(' ', ''))
+            options["plugin"] = "{0}Plugin".format(
+                app_name.replace("_", " ").title().replace(" ", "")
+            )
 
-        if not options['model']:
-            if options['plugin'].endswith('Plugin'):
+        if not options["model"]:
+            if options["plugin"].endswith("Plugin"):
                 # default convert "AppNamePlugin" -> "AppNameItem"
-                options['model'] = RE_PLUGIN.sub('Item', options['plugin'])
+                options["model"] = RE_PLUGIN.sub("Item", options["plugin"])
             else:
-                options['model'] = "{0}Item".format(options['plugin'])
+                options["model"] = "{0}Item".format(options["plugin"])
 
-        super(Command, self).handle('app', app_name, target, **options)
+        super(Command, self).handle("app", app_name, target, **options)

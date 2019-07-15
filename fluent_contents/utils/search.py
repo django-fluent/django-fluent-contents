@@ -1,9 +1,9 @@
 """
 Internal utils for search.
 """
+import six
 from django.utils.encoding import force_text
 from django.utils.html import strip_tags
-import six
 
 
 def get_search_field_values(contentitem):
@@ -44,5 +44,5 @@ def clean_join(separator, iterable):
     return separator.join(filter(None, iterable))
 
 
-#def get_cleaned_bits(data):
+# def get_cleaned_bits(data):
 #    return smart_split(get_cleaned_bits(data))

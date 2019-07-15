@@ -2,12 +2,11 @@
 The manager classes are accessed via ``Placeholder.objects``.
 """
 import six
-
-from future.builtins import str
 from django.conf import settings
-from django.db import models
 from django.contrib.contenttypes.models import ContentType
+from django.db import models
 from django.utils.translation import get_language
+from future.builtins import str
 from parler import appsettings as parler_appsettings
 from parler.utils import get_language_title
 from polymorphic.managers import PolymorphicManager
@@ -34,16 +33,17 @@ class PlaceholderManager(models.Manager):
         placeholder.parent = parent_object  # fill the reverse cache
         return placeholder
 
-    def create_for_object(self, parent_object, slot, role='m', title=None):
+    def create_for_object(self, parent_object, slot, role="m", title=None):
         """
         Create a placeholder with the given parameters
         """
         from .db import Placeholder
+
         parent_attrs = get_parent_lookup_kwargs(parent_object)
         obj = self.create(
             slot=slot,
             role=role or Placeholder.MAIN,
-            title=title or slot.title().replace('_', ' '),
+            title=title or slot.title().replace("_", " "),
             **parent_attrs
         )
         obj.parent = parent_object  # fill the reverse cache
@@ -70,8 +70,12 @@ class ContentItemQuerySet(PolymorphicQuerySet):
         else:
             # Since some code operates on a True/str switch, make sure that doesn't drip into this low level code.
             for language_code in language_codes:
-                if not isinstance(language_code, six.string_types) or language_code.lower() in ('1', '0', 'true', 'false'):
-                    raise ValueError("ContentItemQuerySet.translated() expected language_code to be an ISO code")
+                if not isinstance(
+                    language_code, six.string_types
+                ) or language_code.lower() in ("1", "0", "true", "false"):
+                    raise ValueError(
+                        "ContentItemQuerySet.translated() expected language_code to be an ISO code"
+                    )
 
         if len(language_codes) == 1:
             return self.filter(language_code=language_codes[0])
@@ -89,7 +93,7 @@ class ContentItemQuerySet(PolymorphicQuerySet):
         if limit_parent_language:
             language_code = get_parent_language_code(parent_object)
             if language_code:
-                lookup['language_code'] = language_code
+                lookup["language_code"] = language_code
 
         return self.filter(**lookup)
 
@@ -144,6 +148,7 @@ class ContentItemManager(PolymorphicManager):
     """
     Extra methods for ``ContentItem.objects``.
     """
+
     queryset_class = ContentItemQuerySet
 
     def translated(self, *language_codes):
@@ -162,7 +167,9 @@ class ContentItemManager(PolymorphicManager):
         """
         return self.all().parent(parent_object, limit_parent_language)
 
-    def create_for_placeholder(self, placeholder, sort_order=1, language_code=None, **kwargs):
+    def create_for_placeholder(
+        self, placeholder, sort_order=1, language_code=None, **kwargs
+    ):
         """
         Create a Content Item with the given parameters
 
@@ -190,7 +197,8 @@ class ContentItemManager(PolymorphicManager):
 
         # Fill the reverse caches
         obj.placeholder = placeholder
-        parent = getattr(placeholder, '_parent_cache', None)  # by GenericForeignKey (_meta.virtual_fields[0].cache_attr)
+        # From GenericForeignKey (_meta.virtual_fields[0].cache_attr):
+        parent = getattr(placeholder, "_parent_cache", None)
         if parent is not None:
             obj.parent = parent
 
@@ -207,14 +215,11 @@ def get_parent_lookup_kwargs(parent_object):
     :type parent_object: :class:`~django.db.models.Model`
     """
     if parent_object is None:
-        return dict(
-            parent_type__isnull=True,
-            parent_id=0
-        )
+        return dict(parent_type__isnull=True, parent_id=0)
     elif isinstance(parent_object, models.Model):
         return dict(
             parent_type=ContentType.objects.get_for_model(parent_object),
-            parent_id=parent_object.pk
+            parent_id=parent_object.pk,
         )
     else:
         raise ValueError("parent_object is not a model!")
@@ -257,9 +262,12 @@ def get_parent_active_language_choices(parent_object, exclude_current=False):
     assert parent_object is not None, "Missing parent_object!"
 
     from .db import ContentItem
-    qs = ContentItem.objects \
-        .parent(parent_object, limit_parent_language=False) \
-        .values_list('language_code', flat=True).distinct()
+
+    qs = (
+        ContentItem.objects.parent(parent_object, limit_parent_language=False)
+        .values_list("language_code", flat=True)
+        .distinct()
+    )
 
     languages = set(qs)
 
@@ -267,14 +275,17 @@ def get_parent_active_language_choices(parent_object, exclude_current=False):
         parent_lang = get_parent_language_code(parent_object)
         languages.discard(parent_lang)
 
-    if parler_appsettings.PARLER_LANGUAGES and not parler_appsettings.PARLER_SHOW_EXCLUDED_LANGUAGE_TABS:
+    if (
+        parler_appsettings.PARLER_LANGUAGES
+        and not parler_appsettings.PARLER_SHOW_EXCLUDED_LANGUAGE_TABS
+    ):
         site_id = get_parent_site_id(parent_object)
         try:
             lang_dict = parler_appsettings.PARLER_LANGUAGES[site_id]
         except KeyError:
             lang_dict = ()
 
-        allowed_languages = set(item['code'] for item in lang_dict)
+        allowed_languages = set(item["code"] for item in lang_dict)
         languages &= allowed_languages
 
     # No multithreading issue here, object is instantiated for this user only.
@@ -290,7 +301,7 @@ def get_parent_site_id(parent_object):
     a ``site`` or ``parent_site`` field is defined by the model.
     """
     return (
-        getattr(parent_object, 'parent_site_id', None) or
-        getattr(parent_object, 'site_id', None) or
-        getattr(settings, 'SITE_ID', None)
+        getattr(parent_object, "parent_site_id", None)
+        or getattr(parent_object, "site_id", None)
+        or getattr(settings, "SITE_ID", None)
     )
