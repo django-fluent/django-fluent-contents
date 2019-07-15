@@ -67,8 +67,8 @@ Also check the following settings in the global section:
 
 * :ref:`FLUENT_TEXT_CLEAN_HTML`
 * :ref:`FLUENT_TEXT_SANITIZE_HTML`
-* :ref:`FLUENT_TEXT_PRE_PROCESSORS`
-* :ref:`FLUENT_TEXT_POST_PROCESSORS`
+* :ref:`FLUENT_TEXT_PRE_FILTERS`
+* :ref:`FLUENT_TEXT_POST_FILTERS`
 
 Those settings allow post-processing of the HTML, sanitation and making the HTML well-formed.
 It can be used for example to fix typography, such as replacing regular quotes with curly quotes.

@@ -411,7 +411,9 @@ so it's time to show this module to the public.
 
 .. _django-any-urlfield: https://github.com/edoburu/django-any-urlfield
 .. _django-any-imagefield: https://github.com/edoburu/django-any-imagefield
+.. _django-debug-toolbar: https://github.com/jazzband/django-debug-toolbar
 .. _django-flat-theme: https://github.com/elky/django-flat-theme
+.. _django-fluent-comments: https://github.com/django-fluent/django-fluent/comments
 .. _django-form-designer-ai: https://github.com/andersinno/django-form-designer-ai
 .. _django-parler: https://github.com/edoburu/django-parler
 .. _django-polymorphic: https://github.com/django-polymorphic/django-polymorphic
