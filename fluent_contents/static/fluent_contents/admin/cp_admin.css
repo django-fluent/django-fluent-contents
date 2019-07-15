@@ -10,23 +10,17 @@ html.cp-jsenabled .inline-contentitem-group {
   display: none;
 }
 
-
-
 /* ---- Clearfix ---- */
 
 .cp-clearfix:after {
-  content:      ".";
-  font-size:    0;
-  line-height:  0;
-  display:      block;
-  height:       0;  
-  clear:        both;
-  visibility:   hidden;
+  content: ".";
+  font-size: 0;
+  line-height: 0;
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
 }
-
-* html .cp-clearfix { height:     1%; } /* 1% of nothing makes IE 6 do the right thing. */
-*+html .cp-clearfix { min-height: 0;  } /* and IE7 has new tricks to trigger hasLayout. */
-
 
 /* ---- Editor items ---- */
 
@@ -38,7 +32,7 @@ html.cp-jsenabled .inline-contentitem-group {
 }
 
 .cp-item-delete input {
-  display: none;  /* needed for server side, but has special handling in admin.js */
+  display: none; /* needed for server side, but has special handling in admin.js */
 }
 
 .cp-item-icons {
@@ -58,23 +52,39 @@ html.cp-jsenabled .inline-contentitem-group {
   outline: 0;
 }
 
-.cp-item-up   { background-image: url(img/admin/arrow_up.gif); }
-.cp-item-down { background-image: url(img/admin/arrow_down.gif); }
-.cp-item-move { background-image: url(img/admin/arrow-move.png); }
+.cp-item-up {
+  background-image: url(img/admin/arrow_up.gif);
+}
+.cp-item-down {
+  background-image: url(img/admin/arrow_down.gif);
+}
+.cp-item-move {
+  background-image: url(img/admin/arrow-move.png);
+}
 
-#cp-tabmain .cp-item-move { background-image: url(img/admin/arrow-move-we.png); }
+#cp-tabmain .cp-item-move {
+  background-image: url(img/admin/arrow-move-we.png);
+}
 /* .cp-placeholderfield .cp-item-move { background-image: url(img/admin/arrow-move-ns.png); } */
-body.cp-single-placeholder .cp-item-move { display: none; }
-body.cp-single-placeholder #tab-orphaned .cp-item-move { display: inline; }  /* always show in orphaned tab */
+body.cp-single-placeholder .cp-item-move {
+  display: none;
+}
+body.cp-single-placeholder #tab-orphaned .cp-item-move {
+  display: inline;
+} /* always show in orphaned tab */
 
-.inline-related:first-child .cp-item-up { display: none; }
-.inline-related:last-child  .cp-item-down { display: none; }
+.inline-related:first-child .cp-item-up {
+  display: none;
+}
+.inline-related:last-child .cp-item-down {
+  display: none;
+}
 
 .cp-item-delete a {
   float: left;
   width: 10px;
   height: 10px;
-  padding: 3px;  /* to become 16x16 */
+  padding: 3px; /* to become 16x16 */
   background: url(img/admin/icon_deletelink.gif) no-repeat 50% 50%;
   outline: 0;
 }
@@ -113,8 +123,12 @@ body.cp-single-placeholder #tab-orphaned .cp-item-move { display: inline; }  /* 
   padding: 3px 6px;
 }
 
-* html #cp-move-popup li a { height: 1%; }
-*+html #cp-move-popup li a { min-height: 0; }
+* html #cp-move-popup li a {
+  height: 1%;
+}
+* + html #cp-move-popup li a {
+  min-height: 0;
+}
 
 .cp-empty {
   margin: 0.5em 0;
@@ -139,7 +153,7 @@ form .form-row.no-labels p.help {
 /* ---- CheckboxSelectMultiple fixes ---- */
 
 .aligned .form-row ul li {
-    list-style-type: none;
+  list-style-type: none;
 }
 
 /* ---- Inline header fixes ---- */
@@ -157,23 +171,22 @@ h2.cp-formset-item-title {
   /* Give fieldsets inside inline a different title
      Otherwise there will be 2 levels of the same color already.
   */
-  background-image: url('img/admin/nav-bg.gif');
+  background-image: url("img/admin/nav-bg.gif");
   background-position: left bottom;
   background-repeat: repeat-x;
-  background-color: #fff;  /* for django-flat-theme */
+  background-color: #fff; /* for django-flat-theme */
   color: #999999;
   border-left: 1px solid #eee;
   border-right: 1px solid #eee;
 }
 
 .cp-content .inline-related fieldset h2 {
-  background-image: url('img/admin/nav-bg-reverse.gif');
+  background-image: url("img/admin/nav-bg-reverse.gif");
   background-repeat: repeat-x;
   background-position: left bottom;
-  background-color: #E2E2E2;  /* for django-flat-theme */
+  background-color: #e2e2e2; /* for django-flat-theme */
   color: #999999;
 }
-
 
 /* ---- Tabbar interface ---- */
 
@@ -188,7 +201,7 @@ h2.cp-formset-item-title {
 
 #cp-tabnav {
   margin: 0;
-  padding: 5px 0 0 0;  /* the extra top space for .inline-placeholder-group */
+  padding: 5px 0 0 0; /* the extra top space for .inline-placeholder-group */
 }
 
 #cp-tabnav li {
@@ -206,8 +219,12 @@ h2.cp-formset-item-title {
   cursor: pointer;
 }
 
-* html #cp-tabnav li.active a { height: 1%;    } /* IE 6 */
-*+html #cp-tabnav li.active a { min-height: 0; } /* IE 7 */
+* html #cp-tabnav li.active a {
+  height: 1%;
+} /* IE 6 */
+* + html #cp-tabnav li.active a {
+  min-height: 0;
+} /* IE 7 */
 
 #cp-tabnav li.active a {
   color: #fff;
@@ -217,7 +234,7 @@ h2.cp-formset-item-title {
 
 #cp-tabmain {
   padding: 10px;
-  margin: 0;  /* no bottom margin, .inline-placeholder-group already takes care of this */
+  margin: 0; /* no bottom margin, .inline-placeholder-group already takes care of this */
 }
 
 #cp-tabmain .cp-placeholder-delete {
@@ -229,12 +246,14 @@ h2.cp-formset-item-title {
   margin-bottom: 15px;
 }
 
-
 /* default tabbar appearance */
 
-.cp-tab { display: none }
-#cp-tabmain .cp-tab-active { display: block }
-
+.cp-tab {
+  display: none;
+}
+#cp-tabmain .cp-tab-active {
+  display: block;
+}
 
 /* ---- PlaceholderField ---- */
 
@@ -254,7 +273,7 @@ h2.cp-formset-item-title {
 }
 
 fieldset.plugin-holder label {
-  display: none
+  display: none;
 }
 
 fieldset.plugin-holder .cp-placeholderfield label {
@@ -265,7 +284,6 @@ fieldset.plugin-holder .cp-placeholderfield {
   margin: 0;
   padding: 0;
 }
-
 
 /* ---- Placeholder pane ---- */
 
@@ -279,11 +297,10 @@ fieldset.plugin-holder .cp-placeholderfield {
   padding-left: 10px;
 }
 
-
 /* ---- Rich editor (quick fixes) ---- */
 
 .inline-TextItem .cp-wysiwyg-widget {
-  display: none;  /* avoid flashing a textarea which is to become a WYSIWYG editor */
+  display: none; /* avoid flashing a textarea which is to become a WYSIWYG editor */
 }
 
 body.yui-skin-sam .inline-TextItem .yui-editor-container {

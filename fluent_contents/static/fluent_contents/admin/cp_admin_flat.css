@@ -1,24 +1,24 @@
 /* tabs */
 
 #cp-tabnav {
-  border-bottom: 1px solid #79AEC8;
+  border-bottom: 1px solid #79aec8;
 }
 
 #cp-tabnav li {
   border-radius: 6px 6px 0 0;
-  border: 1px solid #C4DCE8;
+  border: 1px solid #c4dce8;
   font-size: 15px;
   line-height: 17px;
   background-color: #fff;
-  margin-top: 3px;  /* push down */
+  margin-top: 3px; /* push down */
   margin-right: 4px;
   color: #333333;
 }
 
 #cp-tabnav li.active {
   margin-top: 0;
-  background-color: #79AEC8;
-  border-color: #79AEC8;
+  background-color: #79aec8;
+  border-color: #79aec8;
   color: #ffffff;
 }
 
@@ -32,7 +32,6 @@
   padding-bottom: 7px;
   color: #fff;
 }
-
 
 /* tab content */
 

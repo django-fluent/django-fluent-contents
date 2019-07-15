@@ -7,6 +7,7 @@ Changes in 2.0.6 (2019-06-11)
 * Fix Django 2.x compatibility with ``disquswidgets`` and ``formdesignerlink`` migrations.
 * Fix Python error when adding a ``ContentItem`` on a parent model that doesn't have a ``parent_site`` field.
 * Replace *django-form-designer* GitHub dependency with updated django-form-designer-ai_ PyPI release.
+* Reformat all files with isort, black and prettier.
 
 
 Changes in 2.0.5 (2019-04-12)

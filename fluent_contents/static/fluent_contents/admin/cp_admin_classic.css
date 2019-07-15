@@ -15,7 +15,7 @@
 
 #cp-tabnav li.active {
   margin-top: 0;
-  background-image: url('img/admin/default-bg.gif');
+  background-image: url("img/admin/default-bg.gif");
   color: #ffffff;
 }
 
