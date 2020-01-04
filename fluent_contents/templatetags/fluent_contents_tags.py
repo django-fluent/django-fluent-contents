@@ -368,6 +368,11 @@ def render_content_items_media(parser, token):
         {% render_content_items_media js %}
         {% render_content_items_media js local %}
         {% render_content_items_media js external %}
+
+    .. note::
+        The output of plugins is typically cached. Changes the the
+        registered media only show up after flushing the cache,
+        or re-saving the items (which flushes the cache).
     """
     return RenderContentItemsMedia.parse(parser, token)
 
