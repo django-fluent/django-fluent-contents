@@ -11,7 +11,6 @@ from django.dispatch import receiver
 from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils import translation
-from django.utils.functional import curry
 from fluent_utils.ajax import JsonResponse
 
 from fluent_contents import extensions
@@ -22,6 +21,11 @@ from fluent_contents.admin.contentitems import (
 from fluent_contents.admin.genericextensions import BaseInitialGenericInlineFormSet
 from fluent_contents.models import Placeholder
 from fluent_contents.models.managers import get_parent_active_language_choices
+
+try:
+    from functools import partialmethod  # Python 3
+except ImportError:
+    from django.utils.functional import curry as partialmethod
 
 
 class PlaceholderInlineFormSet(BaseInitialGenericInlineFormSet):
@@ -136,7 +140,7 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
         FormSetClass = super(PlaceholderEditorInline, self).get_formset(
             request, obj, **kwargs
         )
-        FormSetClass.__init__ = curry(FormSetClass.__init__, initial=initial)
+        FormSetClass.__init__ = partialmethod(FormSetClass.__init__, initial=initial)
         return FormSetClass
 
     def _get_parent_modeladmin(self):
