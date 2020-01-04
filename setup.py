@@ -39,11 +39,11 @@ setup(
     version=find_version("fluent_contents", "__init__.py"),
     license="Apache 2.0",
     install_requires=[
-        "django-fluent-utils>=2.0",  # DRY utility code
-        "django-parler>=1.9.1",
-        "django-polymorphic>=2.0",
-        "django-tag-parser>=2.1",
-        "django-template-analyzer>=1.6.1",
+        "django-fluent-utils>=2.0.0",  # DRY utility code
+        "django-parler>=2.0.1",
+        "django-polymorphic>=2.1.2",
+        "django-tag-parser>=3.2",
+        "django-template-analyzer>=1.6.2",
         "future>=0.12.2",
         "six>=1.5.2",
         # Work around https://github.com/html5lib/html5lib-python/issues/189
@@ -88,6 +88,7 @@ setup(
         "Framework :: Django :: 2.0",
         "Framework :: Django :: 2.1",
         "Framework :: Django :: 2.2",
+        "Framework :: Django :: 3.0",
         "Topic :: Internet :: WWW/HTTP",
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
         "Topic :: Software Development :: Libraries :: Application Frameworks",
