@@ -23,7 +23,6 @@ This is done using the following syntax:
 
 The CMS interface can scan for those tags using the :ref:`fluent_contents.analyzer` module.
 """
-import six
 from django.conf import settings
 from django.db.models import Manager
 from django.forms import Media
@@ -470,7 +469,7 @@ def _split_css(media, domain):
 
     needs_local = domain == "local"
     new_css = {}
-    for medium, url in six.iteritems(media._css):
+    for medium, url in media._css.items():
         if needs_local == _is_local(url):
             new_css.setdefault(medium, []).append(url)
 

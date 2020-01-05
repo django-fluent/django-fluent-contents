@@ -5,8 +5,9 @@ from functools import reduce
 from django.core.management.base import BaseCommand
 from django.db import ProgrammingError, models
 from django.db.models import Q
-from django.utils import six, translation
+from django.utils import translation
 from django.utils.encoding import force_text
+from future.utils import text_type
 from html5lib import HTMLParser, treebuilders
 
 from fluent_contents.extensions import (
@@ -124,7 +125,7 @@ class Command(BaseCommand):
             for field in url_fields:
                 value = getattr(object, field.name)
                 if value:
-                    if isinstance(value, six.text_type):
+                    if isinstance(value, text_type):
                         value = force_text(value)
                     else:
                         value = value.to_db_value()  # AnyUrlValue

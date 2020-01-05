@@ -4,9 +4,9 @@ the API is exposed via __init__.py
 """
 from threading import Lock
 
-import six
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
+from future.utils import string_types
 from fluent_utils.load import import_apps_submodule
 from future.builtins import str
 
@@ -152,7 +152,7 @@ class PluginPool(object):
         self._import_plugins()
         plugin_instances = []
         for name in names:
-            if isinstance(name, six.string_types):
+            if isinstance(name, string_types):
                 try:
                     plugin_instances.append(self.plugins[name.lower()])
                 except KeyError:

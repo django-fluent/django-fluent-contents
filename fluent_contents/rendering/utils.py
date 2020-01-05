@@ -5,7 +5,6 @@ import logging
 import os
 
 import django
-import six
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.cache import cache
@@ -13,6 +12,7 @@ from django.template.backends.django import Template as TemplateAdapter
 from django.template.loader import select_template
 from django.test import RequestFactory
 from django.utils.translation import get_language
+from future.utils import string_types
 
 from fluent_contents.extensions import ContentPlugin
 
@@ -109,7 +109,7 @@ def is_template_updated(request, contentitem, cachekey):
 
     if not template_names:
         return False
-    if isinstance(template_names, six.string_types):
+    if isinstance(template_names, string_types):
         template_names = [template_names]
 
     # With TEMPLATE_DEBUG = True, each node tracks it's origin.

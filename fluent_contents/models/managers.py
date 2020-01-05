@@ -1,12 +1,12 @@
 """
 The manager classes are accessed via ``Placeholder.objects``.
 """
-import six
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import get_language
 from future.builtins import str
+from future.utils import string_types
 from parler import appsettings as parler_appsettings
 from parler.utils import get_language_title
 from polymorphic.managers import PolymorphicManager
@@ -71,7 +71,7 @@ class ContentItemQuerySet(PolymorphicQuerySet):
             # Since some code operates on a True/str switch, make sure that doesn't drip into this low level code.
             for language_code in language_codes:
                 if not isinstance(
-                    language_code, six.string_types
+                    language_code, string_types
                 ) or language_code.lower() in ("1", "0", "true", "false"):
                     raise ValueError(
                         "ContentItemQuerySet.translated() expected language_code to be an ISO code"

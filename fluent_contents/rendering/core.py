@@ -1,6 +1,5 @@
 import logging
 
-import six
 from django.conf import settings
 from django.core.cache import cache
 from django.db.models.query import EmptyQuerySet
@@ -9,6 +8,7 @@ from django.template.loader import render_to_string
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from future.builtins import str
+from future.utils import integer_types
 from parler.utils.context import smart_override
 
 from fluent_contents import appsettings
@@ -587,10 +587,10 @@ def _get_stale_item_class_name(item):
 def _min_timeout(val1, val2):
     # Avoid min(int, object). That may work but it's
     # a CPython implementation detail to compare that as "int" < "object"
-    if not isinstance(val2, six.integer_types):
+    if not isinstance(val2, integer_types):
         return val1
 
-    if not isinstance(val1, six.integer_types):
+    if not isinstance(val1, integer_types):
         return val2
 
     return min(val1, val2)
