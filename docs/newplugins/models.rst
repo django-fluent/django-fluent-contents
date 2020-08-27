@@ -30,7 +30,7 @@ the rest is just standard Django model code.
 .. code-block:: python
 
   from django.db import models
-  from django.utils.translation import ugettext_lazy as _
+  from django.utils.translation import gettext_lazy as _
   from fluent_contents.models import ContentItem
 
   class AnnouncementBlockItem(ContentItem):
@@ -60,7 +60,7 @@ The :file:`content_plugins.py` file can contain multiple plugins, each should in
 
 .. code-block:: python
 
-  from django.utils.translation import ugettext_lazy as _
+  from django.utils.translation import gettext_lazy as _
   from fluent_contents.extensions import plugin_pool, ContentPlugin
   from .models import AnnouncementBlockItem
 
@@ -109,7 +109,7 @@ This can be used to generate the HTML:
 
     By default, the output of plugins is cached; changes to the template file
     are only visible when the model is saved in the Django admin.
-    You can set :ref:`FLUENT_CONTENTS_CACHE_OUTPUT` to ``False``, or use 
+    You can set :ref:`FLUENT_CONTENTS_CACHE_OUTPUT` to ``False``, or use
     the :attr:`~fluent_contents.extensions.ContentPlugin.cache_output` setting temporary in development.
     The setting is enabled by default to let plugin authors make a conscious decision about caching
     and avoid unexpected results in production.

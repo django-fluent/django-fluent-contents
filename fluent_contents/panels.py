@@ -6,7 +6,7 @@ from datetime import timedelta
 from debug_toolbar.panels import Panel
 from debug_toolbar.utils import ThreadCollector
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from fluent_contents.extensions import PluginNotFound
 from fluent_contents.models import ContentItem

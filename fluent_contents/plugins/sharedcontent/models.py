@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from future.builtins import str
 from future.utils import python_2_unicode_compatible
 from parler.models import TranslatableModel, TranslatedFields

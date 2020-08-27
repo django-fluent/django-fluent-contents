@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db.models import URLField
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from fluent_contents.plugins.oembeditem import backend
 

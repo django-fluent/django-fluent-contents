@@ -18,7 +18,7 @@ from django.template.loader import render_to_string
 from django.utils.functional import cached_property
 from django.utils.html import escape, linebreaks
 from django.utils.translation import get_language
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from future.builtins import str
 from future.utils import with_metaclass
 
@@ -216,7 +216,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
 
     #: The category title to place the plugin into.
     #: This is only used for the "Add Plugin" menu.
-    #: You can provide a string here, :func:`~django.utils.translation.ugettext_lazy`
+    #: You can provide a string here, :func:`~django.utils.translation.gettext_lazy`
     #: or one of the predefined constants (:attr:`MEDIA`, :attr:`INTERACTIVITY:`, :attr:`PROGRAMMING` and :attr:`ADVANCED`).
     category = None
 

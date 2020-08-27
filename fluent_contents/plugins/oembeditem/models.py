@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from future.builtins import str
 from future.utils import python_2_unicode_compatible
 from micawber import ProviderException

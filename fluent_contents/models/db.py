@@ -9,7 +9,7 @@ from django.db import connection, models
 from django.db.backends.utils import truncate_name
 from django.dispatch import receiver
 from django.utils.functional import cached_property
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from future.utils import PY3, python_2_unicode_compatible, with_metaclass
 from parler.models import TranslatableModel
 from parler.signals import post_translation_delete

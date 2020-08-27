@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import signals
 from django.dispatch import receiver
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from fluent_utils.softdeps.comments import get_model as get_comment_model
 from fluent_utils.softdeps.comments import signals as comments_signals
 from future.utils import python_2_unicode_compatible

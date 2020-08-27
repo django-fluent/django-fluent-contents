@@ -10,7 +10,7 @@ This plugin supports several markup languages:
 """
 
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.markup import appsettings, backend
