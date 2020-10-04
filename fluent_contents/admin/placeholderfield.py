@@ -44,8 +44,10 @@ class PlaceholderFieldAdmin(PlaceholderEditorAdmin):
         )
         return super().get_form(request, obj=obj, **kwargs)
 
-    def formfield_for_dbfield(self, db_field, **kwargs):
+    def formfield_for_dbfield(self, db_field, request=None, **kwargs):
         obj = kwargs.pop("obj", None)
+        if request:
+            kwargs["request"] = request
         if isinstance(db_field, PlaceholderField):
             kwargs["parent_object"] = obj
         return super().formfield_for_dbfield(db_field, **kwargs)
