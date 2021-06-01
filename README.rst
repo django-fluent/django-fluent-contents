@@ -1,6 +1,14 @@
+*This project has reached the end of its development as CMS framework.*
+*It only receives low maintenance to continue running existing websites.*
+*Feel free to browse the code, but please use other Django-based CMS frameworks such as*
+`Wagtail CMS <https://wagtail.io/>`_ *when you start a new project.*
+
 django-fluent-contents
 ======================
 
+.. image:: http://unmaintained.tech/badge.svg
+    :target: http://unmaintained.tech
+    :alt: No Maintenance Intended
 .. image:: https://img.shields.io/travis/django-fluent/django-fluent-contents/master.svg?branch=master
     :target: http://travis-ci.org/django-fluent/django-fluent-contents
 .. image:: https://img.shields.io/pypi/v/django-fluent-contents.svg
