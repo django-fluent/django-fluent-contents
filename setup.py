@@ -48,7 +48,7 @@ setup(
         # Work around https://github.com/html5lib/html5lib-python/issues/189
         "html5lib >= 0.999, != 0.9999, != 1.0b5, != 0.99999, != 1.0b6",
     ],
-    requires=["Django (>=1.11)"],
+    requires=["Django (>=2.2)"],
     extras_require={
         "code": ["Pygments"],
         "disquscommentsarea": ["django-disqus"],
@@ -77,7 +77,6 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
