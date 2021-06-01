@@ -596,5 +596,5 @@ class HttpRedirectRequest(Exception):
             "Please add 'fluent_contents.middleware.HttpRedirectRequestMiddleware' "
             "to MIDDLEWARE_CLASSES to handle redirects by plugins.".format(url)
         )
-        self.url = url
+        self.url = str(url) if url else url
         self.status = status
