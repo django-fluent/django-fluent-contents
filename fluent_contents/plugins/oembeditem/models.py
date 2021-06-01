@@ -113,7 +113,7 @@ class AbstractOEmbedItem(ContentItem):
 
            Allow to define the parameters that are passed to the backend to fetch the current URL.
         """
-        return {"max_width": self.embed_max_width, "max_height": self.embed_max_height}
+        return {"maxwidth": self.embed_max_width, "maxheight": self.embed_max_height}
 
     def _input_changed(self):
         return (
