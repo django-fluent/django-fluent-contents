@@ -1,29 +1,19 @@
-dist: xenial
-language: python
 sudo: false
+language: python
 cache: pip
 python:
 - '3.6'
-- '3.5'
-- '2.7'
+- '3.7'
+- '3.8'
 env:
-- PACKAGES="django>=1.11,<1.12"
-- PACKAGES="django>=2.0,<2.1"
-- PACKAGES="django>=2.1,<2.2"
-- PACKAGES="django>=2.2,<2.3"
-matrix:
-  exclude:
-  - python: '2.7'
-    env: PACKAGES="django>=2.0,<2.1"
-  - python: '2.7'
-    env: PACKAGES="django>=2.1,<2.2"
-  - python: '2.7'
-    env: PACKAGES="django>=2.2,<2.3"
+- DJANGO="2.2.*"
+- DJANGO="3.0.*"
+- DJANGO="3.1.*"
 before_install:
 - pip install codecov
 install:
 - pip install -U pip wheel setuptools
-- pip install -q $PACKAGES -r test-requirements.txt -e .
+- pip install -q $DJANGO -r test-requirements.txt -e .
 script:
 - coverage run --rcfile=.coveragerc runtests.py
 after_success:
@@ -32,12 +22,6 @@ branches:
   only:
   - master
 notifications:
-  irc:
-    channels:
-    - irc.freenode.org#django-fluent
-    template:
-    - '%{repository}#%{build_number} (%{commit}) %{message}  --  %{build_url}'
-    skip_join: true
   email:
     recipients:
     - travis@edoburu.nl
