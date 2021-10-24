@@ -1,5 +1,4 @@
 from django.db import models
-from future.utils import python_2_unicode_compatible
 
 from fluent_contents.models import (
     ContentItem,
@@ -9,14 +8,13 @@ from fluent_contents.models import (
 )
 
 
-class OverrideBase(object):
+class OverrideBase:
     # Needs to be in a different module for our tests.
 
     def get_render_template(self):
         pass
 
 
-@python_2_unicode_compatible
 class TestPage(models.Model):
     """
     A plain model, for testing placeholders.
@@ -33,7 +31,6 @@ class TestPage(models.Model):
         verbose_name_plural = "Test pages"
 
 
-@python_2_unicode_compatible
 class PlaceholderFieldTestPage(models.Model):
     """
     A model with PlaceholderField, for testing,
@@ -54,7 +51,6 @@ class PlaceholderFieldTestPage(models.Model):
         return self.title
 
 
-@python_2_unicode_compatible
 class RawHtmlTestItem(ContentItem):
     """
     The most basic "raw HTML" content item, for testing.
@@ -71,7 +67,6 @@ class RawHtmlTestItem(ContentItem):
         return self.html
 
 
-@python_2_unicode_compatible
 class TimeoutTestItem(ContentItem):
     """
     The most basic "raw HTML" content item, for testing.
@@ -88,7 +83,6 @@ class TimeoutTestItem(ContentItem):
         return self.html
 
 
-@python_2_unicode_compatible
 class MediaTestItem(ContentItem):
     """
     The most basic "media HTML" content item, for testing.
@@ -105,7 +99,6 @@ class MediaTestItem(ContentItem):
         return self.html
 
 
-@python_2_unicode_compatible
 class RedirectTestItem(ContentItem):
     """
     The most basic "media HTML" content item, for testing.

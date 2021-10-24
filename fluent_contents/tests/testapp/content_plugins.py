@@ -36,7 +36,7 @@ class TimeoutTestPlugin(ContentPlugin):
 
     def get_render_template(self, request, instance, **kwargs):
         # This is for test_debug_is_method_overwritten()
-        return super(TimeoutTestPlugin, self).get_render_template(
+        return super().get_render_template(
             request, instance, **kwargs
         )
 

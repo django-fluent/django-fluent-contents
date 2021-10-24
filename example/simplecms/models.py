@@ -1,15 +1,11 @@
-from __future__ import unicode_literals
-
 from django.db import models, transaction
 from django.urls import reverse
-from django.utils.encoding import python_2_unicode_compatible
 from mptt.models import MPTTModel
 
 from fluent_contents.models import ContentItemRelation, PlaceholderRelation
 from simplecms import appconfig
 
 
-@python_2_unicode_compatible
 class Page(MPTTModel):
     title = models.CharField("Title", max_length=200)
 
@@ -54,7 +50,7 @@ class Page(MPTTModel):
     # (c) Matthias Kestenholz, BSD licensed
 
     def __init__(self, *args, **kwargs):
-        super(Page, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._original_cached_url = self._cached_url
 
     # This code runs in a transaction since it's potentially editing a lot of records (all decendant urls).
@@ -66,11 +62,11 @@ class Page(MPTTModel):
         # Store this object
         self._make_slug_unique()
         self._update_cached_url()
-        super(Page, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         # Update others
         self._update_decendant_urls()
-        return super(Page, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
     # Following of the principles for "clean code"
     # the save() method is split in the 3 methods below,
@@ -101,7 +97,7 @@ class Page(MPTTModel):
         if self.is_root_node():
             self._cached_url = "/%s/" % self.slug
         else:
-            self._cached_url = "%s%s/" % (self.parent._cached_url, self.slug)
+            self._cached_url = f"{self.parent._cached_url}{self.slug}/"
 
     def _update_decendant_urls(self):
         """
@@ -119,7 +115,7 @@ class Page(MPTTModel):
         subobjects = self.get_descendants().order_by("lft")
         for subobject in subobjects:
             # Set URL, using cache for parent URL.
-            subobject._cached_url = "%s%s/" % (
+            subobject._cached_url = "{}{}/".format(
                 cached_page_urls[subobject.parent_id],
                 subobject.slug,
             )

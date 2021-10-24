@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.db import migrations, models
 
 
@@ -14,7 +11,7 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "contentitem_ptr",
-                    models.OneToOneField(
+                    models.OneToOneField(on_delete=models.CASCADE, 
                         parent_link=True,
                         auto_created=True,
                         primary_key=True,
@@ -71,7 +68,7 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "contentitem_ptr",
-                    models.OneToOneField(
+                    models.OneToOneField(on_delete=models.CASCADE, 
                         parent_link=True,
                         auto_created=True,
                         primary_key=True,

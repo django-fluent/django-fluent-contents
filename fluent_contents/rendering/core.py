@@ -7,8 +7,6 @@ from django.forms import Media
 from django.template.loader import render_to_string
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
-from future.builtins import str
-from future.utils import integer_types
 from parler.utils.context import smart_override
 
 from fluent_contents import appsettings
@@ -41,7 +39,7 @@ def get_placeholder_name(placeholder):
     return "@global@" if placeholder is None else placeholder.slot
 
 
-class ResultTracker(object):
+class ResultTracker:
     """
     A tracking of intermediate results during rendering.
     This object is completely agnostic to what is's rendering,
@@ -154,7 +152,7 @@ class ResultTracker(object):
         return ordered_output
 
 
-class RenderingPipe(object):
+class RenderingPipe:
     """
     The rendering happens using this class to keep it slightly easier to extend
     and break the rendering into more managable pieces.
@@ -204,7 +202,7 @@ class RenderingPipe(object):
             )
             return ContentItemOutput(
                 mark_safe(
-                    u"<!-- no items in placeholder '{0}' -->".format(
+                    "<!-- no items in placeholder '{}' -->".format(
                         escape(get_placeholder_name(placeholder))
                     )
                 ),
@@ -271,7 +269,7 @@ class RenderingPipe(object):
                 if output is not None and not isinstance(output, ContentItemOutput):
                     output = None
                     logger.debug(
-                        "Flushed cached output of {0}#{1} to store new ContentItemOutput format (key: {2})".format(
+                        "Flushed cached output of {}#{} to store new ContentItemOutput format (key: {})".format(
                             plugin.type_name,
                             contentitem.pk,
                             get_placeholder_name(contentitem.placeholder),
@@ -392,7 +390,7 @@ class RenderingPipe(object):
         html_output, media = self.get_html_output(result, items)
 
         if not template_name:
-            merged_html = mark_safe(u"".join(html_output))
+            merged_html = mark_safe("".join(html_output))
         else:
             context = {
                 "contentitems": list(zip(items, html_output)),
@@ -427,7 +425,7 @@ class RenderingPipe(object):
                 class_name = _get_stale_item_class_name(contentitem)
                 html_output.append(
                     mark_safe(
-                        u"<!-- Missing derived model for ContentItem #{id}: {cls}. -->\n".format(
+                        "<!-- Missing derived model for ContentItem #{id}: {cls}. -->\n".format(
                             id=contentitem.pk, cls=class_name
                         )
                     )
@@ -438,7 +436,7 @@ class RenderingPipe(object):
                     )
                 )
             elif isinstance(output, Exception):
-                html_output.append(u"<!-- error: {0} -->\n".format(str(output)))
+                html_output.append(f"<!-- error: {str(output)} -->\n")
             else:
                 html_output.append(output.html)
                 add_media(merged_media, output.media)
@@ -587,10 +585,10 @@ def _get_stale_item_class_name(item):
 def _min_timeout(val1, val2):
     # Avoid min(int, object). That may work but it's
     # a CPython implementation detail to compare that as "int" < "object"
-    if not isinstance(val2, integer_types):
+    if not isinstance(val2, int):
         return val1
 
-    if not isinstance(val1, integer_types):
+    if not isinstance(val1, int):
         return val2
 
     return min(val1, val2)

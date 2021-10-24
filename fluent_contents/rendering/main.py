@@ -98,7 +98,7 @@ def render_content_items(request, items, template_name=None, cachable=None):
     :rtype: :class:`~fluent_contents.models.ContentItemOutput`
     """
     if not items:
-        output = ContentItemOutput(mark_safe(u"<!-- no items to render -->"))
+        output = ContentItemOutput(mark_safe("<!-- no items to render -->"))
     else:
         output = RenderingPipe(request).render_items(
             placeholder=None,

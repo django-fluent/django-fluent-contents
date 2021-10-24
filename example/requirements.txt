@@ -5,7 +5,6 @@ django-tag-parser>=3.1
 django-template-analyzer>=1.6.1
 django-contrib-comments >= 1.8
 django-fluent-utils>=2.0
-future>=0.12.2
 
 # Optional for HTML cleanup and post-filters.
 html5lib >= 1.0

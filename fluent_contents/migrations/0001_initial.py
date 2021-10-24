@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import django.db.models.deletion
 from django.db import migrations, models
 
@@ -102,7 +99,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name="placeholder",
-            unique_together=set([("parent_type", "parent_id", "slot")]),
+            unique_together={("parent_type", "parent_id", "slot")},
         ),
         migrations.AddField(
             model_name="contentitem",

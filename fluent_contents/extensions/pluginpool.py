@@ -6,9 +6,7 @@ from threading import Lock
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ImproperlyConfigured
-from future.utils import string_types
 from fluent_utils.load import import_apps_submodule
-from future.builtins import str
 
 from fluent_contents import appsettings
 from fluent_contents.forms import ContentItemForm
@@ -51,7 +49,7 @@ class PluginNotFound(Exception):
     pass
 
 
-class PluginPool(object):
+class PluginPool:
     """
     The central administration of plugins.
     """
@@ -90,7 +88,7 @@ class PluginPool(object):
         name = name.lower()
         if name in self.plugins:
             raise PluginAlreadyRegistered(
-                "{0}: a plugin with this name is already registered".format(name)
+                f"{name}: a plugin with this name is already registered"
             )
 
         # Avoid registering 2 plugins to the exact same model. If you want to reuse code, use proxy models.
@@ -140,7 +138,7 @@ class PluginPool(object):
             except PluginNotFound as e:
                 raise PluginNotFound(
                     str(e)
-                    + " Update the plugin list of the FLUENT_CONTENTS_PLACEHOLDER_CONFIG['{0}'] setting.".format(
+                    + " Update the plugin list of the FLUENT_CONTENTS_PLACEHOLDER_CONFIG['{}'] setting.".format(
                         placeholder_slot
                     )
                 )
@@ -152,17 +150,17 @@ class PluginPool(object):
         self._import_plugins()
         plugin_instances = []
         for name in names:
-            if isinstance(name, string_types):
+            if isinstance(name, str):
                 try:
                     plugin_instances.append(self.plugins[name.lower()])
                 except KeyError:
-                    raise PluginNotFound("No plugin named '{0}'.".format(name))
+                    raise PluginNotFound(f"No plugin named '{name}'.")
             elif isinstance(name, type) and issubclass(name, ContentPlugin):
                 # Will also allow classes instead of strings.
                 plugin_instances.append(self.plugins[self._name_for_model[name.model]])
             else:
                 raise TypeError(
-                    "get_plugins_by_name() expects a plugin name or class, not: {0}".format(
+                    "get_plugins_by_name() expects a plugin name or class, not: {}".format(
                         name
                     )
                 )
@@ -191,7 +189,7 @@ class PluginPool(object):
             name = self._name_for_model[model_class]
         except KeyError:
             raise PluginNotFound(
-                "No plugin found for model '{0}'.".format(model_class.__name__)
+                f"No plugin found for model '{model_class.__name__}'."
             )
         return self.plugins[name]
 
@@ -216,9 +214,9 @@ class PluginPool(object):
             except AttributeError:  # should return the stale type but Django <1.6 raises an AttributeError in fact.
                 ct_name = "stale content type"
             else:
-                ct_name = "{0}.{1}".format(ct.app_label, ct.model)
+                ct_name = f"{ct.app_label}.{ct.model}"
             raise PluginNotFound(
-                "No plugin found for content type #{0} ({1}).".format(
+                "No plugin found for content type #{} ({}).".format(
                     contenttype, ct_name
                 )
             )
@@ -254,7 +252,7 @@ class PluginPool(object):
                 ct_id = plugin.type_id
                 if ct_id in plugin_ctypes:
                     raise ImproperlyConfigured(
-                        "The plugin '{0}' returns the same type_id as the '{1}' plugin does".format(
+                        "The plugin '{}' returns the same type_id as the '{}' plugin does".format(
                             plugin.name, plugin_ctypes[ct_id]
                         )
                     )

@@ -1,9 +1,7 @@
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
-from future.builtins import str
-from future.utils import python_2_unicode_compatible
+from django.utils.translation import gettext_lazy as _
 from parler.models import TranslatableModel, TranslatedFields
 
 from fluent_contents.models import (
@@ -19,7 +17,6 @@ from .managers import SharedContentManager
 from .utils import get_current_site_id
 
 
-@python_2_unicode_compatible
 class SharedContent(CachedModelMixin, TranslatableModel):
     """
     The parent hosting object for shared content
@@ -66,7 +63,7 @@ class SharedContent(CachedModelMixin, TranslatableModel):
         return self.safe_translation_getter("title", self.slug)
 
     def __init__(self, *args, **kwargs):
-        super(SharedContent, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._was_cross_site = self.is_cross_site
         self._old_slug = self.slug
 
@@ -90,7 +87,6 @@ class SharedContent(CachedModelMixin, TranslatableModel):
         return keys
 
 
-@python_2_unicode_compatible
 class SharedContentItem(ContentItem):
     """
     The contentitem to include in a page.

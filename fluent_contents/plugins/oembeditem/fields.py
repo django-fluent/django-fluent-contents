@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db.models import URLField
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from fluent_contents.plugins.oembeditem import backend
 
@@ -19,10 +19,10 @@ class OEmbedUrlField(URLField):
                 "Enter the URL of the online content to embed (e.g. a YouTube or Vimeo video, SlideShare presentation, etc..)"
             ),
         )
-        super(OEmbedUrlField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean(self, *args, **kwargs):
-        url = super(OEmbedUrlField, self).clean(*args, **kwargs)
+        url = super().clean(*args, **kwargs)
 
         if not backend.has_provider_for_url(url):
             # It's also possible that the backend is configured as provider.

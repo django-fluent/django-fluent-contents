@@ -1,20 +1,17 @@
-from __future__ import unicode_literals
-
 from copy import deepcopy
 
-import django
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import connection, models
 from django.db.backends.utils import truncate_name
 from django.dispatch import receiver
 from django.utils.functional import cached_property
-from django.utils.translation import ugettext_lazy as _
-from future.utils import PY3, python_2_unicode_compatible, with_metaclass
+from django.utils.translation import gettext_lazy as _
 from parler.models import TranslatableModel
 from parler.signals import post_translation_delete
 from parler.utils import get_language_title
 from polymorphic.base import PolymorphicModelBase
+from polymorphic.models import PolymorphicModel
 
 from fluent_contents import appsettings
 from fluent_contents.cache import get_placeholder_cache_key
@@ -25,16 +22,11 @@ from fluent_contents.models.managers import (
 )
 from fluent_contents.models.mixins import CachedModelMixin
 
-try:
-    from polymorphic.models import PolymorphicModel  # django-polymorphic 0.8
-except ImportError:
-    from polymorphic import PolymorphicModel
 
 # Leave flag so testing this feature is possible.
 OPTIMIZE_TRANSLATED_MODEL = True
 
 
-@python_2_unicode_compatible
 class Placeholder(models.Model):
     """
     The placeholder groups various :class:`ContentItem` models together in a single compartment.
@@ -100,7 +92,7 @@ class Placeholder(models.Model):
         return self.title or self.slot
 
     def __repr__(self):
-        return "<{0}: {1}; slot: {2}>".format(self.__class__.__name__, self, self.slot)
+        return f"<{self.__class__.__name__}: {self}; slot: {self.slot}>"
 
     def get_allowed_plugins(self):
         """
@@ -181,7 +173,7 @@ class Placeholder(models.Model):
         # Some databases may not have a proper ON DELETE rule set, causing a DatabaseError on delete.
         # This happened because South 0.7.4 didn't support on_delete=SET_NULL.
         ContentItem.objects.filter(placeholder=self).update(placeholder=None)
-        super(Placeholder, self).delete(*args, **kwargs)
+        super().delete(*args, **kwargs)
 
     delete.alters_data = True
 
@@ -196,15 +188,7 @@ class ContentItemMetaClass(PolymorphicModelBase):
     # Inspired by from Django-CMS, (c) , BSD licensed.
 
     def __new__(mcs, name, bases, attrs):
-        if django.VERSION < (2, 0):
-            # Silence polymorphic messages for wrong manager inheritance,
-            # let everything work just like before.
-            try:
-                attrs["Meta"].manager_inheritance_from_future = True
-            except KeyError:
-                pass
-
-        new_class = super(ContentItemMetaClass, mcs).__new__(mcs, name, bases, attrs)
+        new_class = super().__new__(mcs, name, bases, attrs)
         db_table = new_class._meta.db_table
         app_label = new_class._meta.app_label
 
@@ -212,7 +196,7 @@ class ContentItemMetaClass(PolymorphicModelBase):
             if db_table.startswith(app_label + "_"):
                 model_name = db_table[len(app_label) + 1 :]
                 new_class._meta.db_table = truncate_name(
-                    "contentitem_%s_%s" % (app_label, model_name),
+                    f"contentitem_{app_label}_{model_name}",
                     connection.ops.max_name_length(),
                 )
                 if hasattr(new_class._meta, "original_attrs"):
@@ -229,31 +213,16 @@ class ContentItemMetaClass(PolymorphicModelBase):
                     not hasattr(new_class, "__str__")
                     or new_class.__str__ == ContentItem.__str__
                 ):
-                    if PY3:
-                        raise TypeError(
-                            "The {0} class should implement a __str__() function.".format(
-                                name
-                            )
+                    raise TypeError(
+                        "The {} class should implement a __str__() function.".format(
+                            name
                         )
-                    else:
-                        # The first check is for python_2_unicode_compatible tricks, also check for __unicode__ only.
-                        if (
-                            not hasattr(new_class, "__unicode__")
-                            or new_class.__unicode__ == ContentItem.__unicode__
-                        ):
-                            raise TypeError(
-                                "The {0} class should implement a __unicode__() or __str__() function.".format(
-                                    name
-                                )
-                            )
+                    )
 
         return new_class
 
 
-@python_2_unicode_compatible
-class ContentItem(
-    with_metaclass(ContentItemMetaClass, CachedModelMixin, PolymorphicModel)
-):
+class ContentItem(CachedModelMixin, PolymorphicModel, metaclass=ContentItemMetaClass):
     """
     A `ContentItem` represents a content part (also called pagelet in other systems) which is displayed in a :class:`Placeholder`.
     To use the `ContentItem`, derive it in your model class:
@@ -451,7 +420,7 @@ class ContentItem(
                 or appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE
             )
 
-        super(ContentItem, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     save.alters_data = True
 

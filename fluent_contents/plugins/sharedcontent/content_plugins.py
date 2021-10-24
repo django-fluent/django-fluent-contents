@@ -12,7 +12,7 @@ class SharedContentItemForm(ContentItemForm):
     """
 
     def __init__(self, *args, **kwargs):
-        super(SharedContentItemForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # Filter dynamically, not with limit_choices_to.
         # This supports a threadlocal SITE_ID that django-multisite uses for example.

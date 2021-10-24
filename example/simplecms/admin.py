@@ -1,6 +1,6 @@
 import json
 
-from django.conf.urls import url
+from django.urls import path
 from django.contrib import admin
 from django.http import HttpResponse
 from django.template.loader import get_template
@@ -26,7 +26,7 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
 
     def cached_url(self, page):
         return mark_safe(
-            '<a href="{0}">{1}</a>'.format(page.get_absolute_url(), page._cached_url)
+            f'<a href="{page.get_absolute_url()}">{page._cached_url}</a>'
         )
 
     cached_url.allow_tags = True
@@ -60,9 +60,9 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
         """
         Introduce more urls
         """
-        urls = super(PageAdmin, self).get_urls()
+        urls = super().get_urls()
         my_urls = [
-            url(r"^get_layout/$", self.admin_site.admin_view(self.get_layout_view))
+            path('get_layout/', self.admin_site.admin_view(self.get_layout_view))
         ]
         return my_urls + urls
 

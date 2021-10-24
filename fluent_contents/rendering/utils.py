@@ -12,7 +12,6 @@ from django.template.backends.django import Template as TemplateAdapter
 from django.template.loader import select_template
 from django.test import RequestFactory
 from django.utils.translation import get_language
-from future.utils import string_types
 
 from fluent_contents.extensions import ContentPlugin
 
@@ -42,7 +41,7 @@ def get_placeholder_debug_name(placeholder):
     #       prevent unclear message in <!-- no items in 'shared_content' placeholder --> debug output.
     if placeholder.slot == "shared_content":
         sharedcontent = placeholder.parent
-        return "shared_content:{0}".format(sharedcontent.slug)
+        return f"shared_content:{sharedcontent.slug}"
 
     return placeholder.slot
 
@@ -109,7 +108,7 @@ def is_template_updated(request, contentitem, cachekey):
 
     if not template_names:
         return False
-    if isinstance(template_names, string_types):
+    if isinstance(template_names, str):
         template_names = [template_names]
 
     # With TEMPLATE_DEBUG = True, each node tracks it's origin.

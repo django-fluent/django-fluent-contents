@@ -6,7 +6,7 @@ from datetime import timedelta
 from debug_toolbar.panels import Panel
 from debug_toolbar.utils import ThreadCollector
 from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from fluent_contents.extensions import PluginNotFound
 from fluent_contents.models import ContentItem
@@ -22,7 +22,7 @@ class DebugResultTracker(ResultTracker):
     """
 
     def __init__(self, *args, **kwargs):
-        super(DebugResultTracker, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         # Reference this result in the data collector.
         collector.collect(self)
         # Track that the object was never cachable
@@ -38,7 +38,7 @@ class ContentPluginPanel(Panel):
     template = "fluent_contents/debug_toolbar_panel.html"
 
     def __init__(self, toolbar):
-        super(ContentPluginPanel, self).__init__(toolbar)
+        super().__init__(toolbar)
 
     def enable_instrumentation(self):
         # Patch the regular rendering to report to the debug toolbar
@@ -67,7 +67,7 @@ class ContentPluginPanel(Panel):
         self.num_placeholders = 0
         for resulttracker in collector.get_collection():
             rendered_items = []
-            retreived_items = set(item.pk for item in resulttracker.remaining_items)
+            retreived_items = {item.pk for item in resulttracker.remaining_items}
             for contentitem, output in resulttracker.get_output(
                 include_exceptions=True
             ):
@@ -89,7 +89,7 @@ class ContentPluginPanel(Panel):
                             "model": content_type.model
                             if content_type is not None
                             else "<ContentType unknown>",
-                            "model_path": "{0}.{1}".format(
+                            "model_path": "{}.{}".format(
                                 content_type.app_label, content_type.model
                             )
                             if content_type is not None
@@ -194,7 +194,7 @@ class ContentPluginPanel(Panel):
 
 
 def _full_python_path(cls):
-    return "{0}.{1}".format(cls.__module__, cls.__name__)
+    return f"{cls.__module__}.{cls.__name__}"
 
 
 def _debug_name(resulttracker):

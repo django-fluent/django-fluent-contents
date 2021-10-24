@@ -1,10 +1,7 @@
-from __future__ import unicode_literals
-
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.text import Truncator
-from django.utils.translation import ugettext_lazy as _
-from future.utils import python_2_unicode_compatible
+from django.utils.translation import gettext_lazy as _
 
 from fluent_contents.forms import ContentItemForm
 from fluent_contents.models import ContentItem, ContentItemManager
@@ -33,7 +30,6 @@ class MarkupItemForm(ContentItemForm):
         return self.cleaned_data["text"]
 
 
-@python_2_unicode_compatible
 class MarkupItem(ContentItem):
     """
     A snippet of markup (restructuredtext, markdown, or textile) to display at a page.
@@ -60,7 +56,7 @@ class MarkupItem(ContentItem):
         return Truncator(self.text).words(20)
 
     def __init__(self, *args, **kwargs):
-        super(MarkupItem, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # Extra polymorphic, in case the base class content ID was stored.
         ProxyModelClass = LANGUAGE_MODEL_CLASSES.get(self.language, None)
@@ -70,12 +66,12 @@ class MarkupItem(ContentItem):
 
 class MarkupLanguageManager(ContentItemManager):
     def __init__(self, fixed_language):
-        super(MarkupLanguageManager, self).__init__()
+        super().__init__()
         self.fixed_language = fixed_language
 
     def get_queryset(self):
         return (
-            super(MarkupLanguageManager, self)
+            super()
             .get_queryset()
             .filter(language=self.fixed_language)
         )
@@ -98,7 +94,7 @@ def _create_markup_model(fixed_language):
         verbose_name_plural = _("%s items") % title
         proxy = True
 
-    classname = "{0}MarkupItem".format(fixed_language.capitalize())
+    classname = f"{fixed_language.capitalize()}MarkupItem"
 
     new_class = type(
         str(classname),

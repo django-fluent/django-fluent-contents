@@ -1,7 +1,6 @@
 """
 Utils for internal tests, and utils for testing third party plugins.
 """
-from __future__ import print_function
 
 import os
 from importlib import import_module
@@ -11,7 +10,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.core.management import call_command
 from django.test import TestCase
-from future.builtins import str
 
 from fluent_contents import rendering
 from fluent_contents.rendering.utils import get_dummy_request
@@ -54,7 +52,7 @@ class AppTestCase(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        super(AppTestCase, cls).setUpClass()
+        super().setUpClass()
 
         # Avoid early import, triggers AppCache
         User = get_user_model()
@@ -64,7 +62,7 @@ class AppTestCase(TestCase):
             run_syncdb = False
             for appname in cls.install_apps:
                 if appname not in settings.INSTALLED_APPS:
-                    print("Adding {0} to INSTALLED_APPS".format(appname))
+                    print(f"Adding {appname} to INSTALLED_APPS")
                     settings.INSTALLED_APPS = (appname,) + tuple(
                         settings.INSTALLED_APPS
                     )
@@ -99,7 +97,7 @@ class AppTestCase(TestCase):
         self.assertEqual(
             self.client.get(url).status_code,
             200,
-            str(msg_prefix) + u"Page at {0} should be found.".format(url),
+            str(msg_prefix) + f"Page at {url} should be found.",
         )
 
     def assert404(self, url, msg_prefix=""):
@@ -113,7 +111,7 @@ class AppTestCase(TestCase):
             response.status_code,
             404,
             str(msg_prefix)
-            + u"Page at {0} should return 404, got {1}.".format(
+            + "Page at {} should return 404, got {}.".format(
                 url, response.status_code
             ),
         )

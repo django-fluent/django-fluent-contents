@@ -23,4 +23,4 @@ class TextPlugin(ContentPlugin):
         # Included in a DIV, so the next item will be displayed below.
         # The text_final is allowed to be None, to migrate old plugins.
         text = instance.text if instance.text_final is None else instance.text_final
-        return mark_safe(u'<div class="text">{0}</div>\n'.format(text))
+        return mark_safe(f'<div class="text">{text}</div>\n')

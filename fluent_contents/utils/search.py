@@ -1,9 +1,8 @@
 """
 Internal utils for search.
 """
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.html import strip_tags
-from future.utils import string_types
 
 
 def get_search_field_values(contentitem):
@@ -17,7 +16,7 @@ def get_search_field_values(contentitem):
 
         # Just assume all strings may contain HTML.
         # Not checking for just the PluginHtmlField here.
-        if value and isinstance(value, string_types):
+        if value and isinstance(value, str):
             value = get_cleaned_string(value)
 
         values.append(value)
@@ -27,14 +26,14 @@ def get_search_field_values(contentitem):
 
 def get_search_text(contentitem):
     bits = get_search_field_values(contentitem)
-    return clean_join(u" ", bits)
+    return clean_join(" ", bits)
 
 
 def get_cleaned_string(data):
     """
     Cleanup a string/HTML output to consist of words only.
     """
-    return strip_tags(force_text(data))
+    return strip_tags(force_str(data))
 
 
 def clean_join(separator, iterable):

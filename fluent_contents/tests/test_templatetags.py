@@ -87,7 +87,7 @@ class TemplateTagTests(AppTestCase):
             """{% load fluent_contents_tags %}{% page_placeholder page1 "slot1" %}""",
             {"page1": page1},
         )
-        self.assertEqual(html, u"<b>Item1!</b><b>Item2!</b>")
+        self.assertEqual(html, "<b>Item1!</b><b>Item2!</b>")
 
         # Test standard output + template variable
         html = self._render(
@@ -96,7 +96,7 @@ class TemplateTagTests(AppTestCase):
         )
         self.assertEqual(
             html.replace("\n", ""),
-            u'<b>Item1!</b><div class="splitter"></div><b>Item2!</b>',
+            '<b>Item1!</b><div class="splitter"></div><b>Item2!</b>',
         )
 
         # Test if the "page" variable is used as default argument
@@ -104,7 +104,7 @@ class TemplateTagTests(AppTestCase):
             """{% load fluent_contents_tags %}{% page_placeholder "slot1" %}""",
             {"page": page1},
         )
-        self.assertEqual(html, u"<b>Item1!</b><b>Item2!</b>")
+        self.assertEqual(html, "<b>Item1!</b><b>Item2!</b>")
 
         # Test of invalid slots fail silently. Give the user the chance to enter the data in the CMS.
         html = self._render(
@@ -112,7 +112,7 @@ class TemplateTagTests(AppTestCase):
             {"page1": page1},
         )
         self.assertEqual(
-            html, u"<!-- placeholder 'invalid_slot1' does not yet exist -->"
+            html, "<!-- placeholder 'invalid_slot1' does not yet exist -->"
         )
 
         # Test if a missing "page" variable fails.
@@ -163,7 +163,7 @@ class TemplateTagTests(AppTestCase):
                 """{% load fluent_contents_tags %}{% render_placeholder placeholder1 %}""",
                 {"placeholder1": placeholder1},
             )
-            self.assertEqual(html, u"<b>Item1!</b><b>Item2!</b>")
+            self.assertEqual(html, "<b>Item1!</b><b>Item2!</b>")
 
         # Test passing Placeholder via PlaceholderField (actually tests the PlaceholderFieldDescriptor)
         # - fetch Placeholder
@@ -174,7 +174,7 @@ class TemplateTagTests(AppTestCase):
                 """{% load fluent_contents_tags %}{% render_placeholder page2.contents %}""",
                 {"page2": page2},
             )
-            self.assertEqual(html, u"<b>Item1!</b><b>Item2!</b>")
+            self.assertEqual(html, "<b>Item1!</b><b>Item2!</b>")
 
         # Test passing a related object manager.
         # - fetch Placeholder
@@ -186,7 +186,7 @@ class TemplateTagTests(AppTestCase):
                 """{% load fluent_contents_tags %}{% render_placeholder page2.placeholder_set %}""",
                 {"page2": page2},
             )
-            self.assertEqual(html, u"<b>Item1!</b><b>Item2!</b>")
+            self.assertEqual(html, "<b>Item1!</b><b>Item2!</b>")
 
         # Test if None values fail silently
         with self.assertNumQueries(0) as ctx:
@@ -194,7 +194,7 @@ class TemplateTagTests(AppTestCase):
                 """{% load fluent_contents_tags %}{% render_placeholder none_object %}""",
                 {"none_object": None},
             )
-            self.assertEqual(html, u"<!-- placeholder object is None -->")
+            self.assertEqual(html, "<!-- placeholder object is None -->")
 
         # Test if invalid objects are reported.
         self.assertRaises(

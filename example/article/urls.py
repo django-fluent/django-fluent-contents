@@ -1,7 +1,7 @@
-from django.conf.urls import url
+from django.urls import path
 
 from article.views import ArticleDetailView
 
 urlpatterns = [
-    url(r"^(?P<slug>[^/]+)/$", ArticleDetailView.as_view(), name="article-details")
+    path('<str:slug>/', ArticleDetailView.as_view(), name="article-details")
 ]

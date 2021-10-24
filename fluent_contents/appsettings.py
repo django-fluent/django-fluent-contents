@@ -53,7 +53,7 @@ def _load_callables(setting_name, setting_value):
         func = import_class(import_path, setting_name)
         if not callable(func):
             raise ImproperlyConfigured(
-                "{0} element '{1}' is not callable!".format(setting_name, import_path)
+                f"{setting_name} element '{import_path}' is not callable!"
             )
         funcs.append(func)
     return funcs

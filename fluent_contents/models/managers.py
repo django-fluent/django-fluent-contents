@@ -5,8 +5,6 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import get_language
-from future.builtins import str
-from future.utils import string_types
 from parler import appsettings as parler_appsettings
 from parler.utils import get_language_title
 from polymorphic.managers import PolymorphicManager
@@ -71,7 +69,7 @@ class ContentItemQuerySet(PolymorphicQuerySet):
             # Since some code operates on a True/str switch, make sure that doesn't drip into this low level code.
             for language_code in language_codes:
                 if not isinstance(
-                    language_code, string_types
+                    language_code, str
                 ) or language_code.lower() in ("1", "0", "true", "false"):
                     raise ValueError(
                         "ContentItemQuerySet.translated() expected language_code to be an ISO code"
@@ -285,7 +283,7 @@ def get_parent_active_language_choices(parent_object, exclude_current=False):
         except KeyError:
             lang_dict = ()
 
-        allowed_languages = set(item["code"] for item in lang_dict)
+        allowed_languages = {item["code"] for item in lang_dict}
         languages &= allowed_languages
 
     # No multithreading issue here, object is instantiated for this user only.

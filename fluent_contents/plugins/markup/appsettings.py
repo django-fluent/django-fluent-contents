@@ -32,7 +32,7 @@ for language in FLUENT_MARKUP_LANGUAGES:
             __import__(backendapp)
         except ImportError as e:
             raise ImproperlyConfigured(
-                "The '{0}' package is required to use the '{1}' language for the '{2}' plugin.".format(
+                "The '{}' package is required to use the '{}' language for the '{}' plugin.".format(
                     backendapp, language, "markup"
                 )
             )

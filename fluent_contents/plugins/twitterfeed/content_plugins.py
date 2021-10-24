@@ -10,7 +10,7 @@ class BaseTwitterPlugin(ContentPlugin):
     category = ContentPlugin.MEDIA
 
     def get_context(self, request, instance, **kwargs):
-        context = super(BaseTwitterPlugin, self).get_context(
+        context = super().get_context(
             request, instance, **kwargs
         )
         context.update(

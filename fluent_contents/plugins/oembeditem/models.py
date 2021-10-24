@@ -1,8 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
-from future.builtins import str
-from future.utils import python_2_unicode_compatible
+from django.utils.translation import gettext_lazy as _
 from micawber import ProviderException
 
 from fluent_contents.models import ContentItemManager
@@ -11,7 +9,6 @@ from fluent_contents.plugins.oembeditem import appsettings, backend
 from fluent_contents.plugins.oembeditem.fields import OEmbedUrlField
 
 
-@python_2_unicode_compatible
 class AbstractOEmbedItem(ContentItem):
     """
     The base class for an OEmbedItem,
@@ -66,14 +63,14 @@ class AbstractOEmbedItem(ContentItem):
         return self.title or self.embed_url
 
     def __init__(self, *args, **kwargs):
-        super(AbstractOEmbedItem, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._old_embed_url = self.embed_url
         self._old_embed_max_width = self.embed_max_width
         self._old_embed_max_height = self.embed_max_height
 
     def save(self, *args, **kwargs):
         self.update_oembed_data()  # if clean() did not run, still update the oembed
-        super(AbstractOEmbedItem, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def clean(self):
         # Avoid getting server errors when the URL is not valid.

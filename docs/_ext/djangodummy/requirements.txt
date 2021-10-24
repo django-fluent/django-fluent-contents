@@ -7,4 +7,3 @@ django-parler == 2.2
 django-polymorphic == 3.0.0
 django-tag-parser == 3.2
 sphinxcontrib-django == 0.5.1
-future == 0.18.2

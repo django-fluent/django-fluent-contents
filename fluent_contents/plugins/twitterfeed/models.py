@@ -1,14 +1,10 @@
-from __future__ import unicode_literals
-
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
-from future.utils import python_2_unicode_compatible
+from django.utils.translation import gettext_lazy as _
 
 from fluent_contents.models import ContentItemManager
 from fluent_contents.models.db import ContentItem
 
 
-@python_2_unicode_compatible
 class TwitterRecentEntriesItem(ContentItem):
     """
     Content item to display recent entries of a twitter user.
@@ -47,7 +43,6 @@ class TwitterRecentEntriesItem(ContentItem):
         verbose_name_plural = _("Recent twitter entries")
 
 
-@python_2_unicode_compatible
 class TwitterSearchItem(ContentItem):
     """
     Content item to display recent entries of a twitter user.

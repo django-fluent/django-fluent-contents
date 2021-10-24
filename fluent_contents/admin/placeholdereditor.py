@@ -1,7 +1,7 @@
 from abc import abstractmethod
 
 from django.conf import settings
-from django.conf.urls import url
+from django.urls import path
 from django.contrib.admin import ModelAdmin
 from django.contrib.admin.helpers import InlineAdminFormSet
 from django.contrib.contenttypes.admin import GenericInlineModelAdmin
@@ -34,7 +34,7 @@ class PlaceholderInlineFormSet(BaseInitialGenericInlineFormSet):
     def __init__(self, *args, **kwargs):
         self._instance_languages = None
         # kwargs['prefix'] = 'placeholder_fs'
-        super(PlaceholderInlineFormSet, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @classmethod
     def get_default_prefix(cls):
@@ -137,7 +137,7 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
 
         # Inject as default parameter to the constructor
         # This is the BaseExtendedGenericInlineFormSet constructor
-        FormSetClass = super(PlaceholderEditorInline, self).get_formset(
+        FormSetClass = super().get_formset(
             request, obj, **kwargs
         )
         FormSetClass.__init__ = partialmethod(FormSetClass.__init__, initial=initial)
@@ -149,7 +149,7 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
             parentadmin = self.admin_site._registry[self.parent_model]
         except KeyError:
             raise ImproperlyConfigured(
-                "Model admin for '{0}' not found in admin_site!".format(
+                "Model admin for '{}' not found in admin_site!".format(
                     self.parent_model.__name__
                 )
             )
@@ -157,13 +157,13 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
         # Do some "type" checking to developers are aided in inheriting their parent ModelAdmin screens with the proper classes.
         assert isinstance(
             parentadmin, PlaceholderEditorBaseMixin
-        ), "The '{0}' class can only be used in admin screens which implement a PlaceholderEditor mixin class.".format(
+        ), "The '{}' class can only be used in admin screens which implement a PlaceholderEditor mixin class.".format(
             self.__class__.__name__
         )
         return parentadmin
 
 
-class PlaceholderEditorBaseMixin(object):
+class PlaceholderEditorBaseMixin:
     """
     Base interface/mixin for a :class:`~django.contrib.admin.ModelAdmin` to provide the :class:`PlaceholderEditorInline` with initial data.
     This class is implemented by the :class:`PlaceholderEditorAdmin` and :class:`~fluent_contents.admin.PlaceholderFieldAdmin` classes.
@@ -180,7 +180,7 @@ class PlaceholderEditorBaseMixin(object):
         # This information will be read by the PlaceholderEditorInline,
         # but it could also be reused by other derived classes off course.
         raise NotImplementedError(
-            "The '{0}' subclass should implement get_placeholder_data().".format(
+            "The '{}' subclass should implement get_placeholder_data().".format(
                 self.__class__.__name__
             )
         )
@@ -214,7 +214,7 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
         """
         Create the inlines for the admin, including the placeholder and contentitem inlines.
         """
-        inlines = super(PlaceholderEditorAdmin, self).get_inline_instances(
+        inlines = super().get_inline_instances(
             request, *args, **kwargs
         )
 
@@ -236,14 +236,14 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
         )
 
     def get_urls(self):
-        urls = super(PlaceholderEditorAdmin, self).get_urls()
+        urls = super().get_urls()
         opts = self.model._meta
         info = opts.app_label, opts.model_name
         return [
-            url(
-                r"^(?P<object_id>\d+)/api/get_placeholder_data/",
+            path(
+                '<int:object_id>/api/get_placeholder_data/',
                 self.admin_site.admin_view(self.get_placeholder_data_view),
-                name="{0}_{1}_get_placeholder_data".format(*info),
+                name="{}_{}_get_placeholder_data".format(*info),
             )
         ] + urls
 
@@ -364,7 +364,7 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
                 request, "_deleted_placeholders", ()
             )
 
-        saved_instances = super(PlaceholderEditorAdmin, self).save_formset(
+        saved_instances = super().save_formset(
             request, form, formset, change
         )
 

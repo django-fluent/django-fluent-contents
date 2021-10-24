@@ -1,8 +1,5 @@
-from __future__ import unicode_literals
-
 from django.db import models
 from django.urls import reverse
-from django.utils.encoding import python_2_unicode_compatible
 
 from fluent_contents.models import ContentItem, ContentItemManager
 from fluent_contents.models.fields import (
@@ -12,7 +9,6 @@ from fluent_contents.models.fields import (
 )
 
 
-@python_2_unicode_compatible
 class Article(models.Model):
     title = models.CharField("Title", max_length=200)
     slug = models.SlugField("Slug", unique=True)
@@ -32,7 +28,6 @@ class Article(models.Model):
         return reverse("article-details", kwargs={"slug": self.slug})
 
 
-@python_2_unicode_compatible
 class ArticleTextItem(ContentItem):
     """
     This model can be placed on every placeholder field / page.

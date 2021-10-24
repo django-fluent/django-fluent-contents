@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 from unittest import TestCase
 
 import html5lib
@@ -15,7 +13,7 @@ class TextPluginTests(TestCase):
     Test whether the sanitation works as expected.
     """
 
-    HTML1_ORIGINAL = u'<p><img src="/media/image.jpg" alt="" width="460" height="300" />&nbsp;&nbsp;<img style="float: left;" src="/media/image2.jpg" alt="" width="460" height="130" /></p><p>&nbsp;</p>'
+    HTML1_ORIGINAL = '<p><img src="/media/image.jpg" alt="" width="460" height="300" />&nbsp;&nbsp;<img style="float: left;" src="/media/image2.jpg" alt="" width="460" height="130" /></p><p>&nbsp;</p>'
 
     def test_default_manager(self):
         """
@@ -38,15 +36,15 @@ class TextPluginTests(TestCase):
         Test how clean performs.
         """
         cleaned = clean_html(self.HTML1_ORIGINAL)
-        self.assertTrue("460" in cleaned, u"Missing elements in {0}".format(cleaned))
+        self.assertTrue("460" in cleaned, f"Missing elements in {cleaned}")
         self.assertTrue(
-            "float: left" in cleaned, u"Missing elements in {0}".format(cleaned)
+            "float: left" in cleaned, f"Missing elements in {cleaned}"
         )
         self.assertTrue(
-            "/media/image.jpg" in cleaned, u"Missing elements in {0}".format(cleaned)
+            "/media/image.jpg" in cleaned, f"Missing elements in {cleaned}"
         )
         self.assertTrue(
-            "/media/image2.jpg" in cleaned, u"Missing elements in {0}".format(cleaned)
+            "/media/image2.jpg" in cleaned, f"Missing elements in {cleaned}"
         )
 
     def test_sanitize_html5lib(self):
@@ -55,16 +53,16 @@ class TextPluginTests(TestCase):
         """
         sanitized = clean_html(self.HTML1_ORIGINAL, sanitize=True)
         self.assertTrue(
-            "460" in sanitized, u"Missing elements in {0}".format(sanitized)
+            "460" in sanitized, f"Missing elements in {sanitized}"
         )
         self.assertTrue(
-            "float: left" in sanitized, u"Missing elements in {0}".format(sanitized)
+            "float: left" in sanitized, f"Missing elements in {sanitized}"
         )
         self.assertTrue(
             "/media/image.jpg" in sanitized,
-            u"Missing elements in {0}".format(sanitized),
+            f"Missing elements in {sanitized}",
         )
         self.assertTrue(
             "/media/image2.jpg" in sanitized,
-            u"Missing elements in {0}".format(sanitized),
+            f"Missing elements in {sanitized}",
         )

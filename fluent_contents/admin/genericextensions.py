@@ -17,19 +17,19 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
         """
         # This instance is created each time in the change_view() function.
         self._initial = kwargs.pop("initial", [])
-        super(BaseInitialGenericInlineFormSet, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     @property
     def management_form(self):
         try:
-            return super(BaseInitialGenericInlineFormSet, self).management_form
+            return super().management_form
         except ValidationError:
             # Provide with better description of what is happening.
             form = ManagementForm(self.data, auto_id=self.auto_id, prefix=self.prefix)
             if not form.is_valid():
                 raise ValidationError(
-                    u"ManagementForm data is missing or has been tampered with."
-                    u" form: {0}, model: {1}, errors: \n{2}".format(
+                    "ManagementForm data is missing or has been tampered with."
+                    " form: {}, model: {}, errors: \n{}".format(
                         self.__class__.__name__,
                         self.model.__name__,
                         form.errors.as_text(),
@@ -40,13 +40,13 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
 
     def initial_form_count(self):
         if self.is_bound:
-            return super(BaseInitialGenericInlineFormSet, self).initial_form_count()
+            return super().initial_form_count()
         else:
             return len(self.get_queryset())
 
     def total_form_count(self):
         if self.is_bound:
-            return super(BaseInitialGenericInlineFormSet, self).total_form_count()
+            return super().total_form_count()
         else:
             return max(len(self.get_queryset()), len(self._initial)) + self.extra
 
@@ -56,7 +56,7 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
             if instance:
                 kwargs["instance"] = instance
 
-        form = super(BaseInitialGenericInlineFormSet, self)._construct_form(i, **kwargs)
+        form = super()._construct_form(i, **kwargs)
         return form
 
     def __initial_minus_queryset(self):

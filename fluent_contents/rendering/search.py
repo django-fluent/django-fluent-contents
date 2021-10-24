@@ -13,7 +13,7 @@ class SearchResultTracker(ResultTracker):
         # (the output is already cached at this point)
         output.html = get_cleaned_string(output.html)
         output.cacheable = False
-        super(SearchResultTracker, self).store_output(contentitem, output)
+        super().store_output(contentitem, output)
 
 
 class SearchRenderingPipe(PlaceholderRenderingPipe):
@@ -25,7 +25,7 @@ class SearchRenderingPipe(PlaceholderRenderingPipe):
 
     def __init__(self, language):
         request = get_dummy_request(language)
-        super(SearchRenderingPipe, self).__init__(request)
+        super().__init__(request)
 
     def can_use_cached_output(self, contentitem):
         """
@@ -34,7 +34,7 @@ class SearchRenderingPipe(PlaceholderRenderingPipe):
         return (
             contentitem.plugin.search_output
             and not contentitem.plugin.search_fields
-            and super(SearchRenderingPipe, self).can_use_cached_output(contentitem)
+            and super().can_use_cached_output(contentitem)
         )
 
     def render_item(self, contentitem):
@@ -49,7 +49,7 @@ class SearchRenderingPipe(PlaceholderRenderingPipe):
         if not plugin.search_output:
             output = ContentItemOutput("", cacheable=False)
         else:
-            output = super(SearchRenderingPipe, self).render_item(contentitem)
+            output = super().render_item(contentitem)
 
         if plugin.search_fields:
             # Just add the results into the output, but avoid caching that somewhere.
@@ -70,5 +70,5 @@ class SearchRenderingPipe(PlaceholderRenderingPipe):
             html_output.append(output.html)
 
         # since media is not included, cachable is false
-        merged_html = mark_safe(u"".join(html_output))
+        merged_html = mark_safe("".join(html_output))
         return ContentItemOutput(merged_html, cacheable=False)

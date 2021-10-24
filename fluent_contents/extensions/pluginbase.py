@@ -18,9 +18,7 @@ from django.template.loader import render_to_string
 from django.utils.functional import cached_property
 from django.utils.html import escape, linebreaks
 from django.utils.translation import get_language
-from django.utils.translation import ugettext_lazy as _
-from future.builtins import str
-from future.utils import with_metaclass
+from django.utils.translation import gettext_lazy as _
 
 from fluent_contents.cache import get_placeholder_cache_key, get_rendering_cache_key
 from fluent_contents.forms import ContentItemForm
@@ -101,7 +99,7 @@ class PluginMediaDefiningClass(MediaDefiningClass):
     "Metaclass for classes that can have media definitions"
 
     def __new__(cls, name, bases, attrs):
-        new_class = super(PluginMediaDefiningClass, cls).__new__(
+        new_class = super().__new__(
             cls, name, bases, attrs
         )
         if "frontend_media" not in attrs and "FrontendMedia" in attrs:
@@ -109,7 +107,7 @@ class PluginMediaDefiningClass(MediaDefiningClass):
         return new_class
 
 
-class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
+class ContentPlugin(metaclass=PluginMediaDefiningClass):
     """
     The base class for all content plugins.
 
@@ -275,7 +273,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
     search_output = None
 
     def __repr__(self):
-        return "<{0} for {1} model>".format(
+        return "<{} for {} model>".format(
             self.__class__.__name__, self.model.__name__
         )
 
@@ -312,7 +310,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
             ).id
         except DatabaseError as e:
             raise DatabaseError(
-                "Unable to fetch ContentType object, is a plugin being registered before the initial syncdb? (original error: {0})".format(
+                "Unable to fetch ContentType object, is a plugin being registered before the initial syncdb? (original error: {})".format(
                     str(e)
                 )
             )
@@ -369,7 +367,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         """
         cachekey = self.get_output_cache_base_key(placeholder_name, instance)
         if self.cache_output_per_site:
-            cachekey = "{0}-s{1}".format(cachekey, settings.SITE_ID)
+            cachekey = f"{cachekey}-s{settings.SITE_ID}"
 
         # Append language code
         if self.cache_output_per_language:
@@ -379,7 +377,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
             user_language = get_language()
             if user_language not in self.cache_supported_language_codes:
                 user_language = "unsupported"
-            cachekey = "{0}.{1}".format(cachekey, user_language)
+            cachekey = f"{cachekey}.{user_language}"
 
         return cachekey
 
@@ -401,7 +399,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
                 site_ids.append(settings.SITE_ID)
 
             base_key = get_rendering_cache_key(placeholder_name, instance)
-            cachekeys = ["{0}-s{1}".format(base_key, site_id) for site_id in site_ids]
+            cachekeys = [f"{base_key}-s{site_id}" for site_id in site_ids]
 
         if self.cache_output_per_language or self.render_ignore_item_language:
             # Append language code to all keys,
@@ -423,7 +421,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
             # All variants of the ContentItem in different languages
             for user_language in cache_languages:
                 total_list.extend(
-                    "{0}.{1}".format(base, user_language) for base in cachekeys
+                    f"{base}.{user_language}" for base in cachekeys
                 )
             cachekeys = total_list
 
@@ -491,7 +489,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         render_template = self.get_render_template(request, instance, **kwargs)
         if not render_template:
             return str(
-                _(u"{No rendering defined for class '%s'}" % self.__class__.__name__)
+                _("{No rendering defined for class '%s'}" % self.__class__.__name__)
             )
 
         context = self.get_context(request, instance, **kwargs)
@@ -581,7 +579,7 @@ class ContentPlugin(with_metaclass(PluginMediaDefiningClass, object)):
         .. note:: This method is called when :attr:`search_fields` is set.
         """
         bits = get_search_field_values(instance)
-        return clean_join(u" ", bits)
+        return clean_join(" ", bits)
 
 
 class HttpRedirectRequest(Exception):
@@ -591,8 +589,8 @@ class HttpRedirectRequest(Exception):
     """
 
     def __init__(self, url, status=302):
-        super(HttpRedirectRequest, self).__init__(
-            "A redirect to '{0}' was requested by a plugin.\n"
+        super().__init__(
+            "A redirect to '{}' was requested by a plugin.\n"
             "Please add 'fluent_contents.middleware.HttpRedirectRequestMiddleware' "
             "to MIDDLEWARE_CLASSES to handle redirects by plugins.".format(url)
         )

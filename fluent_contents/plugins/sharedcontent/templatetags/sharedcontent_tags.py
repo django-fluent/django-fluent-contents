@@ -57,12 +57,12 @@ class SharedContentNode(BaseAssignmentOrOutputNode):
     def validate_args(cls, tag_name, *args, **kwargs):
         if len(args) != 1:
             raise TemplateSyntaxError(
-                """{0} tag allows one arguments: 'slot name' and optionally: template="..".""".format(
+                """{} tag allows one arguments: 'slot name' and optionally: template="..".""".format(
                     tag_name
                 )
             )
 
-        super(SharedContentNode, cls).validate_args(tag_name, *args)
+        super().validate_args(tag_name, *args)
 
     def get_value(self, context, *tag_args, **tag_kwargs):
         request = self.get_request(context)
@@ -79,7 +79,7 @@ class SharedContentNode(BaseAssignmentOrOutputNode):
             # If the template name originates from a variable, it can change any time.
             # See PagePlaceholderNode.render_tag() why this is not allowed.
             raise TemplateSyntaxError(
-                "{0} tag does not allow 'cachable' for variable template names!".format(
+                "{} tag does not allow 'cachable' for variable template names!".format(
                     self.tag_name
                 )
             )
@@ -119,7 +119,7 @@ class SharedContentNode(BaseAssignmentOrOutputNode):
                         slug=slot
                     )
                 except SharedContent.DoesNotExist:
-                    return "<!-- shared content '{0}' does not yet exist -->".format(
+                    return "<!-- shared content '{}' does not yet exist -->".format(
                         slot
                     )
 

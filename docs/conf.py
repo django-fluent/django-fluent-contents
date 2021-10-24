@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # django-fluent-contents documentation build configuration file, created by
 # sphinx-quickstart on Wed Dec 21 15:06:42 2011.
@@ -52,8 +51,8 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"django-fluent-contents"
-copyright = u"2011-2017, Diederik van der Boor"
+project = "django-fluent-contents"
+copyright = "2011-2017, Diederik van der Boor"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -196,8 +195,8 @@ latex_documents = [
     (
         "index",
         "django-fluent-contents.tex",
-        u"django-fluent-contents Documentation",
-        u"Diederik van der Boor",
+        "django-fluent-contents Documentation",
+        "Diederik van der Boor",
         "manual",
     )
 ]
@@ -231,8 +230,8 @@ man_pages = [
     (
         "index",
         "django-fluent-contents",
-        u"django-fluent-contents Documentation",
-        [u"Diederik van der Boor"],
+        "django-fluent-contents Documentation",
+        ["Diederik van der Boor"],
         1,
     )
 ]
@@ -250,8 +249,8 @@ texinfo_documents = [
     (
         "index",
         "django-fluent-contents",
-        u"django-fluent-contents Documentation",
-        u"Diederik van der Boor",
+        "django-fluent-contents Documentation",
+        "Diederik van der Boor",
         "django-fluent-contents",
         "One line description of project.",
         "Miscellaneous",

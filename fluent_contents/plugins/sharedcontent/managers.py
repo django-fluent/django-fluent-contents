@@ -14,11 +14,11 @@ class SharedContentQuerySet(TranslatableQuerySet):
     """
 
     def __init__(self, *args, **kwargs):
-        super(SharedContentQuerySet, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._parent_site = None
 
     def _clone(self):
-        c = super(SharedContentQuerySet, self)._clone()
+        c = super()._clone()
         c._parent_site = self._parent_site
         return c
 

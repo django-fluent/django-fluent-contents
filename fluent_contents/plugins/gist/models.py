@@ -1,12 +1,9 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
-from future.builtins import str
-from future.utils import python_2_unicode_compatible
+from django.utils.translation import gettext_lazy as _
 
 from fluent_contents.models import ContentItem, ContentItemManager
 
 
-@python_2_unicode_compatible
 class GistItem(ContentItem):
     """
     A reference to a gist item (gist.github.com) that is rendered as source code.

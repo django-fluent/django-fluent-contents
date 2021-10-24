@@ -10,7 +10,7 @@ This plugin supports several markup languages:
 """
 
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.markup import appsettings, backend
@@ -51,12 +51,12 @@ def _create_markup_plugin(language, model):
     Create a new MarkupPlugin class that represents the plugin type.
     """
     form = type(
-        "{0}MarkupItemForm".format(language.capitalize()),
+        f"{language.capitalize()}MarkupItemForm",
         (MarkupItemForm,),
         {"default_language": language},
     )
 
-    classname = "{0}MarkupPlugin".format(language.capitalize())
+    classname = f"{language.capitalize()}MarkupPlugin"
     PluginClass = type(classname, (MarkupPluginBase,), {"model": model, "form": form})
 
     return PluginClass

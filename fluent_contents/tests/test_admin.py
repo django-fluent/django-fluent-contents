@@ -67,7 +67,7 @@ class AdminTest(AppTestCase):
                 "rawhtmltestitem-0-placeholder": "",  # The placeholder is not defined yet, as item is not yet created.
                 "rawhtmltestitem-0-placeholder_slot": contents_slot,  # BaseContentItemFormSet resolves the placeholder after it's created
                 "rawhtmltestitem-0-sort_order": "1",
-                "rawhtmltestitem-0-html": u"<b>foo</b>",
+                "rawhtmltestitem-0-html": "<b>foo</b>",
             }
         )
 
@@ -76,7 +76,7 @@ class AdminTest(AppTestCase):
         self.assertEqual(
             response.status_code,
             302,
-            "No redirect, received:\n\n{0}".format(self._render_response(response)),
+            f"No redirect, received:\n\n{self._render_response(response)}",
         )
 
         # Check that the page exists.
@@ -91,13 +91,13 @@ class AdminTest(AppTestCase):
 
         # Check that the ContentItem is created,
         # and properly links back to it's parent.
-        rawhtmltestitem = RawHtmlTestItem.objects.get(html=u"<b>foo</b>")
+        rawhtmltestitem = RawHtmlTestItem.objects.get(html="<b>foo</b>")
         self.assertEqual(rawhtmltestitem.placeholder, placeholder)
         self.assertEqual(rawhtmltestitem.parent, page)
 
         # Also check reverse relation of placeholder
         rawhtmltestitem = placeholder.contentitems.all()[0]
-        self.assertEqual(rawhtmltestitem.html, u"<b>foo</b>")
+        self.assertEqual(rawhtmltestitem.html, "<b>foo</b>")
 
     def test_copy_language_backend(self):
         """
@@ -136,7 +136,7 @@ class AdminTest(AppTestCase):
 
     def _post_add(self, modeladmin, formdata):
         opts = modeladmin.opts
-        url = reverse("admin:{0}_{1}_add".format(opts.app_label, opts.model_name))
+        url = reverse(f"admin:{opts.app_label}_{opts.model_name}_add")
 
         # Build request
         # Add properties which middleware would typically do
@@ -150,7 +150,7 @@ class AdminTest(AppTestCase):
         Return the formdata that the management forms need.
         """
         opts = modeladmin.opts
-        url = reverse("admin:{0}_{1}_add".format(opts.app_label, opts.model_name))
+        url = reverse(f"admin:{opts.app_label}_{opts.model_name}_add")
         request = self.factory.get(url)
         request.user = self.admin_user
 
@@ -174,7 +174,7 @@ class AdminTest(AppTestCase):
     def _render_response(self, response):
         if hasattr(response, "render"):
             # TemplateResponse
-            return u"== Context ==\n{0}\n\n== Response ==\n{1}".format(
+            return "== Context ==\n{}\n\n== Response ==\n{}".format(
                 pformat(response.context_data), response.render().content
             )
         else:

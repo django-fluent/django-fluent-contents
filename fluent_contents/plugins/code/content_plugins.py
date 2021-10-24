@@ -25,6 +25,6 @@ class CodePlugin(ContentPlugin):
             backend.render_code(instance, style_name=appsettings.FLUENT_CODE_STYLE)
         )
 
-        context = super(CodePlugin, self).get_context(request, instance, **kwargs)
+        context = super().get_context(request, instance, **kwargs)
         context.update({"code": code})
         return context

@@ -10,7 +10,7 @@ class Command(BaseCommand):
     help = "Remove ContentItems which are stale, because their model is removed."
 
     def add_arguments(self, parser):
-        super(Command, self).add_arguments(parser)
+        super().add_arguments(parser)
         parser.add_argument(
             "-p",
             "--dry-run",
@@ -120,7 +120,7 @@ class Command(BaseCommand):
         if not num_unreferenced:
             self.stdout.write("No unreferenced items found.")
         else:
-            self.stdout.write("{0} unreferenced items found.".format(num_unreferenced))
+            self.stdout.write(f"{num_unreferenced} unreferenced items found.")
             if not self.remove_unreferenced:
                 self.stdout.write(
                     "Re-run this command with --remove-unreferenced to remove these items"

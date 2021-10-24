@@ -18,8 +18,6 @@ from django.core.cache.backends.base import DEFAULT_TIMEOUT
 from django.forms import Media
 from django.utils.html import conditional_escape
 from django.utils.safestring import SafeData, mark_safe
-from future.builtins import str
-from future.utils import python_2_unicode_compatible
 
 from fluent_contents.models.db import ContentItem, Placeholder
 from fluent_contents.models.fields import (
@@ -52,7 +50,7 @@ __all__ = (
 _ALLOWED_ROLES = list(dict(Placeholder.ROLES).keys())
 
 
-class PlaceholderData(object):
+class PlaceholderData:
     """
     A wrapper with data of a placeholder node.
     It shares the :attr:`slot`, :attr:`title` and :attr:`role` fields with the :class:`~fluent_contents.models.Placeholder` class.
@@ -79,7 +77,7 @@ class PlaceholderData(object):
         # Ensure upfront value checking
         if self.role not in _ALLOWED_ROLES:
             raise ValueError(
-                "Invalid role '{0}' for placeholder '{1}': allowed are: {2}.".format(
+                "Invalid role '{}' for placeholder '{}': allowed are: {}.".format(
                     self.role,
                     self.title or self.slot,
                     ", ".join(list(self.ROLE_ALIASES.keys())),
@@ -112,12 +110,11 @@ class PlaceholderData(object):
         return extensions.plugin_pool.get_allowed_plugins(self.slot)
 
     def __repr__(self):
-        return "<{0}: slot={1} role={2} title={3}>".format(
+        return "<{}: slot={} role={} title={}>".format(
             self.__class__.__name__, self.slot, self.role, self.title
         )
 
 
-@python_2_unicode_compatible
 class ContentItemOutput(SafeData):
     """
     A wrapper with holds the rendered output of a plugin,
@@ -145,7 +142,7 @@ class ContentItemOutput(SafeData):
         return len(str(self.html))
 
     def __repr__(self):
-        return "<ContentItemOutput '{0}'>".format(repr(self.html))
+        return f"<ContentItemOutput '{repr(self.html)}'>"
 
     def __getattr__(self, item):
         return getattr(self.html, item)
@@ -209,7 +206,7 @@ if django.VERSION >= (2, 2):
                 raise ValueError(
                     "Providing css/js to ImmutableMedia is no longer supported on Django 2.2+"
                 )
-            super(ImmutableMedia, self).__init__()
+            super().__init__()
 
         def __add__(self, other):
             # Django 2.2 no longer provides add_js/add_css,

@@ -17,10 +17,10 @@ class SearchTest(AppTestCase):
         page = TestPage.objects.create(pk=20, contents="Search!")
         placeholder = Placeholder.objects.create_for_object(page, "slot2")
         TextItem.objects.create_for_placeholder(
-            placeholder, text=u"<b>Item1!</b>", sort_order=1
+            placeholder, text="<b>Item1!</b>", sort_order=1
         )
 
-        self.assertEqual(placeholder.get_search_text().rstrip(), u"Item1!")
+        self.assertEqual(placeholder.get_search_text().rstrip(), "Item1!")
 
     def test_search_skip(self):
         """
@@ -30,9 +30,9 @@ class SearchTest(AppTestCase):
         placeholder = Placeholder.objects.create_for_object(page, "slot2")
 
         RawHtmlTestItem.objects.create_for_placeholder(
-            placeholder, html=u"<b>HTML!!</b>", sort_order=2
+            placeholder, html="<b>HTML!!</b>", sort_order=2
         )
-        self.assertEqual(placeholder.get_search_text(), u"")
+        self.assertEqual(placeholder.get_search_text(), "")
 
     def test_search_fields(self):
         """
@@ -42,6 +42,6 @@ class SearchTest(AppTestCase):
         placeholder = Placeholder.objects.create_for_object(page, "slot2")
 
         PictureItem.objects.create_for_placeholder(
-            placeholder, caption=u"<b>caption</b>", sort_order=1
+            placeholder, caption="<b>caption</b>", sort_order=1
         )
-        self.assertEqual(placeholder.get_search_text(), u"caption")
+        self.assertEqual(placeholder.get_search_text(), "caption")

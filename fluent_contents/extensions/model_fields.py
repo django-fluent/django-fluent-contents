@@ -30,14 +30,14 @@ def _get_path(cls):
     # Hide ".model_fields" unless the field is overwritten.
     if module == _this_module_name:
         module = "fluent_contents.extensions"
-    return "{0}.{1}".format(module, cls.__name__)
+    return f"{module}.{cls.__name__}"
 
 
-class MigrationMixin(object):
+class MigrationMixin:
     def deconstruct(self):
         # Don't masquerade as optional field like fluent-utils does,
         # Show as Plugin..Field in the migrations.
-        name, path, args, kwargs = super(MigrationMixin, self).deconstruct()
+        name, path, args, kwargs = super().deconstruct()
         path = _get_path(self.__class__)
         kwargs.pop("upload_to", None)
         return name, path, args, kwargs
@@ -76,13 +76,13 @@ class PluginHtmlField(MigrationMixin, models.TextField):
 
     def __init__(self, *args, **kwargs):
         # This method override is primary included to improve the API documentation
-        super(PluginHtmlField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):
         defaults = {"widget": WysiwygWidget}
         defaults.update(kwargs)
 
-        return super(PluginHtmlField, self).formfield(**defaults)
+        return super().formfield(**defaults)
 
     def to_python(self, html):
         # Make well-formed if requested

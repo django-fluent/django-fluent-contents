@@ -1,6 +1,5 @@
 from django.template import Library, Node
 from django.template.base import TemplateSyntaxError
-from future.builtins import str
 from tag_parser import parse_as_var, parse_token_kwargs, template_tag
 
 from fluent_contents.admin.contentitems import BaseContentItemInline
@@ -46,7 +45,7 @@ def group_plugins_into_categories(plugins):
     categories = {}
 
     for plugin in plugins:
-        title = str(plugin.category or u"")  # enforce resolving ugettext_lazy proxies.
+        title = str(plugin.category or "")  # enforce resolving ugettext_lazy proxies.
         if title not in categories:
             categories[title] = []
         categories[title].append(plugin)
@@ -114,7 +113,7 @@ class GetFirstOfNode(Node):
 
         if var_name is None:
             raise TemplateSyntaxError(
-                "Expected syntax: {{% {0} val1 val2 as val %}}".format(tag_name)
+                f"Expected syntax: {{% {tag_name} val1 val2 as val %}}"
             )
 
         return cls(choices, var_name)

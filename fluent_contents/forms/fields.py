@@ -20,4 +20,4 @@ class PlaceholderFormField(forms.Field):
             )
         }
         defaults.update(kwargs)
-        super(PlaceholderFormField, self).__init__(**defaults)
+        super().__init__(**defaults)

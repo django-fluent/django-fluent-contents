@@ -15,7 +15,7 @@ class IframePlugin(ContentPlugin):
 
     def render(self, request, instance, **kwargs):
         return mark_safe(
-            u'<iframe class="iframe" src="{src}" width="{width}" height="{height}"></iframe>'.format(
+            '<iframe class="iframe" src="{src}" width="{width}" height="{height}"></iframe>'.format(
                 src=escape(instance.src), width=instance.width, height=instance.height
             )
         )

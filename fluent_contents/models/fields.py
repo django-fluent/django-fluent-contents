@@ -42,7 +42,7 @@ class PlaceholderRelation(GenericRelation):
             )
         }
         defaults.update(kwargs)
-        super(PlaceholderRelation, self).__init__(
+        super().__init__(
             to=Placeholder,
             object_id_field="parent_id",
             content_type_field="parent_type",
@@ -65,7 +65,7 @@ class ContentItemRelation(GenericRelation):
     """
 
     def __init__(self, **kwargs):
-        super(ContentItemRelation, self).__init__(
+        super().__init__(
             to=ContentItem,
             object_id_field="parent_id",
             content_type_field="parent_type",
@@ -75,7 +75,7 @@ class ContentItemRelation(GenericRelation):
     def bulk_related_objects(self, objs, using=DEFAULT_DB_ALIAS):
         # Fix delete screen. Workaround for https://github.com/django-polymorphic/django-polymorphic/issues/34
         return (
-            super(ContentItemRelation, self)
+            super()
             .bulk_related_objects(objs)
             .non_polymorphic()
         )
@@ -104,7 +104,7 @@ class PlaceholderRel(GenericRel):
         )
 
         # TODO: make sure reverse queries work properly
-        super(PlaceholderRel, self).__init__(
+        super().__init__(
             field=field,
             to=Placeholder,
             related_name=None,  # NOTE: must be unique for app/model/slot.
@@ -112,7 +112,7 @@ class PlaceholderRel(GenericRel):
         )
 
 
-class PlaceholderFieldDescriptor(object):
+class PlaceholderFieldDescriptor:
     """
     This descriptor is placed on the PlaceholderField model instance
     by the :func:`~PlaceholderField.contribute_to_class` function.
@@ -131,7 +131,7 @@ class PlaceholderFieldDescriptor(object):
             placeholder = Placeholder.objects.get_by_slot(instance, self.slot)
         except Placeholder.DoesNotExist:
             raise Placeholder.DoesNotExist(
-                "Placeholder does not exist for parent {0} (type_id: {1}, parent_id: {2}), slot: '{3}'".format(
+                "Placeholder does not exist for parent {} (type_id: {}, parent_id: {}), slot: '{}'".format(
                     repr(instance),
                     ContentType.objects.get_for_model(
                         instance, for_concrete_model=False
@@ -190,7 +190,7 @@ class PlaceholderField(PlaceholderRelation):
         Initialize the placeholder field.
         """
         self.slot = slot
-        super(PlaceholderField, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         # See if a plugin configuration is defined in the settings
         self._slot_config = (
@@ -219,7 +219,7 @@ class PlaceholderField(PlaceholderRelation):
         """
         Internal Django method to associate the field with the Model; it assigns the descriptor.
         """
-        super(PlaceholderField, self).contribute_to_class(cls, name, **kwargs)
+        super().contribute_to_class(cls, name, **kwargs)
 
         # overwrites what instance.<colname> returns; give direct access to the placeholder
         setattr(cls, name, PlaceholderFieldDescriptor(self.slot))
@@ -266,7 +266,7 @@ class PlaceholderField(PlaceholderRelation):
             except extensions.PluginNotFound as e:
                 raise extensions.PluginNotFound(
                     str(e)
-                    + " Update the plugin list of '{0}.{1}' field or FLUENT_CONTENTS_PLACEHOLDER_CONFIG['{2}'] setting.".format(
+                    + " Update the plugin list of '{}.{}' field or FLUENT_CONTENTS_PLACEHOLDER_CONFIG['{}'] setting.".format(
                         self.model._meta.object_name, self.name, self.slot
                     )
                 )

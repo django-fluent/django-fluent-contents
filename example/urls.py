@@ -1,14 +1,14 @@
-from django.conf.urls import include, url
+from django.urls import include, path
 from django.contrib import admin
 
 admin.autodiscover()
 
 urlpatterns = [
-    url(r"^admin/doc/", include("django.contrib.admindocs.urls")),
-    url(r"^admin/apps/tinymce/", include("tinymce.urls")),
-    url(r"^admin/", admin.site.urls),
+    path('admin/doc/', include("django.contrib.admindocs.urls")),
+    path('admin/apps/tinymce/', include("tinymce.urls")),
+    path('admin/', admin.site.urls),
     # url(r'^forms/', include('form_designer.urls')),
-    url(r"^articles/", include("article.urls")),
-    url(r"^comments/", include("django_comments.urls")),
-    url(r"", include("simplecms.urls")),
+    path('articles/', include("article.urls")),
+    path('comments/', include("django_comments.urls")),
+    path('', include("simplecms.urls")),
 ]

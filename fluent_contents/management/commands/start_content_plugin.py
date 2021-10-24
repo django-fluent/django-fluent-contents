@@ -23,7 +23,7 @@ class Command(TemplateCommand):
     missing_args_message = "You must provide an application name."
 
     def add_arguments(self, parser):
-        super(Command, self).add_arguments(parser)
+        super().add_arguments(parser)
         parser.add_argument(
             "--plugin",
             "-p",
@@ -64,7 +64,7 @@ class Command(TemplateCommand):
         # Create {{ model }} and {{ plugin }} settings.
         if not options["plugin"]:
             # default converts "app_name" -> "AppNamePlugin"
-            options["plugin"] = "{0}Plugin".format(
+            options["plugin"] = "{}Plugin".format(
                 app_name.replace("_", " ").title().replace(" ", "")
             )
 
@@ -73,6 +73,6 @@ class Command(TemplateCommand):
                 # default convert "AppNamePlugin" -> "AppNameItem"
                 options["model"] = RE_PLUGIN.sub("Item", options["plugin"])
             else:
-                options["model"] = "{0}Item".format(options["plugin"])
+                options["model"] = "{}Item".format(options["plugin"])
 
-        super(Command, self).handle("app", app_name, target, **options)
+        super().handle("app", app_name, target, **options)

@@ -7,7 +7,7 @@ from simplecms.models import Page
 
 def page_detail(request, path):
     stripped = path.strip("/") if path else ""
-    stripped = stripped and u"/%s/" % stripped or "/"
+    stripped = stripped and "/%s/" % stripped or "/"
 
     try:
         page = Page.objects.get(_cached_url=stripped)

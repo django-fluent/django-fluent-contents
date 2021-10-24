@@ -1,7 +1,7 @@
 """
 Plugin for rendering Gist snippets, hosted by Github.
 """
-from django.utils.http import urlquote
+from urllib.parse import quote
 from django.utils.safestring import mark_safe
 
 from fluent_contents.extensions import ContentPlugin, plugin_pool
@@ -14,8 +14,8 @@ class GistPlugin(ContentPlugin):
     category = ContentPlugin.PROGRAMMING
 
     def render(self, request, instance, **kwargs):
-        url = u"http://gist.github.com/{0}.js".format(instance.gist_id)
+        url = f"http://gist.github.com/{instance.gist_id}.js"
         if instance.filename:
-            url += u"?file={0}".format(urlquote(instance.filename))
+            url += f"?file={urlquote(instance.filename)}"
 
-        return mark_safe(u'<script src="{0}"></script>'.format(url))
+        return mark_safe(f'<script src="{url}"></script>')
