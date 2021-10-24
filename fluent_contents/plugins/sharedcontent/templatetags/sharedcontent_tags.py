@@ -115,20 +115,14 @@ class SharedContentNode(BaseAssignmentOrOutputNode):
             if output is None:
                 # Get the placeholder
                 try:
-                    sharedcontent = SharedContent.objects.parent_site(site).get(
-                        slug=slot
-                    )
+                    sharedcontent = SharedContent.objects.parent_site(site).get(slug=slot)
                 except SharedContent.DoesNotExist:
-                    return "<!-- shared content '{}' does not yet exist -->".format(
-                        slot
-                    )
+                    return "<!-- shared content '{}' does not yet exist -->".format(slot)
 
                 # Now that we've fetched the object, the object key be generated.
                 # No real need to check for output again, render_placeholder() does that already.
                 if try_cache and not cache_key:
-                    cache.set(
-                        cache_key_ptr, get_shared_content_cache_key(sharedcontent)
-                    )
+                    cache.set(cache_key_ptr, get_shared_content_cache_key(sharedcontent))
 
         if output is None:
             # Have to fetch + render it.
@@ -140,9 +134,7 @@ class SharedContentNode(BaseAssignmentOrOutputNode):
         rendering.register_frontend_media(request, output.media)
         return output.html
 
-    def render_shared_content(
-        self, request, sharedcontent, template_name=None, cachable=None
-    ):
+    def render_shared_content(self, request, sharedcontent, template_name=None, cachable=None):
         # All parsing done, perform the actual rendering
         placeholder = sharedcontent.contents  # Another DB query
         return rendering.render_placeholder(

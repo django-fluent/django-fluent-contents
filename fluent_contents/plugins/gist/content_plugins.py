@@ -2,6 +2,7 @@
 Plugin for rendering Gist snippets, hosted by Github.
 """
 from urllib.parse import quote
+
 from django.utils.safestring import mark_safe
 
 from fluent_contents.extensions import ContentPlugin, plugin_pool

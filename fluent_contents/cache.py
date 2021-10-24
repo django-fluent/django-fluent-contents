@@ -36,9 +36,7 @@ def get_placeholder_cache_key(placeholder, language_code):
     )
 
 
-def get_placeholder_cache_key_for_parent(
-    parent_object, placeholder_name, language_code
-):
+def get_placeholder_cache_key_for_parent(parent_object, placeholder_name, language_code):
     """
     Return a cache key for a placeholder.
 
@@ -50,9 +48,7 @@ def get_placeholder_cache_key_for_parent(
     )
 
 
-def _get_placeholder_cache_key_for_id(
-    parent_type_id, parent_id, placeholder_name, language_code
-):
+def _get_placeholder_cache_key_for_id(parent_type_id, parent_id, placeholder_name, language_code):
     # Return a cache key for a placeholder, without having to fetch a placeholder first.
     # Not yet exposed, maybe more object values are needed later.
     return "placeholder.{}.{}.{}.{}".format(

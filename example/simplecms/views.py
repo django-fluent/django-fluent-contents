@@ -1,7 +1,6 @@
 from django.http import Http404
 from django.shortcuts import render
 from django.template.context import RequestContext
-
 from simplecms.models import Page
 
 

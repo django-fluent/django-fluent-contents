@@ -10,10 +10,7 @@ from django.utils.safestring import mark_safe
 from parler.utils.context import smart_override
 
 from fluent_contents import appsettings
-from fluent_contents.cache import (
-    get_placeholder_cache_key_for_parent,
-    get_rendering_cache_key,
-)
+from fluent_contents.cache import get_placeholder_cache_key_for_parent, get_rendering_cache_key
 from fluent_contents.extensions import PluginContext, PluginNotFound
 from fluent_contents.models import (
     DEFAULT_TIMEOUT,
@@ -111,9 +108,7 @@ class ResultTracker:
     def fetch_remaining_instances(self):
         """Read the derived table data for all objects tracked as remaining (=not found in the cache)."""
         if self.remaining_items:
-            self.remaining_items = ContentItem.objects.get_real_instances(
-                self.remaining_items
-            )
+            self.remaining_items = ContentItem.objects.get_real_instances(self.remaining_items)
 
     def add_plugin_timeout(self, plugin):
         self.all_timeout = _min_timeout(self.all_timeout, plugin.cache_timeout)
@@ -255,9 +250,7 @@ class RenderingPipe:
                 plugin = contentitem.plugin
             except PluginNotFound as ex:
                 result.store_exception(contentitem, ex)  # Will deal with that later.
-                logger.debug(
-                    "- item #%s has no matching plugin: %s", contentitem.pk, str(ex)
-                )
+                logger.debug("- item #%s has no matching plugin: %s", contentitem.pk, str(ex))
                 continue
 
             # Respect the cache output setting of the plugin
@@ -292,11 +285,7 @@ class RenderingPipe:
         Tell whether the code should try reading cached output
         """
         plugin = contentitem.plugin
-        return (
-            appsettings.FLUENT_CONTENTS_CACHE_OUTPUT
-            and plugin.cache_output
-            and contentitem.pk
-        )
+        return appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and plugin.cache_output and contentitem.pk
 
     def _render_uncached_items(self, items, result):
         """
@@ -309,9 +298,7 @@ class RenderingPipe:
                 output = self.render_item(contentitem)
             except PluginNotFound as ex:
                 result.store_exception(contentitem, ex)
-                logger.debug(
-                    "- item #%s has no matching plugin: %s", contentitem.pk, str(ex)
-                )
+                logger.debug("- item #%s has no matching plugin: %s", contentitem.pk, str(ex))
                 continue
             except SkipItem:
                 result.set_skipped(contentitem)
@@ -362,9 +349,7 @@ class RenderingPipe:
 
     def _can_cache_output(self, plugin, output):
         return (
-            appsettings.FLUENT_CONTENTS_CACHE_OUTPUT
-            and plugin.cache_output
-            and output.cacheable
+            appsettings.FLUENT_CONTENTS_CACHE_OUTPUT and plugin.cache_output and output.cacheable
         )
 
     def _can_cache_merged_output(self, template_name, cachable=None):
@@ -501,9 +486,7 @@ class PlaceholderRenderingPipe(RenderingPipe):
                 fallback_language,
                 try_cache,
             )
-            output = self.render_items(
-                placeholder, items, parent_object, template_name, cachable
-            )
+            output = self.render_items(placeholder, items, parent_object, template_name, cachable)
 
             if is_fallback:
                 # Caching fallbacks is not supported yet,
@@ -534,9 +517,7 @@ class PlaceholderRenderingPipe(RenderingPipe):
             parent_object, limit_parent_language=limit_parent_language
         ).non_polymorphic()
         if isinstance(items, EmptyQuerySet):  # Detect qs.none() was applied
-            logging.debug(
-                "- skipping regular language, parent object has no translation for it."
-            )
+            logging.debug("- skipping regular language, parent object has no translation for it.")
 
         if (
             fallback_language and not items
@@ -547,13 +528,9 @@ class PlaceholderRenderingPipe(RenderingPipe):
                 if fallback_language is True
                 else fallback_language
             )
-            logger.debug(
-                "- reading fallback language %s, try_cache=%s", language_code, try_cache
-            )
+            logger.debug("- reading fallback language %s, try_cache=%s", language_code, try_cache)
             items = (
-                placeholder.get_content_items(
-                    parent_object, limit_parent_language=False
-                )
+                placeholder.get_content_items(parent_object, limit_parent_language=False)
                 .translated(language_code)
                 .non_polymorphic()
             )

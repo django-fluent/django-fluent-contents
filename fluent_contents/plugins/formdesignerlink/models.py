@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from form_designer.models import FormDefinition
 
 from fluent_contents.models import ContentItem, ContentItemManager
-from form_designer.models import FormDefinition
 
 
 class FormDesignerLink(ContentItem):

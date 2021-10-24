@@ -111,9 +111,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "language_code",
-                    models.CharField(
-                        max_length=15, verbose_name="Language", db_index=True
-                    ),
+                    models.CharField(max_length=15, verbose_name="Language", db_index=True),
                 ),
                 ("title", models.CharField(max_length=200, verbose_name="Title")),
                 (

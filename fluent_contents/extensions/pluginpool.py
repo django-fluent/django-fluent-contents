@@ -73,9 +73,7 @@ class PluginPool:
         If a plugin is already registered, this will raise a :class:`PluginAlreadyRegistered` exception.
         """
         # Duck-Typing does not suffice here, avoid hard to debug problems by upfront checks.
-        assert issubclass(
-            plugin, ContentPlugin
-        ), "The plugin must inherit from `ContentPlugin`"
+        assert issubclass(plugin, ContentPlugin), "The plugin must inherit from `ContentPlugin`"
         assert plugin.model, "The plugin has no model defined"
         assert issubclass(
             plugin.model, ContentItem
@@ -87,9 +85,7 @@ class PluginPool:
         name = plugin.__name__  # using class here, no instance created yet.
         name = name.lower()
         if name in self.plugins:
-            raise PluginAlreadyRegistered(
-                f"{name}: a plugin with this name is already registered"
-            )
+            raise PluginAlreadyRegistered(f"{name}: a plugin with this name is already registered")
 
         # Avoid registering 2 plugins to the exact same model. If you want to reuse code, use proxy models.
         if plugin.model in self._name_for_model:
@@ -126,9 +122,7 @@ class PluginPool:
         Return the plugins which are supported in the given placeholder name.
         """
         # See if there is a limit imposed.
-        slot_config = (
-            appsettings.FLUENT_CONTENTS_PLACEHOLDER_CONFIG.get(placeholder_slot) or {}
-        )
+        slot_config = appsettings.FLUENT_CONTENTS_PLACEHOLDER_CONFIG.get(placeholder_slot) or {}
         plugins = slot_config.get("plugins")
         if not plugins:
             return self.get_plugins()
@@ -160,9 +154,7 @@ class PluginPool:
                 plugin_instances.append(self.plugins[self._name_for_model[name.model]])
             else:
                 raise TypeError(
-                    "get_plugins_by_name() expects a plugin name or class, not: {}".format(
-                        name
-                    )
+                    "get_plugins_by_name() expects a plugin name or class, not: {}".format(name)
                 )
         return plugin_instances
 
@@ -188,18 +180,14 @@ class PluginPool:
         try:
             name = self._name_for_model[model_class]
         except KeyError:
-            raise PluginNotFound(
-                f"No plugin found for model '{model_class.__name__}'."
-            )
+            raise PluginNotFound(f"No plugin found for model '{model_class.__name__}'.")
         return self.plugins[name]
 
     def _get_plugin_by_content_type(self, contenttype):
         self._import_plugins()
         self._setup_lazy_indexes()
 
-        ct_id = (
-            contenttype.id if isinstance(contenttype, ContentType) else int(contenttype)
-        )
+        ct_id = contenttype.id if isinstance(contenttype, ContentType) else int(contenttype)
         try:
             name = self._name_for_ctype_id[ct_id]
         except KeyError:
@@ -216,9 +204,7 @@ class PluginPool:
             else:
                 ct_name = f"{ct.app_label}.{ct.model}"
             raise PluginNotFound(
-                "No plugin found for content type #{} ({}).".format(
-                    contenttype, ct_name
-                )
+                "No plugin found for content type #{} ({}).".format(contenttype, ct_name)
             )
 
         return self.plugins[name]

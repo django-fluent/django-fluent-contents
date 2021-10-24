@@ -82,10 +82,7 @@ def frontend_media_property(cls):
             media = Media(definition)
 
             # Not supporting extend=('js',) here, not documented in Django either.
-            if (
-                getattr(definition, "extend", True)
-                and base is not ImmutableMedia.empty_instance
-            ):
+            if getattr(definition, "extend", True) and base is not ImmutableMedia.empty_instance:
                 return base + media
 
             return media
@@ -99,9 +96,7 @@ class PluginMediaDefiningClass(MediaDefiningClass):
     "Metaclass for classes that can have media definitions"
 
     def __new__(cls, name, bases, attrs):
-        new_class = super().__new__(
-            cls, name, bases, attrs
-        )
+        new_class = super().__new__(cls, name, bases, attrs)
         if "frontend_media" not in attrs and "FrontendMedia" in attrs:
             new_class.frontend_media = frontend_media_property(new_class)
         return new_class
@@ -273,9 +268,7 @@ class ContentPlugin(metaclass=PluginMediaDefiningClass):
     search_output = None
 
     def __repr__(self):
-        return "<{} for {} model>".format(
-            self.__class__.__name__, self.model.__name__
-        )
+        return "<{} for {} model>".format(self.__class__.__name__, self.model.__name__)
 
     @property
     def verbose_name(self):
@@ -305,9 +298,7 @@ class ContentPlugin(metaclass=PluginMediaDefiningClass):
         Shortcut to retrieving the ContentType id of the model.
         """
         try:
-            return ContentType.objects.get_for_model(
-                self.model, for_concrete_model=False
-            ).id
+            return ContentType.objects.get_for_model(self.model, for_concrete_model=False).id
         except DatabaseError as e:
             raise DatabaseError(
                 "Unable to fetch ContentType object, is a plugin being registered before the initial syncdb? (original error: {})".format(
@@ -414,15 +405,11 @@ class ContentPlugin(metaclass=PluginMediaDefiningClass):
 
             # All variants of the Placeholder (for full page caching)
             placeholder = instance.placeholder
-            total_list.extend(
-                get_placeholder_cache_key(placeholder, lc) for lc in cache_languages
-            )
+            total_list.extend(get_placeholder_cache_key(placeholder, lc) for lc in cache_languages)
 
             # All variants of the ContentItem in different languages
             for user_language in cache_languages:
-                total_list.extend(
-                    f"{base}.{user_language}" for base in cachekeys
-                )
+                total_list.extend(f"{base}.{user_language}" for base in cachekeys)
             cachekeys = total_list
 
         return cachekeys
@@ -488,9 +475,7 @@ class ContentPlugin(metaclass=PluginMediaDefiningClass):
         """
         render_template = self.get_render_template(request, instance, **kwargs)
         if not render_template:
-            return str(
-                _("{No rendering defined for class '%s'}" % self.__class__.__name__)
-            )
+            return str(_("{No rendering defined for class '%s'}" % self.__class__.__name__))
 
         context = self.get_context(request, instance, **kwargs)
         return self.render_to_string(request, render_template, context)
@@ -511,8 +496,7 @@ class ContentPlugin(metaclass=PluginMediaDefiningClass):
         """
         return (
             '<div style="color: red; border: 1px solid red; padding: 5px;">'
-            "<p><strong>%s</strong></p>%s</div>"
-            % (_("Error:"), linebreaks(escape(str(error))))
+            "<p><strong>%s</strong></p>%s</div>" % (_("Error:"), linebreaks(escape(str(error))))
         )
 
     def redirect(self, url, status=302):

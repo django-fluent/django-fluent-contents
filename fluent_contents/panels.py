@@ -56,9 +56,7 @@ class ContentPluginPanel(Panel):
 
     @property
     def nav_subtitle(self):
-        return _("{0} items in {1} placeholders").format(
-            self.num_items, self.num_placeholders
-        )
+        return _("{0} items in {1} placeholders").format(self.num_items, self.num_placeholders)
 
     def process_response(self, request, response):
         # Serialize to dict to store as debug toolbar stats
@@ -68,9 +66,7 @@ class ContentPluginPanel(Panel):
         for resulttracker in collector.get_collection():
             rendered_items = []
             retreived_items = {item.pk for item in resulttracker.remaining_items}
-            for contentitem, output in resulttracker.get_output(
-                include_exceptions=True
-            ):
+            for contentitem, output in resulttracker.get_output(include_exceptions=True):
                 is_cached = contentitem.pk not in retreived_items
 
                 try:
@@ -115,9 +111,7 @@ class ContentPluginPanel(Panel):
                         templates = plugin.get_render_template(request, contentitem)
                         template_dummy = False
 
-                    if templates is not None and not isinstance(
-                        templates, (list, tuple)
-                    ):
+                    if templates is not None and not isinstance(templates, (list, tuple)):
                         templates = [templates]
 
                     cache_timeout = None
@@ -134,9 +128,7 @@ class ContentPluginPanel(Panel):
                             cache_timeout = plugin.cache_timeout
 
                         cache_timeout = (
-                            None
-                            if isinstance(cache_timeout, object)
-                            else int(cache_timeout)
+                            None if isinstance(cache_timeout, object) else int(cache_timeout)
                         )
 
                     rendered_items.append(
@@ -172,9 +164,7 @@ class ContentPluginPanel(Panel):
                     "parent_model": parent_object.__class__.__name__
                     if parent_object is not None
                     else None,
-                    "parent_id": parent_object.pk
-                    if parent_object is not None
-                    else None,
+                    "parent_id": parent_object.pk if parent_object is not None else None,
                     "slot": resulttracker.placeholder_name,
                     "debug_name": _debug_name(resulttracker),
                     "all_cachable": resulttracker.all_cacheable,

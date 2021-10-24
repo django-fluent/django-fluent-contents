@@ -111,9 +111,7 @@ class TemplateTagTests(AppTestCase):
             """{% load fluent_contents_tags %}{% page_placeholder page1 "invalid_slot1" %}""",
             {"page1": page1},
         )
-        self.assertEqual(
-            html, "<!-- placeholder 'invalid_slot1' does not yet exist -->"
-        )
+        self.assertEqual(html, "<!-- placeholder 'invalid_slot1' does not yet exist -->")
 
         # Test if a missing "page" variable fails.
         self.assertRaises(
@@ -126,9 +124,7 @@ class TemplateTagTests(AppTestCase):
         # Test if a missing arguments are reported
         self.assertRaises(
             TemplateSyntaxError,
-            lambda: Template(
-                """{% load fluent_contents_tags %}{% page_placeholder %}"""
-            ),
+            lambda: Template("""{% load fluent_contents_tags %}{% page_placeholder %}"""),
         )
         self.assertRaises(
             TemplateSyntaxError,
@@ -214,9 +210,7 @@ class TemplateTagTests(AppTestCase):
         # Test if a missing arguments are reported
         self.assertRaises(
             TemplateSyntaxError,
-            lambda: Template(
-                """{% load fluent_contents_tags %}{% render_placeholder %}"""
-            ),
+            lambda: Template("""{% load fluent_contents_tags %}{% render_placeholder %}"""),
         )
         self.assertRaises(
             TemplateSyntaxError,

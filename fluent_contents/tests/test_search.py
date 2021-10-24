@@ -16,9 +16,7 @@ class SearchTest(AppTestCase):
         """
         page = TestPage.objects.create(pk=20, contents="Search!")
         placeholder = Placeholder.objects.create_for_object(page, "slot2")
-        TextItem.objects.create_for_placeholder(
-            placeholder, text="<b>Item1!</b>", sort_order=1
-        )
+        TextItem.objects.create_for_placeholder(placeholder, text="<b>Item1!</b>", sort_order=1)
 
         self.assertEqual(placeholder.get_search_text().rstrip(), "Item1!")
 

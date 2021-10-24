@@ -56,9 +56,7 @@ if appsettings.FLUENT_MARKUP_USE_DJANGO_MARKUP:
         real_filters = list(SUPPORTED_LANGUAGES.keys()) + ["creole"]
         if filter_name in real_filters:
             _languageNames[filter_name] = FilterClass.title
-            SUPPORTED_LANGUAGES[filter_name] = lambda text: mark_safe(
-                formatter(text, filter_name)
-            )
+            SUPPORTED_LANGUAGES[filter_name] = lambda text: mark_safe(formatter(text, filter_name))
 
 # Format as choices
 LANGUAGE_CHOICES = [

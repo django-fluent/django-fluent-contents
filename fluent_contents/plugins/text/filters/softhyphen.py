@@ -3,9 +3,7 @@ from django.core.exceptions import ImproperlyConfigured
 try:
     from softhyphen.html import hyphenate
 except ImportError:
-    raise ImproperlyConfigured(
-        "Install 'django-softhyphen' to use the softhyphen filter"
-    )
+    raise ImproperlyConfigured("Install 'django-softhyphen' to use the softhyphen filter")
 
 
 def softhyphen_filter(textitem, html):

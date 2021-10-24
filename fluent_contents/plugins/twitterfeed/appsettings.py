@@ -4,9 +4,7 @@ Settings for the twitterfeed item.
 from django.conf import settings
 
 FLUENT_TWITTERFEED_AVATAR_SIZE = getattr(settings, "FLUENT_TWITTERFEED_AVATAR_SIZE", 32)
-FLUENT_TWITTERFEED_REFRESH_INTERVAL = getattr(
-    settings, "FLUENT_TWITTERFEED_REFRESH_INTERVAL", 0
-)
+FLUENT_TWITTERFEED_REFRESH_INTERVAL = getattr(settings, "FLUENT_TWITTERFEED_REFRESH_INTERVAL", 0)
 FLUENT_TWITTERFEED_TEXT_TEMPLATE = getattr(
     settings, "FLUENT_TWITTERFEED_TEXT_TEMPLATE", "{avatar}{text} {time}"
 )

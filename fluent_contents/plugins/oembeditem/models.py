@@ -25,9 +25,7 @@ class AbstractOEmbedItem(ContentItem):
     # Fetch parameters
     embed_url = OEmbedUrlField(_("URL to embed"))
     embed_max_width = models.PositiveIntegerField(_("Max width"), blank=True, null=True)
-    embed_max_height = models.PositiveIntegerField(
-        _("Max height"), blank=True, null=True
-    )
+    embed_max_height = models.PositiveIntegerField(_("Max height"), blank=True, null=True)
 
     # The cached response:
     type = models.CharField(editable=False, max_length=20, null=True, blank=True)
@@ -35,13 +33,9 @@ class AbstractOEmbedItem(ContentItem):
     title = models.CharField(editable=False, max_length=512, null=True, blank=True)
     description = models.TextField(editable=False, null=True, blank=True)
 
-    author_name = models.CharField(
-        editable=False, max_length=255, null=True, blank=True
-    )
+    author_name = models.CharField(editable=False, max_length=255, null=True, blank=True)
     author_url = models.URLField(editable=False, null=True, blank=True)
-    provider_name = models.CharField(
-        editable=False, max_length=255, null=True, blank=True
-    )
+    provider_name = models.CharField(editable=False, max_length=255, null=True, blank=True)
     provider_url = models.URLField(editable=False, null=True, blank=True)
 
     thumbnail_url = models.URLField(editable=False, null=True, blank=True)
@@ -85,9 +79,7 @@ class AbstractOEmbedItem(ContentItem):
 
         .. versionadded:: 1.0 Added force and backend_params parameters.
         """
-        if appsettings.FLUENT_OEMBED_FORCE_HTTPS and self.embed_url.startswith(
-            "http://"
-        ):
+        if appsettings.FLUENT_OEMBED_FORCE_HTTPS and self.embed_url.startswith("http://"):
             self.embed_url = "https://" + self.embed_url[7:]
 
         if force or self._input_changed():

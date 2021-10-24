@@ -88,9 +88,7 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
                 queryset_count = self.get_queryset().count()
                 values = self.__initial_minus_queryset()[i - queryset_count]
 
-                values[self.ct_field.name] = ContentType.objects.get_for_model(
-                    self.instance
-                )
+                values[self.ct_field.name] = ContentType.objects.get_for_model(self.instance)
                 values[self.ct_fk_field.name] = self.instance.pk
                 instance = self.model(**values)
             except IndexError:

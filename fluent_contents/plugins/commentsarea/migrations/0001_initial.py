@@ -22,9 +22,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "allow_new",
-                    models.BooleanField(
-                        default=True, verbose_name="Allow posting new comments"
-                    ),
+                    models.BooleanField(default=True, verbose_name="Allow posting new comments"),
                 ),
             ],
             options={

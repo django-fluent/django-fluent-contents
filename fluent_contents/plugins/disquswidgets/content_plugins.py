@@ -16,9 +16,7 @@ class DisqusCommentsPlugin(ContentPlugin):
             "instance": instance,
             "DISQUS_WEBSITE_SHORTNAME": settings.DISQUS_WEBSITE_SHORTNAME,  # for convenience, pass setting
             # Template config setters are hard to use, provide context here!
-            "disqus_identifier": parent_url.strip(
-                "/"
-            ),  # URL is expected to be relative.
+            "disqus_identifier": parent_url.strip("/"),  # URL is expected to be relative.
             "disqus_url": parent_url,
             "disqus_developer": 0,
             # disqus_title

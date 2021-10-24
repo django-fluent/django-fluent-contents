@@ -19,9 +19,7 @@ class OEmbedPlugin(ContentPlugin):
     #: Custom render template
     render_template_base = "fluent_contents/plugins/oembed/{type}.html"
 
-    fieldsets = (
-        (None, {"fields": ("embed_url", ("embed_max_width", "embed_max_height"))}),
-    )
+    fieldsets = ((None, {"fields": ("embed_url", ("embed_max_width", "embed_max_height"))}),)
 
     class Media:
         css = {"screen": ("fluent_contents/plugins/oembed/oembed_admin.css",)}

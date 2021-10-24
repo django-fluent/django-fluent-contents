@@ -8,9 +8,7 @@ from fluent_contents.models import ContentItem, ContentItemManager
 class RawHtmlItem(ContentItem):
     html = models.TextField(
         _("HTML code"),
-        help_text=_(
-            "Enter the HTML code to display, like the embed code of an online widget."
-        ),
+        help_text=_("Enter the HTML code to display, like the embed code of an online widget."),
     )
 
     objects = ContentItemManager()  # Avoid Django 1.10 migrations

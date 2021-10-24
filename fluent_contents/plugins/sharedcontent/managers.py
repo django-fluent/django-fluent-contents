@@ -3,9 +3,7 @@ from django.db.models import Manager, Q
 from parler.managers import TranslatableQuerySet
 
 from fluent_contents import appsettings
-from fluent_contents.plugins.sharedcontent import (
-    appsettings as sharedcontent_appsettings,
-)
+from fluent_contents.plugins.sharedcontent import appsettings as sharedcontent_appsettings
 
 
 class SharedContentQuerySet(TranslatableQuerySet):

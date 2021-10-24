@@ -7,9 +7,7 @@ import threading
 
 from django.core.exceptions import ImproperlyConfigured
 from micawber import Provider, ProviderRegistry, bootstrap_basic, bootstrap_embedly
-from micawber.providers import (
-    bootstrap_noembed,
-)  # Export was missing in 0.2.6 patch, my mistake.
+from micawber.providers import bootstrap_noembed  # Export was missing in 0.2.6 patch, my mistake.
 
 from . import appsettings
 

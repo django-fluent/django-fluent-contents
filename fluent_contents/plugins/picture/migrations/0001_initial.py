@@ -50,9 +50,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "in_new_window",
-                    models.BooleanField(
-                        default=False, verbose_name="Open in a new window"
-                    ),
+                    models.BooleanField(default=False, verbose_name="Open in a new window"),
                 ),
             ],
             options={

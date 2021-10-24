@@ -23,9 +23,7 @@ class PlaceholderFieldWidget(Widget):
 
     class Media:
         js = (
-            "admin/js/vendor/jquery/jquery{}.js".format(
-                "" if settings.DEBUG else ".min"
-            ),
+            "admin/js/vendor/jquery/jquery{}.js".format("" if settings.DEBUG else ".min"),
             "admin/js/jquery.init.js",
             "fluent_contents/admin/cp_admin.js",
             "fluent_contents/admin/cp_data.js",
@@ -64,9 +62,7 @@ class PlaceholderFieldWidget(Widget):
             "other_instance_languages": other_instance_languages,
         }
         return mark_safe(
-            render_to_string(
-                "admin/fluent_contents/placeholderfield/widget.html", context
-            )
+            render_to_string("admin/fluent_contents/placeholderfield/widget.html", context)
         )
 
     @property
@@ -104,6 +100,4 @@ class WysiwygWidget(AdminTextareaWidget):
         else:
             final_attrs["class"] = "cp-wysiwyg-widget"
 
-        return mark_safe(
-            f"<textarea{flatatt(final_attrs)}>{escape(value)}</textarea>"
-        )
+        return mark_safe(f"<textarea{flatatt(final_attrs)}>{escape(value)}</textarea>")

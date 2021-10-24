@@ -8,6 +8,7 @@ from django.utils.text import capfirst
 
 from fluent_contents import appsettings
 from fluent_contents.forms.fields import PlaceholderFormField
+
 from .db import ContentItem, Placeholder
 
 __all__ = ("PlaceholderRelation", "ContentItemRelation", "PlaceholderField")
@@ -66,19 +67,12 @@ class ContentItemRelation(GenericRelation):
 
     def __init__(self, **kwargs):
         super().__init__(
-            to=ContentItem,
-            object_id_field="parent_id",
-            content_type_field="parent_type",
-            **kwargs
+            to=ContentItem, object_id_field="parent_id", content_type_field="parent_type", **kwargs
         )
 
     def bulk_related_objects(self, objs, using=DEFAULT_DB_ALIAS):
         # Fix delete screen. Workaround for https://github.com/django-polymorphic/django-polymorphic/issues/34
-        return (
-            super()
-            .bulk_related_objects(objs)
-            .non_polymorphic()
-        )
+        return super().bulk_related_objects(objs).non_polymorphic()
 
 
 class PlaceholderRel(GenericRel):
@@ -133,9 +127,7 @@ class PlaceholderFieldDescriptor:
             raise Placeholder.DoesNotExist(
                 "Placeholder does not exist for parent {} (type_id: {}, parent_id: {}), slot: '{}'".format(
                     repr(instance),
-                    ContentType.objects.get_for_model(
-                        instance, for_concrete_model=False
-                    ).pk,
+                    ContentType.objects.get_for_model(instance, for_concrete_model=False).pk,
                     instance.pk,
                     self.slot,
                 )
@@ -193,9 +185,7 @@ class PlaceholderField(PlaceholderRelation):
         super().__init__(**kwargs)
 
         # See if a plugin configuration is defined in the settings
-        self._slot_config = (
-            appsettings.FLUENT_CONTENTS_PLACEHOLDER_CONFIG.get(slot) or {}
-        )
+        self._slot_config = appsettings.FLUENT_CONTENTS_PLACEHOLDER_CONFIG.get(slot) or {}
         self._plugins = plugins or self._slot_config.get("plugins") or None
 
         # Overwrite some hardcoded defaults from the base class.

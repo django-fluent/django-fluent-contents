@@ -3,10 +3,7 @@ from functools import partial
 from django.forms import Media
 
 from fluent_contents import extensions
-from fluent_contents.admin.placeholdereditor import (
-    PlaceholderEditorAdmin,
-    PlaceholderEditorInline,
-)
+from fluent_contents.admin.placeholdereditor import PlaceholderEditorAdmin, PlaceholderEditorInline
 from fluent_contents.models import PlaceholderData
 from fluent_contents.models.fields import PlaceholderField
 
@@ -22,9 +19,7 @@ class PlaceholderFieldInline(PlaceholderEditorInline):
     def media(self):
         # Avoid cp_tabs.js for the placeholder field.
         media = super().media
-        return Media(
-            js=[f for f in media._js if not f.endswith("cp_tabs.js")], css=media._css
-        )
+        return Media(js=[f for f in media._js if not f.endswith("cp_tabs.js")], css=media._css)
 
 
 class PlaceholderFieldAdmin(PlaceholderEditorAdmin):
@@ -53,9 +48,7 @@ class PlaceholderFieldAdmin(PlaceholderEditorAdmin):
         obj = kwargs.pop("obj", None)
         if isinstance(db_field, PlaceholderField):
             kwargs["parent_object"] = obj
-        return super().formfield_for_dbfield(
-            db_field, **kwargs
-        )
+        return super().formfield_for_dbfield(db_field, **kwargs)
 
     def get_placeholder_data(self, request, obj=None):
         """

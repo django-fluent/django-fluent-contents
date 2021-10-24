@@ -22,16 +22,12 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "language",
-                    models.CharField(
-                        default="html", max_length=50, verbose_name="Language"
-                    ),
+                    models.CharField(default="html", max_length=50, verbose_name="Language"),
                 ),
                 ("code", models.TextField(verbose_name="Code")),
                 (
                     "linenumbers",
-                    models.BooleanField(
-                        default=False, verbose_name="Show line numbers"
-                    ),
+                    models.BooleanField(default=False, verbose_name="Show line numbers"),
                 ),
             ],
             options={

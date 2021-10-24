@@ -1,4 +1,5 @@
 from article.models import ArticleTextItem
+
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 
 

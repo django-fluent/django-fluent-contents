@@ -21,9 +21,7 @@ class CodePlugin(ContentPlugin):
     def get_context(self, request, instance, **kwargs):
         # Style is not stored in the model,
         # it needs to be a side-wide setting (maybe even in the theme)
-        code = mark_safe(
-            backend.render_code(instance, style_name=appsettings.FLUENT_CODE_STYLE)
-        )
+        code = mark_safe(backend.render_code(instance, style_name=appsettings.FLUENT_CODE_STYLE))
 
         context = super().get_context(request, instance, **kwargs)
         context.update({"code": code})

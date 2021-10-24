@@ -29,6 +29,5 @@ def get_frontend_media(request):
         or re-saving the items (which flushes the cache).
     """
     return (
-        getattr(request, "_fluent_contents_frontend_media", None)
-        or ImmutableMedia.empty_instance
+        getattr(request, "_fluent_contents_frontend_media", None) or ImmutableMedia.empty_instance
     )

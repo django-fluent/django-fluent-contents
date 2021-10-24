@@ -23,9 +23,7 @@ __all__ = (
 )
 
 
-def render_content_items(
-    items, request=None, language=None, template_name=None, cachable=False
-):
+def render_content_items(items, request=None, language=None, template_name=None, cachable=False):
     """
     Render a content items with settings well suited for testing.
     """
@@ -63,9 +61,7 @@ class AppTestCase(TestCase):
             for appname in cls.install_apps:
                 if appname not in settings.INSTALLED_APPS:
                     print(f"Adding {appname} to INSTALLED_APPS")
-                    settings.INSTALLED_APPS = (appname,) + tuple(
-                        settings.INSTALLED_APPS
-                    )
+                    settings.INSTALLED_APPS = (appname,) + tuple(settings.INSTALLED_APPS)
                     run_syncdb = True
 
                     testapp = import_module(appname)
@@ -111,7 +107,5 @@ class AppTestCase(TestCase):
             response.status_code,
             404,
             str(msg_prefix)
-            + "Page at {} should return 404, got {}.".format(
-                url, response.status_code
-            ),
+            + "Page at {} should return 404, got {}.".format(url, response.status_code),
         )

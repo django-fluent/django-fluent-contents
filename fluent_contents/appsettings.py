@@ -18,9 +18,7 @@ FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT = getattr(
     settings, "FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT", False
 )
 
-FLUENT_CONTENTS_PLACEHOLDER_CONFIG = getattr(
-    settings, "FLUENT_CONTENTS_PLACEHOLDER_CONFIG", {}
-)
+FLUENT_CONTENTS_PLACEHOLDER_CONFIG = getattr(settings, "FLUENT_CONTENTS_PLACEHOLDER_CONFIG", {})
 
 # Note: the default language setting is used during the migrations
 FLUENT_DEFAULT_LANGUAGE_CODE = getattr(
@@ -34,9 +32,7 @@ FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE = getattr(
 
 # Allow to disable multisite support.
 # Only used by sharedcontent plugin for now.
-FLUENT_CONTENTS_FILTER_SITE_ID = getattr(
-    settings, "FLUENT_CONTENTS_FILTER_SITE_ID", True
-)
+FLUENT_CONTENTS_FILTER_SITE_ID = getattr(settings, "FLUENT_CONTENTS_FILTER_SITE_ID", True)
 
 # Settings for all PluginHtmlFields:
 FLUENT_TEXT_CLEAN_HTML = getattr(settings, "FLUENT_TEXT_CLEAN_HTML", False)
@@ -52,19 +48,13 @@ def _load_callables(setting_name, setting_value):
         # TODO: replace with import_symbol() or import_func()
         func = import_class(import_path, setting_name)
         if not callable(func):
-            raise ImproperlyConfigured(
-                f"{setting_name} element '{import_path}' is not callable!"
-            )
+            raise ImproperlyConfigured(f"{setting_name} element '{import_path}' is not callable!")
         funcs.append(func)
     return funcs
 
 
-PRE_FILTER_FUNCTIONS = _load_callables(
-    "FLUENT_TEXT_PRE_FILTERS", FLUENT_TEXT_PRE_FILTERS
-)
-POST_FILTER_FUNCTIONS = _load_callables(
-    "FLUENT_TEXT_POST_FILTERS", FLUENT_TEXT_POST_FILTERS
-)
+PRE_FILTER_FUNCTIONS = _load_callables("FLUENT_TEXT_PRE_FILTERS", FLUENT_TEXT_PRE_FILTERS)
+POST_FILTER_FUNCTIONS = _load_callables("FLUENT_TEXT_POST_FILTERS", FLUENT_TEXT_POST_FILTERS)
 
 if FLUENT_TEXT_CLEAN_HTML or FLUENT_TEXT_SANITIZE_HTML:
     try:

@@ -68,9 +68,12 @@ class ContentItemQuerySet(PolymorphicQuerySet):
         else:
             # Since some code operates on a True/str switch, make sure that doesn't drip into this low level code.
             for language_code in language_codes:
-                if not isinstance(
-                    language_code, str
-                ) or language_code.lower() in ("1", "0", "true", "false"):
+                if not isinstance(language_code, str) or language_code.lower() in (
+                    "1",
+                    "0",
+                    "true",
+                    "false",
+                ):
                     raise ValueError(
                         "ContentItemQuerySet.translated() expected language_code to be an ISO code"
                     )
@@ -165,9 +168,7 @@ class ContentItemManager(PolymorphicManager):
         """
         return self.all().parent(parent_object, limit_parent_language)
 
-    def create_for_placeholder(
-        self, placeholder, sort_order=1, language_code=None, **kwargs
-    ):
+    def create_for_placeholder(self, placeholder, sort_order=1, language_code=None, **kwargs):
         """
         Create a Content Item with the given parameters
 

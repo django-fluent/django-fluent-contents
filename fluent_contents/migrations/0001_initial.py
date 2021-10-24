@@ -22,16 +22,12 @@ class Migration(migrations.Migration):
                 ("parent_id", models.IntegerField(null=True)),
                 (
                     "language_code",
-                    models.CharField(
-                        default="", max_length=15, editable=False, db_index=True
-                    ),
+                    models.CharField(default="", max_length=15, editable=False, db_index=True),
                 ),
                 ("sort_order", models.IntegerField(default=1, db_index=True)),
                 (
                     "parent_type",
-                    models.ForeignKey(
-                        to="contenttypes.ContentType", on_delete=models.CASCADE
-                    ),
+                    models.ForeignKey(to="contenttypes.ContentType", on_delete=models.CASCADE),
                 ),
             ],
             options={
@@ -77,9 +73,7 @@ class Migration(migrations.Migration):
                 ("parent_id", models.IntegerField(null=True)),
                 (
                     "title",
-                    models.CharField(
-                        max_length=255, verbose_name="Admin title", blank=True
-                    ),
+                    models.CharField(max_length=255, verbose_name="Admin title", blank=True),
                 ),
                 (
                     "parent_type",

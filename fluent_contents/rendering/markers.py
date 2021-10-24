@@ -23,9 +23,7 @@ def wrap_placeholder_output(html, placeholder):
     return mark_safe(
         '<div class="cp-editable-placeholder" id="cp-editable-placeholder-{slot}" data-placeholder-id="{id}" data-placeholder-slot="{slot}">'
         "{html}"
-        "</div>\n".format(
-            html=conditional_escape(html), id=placeholder.id, slot=placeholder.slot
-        )
+        "</div>\n".format(html=conditional_escape(html), id=placeholder.id, slot=placeholder.slot)
     )
 
 

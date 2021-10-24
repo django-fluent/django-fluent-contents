@@ -29,9 +29,7 @@ class SharedContent(CachedModelMixin, TranslatableModel):
     )
     slug = models.SlugField(
         _("Template code"),
-        help_text=_(
-            "This unique name can be used refer to this content in in templates."
-        ),
+        help_text=_("This unique name can be used refer to this content in in templates."),
     )
     is_cross_site = models.BooleanField(
         _("Share between all sites"),
@@ -80,9 +78,7 @@ class SharedContent(CachedModelMixin, TranslatableModel):
         for site_id in sites:
             for language_code, _ in settings.LANGUAGES:
                 keys.append(
-                    get_shared_content_cache_key_ptr(
-                        site_id, self._old_slug, language_code
-                    )
+                    get_shared_content_cache_key_ptr(site_id, self._old_slug, language_code)
                 )
         return keys
 

@@ -1,7 +1,6 @@
 from abc import abstractmethod
 
 from django.conf import settings
-from django.urls import path
 from django.contrib.admin import ModelAdmin
 from django.contrib.admin.helpers import InlineAdminFormSet
 from django.contrib.contenttypes.admin import GenericInlineModelAdmin
@@ -10,14 +9,12 @@ from django.db.models import signals
 from django.dispatch import receiver
 from django.template import RequestContext
 from django.template.loader import render_to_string
+from django.urls import path
 from django.utils import translation
 from fluent_utils.ajax import JsonResponse
 
 from fluent_contents import extensions
-from fluent_contents.admin.contentitems import (
-    BaseContentItemFormSet,
-    get_content_item_inlines,
-)
+from fluent_contents.admin.contentitems import BaseContentItemFormSet, get_content_item_inlines
 from fluent_contents.admin.genericextensions import BaseInitialGenericInlineFormSet
 from fluent_contents.models import Placeholder
 from fluent_contents.models.managers import get_parent_active_language_choices
@@ -74,9 +71,7 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
         # to display the placeholder panes in a tabbar format.
         # The remaining scripts should just operate the same without it.
         js = (
-            "admin/js/vendor/jquery/jquery{}.js".format(
-                "" if settings.DEBUG else ".min"
-            ),
+            "admin/js/vendor/jquery/jquery{}.js".format("" if settings.DEBUG else ".min"),
             "admin/js/jquery.init.js",
             "fluent_contents/admin/vendor/Sortable.js",
             "fluent_contents/admin/jquery.cookie.js",
@@ -137,9 +132,7 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
 
         # Inject as default parameter to the constructor
         # This is the BaseExtendedGenericInlineFormSet constructor
-        FormSetClass = super().get_formset(
-            request, obj, **kwargs
-        )
+        FormSetClass = super().get_formset(request, obj, **kwargs)
         FormSetClass.__init__ = partialmethod(FormSetClass.__init__, initial=initial)
         return FormSetClass
 
@@ -149,9 +142,7 @@ class PlaceholderEditorInline(GenericInlineModelAdmin):
             parentadmin = self.admin_site._registry[self.parent_model]
         except KeyError:
             raise ImproperlyConfigured(
-                "Model admin for '{}' not found in admin_site!".format(
-                    self.parent_model.__name__
-                )
+                "Model admin for '{}' not found in admin_site!".format(self.parent_model.__name__)
             )
 
         # Do some "type" checking to developers are aided in inheriting their parent ModelAdmin screens with the proper classes.
@@ -214,9 +205,7 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
         """
         Create the inlines for the admin, including the placeholder and contentitem inlines.
         """
-        inlines = super().get_inline_instances(
-            request, *args, **kwargs
-        )
+        inlines = super().get_inline_instances(request, *args, **kwargs)
 
         extra_inline_instances = []
         inlinetypes = self.get_extra_inlines()
@@ -241,7 +230,7 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
         info = opts.app_label, opts.model_name
         return [
             path(
-                '<int:object_id>/api/get_placeholder_data/',
+                "<int:object_id>/api/get_placeholder_data/",
                 self.admin_site.admin_view(self.get_placeholder_data_view),
                 name="{}_{}_get_placeholder_data".format(*info),
             )
@@ -279,9 +268,7 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
 
     def _get_object_formset_data(self, request, obj):
         inline_instances = self.get_inline_instances(request, obj)
-        placeholder_slots = dict(
-            Placeholder.objects.parent(obj).values_list("id", "slot")
-        )
+        placeholder_slots = dict(Placeholder.objects.parent(obj).values_list("id", "slot"))
         all_forms = []
 
         formsets_with_inlines = self.get_formsets_with_inlines(request, obj=obj)
@@ -302,9 +289,7 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
         all_forms.sort(key=lambda x: (x["placeholder_slot"], x["sort_order"]))
         return all_forms
 
-    def _get_contentitem_formset_html(
-        self, request, obj, FormSet, inline, placeholder_slots
-    ):
+    def _get_contentitem_formset_html(self, request, obj, FormSet, inline, placeholder_slots):
         # Passing serialized object fields to the client doesn't work,
         # as some form fields (e.g. picture field or MultiValueField) have a different representation.
         # The only way to pass a form copy to the client is by actually rendering it.
@@ -360,18 +345,12 @@ class PlaceholderEditorAdmin(PlaceholderEditorBaseMixin, ModelAdmin):
         # That ID did exist at the beginning of the transaction, but won't be when all forms are saved.
         # Pass the knowledge of deleted placeholders to the ContentItem formset, so it can deal with it.
         if isinstance(formset, BaseContentItemFormSet):
-            formset._deleted_placeholders = getattr(
-                request, "_deleted_placeholders", ()
-            )
+            formset._deleted_placeholders = getattr(request, "_deleted_placeholders", ())
 
-        saved_instances = super().save_formset(
-            request, form, formset, change
-        )
+        saved_instances = super().save_formset(request, form, formset, change)
 
         if isinstance(formset, PlaceholderInlineFormSet):
-            request._deleted_placeholders = [
-                obj._old_pk for obj in formset.deleted_objects
-            ]
+            request._deleted_placeholders = [obj._old_pk for obj in formset.deleted_objects]
 
         return saved_instances
 

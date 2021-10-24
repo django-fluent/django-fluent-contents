@@ -10,11 +10,11 @@ For example, use:
  * ``FORM_DESIGNER_WIDGET_CLASSES`` to define which widgets are allowed.
 """
 from django.contrib.messages.api import get_messages
+from form_designer import settings as form_designer_settings
+from form_designer.views import process_form
 
 from fluent_contents.extensions import ContentPlugin, plugin_pool
 from fluent_contents.plugins.formdesignerlink.models import FormDesignerLink
-from form_designer import settings as form_designer_settings
-from form_designer.views import process_form
 
 
 @plugin_pool.register
@@ -37,9 +37,7 @@ class FormDesignerLinkPlugin(ContentPlugin):
 
         # The process_form() function is designed with Django CMS in mind,
         # and responds to both the GET and POST request.
-        context = process_form(
-            request, instance.form_definition, {}, disable_redirection=True
-        )
+        context = process_form(request, instance.form_definition, {}, disable_redirection=True)
         # Add no matter what, because the template needs it.
         context["messages"] = get_messages(request)
 

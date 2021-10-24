@@ -71,9 +71,7 @@ def plugin_categories_to_choices(categories):
     choices = []
     for category, items in categories.items():
         if items:
-            plugin_tuples = tuple(
-                (plugin.type_name, plugin.verbose_name) for plugin in items
-            )
+            plugin_tuples = tuple((plugin.type_name, plugin.verbose_name) for plugin in items)
             if category:
                 choices.append((category, plugin_tuples))
             else:
@@ -112,8 +110,6 @@ class GetFirstOfNode(Node):
         tag_name, choices, _ = parse_token_kwargs(parser, bits, allowed_kwargs=())
 
         if var_name is None:
-            raise TemplateSyntaxError(
-                f"Expected syntax: {{% {tag_name} val1 val2 as val %}}"
-            )
+            raise TemplateSyntaxError(f"Expected syntax: {{% {tag_name} val1 val2 as val %}}")
 
         return cls(choices, var_name)

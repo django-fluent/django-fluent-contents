@@ -22,7 +22,6 @@ from fluent_contents.models.managers import (
 )
 from fluent_contents.models.mixins import CachedModelMixin
 
-
 # Leave flag so testing this feature is possible.
 OPTIMIZE_TRANSLATED_MODEL = True
 
@@ -72,9 +71,7 @@ class Placeholder(models.Model):
     # parent_type was envisioned to be null for global placeholders,
     # but the 'sharedcontent' plugin solves this issue in a better way.
     # parent_id needs to allow Null, because Placeholder is created before parent is saved.
-    parent_type = models.ForeignKey(
-        ContentType, on_delete=models.CASCADE, null=True, blank=True
-    )
+    parent_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
     parent_id = models.IntegerField(null=True)
     parent = GenericForeignKey("parent_type", "parent_id")
 
@@ -129,17 +126,13 @@ class Placeholder(models.Model):
             # Filtering by parent should return the same results,
             # unless the database is broken by having objects reference the wrong placeholders.
             # Additionally, the `limit_parent_language` argument is supported.
-            item_qs = item_qs.parent(
-                parent, limit_parent_language=limit_parent_language
-            )
+            item_qs = item_qs.parent(parent, limit_parent_language=limit_parent_language)
         else:
             # For accurate rendering filtering by parent is needed.
             # Otherwise, we risk returning stale objects which are indeed attached to this placeholder,
             # but belong to a different parent. This can only happen when manually changing database contents.
             # The admin won't display anything, as it always filters the parent. Hence, do the same for other queries.
-            item_qs = item_qs.filter(
-                parent_type_id=self.parent_type_id, parent_id=self.parent_id
-            )
+            item_qs = item_qs.filter(parent_type_id=self.parent_type_id, parent_id=self.parent_id)
 
         return item_qs
 
@@ -203,20 +196,13 @@ class ContentItemMetaClass(PolymorphicModelBase):
                     # Make sure that the Django migrations also pick up this change!
                     # Changing the db_table beforehand might be cleaner,
                     # but also requires duplicating the whole algorithm that Django uses.
-                    new_class._meta.original_attrs[
-                        "db_table"
-                    ] = new_class._meta.db_table
+                    new_class._meta.original_attrs["db_table"] = new_class._meta.db_table
 
             # Enforce good manners. The name is often not visible, except for the delete page.
             if not new_class._meta.abstract:
-                if (
-                    not hasattr(new_class, "__str__")
-                    or new_class.__str__ == ContentItem.__str__
-                ):
+                if not hasattr(new_class, "__str__") or new_class.__str__ == ContentItem.__str__:
                     raise TypeError(
-                        "The {} class should implement a __str__() function.".format(
-                            name
-                        )
+                        "The {} class should implement a __str__() function.".format(name)
                     )
 
         return new_class
@@ -295,9 +281,7 @@ class ContentItem(CachedModelMixin, PolymorphicModel, metaclass=ContentItemMetaC
     parent_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     parent_id = models.IntegerField(null=True)
     parent = GenericForeignKey("parent_type", "parent_id")
-    language_code = models.CharField(
-        max_length=15, db_index=True, editable=False, default=""
-    )
+    language_code = models.CharField(max_length=15, db_index=True, editable=False, default="")
 
     # Deleting a placeholder should not remove the items, only makes them orphaned.
     # Also, when updating the page, the PlaceholderEditorInline first adds/deletes placeholders before the items are updated.
@@ -328,9 +312,7 @@ class ContentItem(CachedModelMixin, PolymorphicModel, metaclass=ContentItemMetaC
         # Note this representation is optimized for the admin delete page.
         # Make sure that the
         try:
-            real_type = ContentType.objects.get_for_id(
-                self.polymorphic_ctype_id
-            ).model_class()
+            real_type = ContentType.objects.get_for_id(self.polymorphic_ctype_id).model_class()
         except ContentType.DoesNotExist:
             real_type_text = "(type deleted)"
         else:
@@ -342,9 +324,7 @@ class ContentItem(CachedModelMixin, PolymorphicModel, metaclass=ContentItemMetaC
         return "'{type} {id:d}' in '{language} {placeholder}'".format(
             type=real_type_text,
             id=self.id or 0,
-            language=get_language_title(self.language_code)
-            if self.language_code
-            else None,
+            language=get_language_title(self.language_code) if self.language_code else None,
             placeholder=self.placeholder,
         )
 

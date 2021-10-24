@@ -61,7 +61,5 @@ def sanitize_html(input):
     >>> sanitize_html('foobar<p style="color:red; remove:me; background-image: url(http://example.com/test.php?query_string=bad);">adf<script>alert("Uhoh!")</script><i></p>abc</i>')
     u'foobar<p style="color: red;">adf&lt;script&gt;alert("Uhoh!")&lt;/script&gt;<i></i></p><i>abc</i>'
     """
-    warnings.warn(
-        "Please use clean_html(input, sanitize=True) instead", DeprecationWarning
-    )
+    warnings.warn("Please use clean_html(input, sanitize=True) instead", DeprecationWarning)
     return clean_html(input, sanitize=True)

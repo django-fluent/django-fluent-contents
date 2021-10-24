@@ -1,6 +1,6 @@
+from article.models import Article, ArticleTextItem
 from django.contrib import admin
 
-from article.models import Article, ArticleTextItem
 from fluent_contents.admin import PlaceholderFieldAdmin
 
 

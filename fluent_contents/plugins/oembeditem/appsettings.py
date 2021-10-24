@@ -7,9 +7,7 @@ FLUENT_OEMBED_SOURCE = getattr(
 )  # basic, embedly, noembed, list
 
 # Allow to extend any source, whether it's basic/embedly/noembed/list
-FLUENT_OEMBED_EXTRA_PROVIDERS = tuple(
-    getattr(settings, "FLUENT_OEMBED_EXTRA_PROVIDERS", ())
-)
+FLUENT_OEMBED_EXTRA_PROVIDERS = tuple(getattr(settings, "FLUENT_OEMBED_EXTRA_PROVIDERS", ()))
 
 # Make sure embed are https, when the site is hosted via https.
 FLUENT_OEMBED_FORCE_HTTPS = getattr(
@@ -23,9 +21,7 @@ FLUENT_OEMBED_FORCE_HTTPS = getattr(
 FLUENT_OEMBED_PROVIDER_LIST = getattr(settings, "FLUENT_OEMBED_PROVIDER_LIST", ())
 
 # Keep this for backwards compatibility, it's no longer advertised in the docs.
-FLUENT_OEMBED_PROVIDER_LIST += tuple(
-    getattr(settings, "FLUENT_OEMBED_PROVIDER_LIST_EXTRA", ())
-)
+FLUENT_OEMBED_PROVIDER_LIST += tuple(getattr(settings, "FLUENT_OEMBED_PROVIDER_LIST_EXTRA", ()))
 
 # Embedly API key
 MICAWBER_EMBEDLY_KEY = getattr(settings, "MICAWBER_EMBEDLY_KEY", None)

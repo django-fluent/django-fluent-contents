@@ -24,13 +24,9 @@ class PictureItem(ContentItem):
 
     image = PluginImageField(_("Image"), upload_to=appsettings.FLUENT_PICTURE_UPLOAD_TO)
     caption = models.TextField(_("Caption"), blank=True)
-    align = models.CharField(
-        _("Align"), max_length=10, choices=ALIGN_CHOICES, blank=True
-    )
+    align = models.CharField(_("Align"), max_length=10, choices=ALIGN_CHOICES, blank=True)
     url = PluginUrlField(_("URL"), blank=True)
-    in_new_window = models.BooleanField(
-        _("Open in a new window"), default=False, blank=True
-    )
+    in_new_window = models.BooleanField(_("Open in a new window"), default=False, blank=True)
 
     objects = ContentItemManager()  # Avoid Django 1.10 migrations
 

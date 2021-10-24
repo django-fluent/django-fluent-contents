@@ -1,7 +1,4 @@
-from django.contrib.contenttypes.admin import (
-    BaseGenericInlineFormSet,
-    GenericInlineModelAdmin,
-)
+from django.contrib.contenttypes.admin import BaseGenericInlineFormSet, GenericInlineModelAdmin
 
 from fluent_contents import appsettings, extensions
 from fluent_contents.forms import ContentItemForm
@@ -18,9 +15,7 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
         if instance:
             self.current_language = get_parent_language_code(instance)
             if self.current_language and "queryset" in kwargs:
-                kwargs["queryset"] = kwargs["queryset"].filter(
-                    language_code=self.current_language
-                )
+                kwargs["queryset"] = kwargs["queryset"].filter(language_code=self.current_language)
         else:
             self.current_language = appsettings.FLUENT_CONTENTS_DEFAULT_LANGUAGE_CODE
 
@@ -62,9 +57,7 @@ class BaseContentItemFormSet(BaseGenericInlineFormSet):
             ]  # could already be updated, or still point to previous placeholder.
 
             if not form_placeholder or form_placeholder.slot != form_slot:
-                desired_placeholder = Placeholder.objects.parent(self.instance).get(
-                    slot=form_slot
-                )
+                desired_placeholder = Placeholder.objects.parent(self.instance).get(slot=form_slot)
                 form.cleaned_data["placeholder"] = desired_placeholder
                 form.instance.placeholder = desired_placeholder
 
@@ -128,23 +121,17 @@ class BaseContentItemInline(GenericInlineModelAdmin):
         return media
 
     def get_formset(self, request, obj=None, **kwargs):
-        FormSet = super().get_formset(
-            request, obj=obj, **kwargs
-        )
+        FormSet = super().get_formset(request, obj=obj, **kwargs)
 
         # Make sure that the automatically generated form does have all our common fields first.
         # This allows the admin CSS to pick .form-row:last-child
         form = FormSet.form
         first_fields = list(ContentItemForm.base_fields.keys())
-        field_order = first_fields + [
-            f for f in form.base_fields.keys() if f not in first_fields
-        ]
+        field_order = first_fields + [f for f in form.base_fields.keys() if f not in first_fields]
 
         # Recreate collections.OrderedDict object
         base_fields = form.base_fields
-        form.base_fields = base_fields.__class__(
-            (k, base_fields[k]) for k in field_order
-        )
+        form.base_fields = base_fields.__class__((k, base_fields[k]) for k in field_order)
         return FormSet
 
     def get_fieldsets(self, request, obj=None):
@@ -162,9 +149,7 @@ class BaseContentItemInline(GenericInlineModelAdmin):
             kwargs = dict(attrs, **kwargs)
         except KeyError:
             pass
-        return super().formfield_for_dbfield(
-            db_field, **kwargs
-        )
+        return super().formfield_for_dbfield(db_field, **kwargs)
 
 
 def get_content_item_inlines(plugins=None, base=BaseContentItemInline):

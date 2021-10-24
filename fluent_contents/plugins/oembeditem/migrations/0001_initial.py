@@ -31,28 +31,20 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "embed_max_width",
-                    models.PositiveIntegerField(
-                        null=True, verbose_name="Max width", blank=True
-                    ),
+                    models.PositiveIntegerField(null=True, verbose_name="Max width", blank=True),
                 ),
                 (
                     "embed_max_height",
-                    models.PositiveIntegerField(
-                        null=True, verbose_name="Max height", blank=True
-                    ),
+                    models.PositiveIntegerField(null=True, verbose_name="Max height", blank=True),
                 ),
                 (
                     "type",
-                    models.CharField(
-                        max_length=20, null=True, editable=False, blank=True
-                    ),
+                    models.CharField(max_length=20, null=True, editable=False, blank=True),
                 ),
                 ("url", models.URLField(null=True, editable=False, blank=True)),
                 (
                     "title",
-                    models.CharField(
-                        max_length=512, null=True, editable=False, blank=True
-                    ),
+                    models.CharField(max_length=512, null=True, editable=False, blank=True),
                 ),
                 (
                     "description",
@@ -60,16 +52,12 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "author_name",
-                    models.CharField(
-                        max_length=255, null=True, editable=False, blank=True
-                    ),
+                    models.CharField(max_length=255, null=True, editable=False, blank=True),
                 ),
                 ("author_url", models.URLField(null=True, editable=False, blank=True)),
                 (
                     "provider_name",
-                    models.CharField(
-                        max_length=255, null=True, editable=False, blank=True
-                    ),
+                    models.CharField(max_length=255, null=True, editable=False, blank=True),
                 ),
                 (
                     "provider_url",

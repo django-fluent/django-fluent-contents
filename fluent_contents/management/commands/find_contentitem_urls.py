@@ -42,9 +42,7 @@ class Command(BaseCommand):
         urls = []
 
         # Look through all registered models.
-        for model in sorted(
-            self.get_models(), key=lambda model: model._meta.model_name
-        ):
+        for model in sorted(self.get_models(), key=lambda model: model._meta.model_name):
             try:
                 urls += self.inspect_model(model)
             except ProgrammingError as e:
@@ -67,37 +65,25 @@ class Command(BaseCommand):
         """
         # See which interesting fields the model holds.
         url_fields = sorted(
-            f
-            for f in model._meta.fields
-            if isinstance(f, (PluginUrlField, models.URLField))
+            f for f in model._meta.fields if isinstance(f, (PluginUrlField, models.URLField))
         )
         file_fields = sorted(
-            f
-            for f in model._meta.fields
-            if isinstance(f, (PluginImageField, models.FileField))
+            f for f in model._meta.fields if isinstance(f, (PluginImageField, models.FileField))
         )
         html_fields = sorted(
-            f
-            for f in model._meta.fields
-            if isinstance(f, (models.TextField, PluginHtmlField))
+            f for f in model._meta.fields if isinstance(f, (models.TextField, PluginHtmlField))
         )
         all_fields = [f.name for f in (file_fields + html_fields + url_fields)]
         if not all_fields:
             return []
 
         if model.__name__ in self.exclude:
-            self.stderr.write(
-                "Skipping {} ({})\n".format(model.__name__, ", ".join(all_fields))
-            )
+            self.stderr.write("Skipping {} ({})\n".format(model.__name__, ", ".join(all_fields)))
             return []
 
-        sys.stderr.write(
-            "Inspecting {} ({})\n".format(model.__name__, ", ".join(all_fields))
-        )
+        sys.stderr.write("Inspecting {} ({})\n".format(model.__name__, ", ".join(all_fields)))
 
-        q_notnull = reduce(
-            operator.or_, (Q(**{f"{f}__isnull": False}) for f in all_fields)
-        )
+        q_notnull = reduce(operator.or_, (Q(**{f"{f}__isnull": False}) for f in all_fields))
         qs = model.objects.filter(q_notnull).order_by("pk")
 
         urls = []
@@ -135,9 +121,7 @@ class Command(BaseCommand):
 
     def show_match(self, object, value):
         if self.verbosity >= 2:
-            self.stdout.write(
-                f"{object.__class__.__name__}#{object.pk}: \t{value}"
-            )
+            self.stdout.write(f"{object.__class__.__name__}#{object.pk}: \t{value}")
 
     def extract_html_urls(self, html):
         """

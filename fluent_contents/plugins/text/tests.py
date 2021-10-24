@@ -26,10 +26,10 @@ class TextPluginTests(TestCase):
         """
         Test againt https://github.com/html5lib/html5lib-python/issues/189
         """
-        msg = "This version of html5lib is known to break relative URLs!\nUse version 0.999 instead."
-        self.assertTrue(
-            html5lib.__version__ not in ["1.0b5", "1.0b6", "0.9999", "0.99999"], msg
+        msg = (
+            "This version of html5lib is known to break relative URLs!\nUse version 0.999 instead."
         )
+        self.assertTrue(html5lib.__version__ not in ["1.0b5", "1.0b6", "0.9999", "0.99999"], msg)
 
     def test_clean_html5lib(self):
         """
@@ -37,27 +37,17 @@ class TextPluginTests(TestCase):
         """
         cleaned = clean_html(self.HTML1_ORIGINAL)
         self.assertTrue("460" in cleaned, f"Missing elements in {cleaned}")
-        self.assertTrue(
-            "float: left" in cleaned, f"Missing elements in {cleaned}"
-        )
-        self.assertTrue(
-            "/media/image.jpg" in cleaned, f"Missing elements in {cleaned}"
-        )
-        self.assertTrue(
-            "/media/image2.jpg" in cleaned, f"Missing elements in {cleaned}"
-        )
+        self.assertTrue("float: left" in cleaned, f"Missing elements in {cleaned}")
+        self.assertTrue("/media/image.jpg" in cleaned, f"Missing elements in {cleaned}")
+        self.assertTrue("/media/image2.jpg" in cleaned, f"Missing elements in {cleaned}")
 
     def test_sanitize_html5lib(self):
         """
         Test whether the sanitize feature doesn't completely break pages.
         """
         sanitized = clean_html(self.HTML1_ORIGINAL, sanitize=True)
-        self.assertTrue(
-            "460" in sanitized, f"Missing elements in {sanitized}"
-        )
-        self.assertTrue(
-            "float: left" in sanitized, f"Missing elements in {sanitized}"
-        )
+        self.assertTrue("460" in sanitized, f"Missing elements in {sanitized}")
+        self.assertTrue("float: left" in sanitized, f"Missing elements in {sanitized}")
         self.assertTrue(
             "/media/image.jpg" in sanitized,
             f"Missing elements in {sanitized}",

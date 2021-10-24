@@ -17,9 +17,7 @@ class PicturePlugin(ContentPlugin):
 
     formfield_overrides = {
         "caption": {
-            "widget": AdminTextareaWidget(
-                attrs={"cols": 30, "rows": 4, "class": "vTextField"}
-            )
+            "widget": AdminTextareaWidget(attrs={"cols": 30, "rows": 4, "class": "vTextField"})
         }
     }
     radio_fields = {"align": ContentPlugin.HORIZONTAL}

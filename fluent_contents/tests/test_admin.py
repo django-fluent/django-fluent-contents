@@ -10,10 +10,7 @@ from django.urls import reverse
 from fluent_contents.models import Placeholder
 from fluent_contents.tests import factories
 from fluent_contents.tests.testapp.admin import PlaceholderFieldTestPageAdmin
-from fluent_contents.tests.testapp.models import (
-    PlaceholderFieldTestPage,
-    RawHtmlTestItem,
-)
+from fluent_contents.tests.testapp.models import PlaceholderFieldTestPage, RawHtmlTestItem
 from fluent_contents.tests.utils import AppTestCase
 
 
@@ -46,9 +43,7 @@ class AdminTest(AppTestCase):
         """
         Test adding an object with placeholder field via the admin.
         """
-        self.admin_site.register(
-            PlaceholderFieldTestPage, PlaceholderFieldTestPageAdmin
-        )
+        self.admin_site.register(PlaceholderFieldTestPage, PlaceholderFieldTestPageAdmin)
         modeladmin = self.admin_site._registry[PlaceholderFieldTestPage]
 
         # Get all post data.
@@ -104,19 +99,13 @@ class AdminTest(AppTestCase):
         Testing how the copy button works.
         It calls the ``get_placeholder_data_view`` function.
         """
-        self.admin_site.register(
-            PlaceholderFieldTestPage, PlaceholderFieldTestPageAdmin
-        )
+        self.admin_site.register(PlaceholderFieldTestPage, PlaceholderFieldTestPageAdmin)
         modeladmin = self.admin_site._registry[PlaceholderFieldTestPage]
 
         page = factories.create_page()
         placeholder = factories.create_placeholder(page=page)
-        item1 = factories.create_content_item(
-            RawHtmlTestItem, placeholder=placeholder, html="AA"
-        )
-        item2 = factories.create_content_item(
-            RawHtmlTestItem, placeholder=placeholder, html="BB"
-        )
+        item1 = factories.create_content_item(RawHtmlTestItem, placeholder=placeholder, html="AA")
+        item2 = factories.create_content_item(RawHtmlTestItem, placeholder=placeholder, html="BB")
 
         request = self._get_request(admin_urlname(page._meta, "get_placeholder_data"))
         data = modeladmin.get_placeholder_data_view(request, page.pk).jsondata

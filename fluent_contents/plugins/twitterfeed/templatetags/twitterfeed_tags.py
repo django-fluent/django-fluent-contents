@@ -4,9 +4,7 @@ from django.utils.safestring import mark_safe
 try:
     from twitter_text import TwitterText
 except ImportError:
-    raise ImportError(
-        "The 'twitter-text' package is required to use the 'twitterfeed' plugin."
-    )
+    raise ImportError("The 'twitter-text' package is required to use the 'twitterfeed' plugin.")
 
 register = Library()
 

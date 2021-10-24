@@ -63,9 +63,7 @@ class RenderingTests(AppTestCase):
         Test that 'class FrontendMedia' works.
         """
         placeholder = factories.create_placeholder()
-        factories.create_content_item(
-            MediaTestItem, placeholder=placeholder, html="MEDIA_TEST"
-        )
+        factories.create_content_item(MediaTestItem, placeholder=placeholder, html="MEDIA_TEST")
 
         output = rendering.render_placeholder(self.dummy_request, placeholder)
         self.assertEqual(output.html.strip(), "MEDIA_TEST")
@@ -76,9 +74,7 @@ class RenderingTests(AppTestCase):
         cache.clear()
         page = factories.create_page()
         placeholder = factories.create_placeholder(page=page)
-        factories.create_content_item(
-            RedirectTestItem, placeholder=placeholder, html="MEDIA_TEST"
-        )
+        factories.create_content_item(RedirectTestItem, placeholder=placeholder, html="MEDIA_TEST")
 
         response = self.client.get(reverse("testpage", args=(page.pk,)))
         self.assertTrue(response.status_code, 301)
@@ -115,18 +111,12 @@ class RenderingTests(AppTestCase):
         Rendered plugins should have access to the CSRF token
         """
         request = RequestFactory().get("/")
-        request.META[
-            "CSRF_COOKIE"
-        ] = "TEST1TEST2"  # Not literally used as of Django 1.10
+        request.META["CSRF_COOKIE"] = "TEST1TEST2"  # Not literally used as of Django 1.10
 
         template = Template("{% csrf_token %}")
         context = PluginContext(request)
-        self.assertTrue(
-            context.get("csrf_token", None), "csrf_token not found in context"
-        )
-        self.assertNotEqual(
-            str(context["csrf_token"]), "NOTPROVIDED", "csrf_token is NOTPROVIDED"
-        )
+        self.assertTrue(context.get("csrf_token", None), "csrf_token not found in context")
+        self.assertNotEqual(str(context["csrf_token"]), "NOTPROVIDED", "csrf_token is NOTPROVIDED")
         self.assertTrue(
             "csrfmiddlewaretoken" in template.render(context),
             "csrf_token not found in template",

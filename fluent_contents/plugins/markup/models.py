@@ -70,11 +70,7 @@ class MarkupLanguageManager(ContentItemManager):
         self.fixed_language = fixed_language
 
     def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .filter(language=self.fixed_language)
-        )
+        return super().get_queryset().filter(language=self.fixed_language)
 
 
 def _create_markup_model(fixed_language):

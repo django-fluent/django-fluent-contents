@@ -53,6 +53,4 @@ class SharedContentPlugin(ContentPlugin):
         # Provide the search text for all items stored within this object.
         # This gives recursion the rendering function.
         shared_content = instance.shared_content
-        return render_placeholder_search_text(
-            shared_content.contents, fallback_language=True
-        )
+        return render_placeholder_search_text(shared_content.contents, fallback_language=True)

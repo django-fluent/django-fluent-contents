@@ -1,9 +1,9 @@
 from django.db import models, transaction
 from django.urls import reverse
 from mptt.models import MPTTModel
+from simplecms import appconfig
 
 from fluent_contents.models import ContentItemRelation, PlaceholderRelation
-from simplecms import appconfig
 
 
 class Page(MPTTModel):

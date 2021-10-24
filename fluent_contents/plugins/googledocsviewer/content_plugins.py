@@ -1,8 +1,9 @@
 """
 Google apps widgets for your site.
 """
-from django.utils.html import escape
 from urllib.parse import quote
+
+from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
 from fluent_contents.extensions import ContentPlugin, plugin_pool

@@ -1,0 +1,13 @@
+[tool.isort]
+profile = "black"
+line_length = 99
+
+[tool.black]
+line-length = 99
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | dist
+)/
+'''

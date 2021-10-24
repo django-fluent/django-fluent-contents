@@ -11,7 +11,8 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "contentitem_ptr",
-                    models.OneToOneField(on_delete=models.CASCADE, 
+                    models.OneToOneField(
+                        on_delete=models.CASCADE,
                         parent_link=True,
                         auto_created=True,
                         primary_key=True,
@@ -34,9 +35,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "amount",
-                    models.PositiveSmallIntegerField(
-                        default=5, verbose_name="Number of results"
-                    ),
+                    models.PositiveSmallIntegerField(default=5, verbose_name="Number of results"),
                 ),
                 (
                     "footer_text",
@@ -68,7 +67,8 @@ class Migration(migrations.Migration):
             fields=[
                 (
                     "contentitem_ptr",
-                    models.OneToOneField(on_delete=models.CASCADE, 
+                    models.OneToOneField(
+                        on_delete=models.CASCADE,
                         parent_link=True,
                         auto_created=True,
                         primary_key=True,
@@ -96,9 +96,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "amount",
-                    models.PositiveSmallIntegerField(
-                        default=5, verbose_name="Number of results"
-                    ),
+                    models.PositiveSmallIntegerField(default=5, verbose_name="Number of results"),
                 ),
                 (
                     "footer_text",
