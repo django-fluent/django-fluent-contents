@@ -57,6 +57,7 @@ if not settings.configured:
             "django.contrib.messages.middleware.MessageMiddleware",
             "fluent_contents.middleware.HttpRedirectRequestMiddleware",
         ),
+        SECRET_KEY="testtest",
         TEMPLATES=[
             {
                 "BACKEND": "django.template.backends.django.DjangoTemplates",

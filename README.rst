@@ -9,8 +9,8 @@ django-fluent-contents
 .. image:: http://unmaintained.tech/badge.svg
     :target: http://unmaintained.tech
     :alt: No Maintenance Intended
-.. image:: https://img.shields.io/travis/django-fluent/django-fluent-contents/master.svg?branch=master
-    :target: http://travis-ci.org/django-fluent/django-fluent-contents
+.. image:: https://github.com/django-fluent/django-fluent-contents/actions/workflows/tests.yaml/badge.svg?branch=master
+    :target: https://github.com/django-fluent/django-fluent-contents/actions/workflows/tests.yaml
 .. image:: https://img.shields.io/pypi/v/django-fluent-contents.svg
     :target: https://pypi.python.org/pypi/django-fluent-contents/
 .. image:: https://img.shields.io/pypi/l/django-fluent-contents.svg
