@@ -1,6 +1,20 @@
 Changelog
 =========
 
+Changes in 3.0 (2021-11-17)
+---------------------------
+
+* Added Django 4 compatibility.
+* Fixed OEmbed maxwidth/maxheight parameters.
+* Fixed using request as positional arg in ``PlaceholderFieldAdmin.formfield_for_dbfield()``.
+* Fixed unneeded warnings from ``placeholder_tags`` usage.
+* Fixed keeping a lock unneededly when app loading was complete.
+* Fixed ``HttpRedirectRequest`` to operate on a lazy value.
+* Replaced Travis with GitHub actions.
+* Dropped Python 2.7 support.
+* Dropped Django 1.11, 2.0, 2.1 support.
+
+
 Changes in 2.0.7 (2020-01-04)
 -----------------------------
 
