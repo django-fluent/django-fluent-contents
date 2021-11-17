@@ -8,6 +8,7 @@ exclude = '''
 /(
     \.git
   | \.venv
+  | \.tox
   | dist
 )/
 '''
