@@ -1,6 +1,6 @@
 # for readthedocs
 # Remaining requirements are picked up from setup.py
-Django==3.2.9
+Django==3.2.14
 django-fluent-utils == 2.0.1
 django-mptt == 0.13.4
 django-parler == 2.2.1
