@@ -13,6 +13,7 @@ from fluent_contents.admin import PlaceholderEditorAdmin
 from fluent_contents.analyzer import get_template_placeholder_data
 
 
+@admin.register(Page)
 class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
     """
     Administration screen for pages
@@ -27,7 +28,6 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
     def cached_url(self, page):
         return mark_safe(f'<a href="{page.get_absolute_url()}">{page._cached_url}</a>')
 
-    cached_url.allow_tags = True
 
     # This is where the magic happens.
     # Tell the base class which tabs to create
@@ -83,4 +83,3 @@ class PageAdmin(PlaceholderEditorAdmin, MPTTModelAdmin):
         return HttpResponse(jsonstr, content_type="application/json", status=status)
 
 
-admin.site.register(Page, PageAdmin)

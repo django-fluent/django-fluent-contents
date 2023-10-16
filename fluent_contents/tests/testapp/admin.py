@@ -5,6 +5,7 @@ from fluent_contents.admin import PlaceholderFieldAdmin
 from .models import PlaceholderFieldTestPage
 
 
+@admin.register(PlaceholderFieldTestPage)
 class PlaceholderFieldTestPageAdmin(PlaceholderFieldAdmin):
     """
     Admin interface for the PlaceholderFieldTestPage model.
@@ -13,4 +14,3 @@ class PlaceholderFieldTestPageAdmin(PlaceholderFieldAdmin):
     pass
 
 
-admin.site.register(PlaceholderFieldTestPage, PlaceholderFieldTestPageAdmin)

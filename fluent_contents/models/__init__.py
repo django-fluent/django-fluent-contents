@@ -151,10 +151,7 @@ class ContentItemOutput(SafeData):
         return str(self).__getitem__(item)
 
     def __getstate__(self):
-        if django.VERSION >= (2, 2):
-            return (str(self.html), self.media._css_lists, self.media._js_lists)
-        else:
-            return (str(self.html), self.media._css, self.media._js)
+        return (str(self.html), self.media._css_lists, self.media._js_lists)
 
     def __setstate__(self, state):
         # Handle pickling manually, otherwise invokes __getattr__ in a loop.
@@ -167,19 +164,13 @@ class ContentItemOutput(SafeData):
         if not css and not js:
             self.media = ImmutableMedia.empty_instance
         else:
-            if django.VERSION >= (2, 2):
-                if isinstance(css, dict):
-                    # cache from 2.1 version, convert to lists
-                    self.media = Media(css=css, js=js)
-                else:
-                    self.media = Media()
-                    self.media._css_lists = css
-                    self.media._js_lists = js
+            if isinstance(css, dict):
+                # cache from 2.1 version, convert to lists
+                self.media = Media(css=css, js=js)
             else:
-                # Recover object for Django 2.1 and below
-                self.media = ImmutableMedia()
-                self.media._css = css
-                self.media._js = js
+                self.media = Media()
+                self.media._css_lists = css
+                self.media._js_lists = js
 
     def _insert_media(self, media):
         """
@@ -194,57 +185,26 @@ class ContentItemOutput(SafeData):
 
 
 # Avoid continuous construction of Media objects.
-if django.VERSION >= (2, 2):
 
-    class ImmutableMedia(Media):
-        #: The empty object (a shared instance of this class)
-        empty_instance = None
+class ImmutableMedia(Media):
+    #: The empty object (a shared instance of this class)
+    empty_instance = None
 
-        def __init__(self, **kwargs):
-            if kwargs:
-                # This wasn't used internally at all, but check if any third party packages did this.
-                raise ValueError(
-                    "Providing css/js to ImmutableMedia is no longer supported on Django 2.2+"
-                )
-            super().__init__()
+    def __init__(self, **kwargs):
+        if kwargs:
+            # This wasn't used internally at all, but check if any third party packages did this.
+            raise ValueError(
+                "Providing css/js to ImmutableMedia is no longer supported on Django 2.2+"
+            )
+        super().__init__()
 
-        def __add__(self, other):
-            # Django 2.2 no longer provides add_js/add_css,
-            # making the Media object behave as immutable.
-            # 'other' could also be ImmutableMedia.empty_instance
-            return other
+    def __add__(self, other):
+        # Django 2.2 no longer provides add_js/add_css,
+        # making the Media object behave as immutable.
+        # 'other' could also be ImmutableMedia.empty_instance
+        return other
 
 
-else:
-
-    class ImmutableMedia(Media):
-        #: The empty object (a shared instance of this class)
-        empty_instance = None
-
-        def __init__(self, **kwargs):
-            self._css = {}
-            self._js = []
-
-            if kwargs:
-                Media.add_css(self, kwargs.get("css", None))
-                Media.add_js(self, kwargs.get("js", None))
-
-        def add_css(self, data):
-            raise RuntimeError("Immutable media object")
-
-        def add_js(self, data):
-            raise RuntimeError("Immutable media object")
-
-        def __add__(self, other):
-            # Performance improvement
-            if other is ImmutableMedia.empty_instance:
-                return other
-
-            # Fast copy for Django 2.1 and below
-            combined = Media()
-            combined._css = other._css.copy()
-            combined._js = other._js[:]
-            return combined
 
 
 ImmutableMedia.empty_instance = ImmutableMedia()

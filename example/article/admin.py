@@ -4,6 +4,7 @@ from django.contrib import admin
 from fluent_contents.admin import PlaceholderFieldAdmin
 
 
+@admin.register(Article)
 class ArticleAdmin(PlaceholderFieldAdmin):
     prepopulated_fields = {"slug": ("title",)}
 
@@ -13,7 +14,6 @@ class ArticleAdmin(PlaceholderFieldAdmin):
     )
 
 
-admin.site.register(Article, ArticleAdmin)
 
 
 # For debugging:

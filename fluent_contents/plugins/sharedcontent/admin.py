@@ -10,6 +10,7 @@ from . import appsettings as sharedcontent_appsettings
 from .models import SharedContent
 
 
+@admin.register(SharedContent)
 class SharedContentAdmin(MultiSiteAdminMixin, TranslatableAdmin, PlaceholderFieldAdmin):
     """
     Admin screen for the shared content, displayed in the global Django admin.
@@ -36,4 +37,3 @@ class SharedContentAdmin(MultiSiteAdminMixin, TranslatableAdmin, PlaceholderFiel
         fieldsets[1][1]["fields"] += ("is_cross_site",)
 
 
-admin.site.register(SharedContent, SharedContentAdmin)

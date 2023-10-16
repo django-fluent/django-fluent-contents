@@ -222,14 +222,10 @@ class PlaceholderField(PlaceholderRelation):
 
         # Configure the revere relation if possible.
         # TODO: make sure reverse queries work properly
-        if django.VERSION >= (1, 11):
-            rel = self.remote_field
-        else:
-            rel = self.rel
-
-        if rel.related_name is None:
+        remote_field = self.remote_field
+        if remote_field.related_name is None:
             # Make unique for model (multiple models can use same slotnane)
-            rel.related_name = "{app}_{model}_{slot}_FIXME".format(
+            remote_field.related_name = "{app}_{model}_{slot}_FIXME".format(
                 app=cls._meta.app_label,
                 model=cls._meta.object_name.lower(),
                 slot=self.slot,
@@ -239,7 +235,7 @@ class PlaceholderField(PlaceholderRelation):
             # The regular ForeignKey assigns a ForeignRelatedObjectsDescriptor to it for example.
             # In this case, the PlaceholderRelation is already the reverse relation.
             # Being able to move forward from the Placeholder to the derived models does not have that much value.
-            setattr(rel.to, self.rel.related_name, None)
+            setattr(remote_field.to, self.rel.related_name, None)
 
     @property
     def plugins(self):
