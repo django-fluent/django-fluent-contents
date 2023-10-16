@@ -120,7 +120,7 @@ class AdminTest(AppTestCase):
         request.csrf_processing_done = True
         request.session = {}
         request.user = self.admin_user
-        MessageMiddleware().process_request(request)
+        MessageMiddleware(lambda req: None).process_request(request)
         return request
 
     def _post_add(self, modeladmin, formdata):

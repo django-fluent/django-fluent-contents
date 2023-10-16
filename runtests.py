@@ -81,6 +81,7 @@ if not settings.configured:
         ],
         ROOT_URLCONF="fluent_contents.tests.testapp.urls",
         TEST_RUNNER="django.test.runner.DiscoverRunner",
+        DEFAULT_AUTO_FIELD="django.db.models.AutoField",
         SITE_ID=3,
         FLUENT_CONTENTS_CACHE_OUTPUT=True,
         FLUENT_CONTENTS_CACHE_PLACEHOLDER_OUTPUT=True,
