@@ -75,23 +75,41 @@ class BaseInitialGenericInlineFormSet(BaseGenericInlineFormSet):
 
         return list(filter(initial_not_in_queryset, self._initial))
 
+    def __queryset_minus_initial(self):
+        """
+        Gives all objects from ``self.get_queryset()`` having a slot value that
+        is not already in ``self._initial``.
+        """
+        def queryset_not_in_initial(instance):
+            for values in self._initial:
+                if values['slot'] == instance.slot:
+                    return False
+            return True
+
+        return list(filter(queryset_not_in_initial, self.get_queryset()))
+
     def __get_form_instance(self, i):
-        instance = None
+        # Get slot name from initial values, or from queryset objects without
+        # initial data (by index), when placeholders have been removed from a
+        # template but still exist in the database.
         try:
-            # Editing existing object. Make sure the ID is passed.
-            instance = self.get_queryset()[i]
+            slot = self._initial[i]['slot']
         except IndexError:
-            try:
-                # Adding new object, pass initial values
-                # TODO: initial should be connected to proper instance ordering.
-                # currently this works, because the client handles all details for layout switching.
-                queryset_count = self.get_queryset().count()
-                values = self.__initial_minus_queryset()[i - queryset_count]
-
-                values[self.ct_field.name] = ContentType.objects.get_for_model(self.instance)
-                values[self.ct_fk_field.name] = self.instance.pk
-                instance = self.model(**values)
-            except IndexError:
-                pass
-
+            # Getting by index is just a guess. Is there a better way? Content
+            # items belonging to these placeholders should be orphaned?
+            slot = self.__queryset_minus_initial()[i - len(self._initial)].slot
+        # Editing existing object. Make sure the ID is passed.
+        for instance in self.get_queryset():
+            if instance.slot == slot:
+                return instance
+        # Adding new object, pass initial values
+        for values in self.__initial_minus_queryset():
+            if values['slot'] == slot:
+                break
+        else:
+            raise KeyError('No slot named %r. This should never happen.' % slot)
+        values[self.ct_field.name] = ContentType.objects.get_for_model(self.instance)
+        values[self.ct_fk_field.name] = self.instance.pk
+        instance = self.model(**values)
+        # instance.save()
         return instance
