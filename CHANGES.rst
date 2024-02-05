@@ -1,6 +1,14 @@
 Changelog
 =========
 
+Changes in 3.1 (2024-02-05)
+---------------------------
+
+* Fixed Django 4 admin styling issues.
+* Fixed deprecation warnings.
+* Removed left-over Django 2.1 compatibility code.
+
+
 Changes in 3.0 (2021-11-17)
 ---------------------------
 
